@@ -339,6 +339,38 @@ The load-bearing curation artefact of Phase 0. Everything downstream keys off it
 
 **Packages:** `pyyaml`, `pydantic`, `polars`, `regex`.
 
+**WP2 machinery built 2026-07-28; curation now with Marc.**
+
+`parse.mine_reagents` exploits the structure the text already has: strip the leading
+quantity and unit from a clause and what remains is the reagent name. That yields real
+chemical phrases where n-gram mining would yield "m sodium" and "glycol 6".
+
+| Measure | Value |
+|---------|-------|
+| Records mined | 198,918 X-ray, 883,145 clauses |
+| Clause types | reagent 64.8%, method 16.0%, pH 9.1%, temperature 7.9%, protein/setup 2.1%, reference-only 0.05% |
+| Distinct reagent candidates | 53,876, of which 40,212 seen exactly once |
+| Candidates for 50% / 75% / 90% of clause mass | **31 / 256 / 6,174** |
+| Seed lexicon | 121 reagents, 452 names, **75.1% clause coverage** |
+
+The tail is long but shallow: 75% of clause mass sits in 256 candidates, and the remaining
+25% is mostly singletons. Coverage is therefore reported by **clause mass, not distinct
+name**: chasing distinct-name coverage would be a year of work for no measurable gain.
+
+**A spec assumption to revise.** Section 5.1 lists bare `PEG` (no molecular weight) as a
+significant discard category. It is not: bare PEG is **771 clauses, 0.14%** of the corpus.
+The apparent bulk of it was a parser artefact. When a clause states no concentration, as in
+`peg 8000`, a trailing-quantity rule strips the molecular weight as though it were an
+amount, leaving a bare `peg` and destroying the reagent's identity. Requiring an explicit
+unit before stripping a trailing quantity recovered roughly **15,200 clauses** and moved PEG
+from 16.9% to 19.7% of resolved clause mass. Caught by a unit test, not by inspection.
+
+**Awaiting Marc's curation:** `data/interim/lexicon_worklist.csv` holds the top 300 unmapped
+candidates with blank `canonical_id` / `chem_class` / `notes` columns to fill in. Four
+ambiguous bare anions are deliberately left unmapped rather than guessed: `citrate` (1,348
+clauses), `acetate` (948), `phosphate` (283) and bare `peg` (771). Each genuinely varies by
+counter-ion, and a wrong guess would be invisible downstream.
+
 ### WP3. Deterministic parser
 **6 days. Depends on WP2.**
 

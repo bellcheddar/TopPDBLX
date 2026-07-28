@@ -1,0 +1,932 @@
+# Crystal Ball reagent lexicon
+#
+# The load-bearing curation artefact of Phase 0: every downstream stage keys off these
+# canonical ids. Validated on load by crystal_ball.parse.lexicon; an alias claimed by two
+# reagents is a hard error.
+#
+# Aliases are drawn from the actual corpus ranking produced by `./run.sh parse.mine_reagents`
+# over 198,918 X-ray records, not invented. Measure the effect of any edit with
+# `./run.sh parse.lexicon_coverage`.
+#
+# Fields
+#   chem_class        peg | organic | salt | buffer | polyol | detergent | premix | additive | other
+#   peg_mw            required for chem_class peg. Ordinal, log-scaled downstream.
+#   hofmeister_rank   anion position: negative kosmotropic (salting out), 0 chloride,
+#                     positive chaotropic. sulfate -4 ... thiocyanate +4.
+#   buffer_pka        pKa at 25 C. Buffers collapse to the pH they set (spec 6.3).
+#   default_unit      what the concentration means when the text omits w/v or v/v.
+#
+# DELIBERATELY NOT MAPPED, pending Marc's decision. These are ambiguous and guessing would
+# be worse than leaving them in the curation worklist:
+#   "peg"        bare, no molecular weight. Spec 5.1 lists this as a discard case.
+#   "citrate"    sodium, tri-sodium, ammonium or potassium? ~1,288 clauses.
+#   "acetate"    sodium, ammonium, magnesium, calcium or zinc? ~774 clauses.
+#   "phosphate"  sodium, potassium or mixed Na/K? ~262 clauses.
+
+version: 0.1.0
+
+reagents:
+
+  # ---------------------------------------------------------------- PEGs
+  # Written as "peg 3350", "peg3350", "polyethylene glycol 3350", "peg 4k". The miner
+  # already merges the spacing variants; the K-suffix and spelled-out forms are aliased.
+
+  - canonical_id: PEG_200
+    display_name: PEG 200
+    chem_class: peg
+    peg_mw: 200
+    default_unit: percent_v_v
+    aliases: ["peg 200", "polyethylene glycol 200", "peg200"]
+
+  - canonical_id: PEG_300
+    display_name: PEG 300
+    chem_class: peg
+    peg_mw: 300
+    default_unit: percent_v_v
+    aliases: ["peg 300", "polyethylene glycol 300", "peg300"]
+
+  - canonical_id: PEG_400
+    display_name: PEG 400
+    chem_class: peg
+    peg_mw: 400
+    default_unit: percent_v_v
+    aliases: ["peg 400", "polyethylene glycol 400", "peg400", "peg-400"]
+    note: >-
+      Below about 600 a PEG behaves as an organic precipitant rather than a polymer, and is
+      usually reported v/v. Spec 6.3 requires this distinction be preserved.
+
+  - canonical_id: PEG_600
+    display_name: PEG 600
+    chem_class: peg
+    peg_mw: 600
+    default_unit: percent_v_v
+    aliases: ["peg 600", "polyethylene glycol 600", "peg600"]
+
+  - canonical_id: PEG_1000
+    display_name: PEG 1000
+    chem_class: peg
+    peg_mw: 1000
+    default_unit: percent_w_v
+    aliases: ["peg 1000", "polyethylene glycol 1000", "peg1000", "peg 1k"]
+
+  - canonical_id: PEG_1500
+    display_name: PEG 1500
+    chem_class: peg
+    peg_mw: 1500
+    default_unit: percent_w_v
+    aliases: ["peg 1500", "polyethylene glycol 1500", "peg1500"]
+
+  - canonical_id: PEG_2000
+    display_name: PEG 2000
+    chem_class: peg
+    peg_mw: 2000
+    default_unit: percent_w_v
+    aliases: ["peg 2000", "polyethylene glycol 2000", "peg2000", "peg 2k"]
+
+  - canonical_id: PEG_3000
+    display_name: PEG 3000
+    chem_class: peg
+    peg_mw: 3000
+    default_unit: percent_w_v
+    aliases: ["peg 3000", "polyethylene glycol 3000", "peg3000", "peg 3k"]
+
+  - canonical_id: PEG_3350
+    display_name: PEG 3350
+    chem_class: peg
+    peg_mw: 3350
+    default_unit: percent_w_v
+    aliases: ["peg 3350", "polyethylene glycol 3350", "peg3350", "peg 3,350", "peg 3.35k"]
+
+  - canonical_id: PEG_4000
+    display_name: PEG 4000
+    chem_class: peg
+    peg_mw: 4000
+    default_unit: percent_w_v
+    aliases: ["peg 4000", "polyethylene glycol 4000", "peg4000", "peg 4k", "peg4k"]
+
+  - canonical_id: PEG_5000
+    display_name: PEG 5000
+    chem_class: peg
+    peg_mw: 5000
+    default_unit: percent_w_v
+    aliases: ["peg 5000", "polyethylene glycol 5000", "peg5000", "peg 5k"]
+
+  - canonical_id: PEG_6000
+    display_name: PEG 6000
+    chem_class: peg
+    peg_mw: 6000
+    default_unit: percent_w_v
+    aliases: ["peg 6000", "polyethylene glycol 6000", "peg6000", "peg 6k", "peg6k"]
+
+  - canonical_id: PEG_8000
+    display_name: PEG 8000
+    chem_class: peg
+    peg_mw: 8000
+    default_unit: percent_w_v
+    aliases: ["peg 8000", "polyethylene glycol 8000", "peg8000", "peg 8k", "peg8k"]
+
+  - canonical_id: PEG_10000
+    display_name: PEG 10000
+    chem_class: peg
+    peg_mw: 10000
+    default_unit: percent_w_v
+    aliases: ["peg 10000", "polyethylene glycol 10000", "peg10000", "peg 10k"]
+
+  - canonical_id: PEG_20000
+    display_name: PEG 20000
+    chem_class: peg
+    peg_mw: 20000
+    default_unit: percent_w_v
+    aliases: ["peg 20000", "polyethylene glycol 20000", "peg20000", "peg 20k", "peg20k"]
+
+  # PEG monomethyl ethers. Chemically distinct from the diol PEGs and present in several
+  # commercial screens, so they get their own ids rather than being folded in.
+
+  - canonical_id: PEG_MME_500
+    display_name: PEG MME 500
+    chem_class: peg
+    peg_mw: 500
+    is_mme: true
+    default_unit: percent_w_v
+    aliases: ["peg 500 mme", "peg mme 500", "peg500mme", "mpeg 500"]
+
+  - canonical_id: PEG_MME_550
+    display_name: PEG MME 550
+    chem_class: peg
+    peg_mw: 550
+    is_mme: true
+    default_unit: percent_w_v
+    aliases: ["peg 550 mme", "peg mme 550", "peg550mme", "mpeg 550",
+              "polyethylene glycol monomethyl ether 550"]
+
+  - canonical_id: PEG_MME_2000
+    display_name: PEG MME 2000
+    chem_class: peg
+    peg_mw: 2000
+    is_mme: true
+    default_unit: percent_w_v
+    aliases: ["peg 2000 mme", "peg mme 2000", "peg2000mme", "mpeg 2000",
+              "polyethylene glycol monomethyl ether 2000"]
+
+  - canonical_id: PEG_MME_5000
+    display_name: PEG MME 5000
+    chem_class: peg
+    peg_mw: 5000
+    is_mme: true
+    default_unit: percent_w_v
+    aliases: ["peg 5000 mme", "peg mme 5000", "peg5000mme", "mpeg 5000", "mepeg5k",
+              "polyethylene glycol monomethyl ether 5000"]
+
+  # ---------------------------------------------------------------- salts
+
+  - canonical_id: AMMONIUM_SULFATE
+    display_name: Ammonium sulfate
+    chem_class: salt
+    hofmeister_rank: -4
+    default_unit: molar
+    aliases: ["ammonium sulphate", "(nh4)2so4", "nh4so4", "amso4", "(nh4)2so",
+              "am sulfate", "ammonium sulfate anhydrous"]
+
+  - canonical_id: LITHIUM_SULFATE
+    display_name: Lithium sulfate
+    chem_class: salt
+    hofmeister_rank: -4
+    default_unit: molar
+    aliases: ["lithium sulphate", "li2so4", "liso4", "lithium sulfate monohydrate"]
+
+  - canonical_id: MAGNESIUM_SULFATE
+    display_name: Magnesium sulfate
+    chem_class: salt
+    hofmeister_rank: -4
+    default_unit: molar
+    aliases: ["magnesium sulphate", "mgso4", "magnesium sulfate heptahydrate"]
+
+  - canonical_id: SODIUM_SULFATE
+    display_name: Sodium sulfate
+    chem_class: salt
+    hofmeister_rank: -4
+    default_unit: molar
+    aliases: ["sodium sulphate", "na2so4"]
+
+  - canonical_id: ZINC_SULFATE
+    display_name: Zinc sulfate
+    chem_class: salt
+    hofmeister_rank: -4
+    default_unit: molar
+    aliases: ["zinc sulphate", "znso4"]
+
+  - canonical_id: SODIUM_CHLORIDE
+    display_name: Sodium chloride
+    chem_class: salt
+    hofmeister_rank: 0
+    default_unit: molar
+    aliases: ["nacl", "na cl", "sodium chloride"]
+
+  - canonical_id: POTASSIUM_CHLORIDE
+    display_name: Potassium chloride
+    chem_class: salt
+    hofmeister_rank: 0
+    default_unit: molar
+    aliases: ["kcl"]
+
+  - canonical_id: MAGNESIUM_CHLORIDE
+    display_name: Magnesium chloride
+    chem_class: salt
+    hofmeister_rank: 0
+    default_unit: molar
+    aliases: ["mgcl2", "mgcl", "magnesium chloride hexahydrate", "mgcl2.6h2o"]
+
+  - canonical_id: CALCIUM_CHLORIDE
+    display_name: Calcium chloride
+    chem_class: salt
+    hofmeister_rank: 0
+    default_unit: molar
+    aliases: ["cacl2", "cacl", "calcium chloride dihydrate"]
+
+  - canonical_id: LITHIUM_CHLORIDE
+    display_name: Lithium chloride
+    chem_class: salt
+    hofmeister_rank: 0
+    default_unit: molar
+    aliases: ["licl"]
+
+  - canonical_id: AMMONIUM_CHLORIDE
+    display_name: Ammonium chloride
+    chem_class: salt
+    hofmeister_rank: 0
+    default_unit: molar
+    aliases: ["nh4cl"]
+
+  - canonical_id: MANGANESE_CHLORIDE
+    display_name: Manganese chloride
+    chem_class: salt
+    hofmeister_rank: 0
+    default_unit: millimolar
+    aliases: ["mncl2", "manganese(ii) chloride"]
+
+  - canonical_id: ZINC_CHLORIDE
+    display_name: Zinc chloride
+    chem_class: salt
+    hofmeister_rank: 0
+    default_unit: millimolar
+    aliases: ["zncl2"]
+
+  - canonical_id: COBALT_CHLORIDE
+    display_name: Cobalt chloride
+    chem_class: salt
+    hofmeister_rank: 0
+    default_unit: millimolar
+    aliases: ["cocl2", "cobalt(ii) chloride"]
+
+  - canonical_id: NICKEL_CHLORIDE
+    display_name: Nickel chloride
+    chem_class: salt
+    hofmeister_rank: 0
+    default_unit: millimolar
+    aliases: ["nicl2"]
+
+  - canonical_id: CADMIUM_CHLORIDE
+    display_name: Cadmium chloride
+    chem_class: salt
+    hofmeister_rank: 0
+    default_unit: millimolar
+    aliases: ["cdcl2"]
+
+  - canonical_id: SODIUM_FLUORIDE
+    display_name: Sodium fluoride
+    chem_class: salt
+    hofmeister_rank: -2
+    default_unit: molar
+    aliases: ["naf"]
+
+  - canonical_id: SODIUM_BROMIDE
+    display_name: Sodium bromide
+    chem_class: salt
+    hofmeister_rank: 1
+    default_unit: molar
+    aliases: ["nabr"]
+
+  - canonical_id: POTASSIUM_BROMIDE
+    display_name: Potassium bromide
+    chem_class: salt
+    hofmeister_rank: 1
+    default_unit: molar
+    aliases: ["kbr"]
+
+  - canonical_id: SODIUM_IODIDE
+    display_name: Sodium iodide
+    chem_class: salt
+    hofmeister_rank: 3
+    default_unit: molar
+    aliases: ["nai"]
+
+  - canonical_id: AMMONIUM_IODIDE
+    display_name: Ammonium iodide
+    chem_class: salt
+    hofmeister_rank: 3
+    default_unit: molar
+    aliases: ["nh4i"]
+
+  - canonical_id: SODIUM_NITRATE
+    display_name: Sodium nitrate
+    chem_class: salt
+    hofmeister_rank: 2
+    default_unit: molar
+    aliases: ["nano3"]
+
+  - canonical_id: AMMONIUM_NITRATE
+    display_name: Ammonium nitrate
+    chem_class: salt
+    hofmeister_rank: 2
+    default_unit: molar
+    aliases: ["nh4no3"]
+
+  - canonical_id: POTASSIUM_NITRATE
+    display_name: Potassium nitrate
+    chem_class: salt
+    hofmeister_rank: 2
+    default_unit: molar
+    aliases: ["kno3"]
+
+  - canonical_id: POTASSIUM_THIOCYANATE
+    display_name: Potassium thiocyanate
+    chem_class: salt
+    hofmeister_rank: 4
+    default_unit: molar
+    aliases: ["kscn"]
+
+  - canonical_id: SODIUM_THIOCYANATE
+    display_name: Sodium thiocyanate
+    chem_class: salt
+    hofmeister_rank: 4
+    default_unit: molar
+    aliases: ["nascn"]
+
+  - canonical_id: AMMONIUM_ACETATE
+    display_name: Ammonium acetate
+    chem_class: salt
+    hofmeister_rank: -2
+    default_unit: molar
+    aliases: ["nh4oac", "nh4ac"]
+
+  - canonical_id: MAGNESIUM_ACETATE
+    display_name: Magnesium acetate
+    chem_class: salt
+    hofmeister_rank: -2
+    default_unit: molar
+    aliases: ["mg acetate", "mgac2", "magnesium acetate tetrahydrate", "mg(oac)2"]
+
+  - canonical_id: CALCIUM_ACETATE
+    display_name: Calcium acetate
+    chem_class: salt
+    hofmeister_rank: -2
+    default_unit: molar
+    aliases: ["ca-acetate", "ca acetate", "calcium acetate hydrate"]
+
+  - canonical_id: ZINC_ACETATE
+    display_name: Zinc acetate
+    chem_class: salt
+    hofmeister_rank: -2
+    default_unit: millimolar
+    aliases: ["zn acetate", "zinc acetate dihydrate"]
+
+  - canonical_id: POTASSIUM_ACETATE
+    display_name: Potassium acetate
+    chem_class: salt
+    hofmeister_rank: -2
+    default_unit: molar
+    aliases: ["koac", "k acetate"]
+
+  - canonical_id: SODIUM_FORMATE
+    display_name: Sodium formate
+    chem_class: salt
+    hofmeister_rank: -2
+    default_unit: molar
+    aliases: ["na formate", "hcoona"]
+
+  - canonical_id: AMMONIUM_FORMATE
+    display_name: Ammonium formate
+    chem_class: salt
+    hofmeister_rank: -2
+    default_unit: molar
+    aliases: ["nh4 formate"]
+
+  - canonical_id: MAGNESIUM_FORMATE
+    display_name: Magnesium formate
+    chem_class: salt
+    hofmeister_rank: -2
+    default_unit: molar
+    aliases: ["mg formate", "magnesium formate dihydrate"]
+
+  - canonical_id: POTASSIUM_FORMATE
+    display_name: Potassium formate
+    chem_class: salt
+    hofmeister_rank: -2
+    default_unit: molar
+    aliases: ["k formate"]
+
+  - canonical_id: POTASSIUM_SODIUM_TARTRATE
+    display_name: Potassium sodium tartrate
+    chem_class: salt
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["k/na tartrate", "na/k tartrate", "sodium potassium tartrate",
+              "potassium sodium tartrate tetrahydrate", "rochelle salt"]
+
+  - canonical_id: AMMONIUM_TARTRATE
+    display_name: Ammonium tartrate
+    chem_class: salt
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["ammonium tartrate dibasic"]
+
+  - canonical_id: AMMONIUM_PHOSPHATE
+    display_name: Ammonium phosphate
+    chem_class: salt
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["ammonium phosphate dibasic", "ammonium phosphate monobasic",
+              "(nh4)2hpo4", "nh4h2po4"]
+
+  - canonical_id: AMMONIUM_CITRATE
+    display_name: Ammonium citrate
+    chem_class: salt
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["ammonium citrate tribasic", "ammonium citrate dibasic", "di-ammonium citrate"]
+
+  - canonical_id: SODIUM_MALONATE
+    display_name: Sodium malonate
+    chem_class: salt
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["na malonate", "sodium malonate dibasic", "disodium malonate"]
+
+  # ---------------------------------------------------------------- buffers
+  # Several of these are simultaneously salts. Both fields are populated where that is
+  # true: chem_class records how the reagent is normally used, hofmeister_rank records
+  # what its anion does. The parser decides the per-component role from concentration.
+
+  - canonical_id: HEPES
+    display_name: HEPES
+    chem_class: buffer
+    buffer_pka: 7.55
+    default_unit: molar
+    aliases: ["hepes-naoh", "hepes/naoh", "sodium hepes", "hepes sodium", "na-hepes",
+              "na hepes", "hepes-na", "hepes buffer", "hepes na", "hepes acid"]
+
+  - canonical_id: MES
+    display_name: MES
+    chem_class: buffer
+    buffer_pka: 6.15
+    default_unit: molar
+    aliases: ["mes-naoh", "mes/naoh", "sodium mes", "mes buffer", "mes monohydrate",
+              "na-mes", "mes hydrate"]
+
+  - canonical_id: TRIS
+    display_name: Tris
+    chem_class: buffer
+    buffer_pka: 8.06
+    default_unit: molar
+    aliases: ["tris-hcl", "tris hcl", "tris/hcl", "tris-cl", "trishcl", "tris buffer",
+              "tris hydrochloride", "tris.hcl", "trizma", "tris base"]
+
+  - canonical_id: BIS_TRIS
+    display_name: Bis-Tris
+    chem_class: buffer
+    buffer_pka: 6.50
+    default_unit: molar
+    aliases: ["bistris", "bis tris", "bis-tris methane"]
+
+  - canonical_id: BIS_TRIS_PROPANE
+    display_name: Bis-Tris propane
+    chem_class: buffer
+    buffer_pka: 6.80
+    default_unit: molar
+    aliases: ["bis tris propane", "bis-tris-propane", "bistris propane", "btp"]
+    note: >-
+      Diprotic, pKa 6.8 and 9.0. The lower value is recorded here; the pH banding in the
+      assignment step should use the reported pH, not the pKa.
+
+  - canonical_id: IMIDAZOLE
+    display_name: Imidazole
+    chem_class: buffer
+    buffer_pka: 6.95
+    default_unit: molar
+    aliases: ["imidazole hcl", "imidazole-hcl"]
+
+  - canonical_id: SODIUM_CACODYLATE
+    display_name: Sodium cacodylate
+    chem_class: buffer
+    buffer_pka: 6.27
+    default_unit: molar
+    aliases: ["cacodylate", "na cacodylate", "na-cacodylate", "cacodylic acid",
+              "sodium cacodylate trihydrate", "sodium cacodylate buffer"]
+    note: >-
+      Bare "cacodylate" is mapped here because the sodium salt is essentially the only form
+      used in crystallisation. Bare "citrate", "acetate" and "phosphate" are deliberately
+      left unmapped, since those genuinely vary by counter-ion.
+
+  - canonical_id: MOPS
+    display_name: MOPS
+    chem_class: buffer
+    buffer_pka: 7.20
+    default_unit: molar
+    aliases: ["mops-naoh", "sodium mops"]
+
+  - canonical_id: PIPES
+    display_name: PIPES
+    chem_class: buffer
+    buffer_pka: 6.76
+    default_unit: molar
+    aliases: ["pipes-naoh", "sodium pipes"]
+
+  - canonical_id: BICINE
+    display_name: Bicine
+    chem_class: buffer
+    buffer_pka: 8.35
+    default_unit: molar
+    aliases: ["bicine-naoh"]
+
+  - canonical_id: TRICINE
+    display_name: Tricine
+    chem_class: buffer
+    buffer_pka: 8.15
+    default_unit: molar
+    aliases: ["tricine-naoh"]
+
+  - canonical_id: CHES
+    display_name: CHES
+    chem_class: buffer
+    buffer_pka: 9.30
+    default_unit: molar
+    aliases: ["ches-naoh"]
+
+  - canonical_id: CAPS
+    display_name: CAPS
+    chem_class: buffer
+    buffer_pka: 10.40
+    default_unit: molar
+    aliases: ["caps-naoh"]
+
+  - canonical_id: ADA
+    display_name: ADA
+    chem_class: buffer
+    buffer_pka: 6.60
+    default_unit: molar
+    aliases: ["ada buffer"]
+
+  - canonical_id: SODIUM_ACETATE
+    display_name: Sodium acetate
+    chem_class: buffer
+    buffer_pka: 4.76
+    hofmeister_rank: -2
+    default_unit: molar
+    aliases: ["na acetate", "na-acetate", "naoac", "naac", "naacetate",
+              "sodium acetate trihydrate", "acetic acid sodium salt"]
+
+  - canonical_id: SODIUM_CITRATE
+    display_name: Sodium citrate
+    chem_class: buffer
+    buffer_pka: 4.76
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["na citrate", "na-citrate", "nacitrate", "tri-sodium citrate",
+              "trisodium citrate", "sodium citrate tribasic",
+              "sodium citrate tribasic dihydrate", "tri sodium citrate"]
+    note: >-
+      Citrate is triprotic (3.13, 4.76, 6.40). The middle pKa is recorded; crystallisation
+      citrate buffers are typically used between pH 4 and 6.
+
+  - canonical_id: SODIUM_PHOSPHATE
+    display_name: Sodium phosphate
+    chem_class: buffer
+    buffer_pka: 7.20
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["nah2po4", "na2hpo4", "sodium phosphate monobasic",
+              "sodium phosphate dibasic", "sodium phosphate buffer"]
+
+  - canonical_id: POTASSIUM_PHOSPHATE
+    display_name: Potassium phosphate
+    chem_class: buffer
+    buffer_pka: 7.20
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["kh2po4", "k2hpo4", "potassium phosphate dibasic",
+              "potassium phosphate monobasic", "potassium phosphate buffer"]
+
+  - canonical_id: SODIUM_POTASSIUM_PHOSPHATE
+    display_name: Sodium potassium phosphate
+    chem_class: buffer
+    buffer_pka: 7.20
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["na/k phosphate", "sodium/potassium phosphate", "k/na phosphate",
+              "potassium sodium phosphate"]
+
+  - canonical_id: CITRIC_ACID
+    display_name: Citric acid
+    chem_class: buffer
+    buffer_pka: 3.13
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["citric acid monohydrate"]
+
+  - canonical_id: SUCCINIC_ACID
+    display_name: Succinic acid
+    chem_class: buffer
+    buffer_pka: 4.21
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["succinate", "sodium succinate", "succinic acid ph"]
+
+  - canonical_id: MALIC_ACID
+    display_name: Malic acid
+    chem_class: buffer
+    buffer_pka: 3.40
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["dl-malic acid", "l-malic acid", "malate", "sodium malate"]
+
+  - canonical_id: GLYCINE
+    display_name: Glycine
+    chem_class: buffer
+    buffer_pka: 9.78
+    default_unit: molar
+    aliases: ["glycine buffer", "gly"]
+
+  # ---------------------------------------------------------------- organics
+
+  - canonical_id: MPD
+    display_name: MPD
+    chem_class: organic
+    default_unit: percent_v_v
+    aliases: ["2-methyl-2,4-pentanediol", "(+/-)-2-methyl-2,4-pentanediol",
+              "2-methyl-2,4 pentanediol", "methylpentanediol", "(+-)-2-methyl-2,4-pentanediol"]
+
+  - canonical_id: ISOPROPANOL
+    display_name: Isopropanol
+    chem_class: organic
+    default_unit: percent_v_v
+    aliases: ["2-propanol", "iso-propanol", "isopropyl alcohol", "ipa", "propan-2-ol"]
+
+  - canonical_id: ETHANOL
+    display_name: Ethanol
+    chem_class: organic
+    default_unit: percent_v_v
+    aliases: ["etoh", "ethyl alcohol"]
+
+  - canonical_id: METHANOL
+    display_name: Methanol
+    chem_class: organic
+    default_unit: percent_v_v
+    aliases: ["meoh", "methyl alcohol"]
+
+  - canonical_id: DIOXANE
+    display_name: 1,4-Dioxane
+    chem_class: organic
+    default_unit: percent_v_v
+    aliases: ["dioxane", "1,4 dioxane", "p-dioxane"]
+
+  - canonical_id: DMSO
+    display_name: DMSO
+    chem_class: organic
+    default_unit: percent_v_v
+    aliases: ["dimethyl sulfoxide", "dimethylsulfoxide", "dimethyl sulphoxide"]
+
+  - canonical_id: HEXANEDIOL_16
+    display_name: 1,6-Hexanediol
+    chem_class: organic
+    default_unit: percent_v_v
+    aliases: ["1,6 hexanediol", "hexanediol", "1,6-hexane diol"]
+
+  - canonical_id: PROPANOL_1
+    display_name: 1-Propanol
+    chem_class: organic
+    default_unit: percent_v_v
+    aliases: ["propanol", "n-propanol", "propan-1-ol"]
+    note: >-
+      Bare "propanol" is mapped to the 1-isomer, which is the conventional reading. Where
+      the text says 2-propanol or isopropanol it matches ISOPROPANOL first.
+
+  - canonical_id: PROPANEDIOL_12
+    display_name: 1,2-Propanediol
+    chem_class: organic
+    default_unit: percent_v_v
+    aliases: ["1,2 propanediol", "propylene glycol", "1,2-propane diol"]
+
+  - canonical_id: BUTANEDIOL_23
+    display_name: 2,3-Butanediol
+    chem_class: organic
+    default_unit: percent_v_v
+    aliases: ["2,3 butanediol", "butane-2,3-diol"]
+
+  - canonical_id: TERT_BUTANOL
+    display_name: tert-Butanol
+    chem_class: organic
+    default_unit: percent_v_v
+    aliases: ["t-butanol", "tertiary butanol", "2-methyl-2-propanol"]
+
+  # ---------------------------------------------------------------- polyols
+
+  - canonical_id: GLYCEROL
+    display_name: Glycerol
+    chem_class: polyol
+    default_unit: percent_v_v
+    aliases: ["glycerine", "glycerin", "glycerol anhydrous"]
+    note: >-
+      Dual use. Only about 2% of entries name a cryoprotectant explicitly, and a third of
+      glycerol values in the corpus exceed 15%, which is precipitant scale. The parser sets
+      cryo_evidence to explicit or inferred; only explicit cryo is dropped from the
+      screen-matching fingerprint.
+
+  - canonical_id: ETHYLENE_GLYCOL
+    display_name: Ethylene glycol
+    chem_class: polyol
+    default_unit: percent_v_v
+    aliases: ["ethyleneglycol", "1,2-ethanediol", "ethane-1,2-diol", "meg"]
+
+  - canonical_id: SUCROSE
+    display_name: Sucrose
+    chem_class: polyol
+    default_unit: percent_w_v
+    aliases: ["saccharose"]
+
+  - canonical_id: TREHALOSE
+    display_name: Trehalose
+    chem_class: polyol
+    default_unit: percent_w_v
+    aliases: ["d-trehalose", "trehalose dihydrate"]
+
+  - canonical_id: XYLITOL
+    display_name: Xylitol
+    chem_class: polyol
+    default_unit: percent_w_v
+    aliases: []
+
+  - canonical_id: SORBITOL
+    display_name: Sorbitol
+    chem_class: polyol
+    default_unit: percent_w_v
+    aliases: ["d-sorbitol"]
+
+  # ---------------------------------------------------------------- additives
+
+  - canonical_id: DTT
+    display_name: DTT
+    chem_class: additive
+    default_unit: millimolar
+    aliases: ["dithiothreitol", "dl-dithiothreitol", "1,4-dithiothreitol"]
+
+  - canonical_id: TCEP
+    display_name: TCEP
+    chem_class: additive
+    default_unit: millimolar
+    aliases: ["tris(2-carboxyethyl)phosphine", "tcep-hcl", "tcep hcl"]
+
+  - canonical_id: BETA_MERCAPTOETHANOL
+    display_name: Beta-mercaptoethanol
+    chem_class: additive
+    default_unit: millimolar
+    aliases: ["bme", "2-mercaptoethanol", "b-mercaptoethanol", "mercaptoethanol",
+              "beta mercaptoethanol", "2-me"]
+
+  - canonical_id: EDTA
+    display_name: EDTA
+    chem_class: additive
+    default_unit: millimolar
+    aliases: ["ethylenediaminetetraacetic acid", "edta disodium", "na-edta"]
+
+  - canonical_id: SODIUM_AZIDE
+    display_name: Sodium azide
+    chem_class: additive
+    default_unit: percent_w_v
+    aliases: ["nan3", "na azide"]
+
+  - canonical_id: SPERMINE
+    display_name: Spermine
+    chem_class: additive
+    default_unit: millimolar
+    aliases: ["spermine tetrahydrochloride", "spermine.4hcl", "spermine tetrahcl"]
+
+  - canonical_id: SPERMIDINE
+    display_name: Spermidine
+    chem_class: additive
+    default_unit: millimolar
+    aliases: ["spermidine trihydrochloride"]
+
+  - canonical_id: GLUTATHIONE
+    display_name: Glutathione
+    chem_class: additive
+    default_unit: millimolar
+    aliases: ["gsh", "reduced glutathione", "l-glutathione"]
+
+  - canonical_id: ATP
+    display_name: ATP
+    chem_class: additive
+    default_unit: millimolar
+    aliases: ["adenosine triphosphate", "atp-mg", "mg-atp"]
+
+  - canonical_id: ADP
+    display_name: ADP
+    chem_class: additive
+    default_unit: millimolar
+    aliases: ["adenosine diphosphate"]
+
+  # ---------------------------------------------------------------- detergents
+
+  - canonical_id: SDS
+    display_name: SDS
+    chem_class: detergent
+    default_unit: percent_w_v
+    aliases: ["sodium dodecyl sulfate", "sodium dodecyl sulphate", "sodium lauryl sulfate"]
+
+  - canonical_id: BETA_OG
+    display_name: beta-octyl glucoside
+    chem_class: detergent
+    default_unit: percent_w_v
+    aliases: ["b-og", "beta-og", "n-octyl-beta-d-glucoside", "octyl glucoside", "bog"]
+
+  # ---------------------------------------------------------------- premixes
+  # Spec decision 12.2: Phase 0 fixes the representation, not the taxonomy. Each premix
+  # expands to its published constituents while keeping its own id, so either Phase 1
+  # choice (own top-level class, or a mixed_system bucket) remains available.
+
+  - canonical_id: TACSIMATE
+    display_name: Tacsimate
+    chem_class: premix
+    default_unit: percent_v_v
+    premix_components: [MALIC_ACID, AMMONIUM_CITRATE, SUCCINIC_ACID, SODIUM_MALONATE,
+                        AMMONIUM_ACETATE, AMMONIUM_TARTRATE, SODIUM_FORMATE]
+    aliases: ["tacsimate ph 7.0", "tacsimate ph 5.0"]
+    note: >-
+      Hampton titrated mixture of seven organic acid salts. Constituents listed from the
+      published formulation; proportions belong in the WP4 screen library, not here.
+
+  - canonical_id: MIB_BUFFER
+    display_name: MIB buffer
+    chem_class: premix
+    default_unit: molar
+    premix_components: [MALIC_ACID, IMIDAZOLE, BORIC_ACID]
+    aliases: ["mib", "mib ph", "malic acid imidazole boric acid"]
+    note: Sodium malonate/imidazole/boric acid system, 2:3:3, used across a wide pH range.
+
+  - canonical_id: PHOSPHATE_CITRATE
+    display_name: Phosphate-citrate
+    chem_class: premix
+    default_unit: molar
+    premix_components: [SODIUM_PHOSPHATE, CITRIC_ACID]
+    aliases: ["phosphate citrate", "citrate-phosphate", "citrate phosphate"]
+
+  - canonical_id: MMT_BUFFER
+    display_name: MMT buffer
+    chem_class: premix
+    default_unit: molar
+    premix_components: [MALIC_ACID, MES, TRIS]
+    aliases: ["mmt", "malic acid mes tris", "dl-malic acid mes tris"]
+    note: DL-malic acid / MES / Tris in a 1:2:2 molar ratio, used across pH 4 to 9.
+
+  - canonical_id: MES_IMIDAZOLE
+    display_name: MES/imidazole
+    chem_class: premix
+    default_unit: molar
+    premix_components: [MES, IMIDAZOLE]
+    aliases: ["mes imidazole", "imidazole/mes", "mes-imidazole"]
+    note: >-
+      A mixed buffer system rather than a vendor premix, but represented the same way so
+      neither constituent is lost. 508 clauses in the corpus.
+
+  - canonical_id: LITHIUM_ACETATE
+    display_name: Lithium acetate
+    chem_class: salt
+    hofmeister_rank: -2
+    default_unit: molar
+    aliases: ["li acetate", "lioac"]
+
+  - canonical_id: BORIC_ACID
+    display_name: Boric acid
+    chem_class: buffer
+    buffer_pka: 9.24
+    default_unit: molar
+    aliases: ["borate", "sodium borate", "borate buffer"]
+
+  # ---------------------------------------------------------------- other polymers
+
+  - canonical_id: JEFFAMINE_ED2001
+    display_name: Jeffamine ED-2001
+    chem_class: other
+    default_unit: percent_w_v
+    aliases: ["jeffamine ed 2001", "jeffamine ed2001"]
+
+  - canonical_id: JEFFAMINE_M600
+    display_name: Jeffamine M-600
+    chem_class: other
+    default_unit: percent_w_v
+    aliases: ["jeffamine m 600", "jeffamine m600"]
+
+  - canonical_id: PEI
+    display_name: Polyethyleneimine
+    chem_class: other
+    default_unit: percent_w_v
+    aliases: ["polyethylenimine", "polyethyleneimine"]
