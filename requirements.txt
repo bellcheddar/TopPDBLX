@@ -1,0 +1,21 @@
+# Crystal Ball core pipeline dependencies (WP0 to WP5, WP7 to WP9).
+# Machine-learning extras live in requirements-ml.txt so the ingest and parse stages
+# stay installable without pulling MLX and its wheels.
+
+requests>=2.32          # RCSB Search + Data GraphQL, UniProt REST, SIFTS downloads
+tenacity>=8.2           # polite exponential backoff on 429/5xx from the public APIs
+orjson>=3.10            # ~200k GraphQL records: stdlib json is the bottleneck, orjson is not
+
+pyarrow>=17             # Parquet writer for the interim and released tables
+polars>=1.0             # dataframe layer; lazy scans keep the 800k-row entity table cheap
+duckdb>=1.1             # working store and the SQL surface of the released database
+
+pydantic>=2.8           # schema validation for records, lexicon and screen formulations
+jsonschema>=4.23        # validates released JSONL against the frozen, versioned JSON Schema
+pyyaml>=6.0             # ontology/synonyms.yaml and ontology/screens/*.yaml
+
+gemmi>=0.7              # mmCIF parsing, used only by the WP1 fidelity gate and the WP9 full check
+regex>=2024.5           # WP3 parser: variable-width lookbehind and better unicode than stdlib re
+
+tqdm>=4.66              # progress on the ~690 ingest batches and the parse sweeps
+pytest>=8.0             # WP3 frozen fixture suite

@@ -1,0 +1,25 @@
+# Data lives outside the repo (symlinks into ~/CrystalBallData). Never commit the payload.
+data/
+manifests/*.json
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+build/
+dist/
+
+# Models and training artefacts
+wandb/
+adapters/
+*.safetensors
+
+# macOS
+.DS_Store
+
+# Session transcripts and scratch: these sit untracked in the working tree and must never
+# be swept into a commit.
+*.jsonl.session
+scratch/

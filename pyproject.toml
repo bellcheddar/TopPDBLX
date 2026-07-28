@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "crystal-ball"
+version = "0.1.0.dev0"
+description = "PDB crystallisation condition normalisation and sequence-linked prediction"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [{ name = "Marc C. Deller", email = "marc@marcdeller.com" }]
+
+# Runtime pins live in requirements.txt, with a comment per dependency explaining why it
+# is there. This table stays deliberately loose so an editable install never fights it.
+dependencies = [
+  "requests", "tenacity", "orjson",
+  "pyarrow", "polars", "duckdb",
+  "pydantic", "jsonschema", "pyyaml",
+  "gemmi", "regex", "tqdm",
+]
+
+[project.optional-dependencies]
+ml = ["mlx", "mlx-lm", "wandb", "huggingface_hub", "scikit-learn", "plotly"]
+dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
