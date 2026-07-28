@@ -28,7 +28,7 @@ import yaml
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from .. import config
-from .text import normalise
+from .text import normalise, tidy_name
 
 LEXICON_PATH = config.ONTOLOGY_DIR / "synonyms.yaml"
 
@@ -90,7 +90,7 @@ class Lexicon(BaseModel, extra="forbid"):
         owners: defaultdict[str, list[str]] = defaultdict(list)
         for reagent in self.reagents:
             for name in reagent.all_names:
-                owners[normalise(name)].append(reagent.canonical_id)
+                owners[normalise(tidy_name(name))].append(reagent.canonical_id)
         clashes = {alias: sorted(set(who)) for alias, who in owners.items() if len(set(who)) > 1}
         if clashes:
             raise ValueError(f"alias claimed by more than one reagent: {clashes}")
@@ -107,8 +107,12 @@ class Lexicon(BaseModel, extra="forbid"):
         return self
 
     def index(self) -> dict[str, Reagent]:
-        """Normalised alias -> Reagent, for exact lookup by the parser."""
-        return {normalise(name): reagent
+        """Normalised alias -> Reagent, for exact lookup by the parser.
+
+        Keys go through the same tidying the parser applies to candidate names, so both
+        sides of the lookup agree on hydration state, oxidation state and trademarks.
+        """
+        return {normalise(tidy_name(name)): reagent
                 for reagent in self.reagents
                 for name in reagent.all_names}
 

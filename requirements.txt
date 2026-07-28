@@ -19,3 +19,4 @@ regex>=2024.5           # WP3 parser: variable-width lookbehind and better unico
 
 tqdm>=4.66              # progress on the ~690 ingest batches and the parse sweeps
 pytest>=8.0             # WP3 frozen fixture suite
+pypdf>=5.0                 # WP4: extract screen formulations from vendor PDFs

@@ -39,6 +39,9 @@ _SPLIT = re.compile(r"""
       | \s\+\s
       | \s+and\s+
       | \s+plus\s+
+      | \s+/\s+          # "0.98 M sodium malonate pH 7.0 / 0.02 M citric acid": a titration
+                         # pair. Spaces are required on both sides, so "w/v", "mg/ml",
+                         # "hepes/naoh" and "na/k phosphate" are untouched
       | \s+in\s+(?=\d)   # "50mM CaCl2 in 0.1M cacodylate": only before a digit, so
                          # "crystals grown in sitting drops" is left alone
       | \ \ +(?=\d)      # "glycol 6,000  100 mM citrate": depositors separate components
@@ -131,6 +134,20 @@ def _prepare(text: str) -> str:
     return unicodedata.normalize("NFKC", text).translate(_DASHES).strip().lower()
 
 
+def trim_unmatched_parens(text: str) -> str:
+    """Drop brackets left dangling by splitting, without touching balanced formulae.
+
+    "(0.07 m citric acid" and "ph 3.4)" are fragments of a bracketed group the splitter
+    broke apart; a leading bracket there blocks quantity stripping entirely. "(nh4)2so4" is
+    balanced and load-bearing, so it survives untouched.
+    """
+    while text.count("(") > text.count(")") and text.startswith("("):
+        text = text[1:].strip()
+    while text.count(")") > text.count("(") and text.endswith(")"):
+        text = text[:-1].strip()
+    return text
+
+
 def clauses(text: str) -> list[str]:
     """Split into component clauses, tidying each only after the split."""
     out = []
@@ -138,6 +155,7 @@ def clauses(text: str) -> list[str]:
         if not part:
             continue
         cleaned = _LEADING_CONJUNCTION.sub("", re.sub(r"\s+", " ", part).strip())
+        cleaned = trim_unmatched_parens(cleaned)
         if cleaned:
             out.append(cleaned)
     return out
@@ -171,16 +189,34 @@ def _unwrap(name: str) -> str:
     return name
 
 
+# Hydration state is a property of the solid reagent in the bottle, not of the condition:
+# "calcium chloride dihydrate" and "calcium chloride" are the same species in solution.
+# Stripping it generically collapses a long tail of vendor and depositor spellings.
+_HYDRATE = re.compile(r"""
+    \s+(?:mono|di|tri|tetra|penta|hexa|hepta|octa|deca)?hydrate\b
+  | \s+anhydrous\b
+  | \s+\d+\s*\.?\s*h2o\b
+""", re.VERBOSE)
+
+# "nickel(ii) chloride" and "iron(iii) chloride": the oxidation state is implied by the
+# formula and never distinguishes two reagents in a crystallisation screen.
+_OXIDATION_STATE = re.compile(r"\s*\((?:i{1,3}|iv|v|vi)\)\s*", re.IGNORECASE)
+
+# Trademark and registered marks survive PDF extraction as literal text ("tacsimatetm").
+_TRADEMARK = re.compile(r"\s*(?:™|®|©|\(tm\)|\(r\))\s*", re.IGNORECASE)
+_TRAILING_TM = re.compile(r"(?<=[a-z])tm\b")
+
+
 def tidy_name(name: str) -> str:
     """Light canonicalisation of a candidate reagent name."""
     name = name.strip().strip(" .:;,-")
+    name = _TRADEMARK.sub(" ", name)
+    name = _TRAILING_TM.sub("", name)
+    name = _OXIDATION_STATE.sub(" ", name)
+    name = _HYDRATE.sub("", name)
     name = _unwrap(name)
-    # "peg 3350)" and "(peg 3350": a stray unmatched paren left by clause splitting. Only
-    # the unmatched one is removed, so balanced formulae like "(nh4)2so4" are untouched.
-    while name.count(")") > name.count("(") and name.endswith(")"):
-        name = name[:-1].strip()
-    while name.count("(") > name.count(")") and name.startswith("("):
-        name = name[1:].strip()
+    # "peg 3350)" and "(peg 3350": a stray unmatched paren left by clause splitting.
+    name = trim_unmatched_parens(name)
     # "peg 6,000" -> "peg 6000": the comma is a thousands separator, not a separator.
     name = re.sub(r"(?<=\d),(?=\d{3}\b)", "", name)
     # "polyethylene glycol (peg) 3350": a parenthetical abbreviation restating the name.

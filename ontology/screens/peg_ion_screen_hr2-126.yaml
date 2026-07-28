@@ -1,0 +1,103 @@
+screen: PEG / Ion Screen
+catalogue: HR2-126
+vendor: Hampton Research
+source_url: https://hamptonresearch.com/uploads/support_materials/HR2-126_Binder.pdf
+retrieved: '2026-07-29'
+n_wells: 48
+wells:
+- well: '1'
+  condition_text: 0.2 M Sodium fluoride, 20% w/v Polyethylene glycol 3,350
+- well: '2'
+  condition_text: 0.2 M Potassium fluoride, 20% w/v Polyethylene glycol 3,350
+- well: '3'
+  condition_text: 0.2 M Ammonium fluoride, 20% w/v Polyethylene glycol 3,350
+- well: '4'
+  condition_text: 0.2 M Lithium chloride, 20% w/v Polyethylene glycol 3,350
+- well: '5'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 20% w/v Polyethylene glycol 3,350
+- well: '6'
+  condition_text: 0.2 M Sodium chloride, 20% w/v Polyethylene glycol 3,350
+- well: '7'
+  condition_text: 0.2 M Calcium chloride dihydrate, 20% w/v Polyethylene glycol 3,350
+- well: '8'
+  condition_text: 0.2 M Potassium chloride, 20% w/v Polyethylene glycol 3,350
+- well: '9'
+  condition_text: 0.2 M Ammonium chloride, 20% w/v Polyethylene glycol 3,350
+- well: '10'
+  condition_text: 0.2 M Sodium iodide, 20% w/v Polyethylene glycol 3,350
+- well: '11'
+  condition_text: 0.2 M Potassium iodide, 20% w/v Polyethylene glycol 3,350
+- well: '12'
+  condition_text: 0.2 M Ammonium iodide, 20% w/v Polyethylene glycol 3,350
+- well: '13'
+  condition_text: 0.2 M Sodium thiocyanate, 20% w/v Polyethylene glycol 3,350
+- well: '14'
+  condition_text: 0.2 M Potassium thiocyanate, 20% w/v Polyethylene glycol 3,350
+- well: '15'
+  condition_text: 0.2 M Lithium nitrate, 20% w/v Polyethylene glycol 3,350
+- well: '16'
+  condition_text: 0.2 M Magnesium nitrate hexahydrate, 20% w/v Polyethylene glycol 3,350
+- well: '17'
+  condition_text: 0.2 M Sodium nitrate, 20% w/v Polyethylene glycol 3,350
+- well: '18'
+  condition_text: 0.2 M Potassium nitrate, 20% w/v Polyethylene glycol 3,350
+- well: '19'
+  condition_text: 0.2 M Ammonium nitrate, 20% w/v Polyethylene glycol 3,350
+- well: '20'
+  condition_text: 0.2 M Magnesium formate dihydrate, 20% w/v Polyethylene glycol 3,350
+- well: '21'
+  condition_text: 0.2 M Sodium formate, 20% w/v Polyethylene glycol 3,350
+- well: '22'
+  condition_text: 0.2 M Potassium formate, 20% w/v Polyethylene glycol 3,350
+- well: '23'
+  condition_text: 0.2 M Ammonium formate, 20% w/v Polyethylene glycol 3,350
+- well: '24'
+  condition_text: 0.2 M Lithium acetate dihydrate, 20% w/v Polyethylene glycol 3,350
+- well: '25'
+  condition_text: 0.2 M Magnesium acetate tetrahydrate, 20% w/v Polyethylene glycol 3,350
+- well: '26'
+  condition_text: 0.2 M Zinc acetate dihydrate, 20% w/v Polyethylene glycol 3,350
+- well: '27'
+  condition_text: 0.2 M Sodium acetate trihydrate, 20% w/v Polyethylene glycol 3,350
+- well: '28'
+  condition_text: 0.2 M Calcium acetate hydrate, 20% w/v Polyethylene glycol 3,350
+- well: '29'
+  condition_text: 0.2 M Potassium acetate, 20% w/v Polyethylene glycol 3,350
+- well: '30'
+  condition_text: 0.2 M Ammonium acetate, 20% w/v Polyethylene glycol 3,350
+- well: '31'
+  condition_text: 0.2 M Lithium sulfate monohydrate, 20% w/v Polyethylene glycol 3,350
+- well: '32'
+  condition_text: 0.2 M Magnesium sulfate heptahydrate, 20% w/v Polyethylene glycol 3,350
+- well: '33'
+  condition_text: 0.2 M Sodium sulfate decahydrate, 20% w/v Polyethylene glycol 3,350
+- well: '34'
+  condition_text: 0.2 M Potassium sulfate, 20% w/v Polyethylene glycol 3,350
+- well: '35'
+  condition_text: 0.2 M Ammonium sulfate, 20% w/v Polyethylene glycol 3,350
+- well: '36'
+  condition_text: 0.2 M Sodium tartrate dibasic dihydrate, 20% w/v Polyethylene glycol 3,350
+- well: '37'
+  condition_text: 0.2 M Potassium sodium tartrate tetrahydrate, 20% w/v Polyethylene glycol 3,350
+- well: '38'
+  condition_text: 0.2 M Ammonium tartrate dibasic, 20% w/v Polyethylene glycol 3,350
+- well: '39'
+  condition_text: 0.2 M Sodium phosphate monobasic monohydrate, 20% w/v Polyethylene glycol 3,350
+- well: '40'
+  condition_text: 0.2 M Sodium phosphate dibasic dihydrate, 20% w/v Polyethylene glycol 3,350
+- well: '41'
+  condition_text: 0.2 M Potassium phosphate monobasic, 20% w/v Polyethylene glycol 3,350
+- well: '42'
+  condition_text: 0.2 M Potassium phosphate dibasic, 20% w/v Polyethylene glycol 3,350
+- well: '43'
+  condition_text: 0.2 M Ammonium phosphate monobasic, 20% w/v Polyethylene glycol 3,350
+- well: '44'
+  condition_text: 0.2 M Ammonium phosphate dibasic, 20% w/v Polyethylene glycol 3,350
+- well: '45'
+  condition_text: 0.2 M Lithium citrate tribasic tetrahydrate, 20% w/v Polyethylene glycol 3,350
+- well: '46'
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate, 20% w/v Polyethylene glycol 3,350
+- well: '47'
+  condition_text: 0.2 M Potassium citrate tribasic monohydrate, 20% w/v Polyethylene glycol 3,350
+- well: '48'
+  condition_text: 0.2 M Ammonium citrate dibasic, 20% w/v Polyethylene glycol 3,350

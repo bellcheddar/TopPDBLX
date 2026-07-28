@@ -1,0 +1,103 @@
+screen: SaltRx™ 2
+catalogue: HR2-109
+vendor: Hampton Research
+source_url: https://hamptonresearch.com/uploads/support_materials/HR2-109_Binder.pdf
+retrieved: '2026-07-29'
+n_wells: 48
+wells:
+- well: '1'
+  condition_text: 1.0 M Ammonium phosphate monobasic, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '2'
+  condition_text: 1.8 M Ammonium phosphate monobasic, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '3'
+  condition_text: 1.5 M Ammonium phosphate dibasic, 0.1 M Tris pH 8.5
+- well: '4'
+  condition_text: 2.4 M Ammonium phosphate dibasic, 0.1 M Tris pH 8.5
+- well: '5'
+  condition_text: 1.0 M Sodium phosphate monobasic monohydrate, Potassium phosphate dibasic / pH 5.0
+- well: '6'
+  condition_text: 1.0 M Sodium phosphate monobasic monohydrate, Potassium phosphate dibasic / pH 6.9
+- well: '7'
+  condition_text: 1.0 M Sodium phosphate monobasic monohydrate, Potassium phosphate dibasic / pH 8.2
+- well: '8'
+  condition_text: 1.8 M Sodium phosphate monobasic monohydrate, Potassium phosphate dibasic / pH 5.0
+- well: '9'
+  condition_text: 1.8 M Sodium phosphate monobasic monohydrate, Potassium phosphate dibasic / pH 6.9
+- well: '10'
+  condition_text: 1.8 M Sodium phosphate monobasic monohydrate, Potassium phosphate dibasic / pH 8.2
+- well: '11'
+  condition_text: 0.5 M Succinic acid pH 7.0, 0.1 M BIS-TRIS propane pH 7.0
+- well: '12'
+  condition_text: 1.0 M Succinic acid pH 7.0, 0.1 M BIS-TRIS propane pH 7.0
+- well: '13'
+  condition_text: 1.5 M Ammonium sulfate, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '14'
+  condition_text: 1.5 M Ammonium sulfate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '15'
+  condition_text: 1.5 M Ammonium sulfate, 0.1 M Tris pH 8.5
+- well: '16'
+  condition_text: 2.5 M Ammonium sulfate, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '17'
+  condition_text: 2.5 M Ammonium sulfate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '18'
+  condition_text: 2.5 M Ammonium sulfate, 0.1 M Tris pH 8.5
+- well: '19'
+  condition_text: 0.8 M Lithium sulfate monohydrate, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '20'
+  condition_text: 0.8 M Lithium sulfate monohydrate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '21'
+  condition_text: 0.8 M Lithium sulfate monohydrate, 0.1 M Tris pH 8.5
+- well: '22'
+  condition_text: 1.5 M Lithium sulfate monohydrate, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '23'
+  condition_text: 1.5 M Lithium sulfate monohydrate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '24'
+  condition_text: 1.5 M Lithium sulfate monohydrate, 0.1 M Tris pH 8.5
+- well: '25'
+  condition_text: 1.0 M Magnesium sulfate hydrate, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '26'
+  condition_text: 1.0 M Magnesium sulfate hydrate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '27'
+  condition_text: 1.0 M Magnesium sulfate hydrate, 0.1 M Tris pH 8.5
+- well: '28'
+  condition_text: 1.8 M Magnesium sulfate hydrate, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '29'
+  condition_text: 1.8 M Magnesium sulfate hydrate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '30'
+  condition_text: 1.8 M Magnesium sulfate hydrate, 0.1 M Tris pH 8.5
+- well: '31'
+  condition_text: 0.7 M Ammonium tartrate dibasic, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '32'
+  condition_text: 0.7 M Ammonium tartrate dibasic, 0.1 M BIS-TRIS propane pH 7.0
+- well: '33'
+  condition_text: 0.7 M Ammonium tartrate dibasic, 0.1 M Tris pH 8.5
+- well: '34'
+  condition_text: 1.0 M Ammonium tartrate dibasic, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '35'
+  condition_text: 1.3 M Ammonium tartrate dibasic, 0.1 M BIS-TRIS propane pH 7.0
+- well: '36'
+  condition_text: 1.4 M Ammonium tartrate dibasic, 0.1 M Tris pH 8.5
+- well: '37'
+  condition_text: 0.6 M Potassium sodium tartrate tetrahydrate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '38'
+  condition_text: 1.2 M Potassium sodium tartrate tetrahydrate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '39'
+  condition_text: 0.6 M Potassium sodium tartrate tetrahydrate, 0.1 M Tris pH 8.5
+- well: '40'
+  condition_text: 1.2 M Potassium sodium tartrate tetrahydrate, 0.1 M Tris pH 8.5
+- well: '41'
+  condition_text: 0.5 M Potassium thiocyanate, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '42'
+  condition_text: 0.5 M Potassium thiocyanate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '43'
+  condition_text: 0.5 M Potassium thiocyanate, 0.1 M Tris pH 8.5
+- well: '44'
+  condition_text: 4.0 M Ammonium acetate, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '45'
+  condition_text: 4.0 M Ammonium acetate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '46'
+  condition_text: 4.0 M Ammonium acetate, 0.1 M Tris pH 8.5
+- well: '47'
+  condition_text: 35% v/v Tacsimate pH 7.0, 0.1 M BIS-TRIS propane pH 7.0
+- well: '48'
+  condition_text: 60% v/v Tacsimate pH 7.0, 0.1 M BIS-TRIS propane pH 7.0

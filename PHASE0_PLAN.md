@@ -492,6 +492,48 @@ category; on the evidence it is negligible, consistent with the planning probe f
 
 **Packages:** `polars`, `numpy`.
 
+**WP4/WP5 built 2026-07-29.** 9 Hampton screens, 434 wells, all sourced from the vendor's own
+support-material PDFs and extracted verbatim. Nothing transcribed from memory: the screen name
+and catalogue number are read out of each document, and screens whose layout defeats extraction
+(the HT 96-well binders) are **rejected rather than shipped incomplete**, because a library with
+six invented wells would corrupt the validation set far more quietly than a missing screen.
+
+**All 434 wells parse to fully resolved components (100%).** That is a direct check on the
+parser: vendor strings are clean prose, and a parser that stumbles on
+`0.2 M Magnesium chloride hexahydrate, 0.1 M TRIS hydrochloride pH 8.5, 30% w/v Polyethylene
+glycol 4,000` has no business on the messy corpus. Getting there from 81.3% surfaced four
+generic normalisation gaps that also help the main corpus: hydration state
+(`calcium chloride dihydrate`), oxidation state (`nickel(ii) chloride`), trademark symbols
+(`tacsimatetm`, `jeffamine ®`), and the spaced-slash titration separator
+(`0.98 M sodium malonate pH 7.0 / 0.02 M citric acid`).
+
+| Matching result | Records | Share |
+|-----------------|---------|-------|
+| Kept records | 181,103 | |
+| Component set matches a known well | 42,296 | 23.4% |
+| ... and every concentration agrees | 18,584 | 43.9% of matches |
+| ... and the pH agrees too (exact) | 10,024 | |
+| Flagged `optimised_not_screen` | 23,712 | |
+
+**Reading the 43.9% honestly.** It is not a parser accuracy figure. Deviation analysis over
+85,258 matched components shows the median deposited/screen concentration ratio is exactly
+**1.00**, with **64% within 5%** of the published value and 88% within 2x. The mode is exact
+agreement; the spread above it is dominated by genuine optimisation, which is precisely what
+spec 5.4 predicts. Two caveats belong in any write-up:
+
+- **Component-set matching is necessary but not sufficient.** A single-component condition such
+  as `2.0 M ammonium sulfate` matches Crystal Screen 32 trivially, whether or not the depositor
+  ever used that screen. Simple conditions inflate the match count.
+- **A systematic naming error is invisible here**, because both sides use the same parser and the
+  same lexicon. Screen matching validates structure, concentration and unit reading. Reagent
+  naming is what the WP8 hand audit is for.
+
+**One bug this analysis caught.** `concentrations_agree` compared unit *strings*, so a well
+printed as `0.1 M` and a deposition written as `100 mM` scored as a disagreement. That alone
+accounted for 11.6% of matched components. Reducing molar-family units to a common scale before
+comparison raised concentration agreement from 38.3% to 43.9% and exact matches from 8,773 to
+10,024. Percent w/v and percent v/v are deliberately kept in separate families.
+
 ### WP6. Small language model parser for the residual
 **6 days, of which 3 are labelling. Depends on WP3, WP5.**
 

@@ -1,0 +1,103 @@
+screen: PEGRx™ 1
+catalogue: HR2-082
+vendor: Hampton Research
+source_url: https://hamptonresearch.com/uploads/support_materials/HR2-082_Binder.pdf
+retrieved: '2026-07-29'
+n_wells: 48
+wells:
+- well: '1'
+  condition_text: 0.1 M Citric acid pH 3.5, 34% v/v Polyethylene glycol 200
+- well: '2'
+  condition_text: 0.1 M Sodium citrate tribasic dihydrate pH 5.5, 38% v/v Polyethylene glycol 200
+- well: '3'
+  condition_text: 0.1 M HEPES pH 7.5, 42% v/v Polyethylene glycol 200
+- well: '4'
+  condition_text: 0.1 M Sodium acetate trihydrate pH 4.5, 30% v/v Polyethylene glycol 300
+- well: '5'
+  condition_text: 0.1 M BIS-TRIS pH 6.5, 25% v/v Polyethylene glycol 300
+- well: '6'
+  condition_text: 0.1 M BICINE pH 8.5, 20% v/v Polyethylene glycol 300
+- well: '7'
+  condition_text: 0.1 M Sodium acetate trihydrate pH 4.0, 15% v/v Polyethylene glycol 400
+- well: '8'
+  condition_text: 0.1 M MES monohydrate pH 6.0, 22% v/v Polyethylene glycol 400
+- well: '9'
+  condition_text: 0.1 M Tris pH 8.0, 30% v/v Polyethylene glycol 400
+- well: '10'
+  condition_text: 0.1 M Sodium citrate tribasic dihydrate pH 5.0, 30% v/v Polyethylene glycol monomethyl ether 550
+- well: '11'
+  condition_text: 0.1 M Imidazole pH 7.0, 25% v/v Polyethylene glycol monomethyl ether 550
+- well: '12'
+  condition_text: 0.1 M BIS-TRIS propane pH 9.0, 20% v/v Polyethylene glycol monomethyl ether 550
+- well: '13'
+  condition_text: 0.1 M Sodium acetate trihydrate pH 4.0, 10% v/v Jeffamine® M-600® pH 7.0
+- well: '14'
+  condition_text: 0.1 M MES monohydrate pH 6.0, 20% v/v Jeffamine® M-600® pH 7.0
+- well: '15'
+  condition_text: 0.1 M Tris pH 8.0, 30% v/v Jeffamine® M-600® pH 7.0
+- well: '16'
+  condition_text: 0.1 M Citric acid pH 3.5, 14% w/v Polyethylene glycol 1,000
+- well: '17'
+  condition_text: 0.1 M Sodium citrate tribasic dihydrate pH 5.5, 22% w/v Polyethylene glycol 1,000
+- well: '18'
+  condition_text: 0.1 M HEPES pH 7.5, 30% w/v Polyethylene glycol 1,000
+- well: '19'
+  condition_text: 0.1 M Sodium acetate trihydrate pH 4.5, 30% w/v Polyethylene glycol 1,500
+- well: '20'
+  condition_text: 0.1 M BIS-TRIS pH 6.5, 20% w/v Polyethylene glycol 1,500
+- well: '21'
+  condition_text: 0.1 M BICINE pH 8.5, 15% w/v Polyethylene glycol 1,500
+- well: '22'
+  condition_text: 0.1 M Sodium acetate trihydrate pH 4.0, 10% w/v Polyethylene glycol monomethyl ether 2,000
+- well: '23'
+  condition_text: 0.1 M MES monohydrate pH 6.0, 20% w/v Polyethylene glycol monomethyl ether 2,000
+- well: '24'
+  condition_text: 0.1 M Tris pH 8.0, 30% w/v Polyethylene glycol monomethyl ether 2,000
+- well: '25'
+  condition_text: 0.1 M Sodium citrate tribasic dihydrate pH 5.0, 30% v/v Jeffamine® ED-2001 pH 7.0
+- well: '26'
+  condition_text: 0.1 M Imidazole pH 7.0, 20% v/v Jeffamine® ED-2001 pH 7.0
+- well: '27'
+  condition_text: 0.1 M BIS-TRIS propane pH 9.0, 10% v/v Jeffamine® ED-2001 pH 7.0
+- well: '28'
+  condition_text: 0.1 M Citric acid pH 3.5, 25% w/v Polyethylene glycol 3,350
+- well: '29'
+  condition_text: 0.1 M Sodium citrate tribasic dihydrate pH 5.5, 18% w/v Polyethylene glycol 3,350
+- well: '30'
+  condition_text: 0.1 M HEPES pH 7.5, 12% w/v Polyethylene glycol 3,350
+- well: '31'
+  condition_text: 0.1 M Sodium acetate trihydrate pH 4.0, 10% w/v Polyethylene glycol 4,000
+- well: '32'
+  condition_text: 0.1 M MES monohydrate pH 6.0, 14% w/v Polyethylene glycol 4,000
+- well: '33'
+  condition_text: 0.1 M Tris pH 8.0, 28% w/v Polyethylene glycol 4,000
+- well: '34'
+  condition_text: 0.1 M Sodium acetate trihydrate pH 4.5, 30% w/v Polyethylene glycol monomethyl ether 5,000
+- well: '35'
+  condition_text: 0.1 M BIS-TRIS pH 6.5, 20% w/v Polyethylene glycol monomethyl ether 5,000
+- well: '36'
+  condition_text: 0.1 M BICINE pH 8.5, 8% w/v Polyethylene glycol monomethyl ether 5,000
+- well: '37'
+  condition_text: 0.1 M Sodium citrate tribasic dihydrate pH 5.0, 10% w/v Polyethylene glycol 6,000
+- well: '38'
+  condition_text: 0.1 M Imidazole pH 7.0, 20% w/v Polyethylene glycol 6,000
+- well: '39'
+  condition_text: 0.1 M BIS-TRIS propane pH 9.0, 30% w/v Polyethylene glycol 6,000
+- well: '40'
+  condition_text: 0.1 M Citric acid pH 3.5, 28% w/v Polyethylene glycol 8,000
+- well: '41'
+  condition_text: 0.1 M Sodium citrate tribasic dihydrate pH 5.5, 16% w/v Polyethylene glycol 8,000
+- well: '42'
+  condition_text: 0.1 M HEPES pH 7.5, 4% w/v Polyethylene glycol 8,000
+- well: '43'
+  condition_text: 0.1 M Sodium acetate trihydrate pH 4.5, 10% w/v Polyethylene glycol 10,000
+- well: '44'
+  condition_text: 0.1 M BIS-TRIS pH 6.5, 16% w/v Polyethylene glycol 10,000
+- well: '45'
+  condition_text: 0.1 M BICINE pH 8.5, 20% w/v Polyethylene glycol 10,000
+- well: '46'
+  condition_text: 0.1 M Sodium citrate tribasic dihydrate pH 5.0, 18% w/v Polyethylene glycol 20,000
+- well: '47'
+  condition_text: 0.1 M Imidazole pH 7.0, 12% w/v Polyethylene glycol 20,000
+- well: '48'
+  condition_text: 0.1 M BIS-TRIS propane pH 9.0, 8% w/v Polyethylene glycol 20,000

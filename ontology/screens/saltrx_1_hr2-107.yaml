@@ -1,0 +1,103 @@
+screen: SaltRx™ 1
+catalogue: HR2-107
+vendor: Hampton Research
+source_url: https://hamptonresearch.com/uploads/support_materials/HR2-107_Binder.pdf
+retrieved: '2026-07-29'
+n_wells: 48
+wells:
+- well: '1'
+  condition_text: 1.8 M Sodium acetate trihydrate pH 7.0, 0.1 M BIS-TRIS propane pH 7.0
+- well: '2'
+  condition_text: 2.8 M Sodium acetate trihydrate pH 7.0, 0.1 M BIS-TRIS propane pH 7.0
+- well: '3'
+  condition_text: 1.5 M Ammonium chloride, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '4'
+  condition_text: 1.5 M Ammonium chloride, 0.1 M BIS-TRIS propane pH 7.0
+- well: '5'
+  condition_text: 1.5 M Ammonium chloride, 0.1 M Tris pH 8.5
+- well: '6'
+  condition_text: 3.5 M Ammonium chloride, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '7'
+  condition_text: 3.5 M Ammonium chloride, 0.1 M BIS-TRIS propane pH 7.0
+- well: '8'
+  condition_text: 3.5 M Ammonium chloride, 0.1 M Tris pH 8.5
+- well: '9'
+  condition_text: 2.2 M Sodium chloride, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '10'
+  condition_text: 2.2 M Sodium chloride, 0.1 M BIS-TRIS propane pH 7.0
+- well: '11'
+  condition_text: 2.2 M Sodium chloride, 0.1 M Tris pH 8.5
+- well: '12'
+  condition_text: 3.2 M Sodium chloride, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '13'
+  condition_text: 3.2 M Sodium chloride, 0.1 M BIS-TRIS propane pH 7.0
+- well: '14'
+  condition_text: 3.2 M Sodium chloride, 0.1 M Tris pH 8.5
+- well: '15'
+  condition_text: 1.0 M Ammonium citrate dibasic, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '16'
+  condition_text: 1.8 M Ammonium citrate dibasic, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '17'
+  condition_text: 1.0 M Ammonium citrate tribasic pH 7.0, 0.1 M BIS-TRIS propane pH 7.0
+- well: '18'
+  condition_text: 2.0 M Ammonium citrate tribasic pH 7.0, 0.1 M BIS-TRIS propane pH 7.0
+- well: '19'
+  condition_text: 0.7 M Sodium citrate tribasic dihydrate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '20'
+  condition_text: 0.7 M Sodium citrate tribasic dihydrate, 0.1 M Tris pH 8.5
+- well: '21'
+  condition_text: 1.2 M Sodium citrate tribasic dihydrate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '22'
+  condition_text: 1.2 M Sodium citrate tribasic dihydrate, 0.1 M Tris pH 8.5
+- well: '23'
+  condition_text: 0.4 M Magnesium formate dihydrate, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '24'
+  condition_text: 0.4 M Magnesium formate dihydrate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '25'
+  condition_text: 0.4 M Magnesium formate dihydrate, 0.1 M Tris pH 8.5
+- well: '26'
+  condition_text: 0.7 M Magnesium formate dihydrate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '27'
+  condition_text: 2.0 M Sodium formate, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '28'
+  condition_text: 2.0 M Sodium formate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '29'
+  condition_text: 2.0 M Sodium formate, 0.1 M Tris pH 8.5
+- well: '30'
+  condition_text: 3.5 M Sodium formate, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '31'
+  condition_text: 3.5 M Sodium formate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '32'
+  condition_text: 3.5 M Sodium formate, 0.1 M Tris pH 8.5
+- well: '33'
+  condition_text: 1.2 M DL-Malic acid pH 7.0, 0.1 M BIS-TRIS propane pH 7.0
+- well: '34'
+  condition_text: 2.2 M DL-Malic acid pH 7.0, 0.1 M BIS-TRIS propane pH 7.0
+- well: '35'
+  condition_text: 1.4 M Sodium malonate pH 7.0, 0.1 M BIS-TRIS propane pH 7.0
+- well: '36'
+  condition_text: 2.4 M Sodium malonate pH 7.0, 0.1 M BIS-TRIS propane pH 7.0
+- well: '37'
+  condition_text: 2.5 M Ammonium nitrate, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '38'
+  condition_text: 2.5 M Ammonium nitrate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '39'
+  condition_text: 2.5 M Ammonium nitrate, 0.1 M Tris pH 8.5
+- well: '40'
+  condition_text: 6.0 M Ammonium nitrate, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '41'
+  condition_text: 6.0 M Ammonium nitrate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '42'
+  condition_text: 6.0 M Ammonium nitrate, 0.1 M Tris pH 8.5
+- well: '43'
+  condition_text: 1.5 M Sodium nitrate, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '44'
+  condition_text: 1.5 M Sodium nitrate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '45'
+  condition_text: 1.5 M Sodium nitrate, 0.1 M Tris pH 8.5
+- well: '46'
+  condition_text: 4.0 M Sodium nitrate, 0.1 M Sodium acetate trihydrate pH 4.6
+- well: '47'
+  condition_text: 4.0 M Sodium nitrate, 0.1 M BIS-TRIS propane pH 7.0
+- well: '48'
+  condition_text: 4.0 M Sodium nitrate, 0.1 M Tris pH 8.5

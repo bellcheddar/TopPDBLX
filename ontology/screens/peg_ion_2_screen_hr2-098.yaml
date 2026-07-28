@@ -1,0 +1,103 @@
+screen: PEG / Ion 2 Screen
+catalogue: HR2-098
+vendor: Hampton Research
+source_url: https://hamptonresearch.com/uploads/support_materials/HR2-098_Binder.pdf
+retrieved: '2026-07-29'
+n_wells: 48
+wells:
+- well: '1'
+  condition_text: 0.1 M Sodium malonate pH 4.0, 12% w/v Polyethylene glycol 3,350
+- well: '2'
+  condition_text: 0.2 M Sodium malonate pH 4.0, 20% w/v Polyethylene glycol 3,350
+- well: '3'
+  condition_text: 0.1 M Sodium malonate pH 5.0, 12% w/v Polyethylene glycol 3,350
+- well: '4'
+  condition_text: 0.2 M Sodium malonate pH 5.0, 20% w/v Polyethylene glycol 3,350
+- well: '5'
+  condition_text: 0.1 M Sodium malonate pH 6.0, 12% w/v Polyethylene glycol 3,350
+- well: '6'
+  condition_text: 0.2 M Sodium malonate pH 6.0, 20% w/v Polyethylene glycol 3,350
+- well: '7'
+  condition_text: 0.1 M Sodium malonate pH 7.0, 12% w/v Polyethylene glycol 3,350
+- well: '8'
+  condition_text: 0.2 M Sodium malonate pH 7.0, 20% w/v Polyethylene glycol 3,350
+- well: '9'
+  condition_text: 4% v/v TacsimateTM pH 4.0, 12% w/v Polyethylene glycol 3,350
+- well: '10'
+  condition_text: 8% v/v TacsimateTM pH 4.0, 20% w/v Polyethylene glycol 3,350
+- well: '11'
+  condition_text: 4% v/v TacsimateTM pH 5.0, 12% w/v Polyethylene glycol 3,350
+- well: '12'
+  condition_text: 8% v/v TacsimateTM pH 5.0, 20% w/v Polyethylene glycol 3,350
+- well: '13'
+  condition_text: 4% v/v TacsimateTM pH 6.0, 12% w/v Polyethylene glycol 3,350
+- well: '14'
+  condition_text: 8% v/v TacsimateTM pH 6.0, 20% w/v Polyethylene glycol 3,350
+- well: '15'
+  condition_text: 4% v/v TacsimateTM pH 7.0, 12% w/v Polyethylene glycol 3,350
+- well: '16'
+  condition_text: 8% v/v TacsimateTM pH 7.0, 20% w/v Polyethylene glycol 3,350
+- well: '17'
+  condition_text: 4% v/v TacsimateTM pH 8.0, 12% w/v Polyethylene glycol 3,350
+- well: '18'
+  condition_text: 8% v/v TacsimateTM pH 8.0, 20% w/v Polyethylene glycol 3,350
+- well: '19'
+  condition_text: 0.1 M Succinic acid pH 7.0, 12% w/v Polyethylene glycol 3,350
+- well: '20'
+  condition_text: 0.2 M Succinic acid pH 7.0, 20% w/v Polyethylene glycol 3,350
+- well: '21'
+  condition_text: 0.1 M Ammonium citrate tribasic pH 7.0, 12% w/v Polyethylene glycol 3,350
+- well: '22'
+  condition_text: 0.2 M Ammonium citrate tribasic pH 7.0, 20% w/v Polyethylene glycol 3,350
+- well: '23'
+  condition_text: 0.1 M DL-Malic acid pH 7.0, 12% w/v Polyethylene glycol 3,350
+- well: '24'
+  condition_text: 0.2 M DL-Malic acid pH 7.0, 20% w/v Polyethylene glycol 3,350
+- well: '25'
+  condition_text: 0.1 M Sodium acetate trihydrate pH 7.0, 12% w/v Polyethylene glycol 3,350
+- well: '26'
+  condition_text: 0.2 M Sodium acetate trihydrate pH 7.0, 20% w/v Polyethylene glycol 3,350
+- well: '27'
+  condition_text: 0.1 M Sodium formate pH 7.0, 12% w/v Polyethylene glycol 3,350
+- well: '28'
+  condition_text: 0.2 M Sodium formate pH 7.0, 20% w/v Polyethylene glycol 3,350
+- well: '29'
+  condition_text: 0.1 M Ammonium tartrate dibasic pH 7.0, 12% w/v Polyethylene glycol 3,350
+- well: '30'
+  condition_text: 0.2 M Ammonium tartrate dibasic pH 7.0, 20% w/v Polyethylene glycol 3,350
+- well: '31'
+  condition_text: 2% v/v TacsimateTM pH 4.0, 0.1 M Sodium acetate trihydrate pH 4.6, 16% w/v Polyethylene glycol 3,350
+- well: '32'
+  condition_text: 2% v/v TacsimateTM pH 5.0, 0.1 M Sodium citrate tribasic dihydrate pH 5.6, 16% w/v Polyethylene glycol 3,350
+- well: '33'
+  condition_text: 2% v/v TacsimateTM pH 6.0, 0.1 M BIS-TRIS pH 6.5, 20% w/v Polyethylene glycol 3,350
+- well: '34'
+  condition_text: 2% v/v TacsimateTM pH 7.0, 0.1 M HEPES pH 7.5, 20% w/v Polyethylene glycol 3,350
+- well: '35'
+  condition_text: 2% v/v TacsimateTM pH 8.0, 0.1 M Tris pH 8.5, 16% w/v Polyethylene glycol 3,350
+- well: '36'
+  condition_text: (0.07 M Citric acid, 0.03 M BIS-TRIS propane / pH 3.4), 16% w/v Polyethylene glycol 3,350
+- well: '37'
+  condition_text: (0.06 M Citric acid, 0.04 M BIS-TRIS propane / pH 4.1), 16% w/v Polyethylene glycol 3,350
+- well: '38'
+  condition_text: (0.05 M Citric acid, 0.05 M BIS-TRIS propane / pH 5.0), 16% w/v Polyethylene glycol 3,350
+- well: '39'
+  condition_text: (0.04 M Citric acid, 0.06 M BIS-TRIS propane / pH 6.4), 20% w/v Polyethylene glycol 3,350
+- well: '40'
+  condition_text: (0.03 M Citric acid, 0.07 M BIS-TRIS propane / pH 7.6), 20% w/v Polyethylene glycol 3,350
+- well: '41'
+  condition_text: (0.02 M Citric acid, 0.08 M BIS-TRIS propane / pH 8.8), 16% w/v Polyethylene glycol 3,350
+- well: '42'
+  condition_text: 0.02 M Calcium chloride dihydrate, 0.02 M Cadmium chloride hydrate,
+- well: '43'
+  condition_text: 0.01 M Magnesium chloride hexahydrate, 0.005 M Nickel(II) chloride hexahydrate
+- well: '44'
+  condition_text: 0.02 M Zinc chloride, 20% w/v Polyethylene glycol 3,350
+- well: '45'
+  condition_text: 0.15 M Cesium chloride, 15% w/v Polyethylene glycol 3,350
+- well: '46'
+  condition_text: 0.2 M Sodium bromide, 20% w/v Polyethylene glycol 3,350
+- well: '47'
+  condition_text: 1% w/v Tryptone, 0.001 M Sodium azide, 0.05 M HEPES sodium pH 7.0, 12% w/v Polyethylene glycol 3,350
+- well: '48'
+  condition_text: 1% w/v Tryptone, 0.001 M Sodium azide, 0.05 M HEPES sodium pH 7.0, 20% w/v Polyethylene glycol 3,350

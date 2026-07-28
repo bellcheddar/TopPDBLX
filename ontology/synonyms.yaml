@@ -462,6 +462,117 @@ reagents:
     default_unit: molar
     aliases: ["na malonate", "sodium malonate dibasic", "disodium malonate"]
 
+  # Salts surfaced by parsing the commercial screen formulations (WP4). Clean vendor
+  # spellings, so they resolve the screen library as well as the corpus.
+
+  - canonical_id: CESIUM_CHLORIDE
+    display_name: Cesium chloride
+    chem_class: salt
+    hofmeister_rank: 0
+    default_unit: molar
+    aliases: ["caesium chloride", "cscl"]
+
+  - canonical_id: POTASSIUM_FLUORIDE
+    display_name: Potassium fluoride
+    chem_class: salt
+    hofmeister_rank: -2
+    default_unit: molar
+    aliases: ["kf"]
+
+  - canonical_id: AMMONIUM_FLUORIDE
+    display_name: Ammonium fluoride
+    chem_class: salt
+    hofmeister_rank: -2
+    default_unit: molar
+    aliases: ["nh4f"]
+
+  - canonical_id: POTASSIUM_IODIDE
+    display_name: Potassium iodide
+    chem_class: salt
+    hofmeister_rank: 3
+    default_unit: molar
+    aliases: ["ki"]
+
+  - canonical_id: LITHIUM_NITRATE
+    display_name: Lithium nitrate
+    chem_class: salt
+    hofmeister_rank: 2
+    default_unit: molar
+    aliases: ["lino3"]
+
+  - canonical_id: MAGNESIUM_NITRATE
+    display_name: Magnesium nitrate
+    chem_class: salt
+    hofmeister_rank: 2
+    default_unit: molar
+    aliases: ["mg(no3)2"]
+
+  - canonical_id: POTASSIUM_SULFATE
+    display_name: Potassium sulfate
+    chem_class: salt
+    hofmeister_rank: -4
+    default_unit: molar
+    aliases: ["potassium sulphate", "k2so4"]
+
+  - canonical_id: CADMIUM_SULFATE
+    display_name: Cadmium sulfate
+    chem_class: salt
+    hofmeister_rank: -4
+    default_unit: millimolar
+    aliases: ["cadmium sulphate", "cdso4"]
+
+  - canonical_id: IRON_CHLORIDE
+    display_name: Iron chloride
+    chem_class: salt
+    hofmeister_rank: 0
+    default_unit: millimolar
+    aliases: ["ferric chloride", "fecl3", "iron chloride hexahydrate"]
+
+  - canonical_id: SODIUM_TARTRATE
+    display_name: Sodium tartrate
+    chem_class: salt
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["sodium tartrate dibasic", "disodium tartrate"]
+
+  - canonical_id: LITHIUM_CITRATE
+    display_name: Lithium citrate
+    chem_class: salt
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["lithium citrate tribasic"]
+
+  - canonical_id: POTASSIUM_CITRATE
+    display_name: Potassium citrate
+    chem_class: salt
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["potassium citrate tribasic", "tripotassium citrate"]
+
+  - canonical_id: PROLINE
+    display_name: L-Proline
+    chem_class: additive
+    default_unit: molar
+    aliases: ["proline", "l proline"]
+
+  - canonical_id: CTAB
+    display_name: CTAB
+    chem_class: detergent
+    default_unit: percent_w_v
+    aliases: ["hexadecyltrimethylammonium bromide", "cetyltrimethylammonium bromide"]
+
+  - canonical_id: DEXTRAN_SULFATE
+    display_name: Dextran sulfate
+    chem_class: other
+    default_unit: percent_w_v
+    aliases: ["dextran sulfate sodium salt", "dextran sulphate"]
+
+  - canonical_id: TRYPTONE
+    display_name: Tryptone
+    chem_class: other
+    default_unit: percent_w_v
+    aliases: []
+
   # ---------------------------------------------------------------- buffers
   # Several of these are simultaneously salts. Both fields are populated where that is
   # true: chem_class records how the reagent is normally used, hofmeister_rank records
@@ -846,7 +957,8 @@ reagents:
     display_name: beta-octyl glucoside
     chem_class: detergent
     default_unit: percent_w_v
-    aliases: ["b-og", "beta-og", "n-octyl-beta-d-glucoside", "octyl glucoside", "bog"]
+    aliases: ["b-og", "beta-og", "n-octyl-beta-d-glucoside", "octyl glucoside", "bog",
+              "n-octyl-b-d-glucoside", "n-octyl-d-glucoside"]
 
   # ---------------------------------------------------------------- premixes
   # Spec decision 12.2: Phase 0 fixes the representation, not the taxonomy. Each premix
@@ -929,4 +1041,4 @@ reagents:
     display_name: Polyethyleneimine
     chem_class: other
     default_unit: percent_w_v
-    aliases: ["polyethylenimine", "polyethyleneimine"]
+    aliases: ["polyethylenimine", "polyethyleneimine", "ethylene imine polymer"]
