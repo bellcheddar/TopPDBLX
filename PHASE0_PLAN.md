@@ -412,6 +412,50 @@ extraction), `rules_v2` (defaulting rules and pH logic), `rules_v3` (ranges, pre
 
 **Packages:** `regex`, `pydantic`, `jsonschema`, `polars`, `pytest`.
 
+**WP3 built 2026-07-29. Rule parser at 90.9% keep rate, well above the expected plateau.**
+
+Spec 5.2 predicts a rule-based parser plateaus around 75%. On this corpus `rules_v3` keeps
+**181,103 of 199,185 records (90.9%)** with a median confidence of 1.000, and resolves
+**77.0% of components** to a canonical reagent against a 121-entry lexicon. The gap between
+those two numbers is where the WP6 language model earns its place: most records parse, but
+roughly a quarter of components still land as `unknown`.
+
+| Discard reason | Records | Share |
+|----------------|---------|-------|
+| NO_REAGENT_MATCH | 10,537 | 5.3% |
+| TOO_SHORT | 4,369 | 2.2% |
+| METHOD_ONLY | 2,258 | 1.1% |
+| UNPARSEABLE_RESIDUAL | 613 | 0.3% |
+| REFERENCE_ONLY | 107 | 0.1% |
+| EMPTY | 91 | 0.0% |
+| NON_CRYSTALLISATION_TEXT | 107 | 0.1% |
+
+`REFERENCE_ONLY` is 107 records. Spec 5.1 treats "see publication" as a major discard
+category; on the evidence it is negligible, consistent with the planning probe finding 0 of
+600. The real discard driver is unresolved reagent names, which curation directly improves.
+
+**Four separator bugs found by smoke-testing on real strings, each silently destructive:**
+
+1. **Newlines were being flattened before clause splitting.** Depositors routinely put one
+   component per line, so every multi-line deposition was parsed as a single unresolvable
+   clause. The parser normalised the text and then split it, when it had to split first.
+2. **`in` was not a separator**, so `50mM CaCl2 in 0.1M cacodylate` resolved neither
+   reagent. Now split only when followed by a digit, leaving `grown in sitting drops` alone.
+3. **Multiple spaces were not a separator**, so `glycol 6,000  100 mM citrate` merged two
+   components. Now split on two or more spaces followed by a digit.
+4. **Leading conjunctions blocked lookup**: `and 172 mM ammonium nitrate` never resolved.
+
+**Measured behaviour of the three judgement calls:**
+
+- **Unit inference** fired on 31.5% of components (187,390). Every one is flagged
+  `unit_inferred`, and WP8 measures it separately.
+- **pH attribution**: 88,845 buffer, 50 final, 92,208 unstated. The tiny `final` count is
+  the honest answer, not a failure: depositors almost never say which they mean, and the
+  parser refuses to guess. A standalone pH clause directly following a buffer clause is
+  attributed to that buffer, which is the commonest way the corpus writes it.
+- **Cryo attribution**: 3,724 explicit against 16,795 inferred, a 1:4 ratio that matches the
+  2.2% textual-mention rate from 0.6 and confirms why the two must not be conflated.
+
 ### WP4. Commercial screen formulation library
 **3 days, of which 2 are curation. Depends on WP2 (shares the canonical vocabulary). Parallel with WP3.**
 

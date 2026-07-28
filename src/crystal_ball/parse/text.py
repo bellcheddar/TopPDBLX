@@ -39,6 +39,11 @@ _SPLIT = re.compile(r"""
       | \s\+\s
       | \s+and\s+
       | \s+plus\s+
+      | \s+in\s+(?=\d)   # "50mM CaCl2 in 0.1M cacodylate": only before a digit, so
+                         # "crystals grown in sitting drops" is left alone
+      | \ \ +(?=\d)      # "glycol 6,000  100 mM citrate": depositors separate components
+                         # with extra spaces. Requiring a following digit keeps it safe,
+                         # since a new component almost always opens with a concentration
     )\s*
 """, re.VERBOSE)
 
@@ -83,7 +88,10 @@ _REFERENCE = re.compile(r"""
 
 _PROTEIN = re.compile(r"""
     protein\s+(?:concentration|solution|conc) | mg\s*/\s*ml\s*(?:protein)?
-  | reservoir\s+solution | drop\s+(?:ratio|volume) | \bmicroliters?\b | \bul\b\s+of | \bµl\b
+  | (?:reservoir|well|mother)\s+(?:solution|liquor)
+  | drop\s+(?:ratio|volume) | \bmicroliters?\b | \bul\b\s+of | \bµl\b
+  | mixed\s+(?:\d\s*:\s*\d|1:1|in\s+a?\s*\d) | \bratio\b | equal\s+volumes?
+  | total\s+volume | \bnl\b
 """, re.VERBOSE)
 
 _NOISE = re.compile(r"""
@@ -98,14 +106,41 @@ _NOISE = re.compile(r"""
 _POLYMER_PREFIX = re.compile(r"^(m?peg|peg-?mme|mme|pei|ppg)\s*-?\s*(\d{3,6})\b")
 
 
+# Conjunctions and prepositions left at the head of a clause by splitting. "and 172 mM
+# ammonium nitrate" must become "172 mM ammonium nitrate" or the reagent never resolves.
+_LEADING_CONJUNCTION = re.compile(r"^(?:and|plus|with|in|of|containing|at)\s+")
+
+
 def normalise(text: str) -> str:
-    """NFKC, unify dashes, collapse whitespace, lowercase."""
+    """NFKC, unify dashes, collapse all whitespace, lowercase.
+
+    Used for lexicon keys and name comparison, where whitespace is never meaningful.
+    Clause splitting uses `_prepare` instead, which preserves the whitespace it needs.
+    """
     text = unicodedata.normalize("NFKC", text).translate(_DASHES)
     return re.sub(r"\s+", " ", text).strip().lower()
 
 
+def _prepare(text: str) -> str:
+    """Normalise without destroying the whitespace that separates clauses.
+
+    Newlines and runs of spaces are both load-bearing: depositors put one component per
+    line, or separate them with extra spaces, and collapsing either before the split turns
+    a four-component condition into one unparseable string.
+    """
+    return unicodedata.normalize("NFKC", text).translate(_DASHES).strip().lower()
+
+
 def clauses(text: str) -> list[str]:
-    return [c for c in _SPLIT.split(normalise(text)) if c and c.strip()]
+    """Split into component clauses, tidying each only after the split."""
+    out = []
+    for part in _SPLIT.split(_prepare(text)):
+        if not part:
+            continue
+        cleaned = _LEADING_CONJUNCTION.sub("", re.sub(r"\s+", " ", part).strip())
+        if cleaned:
+            out.append(cleaned)
+    return out
 
 
 def split_trailing_ph(clause: str) -> tuple[str, str | None]:

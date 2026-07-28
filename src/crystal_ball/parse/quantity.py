@@ -1,0 +1,140 @@
+"""Quantity and unit extraction from a condition clause.
+
+Separated from the rule parser because this is where the corpus is most treacherous and
+the logic deserves its own tests.
+
+The load-bearing decision is unit inference. Roughly **80% of percentage concentrations in
+this corpus carry no w/v or v/v marker at all**, so the defaulting rule decides the unit for
+four values in five. It is applied from the reagent's chemistry, never guessed globally,
+and every inferred unit is flagged so downstream work can filter on it and the WP8 audit
+can measure the rule directly.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Optional
+
+import regex as re
+
+from .schema import Unit
+
+_NUMBER = r"\d+(?:[.,]\d+)?"
+
+# "18-22%", "1.7 to 2.1", "5 - 15 %(v/v)". The separator alternatives are ordered so the
+# word forms are tried before the bare hyphen.
+_RANGE_SEP = r"(?:\s*(?:to|-|–|through)\s*)"
+
+_QUANTITY = re.compile(rf"""
+    (?P<low>{_NUMBER})
+    (?: {_RANGE_SEP} (?P<high>{_NUMBER}) )?
+    \s*
+    (?P<unit>
+        %\s*\(?\s*(?:w\s*/\s*v|w\s*:\s*v)\s*\)?
+      | %\s*\(?\s*(?:v\s*/\s*v|v\s*:\s*v)\s*\)?
+      | %\s*\(?\s*w\s*/\s*w\s*\)?
+      | %
+      | mg\s*/\s*ml | mg\s*/\s*l | g\s*/\s*l
+      | mm | µm | um | nm | m
+    )?
+    (?![a-z0-9])
+""", re.VERBOSE | re.IGNORECASE)
+
+_UNIT_MAP: dict[str, Unit] = {
+    "%": "percent_unspecified",
+    "%w/v": "percent_w_v", "%w:v": "percent_w_v", "%w/w": "percent_w_v",
+    "%v/v": "percent_v_v", "%v:v": "percent_v_v",
+    "m": "molar", "mm": "millimolar", "µm": "micromolar", "um": "micromolar",
+    "nm": "nanomolar", "mg/ml": "mg_ml", "mg/l": "g_l", "g/l": "g_l",
+}
+
+# Percent units that the reagent's chemistry must disambiguate.
+_AMBIGUOUS_PERCENT = "percent_unspecified"
+
+
+@dataclass
+class Quantity:
+    value: Optional[float] = None
+    unit: Optional[Unit] = None
+    unit_explicit: bool = False
+    is_range: bool = False
+    low: Optional[float] = None
+    high: Optional[float] = None
+    span: Optional[tuple[int, int]] = None
+
+    @property
+    def found(self) -> bool:
+        return self.value is not None
+
+
+def _to_float(text: str) -> Optional[float]:
+    try:
+        # "0,5" is a decimal comma in some depositions; "6,000" was already normalised
+        # to "6000" upstream by tidy_name.
+        return float(text.replace(",", "."))
+    except ValueError:
+        return None
+
+
+def _canonical_unit(raw: Optional[str]) -> Optional[Unit]:
+    if not raw:
+        return None
+    key = re.sub(r"[\s()]", "", raw).lower()
+    return _UNIT_MAP.get(key)
+
+
+def extract(clause: str) -> Quantity:
+    """Find the leading quantity in a clause.
+
+    Only the first match is taken. A clause containing two quantities is a splitting
+    failure upstream, not something to silently average.
+    """
+    match = _QUANTITY.search(clause)
+    if not match:
+        return Quantity()
+
+    low = _to_float(match.group("low"))
+    high = _to_float(match.group("high")) if match.group("high") else None
+    unit = _canonical_unit(match.group("unit"))
+
+    if low is None:
+        return Quantity()
+
+    if high is not None:
+        # The midpoint is the representative value; the endpoints are preserved so a
+        # consumer that cares about the spread is not forced to re-parse the text.
+        return Quantity(value=(low + high) / 2, unit=unit, unit_explicit=unit is not None,
+                        is_range=True, low=low, high=high, span=match.span())
+    return Quantity(value=low, unit=unit, unit_explicit=unit is not None,
+                    span=match.span())
+
+
+def infer_unit(unit: Optional[Unit], chem_class: Optional[str], peg_mw: Optional[int],
+               default_unit: Optional[str]) -> tuple[Optional[Unit], bool]:
+    """Resolve a missing or ambiguous unit from the reagent's chemistry.
+
+    Returns (unit, inferred). The rules, in order:
+
+      * An explicit w/v or v/v marker always wins.
+      * A bare "%" is resolved by chemistry. PEGs of 600 and below behave as organic
+        precipitants and are reported v/v; PEGs of 1000 and above are polymers reported
+        w/v (spec 6.3). Organics and polyols are v/v. Everything else is w/v.
+      * No unit at all falls back to the reagent's curated default, which is molar for
+        salts and buffers: "1.7 to 2.1 ammonium sulfate" means molar.
+    """
+    if unit and unit != _AMBIGUOUS_PERCENT:
+        return unit, False
+
+    if unit == _AMBIGUOUS_PERCENT:
+        if chem_class == "peg" and peg_mw is not None:
+            return ("percent_v_v" if peg_mw <= 600 else "percent_w_v"), True
+        if chem_class in ("organic", "polyol"):
+            return "percent_v_v", True
+        if chem_class in ("salt", "buffer", "detergent", "additive", "premix", "other"):
+            return "percent_w_v", True
+        # Unknown chemistry: w/v is the majority convention, but flag the inference.
+        return "percent_w_v", True
+
+    if default_unit:
+        return default_unit, True          # type: ignore[return-value]
+    return None, False
