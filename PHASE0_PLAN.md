@@ -183,8 +183,13 @@ assignment stays in the fingerprint, because on this evidence it was probably in
 several rows, and naive code takes row 0 and silently discards the rest. Every probe in section 0
 made exactly that mistake before it was caught.
 
-Measured over 3,000 entries: **0.07% have more than one row**, so roughly 140 entries archive-wide.
-Rare, but the rows are genuinely distinct conditions rather than duplicates:
+A 3,000-entry probe suggested 0.07%. **The full ingest gives the exact figure: 390 entries, 0.152%
+of the archive**, contributing 495 extra condition rows. The probe was low by a factor of two,
+which is the sampling caveat in 0.2 behaving exactly as advertised. The distribution has a long
+tail: 342 entries with 2 forms, 27 with 3, 6 with 4, 10 with 5, 3 with 6, 1 with 7 and **one entry
+with 21**. Indexing row 0 would have destroyed 20 records from that entry alone.
+
+The rows are often genuinely distinct conditions:
 
 ```
 1Q8I  row 1  pH 5.3  Citrate, PEG3K, DTT, EDTA, Glycerol
@@ -198,6 +203,11 @@ The record key is therefore `(pdb_id, crystal_id)`, with `crystal_id` defaulting
 one extra column; the benefit is that an entire class of silent data loss is impossible. The WP1
 fidelity gate compares **row counts** as well as string content, since a single-row assumption is
 exactly the kind of bug an API-only view hides.
+
+**But not every extra row is a new condition.** 6SVA carries seven forms whose details strings are
+identical (`0.2 M Sodium Sulphate 20% PEG 3350` repeated). WP3 must therefore deduplicate identical
+rows **within** an entry before counting conditions, or a handful of entries will be over-weighted
+in the statistics. Retain the rows, collapse them at analysis time, and record how many collapsed.
 
 ---
 
@@ -254,11 +264,17 @@ because they are the real constraint.
 ### WP1. Ingest
 **3 days. Depends on WP0.**
 
-- `src/crystal_ball/ingest/fetch_entry_ids.py`: Search API, paginated, all X-ray entry ids, plus all
-  experimental entry ids for the sequence-only sidecar (see decision D6). Snapshot the id list with
-  a date and hash: this defines the archive version for the whole release.
+- `src/crystal_ball/ingest/entry_ids.py`: Search API, all X-ray entry ids plus all experimental
+  entry ids for the sequence sidecar (see decision 12.6). Snapshot defines the archive version for
+  the whole release. **Built and run 2026-07-28:** the Search API accepts `return_all_hits`, which
+  returns all 205,949 identifiers in one response, so pagination is avoided entirely. A paginated
+  sweep of a live index can duplicate or drop rows between pages, and the loss would be invisible.
+  Sorted by `rcsb_id` for determinism. Counts confirmed at 205,949 X-ray and 256,789 experimental.
 - `src/crystal_ball/ingest/fetch_entries.py`: batched GraphQL, 300 ids per request, resumable, raw
-  responses written to `data/raw/graphql/<batch_hash>.json.gz` and never modified again.
+  responses written to `data/raw/graphql/<index>_<batch_hash>.json.gz` and never modified again.
+  **Measured 2026-07-28:** 1.3 s and 0.58 MB per batch, about 95 KB gzipped, so 857 batches is
+  roughly 19 minutes and 80 MB on disk. Requests are serial by choice: the 19 minutes is a one-off
+  and parallelising against a free public API to save a quarter of an hour is not a good trade.
 - `src/crystal_ball/ingest/flatten.py`: raw JSON to `data/interim/entries.parquet`, **one row per
   `(pdb_id, crystal_id)`** per 0.7, with columns `pdb_id, crystal_id, method, revision_date,
   initial_release_date, resolution, grow_method, temp_k, ph_reported, ph_range, raw_details,
@@ -271,14 +287,38 @@ because they are the real constraint.
 - Sequence sidecar: `data/interim/entities.parquet` with
   `pdb_id, entity_id, seq_one_letter, seq_can, length, type, uniprot_ids, source_organism,
   description` for **all** experimental entries, not just X-ray.
-- Acquire and checksum the **TargetTrack archive dump now** and park it in `data/raw/targettrack/`.
-  It is an archived, unmaintained resource and link rot is a live risk. One hour of work in Phase 0
-  that de-risks Phase 3 entirely. Do not process it.
+- `src/crystal_ball/ingest/targettrack.py`: acquire and checksum the **TargetTrack archive now** into
+  `data/raw/targettrack/`. It is archived and unmaintained, and link rot would end the Phase 3
+  propensity work with no recovery. **Located 2026-07-28:** Zenodo DOI `10.5281/zenodo.821654`,
+  "Protein Structure Initiative - TargetTrack 2000-2017 - all data files",
+  `TargetTrack-1Jul2017.tar.gz`, 832.9 MB, final release 1 July 2017. The download URL is resolved
+  through the Zenodo API at run time rather than hardcoded, and the published MD5 is verified.
+  Stored unopened: which status counts as a positive is decision 12.5 and belongs to Phase 3.
 
 **Packages:** `requests`, `tenacity`, `orjson`, `pyarrow`, `polars`, `gemmi` (validation only).
 
-**Output:** `entries.parquet` (~206k rows), `entities.parquet` (~800k rows), raw JSON archive,
-manifest.
+**Output:** `entries.parquet`, `entities.parquet`, raw JSON archive, manifest.
+
+**WP1 completed 2026-07-28.** Actual results:
+
+| Measure | Value |
+|---------|-------|
+| Harvest | 256,789 ids requested, 256,789 returned, **0 missing**, 17m57s, 143 MB gzipped |
+| Condition rows | 257,284 across 256,789 entries |
+| X-ray rows | 206,437 (205,949 distinct entries) |
+| X-ray entries with a details string | **198,432** |
+| X-ray entries with no grow row at all | 7,433 |
+| Multi-form entries | 390 (0.152%), max 21 forms in one entry |
+| Polymer entities | 597,595, of which 506,129 (84.7%) carry a UniProt accession |
+| Details string length, X-ray | median 76, p90 150, p99 385, max 1,755 characters |
+
+Six independent counts (X-ray entries, with-details, with-pH, with-temp, with-method, all
+experimental) were cross-checked against the Search API and **all six match exactly**.
+
+**Fidelity gate: PASSED.** 200 entries, 229 crystal-form rows, zero mismatches on both details
+strings and loop row counts. 25 multi-form entries were forced into the sample, where uniform
+sampling would have contained 0.3 of them. The API reproduces the archive verbatim on this evidence,
+so the build proceeds on the API and the full-scale check happens against the WP9 snapshot.
 
 ### WP2. Reagent lexicon (`ontology/synonyms.yaml`)
 **3 days, of which 2 are curation. Depends on WP1 (needs the corpus to mine).**
@@ -517,6 +557,16 @@ for WP6 labelling as well as WP8 auditing, is what keeps this number down.
 | 12.6 | Include cryo-EM and NMR entries | **Yes, as ingest scope** | Agree with the spec: exclude from conditions, but ingest polymer entity sequences and UniProt links for **all** experimental entries (256,789 rather than 205,949). Adds about an hour to WP1 and avoids a full re-ingest when Phase 3 boundary work starts |
 | 12.7 | Licensing and hosting | **Yes, by week 5** | Recommend CC-BY-4.0 for data, MIT for code, Zenodo for the DOI, HuggingFace `Dellboy` as the working mirror, GitHub for code. Caveat: `ontology/screens/` is a transcription of vendor formulations. Formulations are published facts and citing the vendor is normal practice, but keep that directory separable so it can be pulled without breaking the release if anyone objects |
 
+**A new decision, surfaced by the WP1 ingest and not anticipated in the spec.** 194 non-X-ray entries
+carry a populated `exptl_crystal_grow` record: neutron diffraction 88, electron crystallography 69,
+powder diffraction 24, electron microscopy 10, fibre diffraction 9, solution scattering 1. The first
+three are real crystals grown by real crystallographers, and their conditions are as valid as any
+X-ray entry's. They are 0.09% of the corpus, so nothing statistical hangs on it, but the scope needs
+stating rather than defaulting. **Recommendation:** admit neutron, electron crystallography and
+powder diffraction to the condition corpus with a `diffraction_method` field so they can be filtered
+out at will, and exclude the EM, fibre and solution-scattering handful as probably mis-annotated.
+Not blocking: it changes 181 records and can be revisited at any point before release.
+
 Three decisions needed answering before code lands: **12.3**, **12.6**, and the representation half
 of **12.2**. **12.3 is now decided** (see the table). **12.6** and the **12.2** representation
 question are proceeding as recommended above, since both are lossless and reversible: say so if you
@@ -539,7 +589,8 @@ dependency, since the WP9 archive snapshot needs 90 GB free at the same time.
 | Curation underestimated, schedule slips | **High** | Medium | Section 4 budgets 51 to 68 hours explicitly; audit tool built early and reused for labelling |
 | RCSB rate limits or partial batch failures | Medium | Low | Resumable, on-disk batch cache keyed by hash, tenacity backoff |
 | iCloud evicts large intermediate files | Medium | Medium | `data/raw` and `data/interim` symlinked outside `Documents`; dataless check before every long run |
-| Python 3.14 wheel gaps in a later dependency | Low | Low | Homebrew python3.12 is present as a fallback interpreter |
+| Python 3.14 wheel gaps in a later dependency | ~~Low~~ **Closed** | Low | All core dependencies including gemmi 0.7.5 install cleanly on 3.14.3 (verified WP0) |
+| Editable install silently not importable | **Was certain** | Medium | Every pip-installed file in site-packages on this machine carries the macOS `UF_HIDDEN` flag, and python 3.14's `site.py` skips hidden `.pth` files, so setuptools' `__editable__*.pth` is ignored while `pip list` still shows the package. Fixed by putting `src` on the path explicitly in `run.sh` and `pytest`'s `pythonpath`, which does not regress on reinstall |
 
 ---
 

@@ -29,3 +29,8 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Do not rely on the editable install being importable. On this machine every
+# pip-installed file in site-packages carries the macOS UF_HIDDEN flag, and python 3.14's
+# site.py (line 183) skips hidden .pth files, so setuptools' __editable__*.pth is ignored
+# and `import crystal_ball` fails while `pip list` still shows the package. See run.sh.
+pythonpath = ["src"]

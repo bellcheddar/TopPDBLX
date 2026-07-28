@@ -35,4 +35,12 @@ if [[ $# -lt 1 || "${1:-}" == "--list" || "${1:-}" == "-h" || "${1:-}" == "--hel
 fi
 
 STAGE="$1"; shift
+
+# src/ is put on the path explicitly rather than trusting the editable install. On this
+# machine every pip-installed file in site-packages carries the macOS UF_HIDDEN flag, and
+# python 3.14's site.py skips hidden .pth files, so setuptools' __editable__*.pth is
+# silently ignored: the package installs, `pip list` shows it, and the import still fails.
+# `chflags nohidden` on the .pth fixes it until the next reinstall; this does not regress.
+export PYTHONPATH="$REPO_ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
+
 exec "$PYTHON" -m "crystal_ball.$STAGE" "$@"
