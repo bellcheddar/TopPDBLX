@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="The judgement calls Crystal Ball's parser cannot make on its own.">
+<meta name="author" content="Marc C. Deller, D.Phil.">
+<title>Condition Courtroom v4 | The calls only you can make | Marc C. Deller</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --md-primary:#1e73be; --md-primary-dark:#155a9c; --md-primary-light:#4a9fd4;
+  --md-bg:#fff; --md-bg-alt:#f4f7fb; --md-surface:#fff; --md-border:#dde4ed;
+  --md-text:#1a1a2e; --md-text-muted:#6b7c93; --md-text-light:#fff;
+  --md-accent-green:#00d084; --md-accent-orange:#ff6900; --md-accent-amber:#fcb900;
+  --md-shadow-sm:6px 6px 9px rgba(0,0,0,.12); --md-radius:8px; --md-radius-lg:16px;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;overflow-x:hidden;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  font-size:15px;line-height:1.6;color:var(--md-text);background:var(--md-bg-alt)}
+code,pre,.mono{font-family:'Roboto Mono',monospace}
+.md-header{background:linear-gradient(135deg,var(--md-primary-dark),var(--md-primary));
+  color:#fff;box-shadow:var(--md-shadow-sm);position:sticky;top:0;z-index:100}
+.md-header-inner{max-width:1080px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.md-header-brand a{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.9);text-decoration:none;
+  font-weight:600;font-size:13px;white-space:nowrap}
+.md-header-brand a:hover{color:#fff}
+.md-logo-dot{width:10px;height:10px;background:var(--md-accent-amber);border-radius:50%;flex-shrink:0}
+.md-header-title{flex:1;min-width:0}
+.md-header-title h1{font-size:16px;font-weight:700;color:#fff;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.md-header-links{display:flex;gap:10px;flex-shrink:0;flex-wrap:wrap}
+.md-header-links a{color:rgba(255,255,255,.85);text-decoration:none;font-size:12px;padding:4px 12px;
+  border:1px solid rgba(255,255,255,.3);border-radius:20px;white-space:nowrap}
+.md-header-links a:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.md-main{max-width:1080px;margin:0 auto;padding:18px 24px 80px}
+#dropzone{border:2px dashed var(--md-primary-light);border-radius:var(--md-radius-lg);padding:56px 24px;
+  text-align:center;background:#fff;cursor:pointer;transition:all .2s}
+#dropzone.hot{background:#eaf3fb;border-color:var(--md-primary)}
+#dropzone h2{margin:0 0 8px;font-size:20px}
+#dropzone p{color:var(--md-text-muted);margin:4px 0}
+
+.btn{background:var(--md-primary);color:#fff;border:none;border-radius:var(--md-radius);padding:9px 16px;
+  font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn:hover{background:var(--md-primary-dark)}
+.btn.ghost{background:transparent;color:var(--md-primary);border:1px solid var(--md-border)}
+.btn.ghost:hover{background:var(--md-bg-alt)}
+.btn.green{background:var(--md-accent-green);color:#06301f}
+
+.topbar{position:sticky;top:56px;z-index:90;background:var(--md-bg-alt);padding:12px 0 10px;
+  border-bottom:1px solid var(--md-border);margin-bottom:18px}
+.topbar-inner{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.progress-wrap{flex:1;min-width:200px}
+.progress-bar{height:10px;background:var(--md-border);border-radius:6px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--md-primary),var(--md-accent-green));width:0;transition:width .25s}
+.progress-label{font-size:12px;color:var(--md-text-muted);margin-top:4px}
+
+.intro{background:#eaf3fb;border-left:4px solid var(--md-primary);border-radius:var(--md-radius);
+  padding:14px 18px;font-size:14px;margin-bottom:20px;color:var(--md-primary-dark)}
+.intro b{color:var(--md-primary-dark)}
+
+h2.group{font-size:13px;text-transform:uppercase;letter-spacing:.09em;color:var(--md-text-muted);
+  margin:30px 0 12px;font-weight:700;display:flex;align-items:center;gap:10px}
+h2.group .n{font-family:'Roboto Mono',monospace;font-size:11px;background:#fff;border:1px solid var(--md-border);
+  border-radius:20px;padding:2px 9px;text-transform:none;letter-spacing:0}
+
+.q{background:#fff;border:1px solid var(--md-border);border-left:5px solid var(--md-border);
+  border-radius:var(--md-radius);padding:16px 18px;margin-bottom:12px;transition:border-color .15s}
+.q.answered{border-left-color:var(--md-accent-green)}
+.q.big{border-left-color:var(--md-accent-orange)}
+.q.big.answered{border-left-color:var(--md-accent-green)}
+.q-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:6px}
+.q-text{font-weight:600;font-size:15.5px;line-height:1.45}
+.weight{font-family:'Roboto Mono',monospace;font-size:11.5px;background:var(--md-bg-alt);
+  border:1px solid var(--md-border);border-radius:20px;padding:3px 10px;white-space:nowrap;color:var(--md-text-muted)}
+.weight.big{background:#fff4e6;border-color:var(--md-accent-orange);color:#a33f00;font-weight:700}
+.why{font-size:13px;color:var(--md-text-muted);margin:0 0 12px}
+.ctx{font-family:'Roboto Mono',monospace;font-size:11.5px;color:var(--md-text-muted);
+  background:var(--md-bg-alt);border-radius:6px;padding:8px 10px;margin-bottom:12px;white-space:pre-wrap;word-break:break-word}
+.answer{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+select{padding:9px 11px;border:1px solid var(--md-border);border-radius:var(--md-radius);
+  font-family:inherit;font-size:14px;background:#fff;color:var(--md-text);min-width:280px;flex:1}
+select:focus{outline:2px solid var(--md-primary-light);border-color:var(--md-primary)}
+input[type=text]{padding:9px 11px;border:1px solid var(--md-border);border-radius:var(--md-radius);
+  font-family:'Roboto Mono',monospace;font-size:13px;color:var(--md-text);flex:1;min-width:200px}
+.tick{font-size:19px;color:var(--md-accent-green);font-weight:700;width:22px;text-align:center}
+.tick.off{color:var(--md-border)}
+.stat-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin-bottom:16px}
+.stat{background:#fff;border:1px solid var(--md-border);border-radius:var(--md-radius);padding:10px 13px}
+.stat .n{font-size:20px;font-weight:700;color:var(--md-primary-dark);line-height:1.2}
+.stat .l{font-size:10.5px;color:var(--md-text-muted);text-transform:uppercase;letter-spacing:.05em}
+.hint{font-size:12px;color:var(--md-text-muted);margin-top:16px}
+.md-footer{text-align:center;padding:20px;color:var(--md-text-muted);font-size:13px}
+.md-footer a{color:var(--md-primary)}
+@media (max-width:768px){
+  .md-main{padding:13px} .md-header-inner{padding:10px 16px}
+  .md-header-title h1{font-size:14px} .md-logo-text{display:none}
+  .topbar{top:52px} select{min-width:100%}
+}
+</style>
+</head>
+<body>
+<header class="md-header">
+  <div class="md-header-inner">
+    <div class="md-header-brand">
+      <a href="https://marcdeller.com" target="_blank" rel="noopener noreferrer">
+        <span class="md-logo-dot"></span><span class="md-logo-text">Marc C. Deller, D.Phil.</span>
+      </a>
+    </div>
+    <div class="md-header-title"><h1>Condition Courtroom v4 &middot; the calls only you can make</h1></div>
+    <div class="md-header-links">
+      <a href="https://marcdeller.com" target="_blank" rel="noopener noreferrer">🌐 marcdeller.com</a>
+      <a href="mailto:marc@marcdeller.com">✉️ marc@marcdeller.com</a>
+    </div>
+  </div>
+</header>
+
+<main class="md-main">
+  <section id="loader">
+    <div id="dropzone" role="button" tabindex="0" aria-label="Load audit questions JSON">
+      <h2>⚖️ Drop <code>audit_questions.json</code> here</h2>
+      <p>or click to choose a file</p>
+      <p style="font-size:13px;margin-top:14px">
+        Produced by <code>./run.sh eval.audit_questions</code> &middot; in <code>data/interim/</code>
+      </p>
+      <input type="file" id="fileInput" accept=".json,application/json" hidden>
+    </div>
+    <p class="hint" id="resumeNote" style="text-align:center"></p>
+  </section>
+
+  <section id="workspace" hidden>
+    <div class="topbar"><div class="topbar-inner">
+      <button class="btn ghost" id="acceptAllBtn">✓ Accept every recommendation</button>
+      <button class="btn ghost" id="pendingBtn">Show unanswered only</button>
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-label" id="progressLabel"></div>
+      </div>
+      <button class="btn green" id="exportBtn">⬇ Export answers</button>
+      <button class="btn ghost" id="resetBtn">Reset</button>
+    </div></div>
+
+    <div class="intro" id="intro"></div>
+    <div class="stat-grid" id="statGrid"></div>
+    <div id="questions"></div>
+    <p class="hint">
+      Every dropdown is pre-set to the pipeline's recommendation. Change the ones you disagree
+      with, then accept the rest in one click. Your answers save in this browser automatically.
+    </p>
+  </section>
+</main>
+
+<footer class="md-footer">
+  Built by <a href="https://marcdeller.com" target="_blank" rel="noopener noreferrer">Marc C. Deller, D.Phil.</a>
+  &middot; <a href="mailto:marc@marcdeller.com">marc@marcdeller.com</a> &middot; Condition Courtroom v4
+</footer>
+
+<script>
+const STORAGE_PREFIX = 'crystalball.courtroom4.';
+let DATA=null, answers={}, storageKey=null, pendingOnly=false;
+const $ = id => document.getElementById(id);
+
+function save(){ if(storageKey){ try{ localStorage.setItem(storageKey, JSON.stringify(answers)); }
+  catch(e){ console.warn('save failed', e); } } }
+function loadAnswers(){ if(!storageKey) return {};
+  try{ return JSON.parse(localStorage.getItem(storageKey)||'{}'); }catch(e){ return {}; } }
+function esc(s){ return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+const fmt = n => (n||0).toLocaleString();
+
+function ingest(payload){
+  if(!payload || !Array.isArray(payload.questions))
+    throw new Error('Expected the output of ./run.sh eval.audit_questions (no "questions" array).');
+  DATA = payload;
+  storageKey = STORAGE_PREFIX + (payload.lexicon_version || 'v') + '.' + payload.n_questions;
+  answers = loadAnswers();
+  $('loader').hidden = true; $('workspace').hidden = false;
+  render();
+}
+function readFile(file){
+  if(!file) return;
+  if(!/\.json$/i.test(file.name)){ alert('Please choose a .json file.'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    let payload;
+    try{ payload = JSON.parse(e.target.result); }
+    catch(err){ alert('That file is not valid JSON:\n\n'+err.message); return; }
+    try{ ingest(payload); }
+    catch(err){ console.error(err);
+      alert('The file loaded but the page failed to render it:\n\n'+err.message+
+            '\n\nThis is a bug in the tool, not in your data.'); }
+  };
+  reader.onerror = () => alert('Could not read that file.');
+  reader.readAsText(file);
+}
+
+function recommendedFor(q){
+  const rec = q.options.find(o => o.recommended);
+  return rec ? rec.value : (q.options[0] ? q.options[0].value : '');
+}
+
+function cardFor(q){
+  const answer = answers[q.id];
+  const chosen = answer ? answer.value : recommendedFor(q);
+  const el = document.createElement('div');
+  el.className = 'q' + (answer ? ' answered' : '') + (q.weight >= 1000 ? ' big' : '');
+
+  const options = q.options.map(o =>
+    `<option value="${esc(o.value)}"${o.value===chosen?' selected':''}>${esc(o.label)}` +
+    `${o.recommended?'  ·  recommended':''}</option>`).join('');
+
+  el.innerHTML = `
+    <div class="q-head">
+      <div class="q-text">${esc(q.question)}</div>
+      <span class="weight ${q.weight>=1000?'big':''}">${esc(q.weight_label)}</span>
+    </div>
+    <p class="why">${esc(q.why)}</p>
+    ${q.context && q.context.length ? `<div class="ctx">${q.context.map(esc).join('\n')}</div>` : ''}
+    <div class="answer">
+      <span class="tick ${answer?'':'off'}" aria-hidden="true">✓</span>
+      <select aria-label="${esc(q.question)}">${options}</select>
+      ${q.allow_text ? `<input type="text" placeholder="or type the exact canonical name"
+         value="${esc(answer && answer.text || '')}" aria-label="Custom answer">` : ''}
+    </div>`;
+
+  const select = el.querySelector('select');
+  select.addEventListener('change', () => {
+    answers[q.id] = {value: select.value, text: (el.querySelector('input')||{}).value || '',
+                     answered_at: new Date().toISOString()};
+    save(); render();
+  });
+  const text = el.querySelector('input');
+  if(text) text.addEventListener('input', () => {
+    answers[q.id] = {value: select.value, text: text.value,
+                     answered_at: new Date().toISOString()};
+    save(); updateProgress();
+  });
+  return el;
+}
+
+function render(){
+  if(!DATA) return;
+  const t = DATA.totals || {};
+  $('intro').innerHTML =
+    `<b>${DATA.n_questions} questions.</b> Everything else in the parse was accepted ` +
+    `automatically, because it needed no judgement. These are the places where the pipeline ` +
+    `guessed, contradicted itself, or refused to choose. Together they govern ` +
+    `<b>${fmt(t.components_under_question)}</b> of ${fmt(t.n_components)} components.`;
+
+  const host = $('questions'); host.innerHTML='';
+  const groups = [];
+  DATA.questions.forEach(q => { if(!groups.includes(q.group)) groups.push(q.group); });
+
+  groups.forEach(group => {
+    let list = DATA.questions.filter(q => q.group === group);
+    if(pendingOnly) list = list.filter(q => !answers[q.id]);
+    if(!list.length) return;
+    const weight = list.reduce((a,q)=>a+q.weight,0);
+    const heading = document.createElement('h2');
+    heading.className = 'group';
+    heading.innerHTML = `${esc(group)} <span class="n">${list.length} · ${fmt(weight)} components</span>`;
+    host.appendChild(heading);
+    list.forEach(q => host.appendChild(cardFor(q)));
+  });
+  updateProgress();
+}
+
+function updateProgress(){
+  const total = DATA.questions.length;
+  const done = DATA.questions.filter(q => answers[q.id]).length;
+  const doneWeight = DATA.questions.filter(q => answers[q.id]).reduce((a,q)=>a+q.weight,0);
+  const totalWeight = DATA.questions.reduce((a,q)=>a+q.weight,0);
+  $('progressFill').style.width = (100*done/Math.max(1,total)).toFixed(1)+'%';
+  $('progressLabel').textContent = `${done} of ${total} answered`;
+  const changed = DATA.questions.filter(q => answers[q.id] &&
+    (answers[q.id].value !== recommendedFor(q) || (answers[q.id].text||'').trim())).length;
+  $('statGrid').innerHTML = `
+    <div class="stat"><div class="n">${done}/${total}</div><div class="l">answered</div></div>
+    <div class="stat"><div class="n">${changed}</div><div class="l">you overrode</div></div>
+    <div class="stat"><div class="n">${fmt(doneWeight)}</div><div class="l">components settled</div></div>
+    <div class="stat"><div class="n">${totalWeight?((100*doneWeight/totalWeight).toFixed(0)+'%'):'—'}</div>
+      <div class="l">of questioned mass</div></div>`;
+}
+
+function acceptAll(){
+  DATA.questions.forEach(q => {
+    if(!answers[q.id]) answers[q.id] = {value: recommendedFor(q), text:'',
+                                        answered_at:new Date().toISOString(), accepted_default:true};
+  });
+  save(); render();
+}
+function exportAnswers(){
+  const answered = DATA.questions.filter(q => answers[q.id]);
+  if(!answered.length){ alert('Nothing answered yet.'); return; }
+  const out = {
+    tool:'condition_courtroom_v4', lexicon_version:DATA.lexicon_version,
+    schema_version:DATA.schema_version, exported_at:new Date().toISOString(),
+    n_questions:DATA.questions.length, n_answered:answered.length,
+    answers: answered.map(q => ({
+      id:q.id, group:q.group, question:q.question, weight:q.weight,
+      recommended: recommendedFor(q),
+      chosen: answers[q.id].value,
+      free_text: answers[q.id].text || '',
+      overrode_recommendation: answers[q.id].value !== recommendedFor(q)
+    }))
+  };
+  const blob = new Blob([JSON.stringify(out,null,1)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'audit_answers.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const zone=$('dropzone'), input=$('fileInput');
+  zone.addEventListener('click', ()=>input.click());
+  zone.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();input.click();} });
+  input.addEventListener('change', e=>readFile(e.target.files[0]));
+  ['dragenter','dragover'].forEach(t=>zone.addEventListener(t,e=>{e.preventDefault();zone.classList.add('hot');}));
+  ['dragleave','drop'].forEach(t=>zone.addEventListener(t,e=>{e.preventDefault();zone.classList.remove('hot');}));
+  zone.addEventListener('drop', e=>readFile(e.dataTransfer.files[0]));
+
+  $('acceptAllBtn').addEventListener('click', acceptAll);
+  $('exportBtn').addEventListener('click', exportAnswers);
+  $('pendingBtn').addEventListener('click', () => {
+    pendingOnly = !pendingOnly;
+    $('pendingBtn').textContent = pendingOnly ? 'Show all questions' : 'Show unanswered only';
+    render();
+  });
+  $('resetBtn').addEventListener('click', () => {
+    if(confirm('Discard every answer recorded in this browser?')){ answers={}; save(); render(); }
+  });
+
+  const keys = Object.keys(localStorage).filter(k=>k.startsWith(STORAGE_PREFIX));
+  if(keys.length){
+    const saved = Object.keys(JSON.parse(localStorage.getItem(keys[0])||'{}')).length;
+    if(saved) $('resumeNote').textContent =
+      `${saved} answer${saved===1?'':'s'} already saved in this browser.`;
+  }
+});
+</script>
+</body>
+</html>
