@@ -174,8 +174,13 @@ def build_questions(components: pl.DataFrame, conditions: pl.DataFrame,
         questions.append({
             "id": f"unit::{rule}::{unit}",
             "group": "Unit inference rules",
-            "question": (f"“{rule}” with a bare % is being read as {unit.replace('percent_', '% ').replace('_', '/')}. "
-                         f"Keep that?"),
+            # A percent rule resolves an ambiguous "%"; a molar or millimolar rule fires
+            # when the text states no unit at all and the reagent's curated default is used.
+            # Saying "bare %" for the latter describes the wrong situation entirely.
+            "question": (
+                f"“{rule}” "
+                + ("with a bare %" if unit.startswith("percent") else "with no unit stated")
+                + f" is being read as {unit.replace('percent_', '% ').replace('_', '/')}. Keep that?"),
             "why": {
                 "guessed": "There is no chemistry to go on here, so the parser falls back to "
                            "w/v. This is the single largest guess in the pipeline.",
@@ -315,6 +320,10 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument("--out", type=Path,
                         default=config.INTERIM_DIR / "audit_questions.json")
     parser.add_argument("--max-per-group", type=int, default=DEFAULT_MAX_PER_GROUP)
+    parser.add_argument("--previous-answers", type=Path, default=None,
+                        help="drop questions already answered in this export")
+    parser.add_argument("--reask", action="append", default=None,
+                        help="force a question id back in even if already answered")
     args = parser.parse_args(argv)
 
     config.ensure_dirs()
@@ -327,6 +336,18 @@ def main(argv: Optional[list[str]] = None) -> int:
         m.add_input(config.ONTOLOGY_DIR / "synonyms.yaml")
 
         questions = build_questions(components, conditions, lexicon, args.max_per_group)
+
+        # Answered questions are dropped so a re-run shows only outstanding work. Ids given
+        # with --reask survive the filter: they were answered against a broken option list
+        # and the recorded answer is not usable.
+        n_before = len(questions)
+        answered: set[str] = set()
+        if args.previous_answers and args.previous_answers.exists():
+            previous = json.loads(args.previous_answers.read_text())
+            answered = {a["id"] for a in previous.get("answers", [])}
+            forced = set(args.reask or [])
+            questions = [q for q in questions
+                         if q["id"] not in answered or q["id"] in forced]
         covered = sum(q["weight"] for q in questions)
 
         payload = {
@@ -348,6 +369,8 @@ def main(argv: Optional[list[str]] = None) -> int:
             groups[q["group"]] = groups.get(q["group"], 0) + 1
 
         stats = {"n_questions": len(questions),
+                 "n_before_filter": n_before,
+                 "n_already_answered": len(answered),
                  "components_under_question": covered,
                  "share_of_components": round(covered / max(1, components.height), 4)}
         m.add_output(args.out).note(**stats, groups=groups)

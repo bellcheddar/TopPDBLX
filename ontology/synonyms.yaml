@@ -725,8 +725,12 @@ reagents:
     buffer_pka: 7.20
     hofmeister_rank: -3
     default_unit: molar
-    aliases: ["nah2po4", "na2hpo4", "sodium phosphate monobasic",
-              "sodium phosphate dibasic", "sodium phosphate buffer", "phosphate buffer"]
+    aliases: ["sodium phosphate buffer", "phosphate buffer", "sodium phosphate solution"]
+    note: >-
+      The buffer *system*, meaning the mono/dibasic pair titrated to a pH. The individual
+      protonation states are SODIUM_DIHYDROGEN_PHOSPHATE and DISODIUM_HYDROGEN_PHOSPHATE:
+      split out in the 2026-07-29 audit because as standalone reagents they are acidic and
+      basic respectively, not interchangeable.
 
   - canonical_id: POTASSIUM_PHOSPHATE
     display_name: Potassium phosphate
@@ -734,8 +738,48 @@ reagents:
     buffer_pka: 7.20
     hofmeister_rank: -3
     default_unit: molar
-    aliases: ["kh2po4", "k2hpo4", "potassium phosphate dibasic",
-              "potassium phosphate monobasic", "potassium phosphate buffer"]
+    aliases: ["potassium phosphate buffer", "potassium phosphate solution"]
+    note: >-
+      The buffer system. Split on the same basis as the sodium salts, so the released data
+      is not inconsistent between the two counter-ions.
+
+  - canonical_id: SODIUM_DIHYDROGEN_PHOSPHATE
+    display_name: Sodium dihydrogen phosphate
+    chem_class: buffer
+    buffer_pka: 7.20
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["nah2po4", "sodium phosphate monobasic", "monosodium phosphate",
+              "sodium dihydrogen phosphate", "nah2po4.h2o", "sodium phosphate monobasic monohydrate"]
+    note: Acidic in solution (about pH 4.5 at 0.1 M). pKa2 governs its buffering range.
+
+  - canonical_id: DISODIUM_HYDROGEN_PHOSPHATE
+    display_name: Disodium hydrogen phosphate
+    chem_class: buffer
+    buffer_pka: 7.20
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["na2hpo4", "sodium phosphate dibasic", "disodium phosphate",
+              "disodium hydrogen phosphate", "sodium hydrogen phosphate"]
+    note: Basic in solution (about pH 9 at 0.1 M).
+
+  - canonical_id: POTASSIUM_DIHYDROGEN_PHOSPHATE
+    display_name: Potassium dihydrogen phosphate
+    chem_class: buffer
+    buffer_pka: 7.20
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["kh2po4", "potassium phosphate monobasic", "monopotassium phosphate",
+              "potassium dihydrogen phosphate"]
+
+  - canonical_id: DIPOTASSIUM_HYDROGEN_PHOSPHATE
+    display_name: Dipotassium hydrogen phosphate
+    chem_class: buffer
+    buffer_pka: 7.20
+    hofmeister_rank: -3
+    default_unit: molar
+    aliases: ["k2hpo4", "potassium phosphate dibasic", "dipotassium phosphate",
+              "dipotassium hydrogen phosphate"]
 
   - canonical_id: SODIUM_POTASSIUM_PHOSPHATE
     display_name: Sodium potassium phosphate
