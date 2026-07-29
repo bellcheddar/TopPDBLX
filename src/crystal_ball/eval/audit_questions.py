@@ -156,6 +156,13 @@ def build_questions(components: pl.DataFrame, conditions: pl.DataFrame,
         if not (is_guess or is_contradiction or is_minority):
             continue
         options = [dict(o) for o in unit_options]
+        # The rule's current unit must always be offered, or the question cannot be
+        # answered "keep it". Molar and millimolar rules were previously given only the two
+        # percent options, so nothing was flagged recommended and the dropdown silently
+        # defaulted to the first entry.
+        if unit not in {o["value"] for o in options}:
+            options.insert(0, {"value": unit, "label": f"{unit} (what it does today)",
+                               "recommended": False})
         for option in options:
             option["recommended"] = option["value"] == unit
         if is_contradiction:

@@ -446,7 +446,7 @@ reagents:
     hofmeister_rank: -3
     default_unit: molar
     aliases: ["ammonium phosphate dibasic", "ammonium phosphate monobasic",
-              "(nh4)2hpo4", "nh4h2po4"]
+              "(nh4)2hpo4", "nh4h2po4", "ammonium dihydrogen phosphate"]
 
   - canonical_id: AMMONIUM_CITRATE
     display_name: Ammonium citrate
@@ -573,6 +573,14 @@ reagents:
     default_unit: percent_w_v
     aliases: []
 
+  - canonical_id: SODIUM_OXAMATE
+    display_name: Sodium oxamate
+    chem_class: salt
+    hofmeister_rank: -2
+    default_unit: molar
+    aliases: ["oxamate", "sodium oxamate hydrate"]
+    note: Added from the 2026-07-29 audit, 216 components.
+
   # ---------------------------------------------------------------- buffers
   # Several of these are simultaneously salts. Both fields are populated where that is
   # true: chem_class records how the reagent is normally used, hofmeister_rank records
@@ -657,7 +665,7 @@ reagents:
     chem_class: buffer
     buffer_pka: 8.35
     default_unit: molar
-    aliases: ["bicine-naoh"]
+    aliases: ["bicine-naoh", "bicine/naoh"]
 
   - canonical_id: TRICINE
     display_name: Tricine
@@ -694,7 +702,8 @@ reagents:
     hofmeister_rank: -2
     default_unit: molar
     aliases: ["na acetate", "na-acetate", "naoac", "naac", "naacetate",
-              "sodium acetate trihydrate", "acetic acid sodium salt"]
+              "sodium acetate trihydrate", "acetic acid sodium salt",
+              "acetate", "sodium acetate buffer"]
 
   - canonical_id: SODIUM_CITRATE
     display_name: Sodium citrate
@@ -704,7 +713,8 @@ reagents:
     default_unit: molar
     aliases: ["na citrate", "na-citrate", "nacitrate", "tri-sodium citrate",
               "trisodium citrate", "sodium citrate tribasic",
-              "sodium citrate tribasic dihydrate", "tri sodium citrate"]
+              "sodium citrate tribasic dihydrate", "tri sodium citrate",
+              "citrate"]
     note: >-
       Citrate is triprotic (3.13, 4.76, 6.40). The middle pKa is recorded; crystallisation
       citrate buffers are typically used between pH 4 and 6.
@@ -716,7 +726,7 @@ reagents:
     hofmeister_rank: -3
     default_unit: molar
     aliases: ["nah2po4", "na2hpo4", "sodium phosphate monobasic",
-              "sodium phosphate dibasic", "sodium phosphate buffer"]
+              "sodium phosphate dibasic", "sodium phosphate buffer", "phosphate buffer"]
 
   - canonical_id: POTASSIUM_PHOSPHATE
     display_name: Potassium phosphate
@@ -832,6 +842,16 @@ reagents:
     chem_class: organic
     default_unit: percent_v_v
     aliases: ["2,3 butanediol", "butane-2,3-diol"]
+
+  - canonical_id: BUTANEDIOL_14
+    display_name: 1,4-Butanediol
+    chem_class: organic
+    default_unit: percent_v_v
+    aliases: ["1,4 butanediol", "butane-1,4-diol", "1,4-butane diol"]
+    note: >-
+      A different compound from 2,3-butanediol, not an alias of it. The audit offered
+      BUTANEDIOL_23 as the closest fuzzy match and it was accepted, but the two isomers are
+      distinct reagents and merging them would be a chemistry error in the released data.
 
   - canonical_id: TERT_BUTANOL
     display_name: tert-Butanol
@@ -1016,6 +1036,14 @@ reagents:
     default_unit: molar
     aliases: ["li acetate", "lioac"]
 
+  - canonical_id: TRIS_BICINE
+    display_name: Tris/Bicine
+    chem_class: premix
+    default_unit: molar
+    premix_components: [TRIS, BICINE]
+    aliases: ["tris bicine", "bicine/tris", "tris-bicine"]
+    note: Mixed buffer system. Added from the 2026-07-29 audit, 220 components.
+
   - canonical_id: BORIC_ACID
     display_name: Boric acid
     chem_class: buffer
@@ -1036,6 +1064,15 @@ reagents:
     chem_class: other
     default_unit: percent_w_v
     aliases: ["jeffamine m 600", "jeffamine m600"]
+
+  - canonical_id: PEG_SMEAR_BROAD
+    display_name: PEG Smear Broad
+    chem_class: other
+    default_unit: percent_w_v
+    aliases: ["peg smear", "peg smear broad", "molecular dimensions peg smear broad"]
+    note: >-
+      A vendor mixture of several PEG molecular weights, so it has no single peg_mw and is
+      deliberately not chem_class peg. Added from the 2026-07-29 audit, 225 components.
 
   - canonical_id: PEI
     display_name: Polyethyleneimine

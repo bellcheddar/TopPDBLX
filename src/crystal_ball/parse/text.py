@@ -44,6 +44,10 @@ _SPLIT = re.compile(r"""
                          # "hepes/naoh" and "na/k phosphate" are untouched
       | \s+in\s+(?=\d)   # "50mM CaCl2 in 0.1M cacodylate": only before a digit, so
                          # "crystals grown in sitting drops" is left alone
+      | (?<=\bph\s{0,2}\d{1,2}(?:\.\d+)?)\s+(?=\d)
+                         # "25mM Tris/HCl pH 7.5 100mM NaCl": a pH declaration followed by a
+                         # further concentration ends the clause. Without this the whole tail
+                         # becomes one unresolvable reagent name and the NaCl is lost
       | \ \ +(?=\d)      # "glycol 6,000  100 mM citrate": depositors separate components
                          # with extra spaces. Requiring a following digit keeps it safe,
                          # since a new component almost always opens with a concentration

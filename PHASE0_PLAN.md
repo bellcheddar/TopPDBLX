@@ -718,6 +718,42 @@ everything above the cursor in one keystroke.
 `app/condition_courtroom_v3.html` implements this. It has **no CDN dependency at all**, so it
 works offline, unlike v1 and v2 which needed Tabulator from unpkg.
 
+### WP8 v4 and the completed audit, 2026-07-29
+
+v3's 919 items were still too many, because most needed no judgement at all. `eval.audit_questions`
+instead **detects only where the pipeline guessed, contradicted itself or refused to choose**, and
+computes candidate answers: **35 questions governing 33,198 components**, answered through
+pre-set dropdowns in `app/condition_courtroom_v4.html`.
+
+**Result of the audit (35 answered, 18 overriding the recommendation):**
+
+| Measure | Before | After |
+|---------|--------|-------|
+| Records kept | 181,103 (90.9%) | **182,640 (91.7%)** |
+| `NO_REAGENT_MATCH` discards | 10,537 | **9,075** |
+| Components resolved | 77.0% | **78.7%** |
+| Lexicon | 137 reagents | 141 reagents, 477 names |
+
+**Four answers were not applied as given**, because applying them would have put a known error
+into the released data:
+
+1. `1,4-butanediol` was accepted onto `BUTANEDIOL_23`, a different isomer, because the fuzzy
+   matcher offered it as the closest string. Created `BUTANEDIOL_14` instead.
+2. Two unit questions (981 components) were **unanswerable as posed**: the option list was
+   hardcoded to the two percent units, so molar and millimolar rules had no "keep it" choice and
+   the dropdown silently defaulted. Generator fixed; both need re-asking.
+3. The `peg <= 600` question conflated diol PEGs with monomethyl ethers: all 221 components are
+   PEG MME 500 and 550 falling back to their curated default, not a mis-inference.
+4. `tris/hcl ph 7.5 100mm nacl` was a **splitter bug**, not a missing reagent. Aliasing it to TRIS
+   would have masked the bug and discarded the NaCl. A pH declaration followed by another
+   concentration is now a clause boundary.
+
+**The most useful thing the audit taught was where a detector was wrong.** All ten "one reagent,
+two units" questions were answered "keep the minority": ammonium sulfate at millimolar, PEG 3350
+v/v, glycerol w/v, NaCl w/v. The detector assumed a dominant reading plus a small stubborn
+minority meant a misparse. It does not: those are real chemistry. 5,603 components are therefore
+positively validated rather than "corrected" into being wrong.
+
 ### WP9. Release
 **3 days. Depends on WP8.**
 

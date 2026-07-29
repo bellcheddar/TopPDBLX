@@ -113,11 +113,23 @@ def test_shipped_lexicon_resolves_real_corpus_spellings(shipped):
         assert index[spelling].canonical_id == expected, spelling
 
 
-def test_ambiguous_bare_anions_are_deliberately_unmapped(shipped):
-    """These vary by counter-ion; guessing would be worse than leaving them to curation."""
+def test_bare_anions_resolved_by_the_audit(shipped):
+    """Settled in the 2026-07-29 audit: where a counter-ion is conventional, map it."""
     index = shipped.index()
-    for bare in ("peg", "citrate", "acetate", "phosphate", "polyethylene glycol"):
-        assert bare not in index, f"{bare!r} should stay unmapped pending a decision"
+    assert index["citrate"].canonical_id == "SODIUM_CITRATE"
+    assert index["acetate"].canonical_id == "SODIUM_ACETATE"
+
+
+def test_genuinely_ambiguous_strings_stay_unmapped(shipped):
+    """The audit kept these unmapped, on two different grounds.
+
+    A bare PEG is missing its molecular weight, which is part of the reagent's identity
+    rather than a counter-ion convention. A bare phosphate genuinely varies between sodium,
+    potassium and mixed Na/K, and the choice changes the chemistry.
+    """
+    index = shipped.index()
+    for bare in ("peg", "polyethylene glycol", "peg mme", "phosphate"):
+        assert bare not in index, f"{bare!r} should stay unmapped"
 
 
 def test_every_peg_has_a_molecular_weight_and_a_unit(shipped):
