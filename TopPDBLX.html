@@ -1,0 +1,406 @@
+<h1>🔮 TopPDBLX</h1>
+<blockquote>
+<p><strong>Every crystallisation condition in the Protein Data Bank, parsed, normalised and linked to the sequence that produced it.</strong></p>
+</blockquote>
+<p><img alt="python" src="https://img.shields.io/badge/python-3.14-3776AB?logo=python&amp;logoColor=white"> <img alt="records" src="https://img.shields.io/badge/records-182%2C973-467FF7"> <img alt="components" src="https://img.shields.io/badge/components-594%2C756-467FF7"> <img alt="parse coverage" src="https://img.shields.io/badge/parse%20coverage-91.9%25-00897B"> <img alt="tests" src="https://img.shields.io/badge/tests-192%20passing-00897B"> <img alt="data" src="https://img.shields.io/badge/data-CC--BY--4.0-9b51e0"> <img alt="code" src="https://img.shields.io/badge/code-MIT-9b51e0"> <img alt="phase 0" src="https://img.shields.io/badge/phase%200-complete-fcb900"> <img alt="author" src="https://img.shields.io/badge/author-Marc%20C.%20Deller%2C%20D.Phil.-1C244B"></p>
+<table class="emd-info-table">
+<tr>
+<td>🌐 <b>Website</b></td><td><a href="https://marcdeller.com" target="_blank" rel="noopener noreferrer">marcdeller.com</a></td>
+<td>✉️ <b>Contact</b></td><td><a href="mailto:marc@marcdeller.com">marc@marcdeller.com</a></td>
+<td>🐙 <b>GitHub</b></td><td><a href="https://github.com/bellcheddar/TopPDBLX" target="_blank" rel="noopener noreferrer">bellcheddar/TopPDBLX</a></td>
+</tr>
+</table>
+
+<hr>
+<p>Parse, normalise and curate every crystallisation condition in the Protein Data Bank, and link each one to the sequence of the construct that produced it. TopPDBLX turns the free-text <code>_exptl_crystal_grow.pdbx_details</code> field into typed components (reagent, concentration, unit, role), cross-references them against published commercial screen formulations, and attaches MMseqs2 cluster identifiers so that redundancy can be controlled properly.</p>
+<p><strong>Why it matters:</strong> the strongest lever on crystallisation success is construct design and the second strongest is choosing a screen that suits the protein, yet both are still done by intuition, because all the precedent sits in a quarter of a million unstructured strings that nobody can query. Turning that text into data is the precondition for every downstream question worth asking. It is useful for: crystallographers planning a screen, structural genomics groups mining historical outcomes, method developers who need a benchmark, and anyone building models over crystallisation space.</p>
+<ul>
+<li>Project brief: <a href="toppdblx_spec_v1.md"><code>toppdblx_spec_v1.md</code></a></li>
+<li>Phase 0 implementation plan: <a href="PHASE0_PLAN.md"><code>PHASE0_PLAN.md</code></a></li>
+<li>Dataset datasheet: <a href="DATASHEET.md"><code>DATASHEET.md</code></a></li>
+</ul>
+<hr>
+<h2>✨ What it does</h2>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Capability</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Capability"><strong>Parses the whole archive</strong></td>
+<td data-label="Detail">199,185 crystallisation records from 198,691 PDB entries, keyed on <code>(pdb_id, crystal_id)</code></td>
+</tr>
+<tr>
+<td data-label="Capability"><strong>Typed components</strong></td>
+<td data-label="Detail">594,756 reagents with role, concentration, unit, PEG molecular weight, Hofmeister rank and buffer pKa</td>
+</tr>
+<tr>
+<td data-label="Capability"><strong>Accounts for every record</strong></td>
+<td data-label="Detail">Anything not parsed carries one of seven discard codes, with its raw text retained</td>
+</tr>
+<tr>
+<td data-label="Capability"><strong>Links to sequence</strong></td>
+<td data-label="Detail">195,985 records carry the construct sequence, UniProt accessions and cluster ids at 30%, 50% and 90% identity</td>
+</tr>
+<tr>
+<td data-label="Capability"><strong>Cross-references screens</strong></td>
+<td data-label="Detail">434 wells across 9 commercial screens, extracted verbatim from vendor support materials</td>
+</tr>
+<tr>
+<td data-label="Capability"><strong>Records its own uncertainty</strong></td>
+<td data-label="Detail">Inferred units, inferred cryoprotectant roles and pH attribution are flagged, never presented as fact</td>
+</tr>
+<tr>
+<td data-label="Capability"><strong>Reproducible by stage</strong></td>
+<td data-label="Detail">Every stage is one command and writes a manifest of input hashes, tool versions and git state</td>
+</tr>
+</tbody>
+</table></div>
+<h2>📊 Results</h2>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Measure</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Measure">Records</td>
+<td data-label="Value">199,185</td>
+</tr>
+<tr>
+<td data-label="Measure">Usable</td>
+<td data-label="Value"><strong>182,973 (91.9%)</strong></td>
+</tr>
+<tr>
+<td data-label="Measure">Components</td>
+<td data-label="Value">594,756, <strong>79.5% resolved</strong> to a canonical reagent</td>
+</tr>
+<tr>
+<td data-label="Measure">Reagent lexicon</td>
+<td data-label="Value">147 reagents, 501 names</td>
+</tr>
+<tr>
+<td data-label="Measure">Linked sequences</td>
+<td data-label="Value">195,985 across <strong>23,868</strong> distinct 30% identity clusters</td>
+</tr>
+<tr>
+<td data-label="Measure">Screen-well matches</td>
+<td data-label="Value">44,989 component-set matches, 20,004 agreeing on every concentration</td>
+</tr>
+<tr>
+<td data-label="Measure">Tests</td>
+<td data-label="Value">192 passing</td>
+</tr>
+</tbody>
+</table></div>
+<p>The project brief anticipated a rule-based parser plateauing near 75%. It reaches 91.9%, because most of the difficulty in this corpus turned out to be clause splitting rather than chemistry: newlines, double spaces, <code>in</code>, spaced slashes and stray brackets all separate components, and handling them properly recovered far more than chasing reagent names did.</p>
+<h3>Why records are discarded</h3>
+<p>Every X-ray record is accounted for: it either parsed or carries exactly one reason code.</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Reason</th>
+<th>Records</th>
+<th>Share</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Reason"><code>NO_REAGENT_MATCH</code></td>
+<td data-label="Records">8,774</td>
+<td data-label="Share">4.40%</td>
+</tr>
+<tr>
+<td data-label="Reason"><code>TOO_SHORT</code></td>
+<td data-label="Records">4,369</td>
+<td data-label="Share">2.19%</td>
+</tr>
+<tr>
+<td data-label="Reason"><code>METHOD_ONLY</code></td>
+<td data-label="Records">2,236</td>
+<td data-label="Share">1.12%</td>
+</tr>
+<tr>
+<td data-label="Reason"><code>UNPARSEABLE_RESIDUAL</code></td>
+<td data-label="Records">531</td>
+<td data-label="Share">0.27%</td>
+</tr>
+<tr>
+<td data-label="Reason"><code>REFERENCE_ONLY</code></td>
+<td data-label="Records">107</td>
+<td data-label="Share">0.05%</td>
+</tr>
+<tr>
+<td data-label="Reason"><code>NON_CRYSTALLISATION_TEXT</code></td>
+<td data-label="Records">104</td>
+<td data-label="Share">0.05%</td>
+</tr>
+<tr>
+<td data-label="Reason"><code>EMPTY</code></td>
+<td data-label="Records">91</td>
+<td data-label="Share">0.05%</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>REFERENCE_ONLY</code> at 107 records is worth noting: the brief expected "see publication" to be a major discard category, and it is negligible.</p>
+<h2>🔧 Installation</h2>
+<pre><code class="language-bash">git clone https://github.com/bellcheddar/TopPDBLX.git
+cd TopPDBLX
+python3.14 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m pip install -e '.[dev]'
+brew install mmseqs2          # required by the clustering stage
+</code></pre>
+<p>Large files live outside the repository. Point the data directories somewhere that is not inside an iCloud-synced folder, because macOS Optimize Mac Storage will silently evict them:</p>
+<pre><code class="language-bash">mkdir -p ~/TopPDBLXData/{raw,interim,processed}
+ln -sfn ~/TopPDBLXData/raw       data/raw
+ln -sfn ~/TopPDBLXData/interim   data/interim
+ln -sfn ~/TopPDBLXData/processed data/processed
+</code></pre>
+<h2>🚀 Usage</h2>
+<p>Every stage is a single command and writes its own manifest.</p>
+<pre><code class="language-bash">./run.sh --list                    # show all stages
+./run.sh ingest.entry_ids          # snapshot the PDB entry id list
+./run.sh ingest.fetch_entries      # batched GraphQL harvest (about 18 minutes)
+./run.sh ingest.flatten            # raw JSON to parquet
+./run.sh ingest.validate_fidelity  # gate: API text against archive mmCIF
+./run.sh parse.run_parser          # free text to typed components
+./run.sh assign.screen_match       # cross-reference commercial screens
+./run.sh link.representative       # one sequence per entry
+./run.sh link.cluster              # MMseqs2 at 30%, 50% and 90%
+./run.sh release.assemble          # build the released database
+./run.sh release.datasheet         # regenerate the datasheet
+</code></pre>
+<h3>Pipeline stages</h3>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Stage</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Stage"><code>ingest.entry_ids</code></td>
+<td data-label="Purpose">Snapshots the entry id list: this defines the archive version for the release</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>ingest.fetch_entries</code></td>
+<td data-label="Purpose">Batched GraphQL harvest, resumable, raw responses kept as provenance</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>ingest.flatten</code></td>
+<td data-label="Purpose">One row per <code>(pdb_id, crystal_id)</code>, never index 0 of the crystal-grow loop</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>ingest.validate_fidelity</code></td>
+<td data-label="Purpose">Byte-compares API text against archive mmCIF, including loop row counts</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>ingest.targettrack</code></td>
+<td data-label="Purpose">Acquires and checksums the archived TargetTrack negative set for Phase 3</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>parse.mine_reagents</code></td>
+<td data-label="Purpose">Ranks candidate reagent names by corpus mass, to drive lexicon curation</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>parse.lexicon_coverage</code></td>
+<td data-label="Purpose">Measures what share of the corpus the lexicon resolves</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>parse.run_parser</code></td>
+<td data-label="Purpose">The deterministic rule parser, over the whole archive</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>assign.build_screens</code></td>
+<td data-label="Purpose">Extracts screen formulations verbatim from vendor PDFs</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>assign.screen_match</code></td>
+<td data-label="Purpose">Matches parsed conditions to screen wells, schema to schema</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>link.representative</code></td>
+<td data-label="Purpose">Chooses one sequence per entry, never one per chain</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>link.cluster</code></td>
+<td data-label="Purpose">MMseqs2 clustering at three identity thresholds</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>link.sifts</code>, <code>link.uniprot</code></td>
+<td data-label="Purpose">PDB to UniProt mapping, and full-length reference sequences</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>eval.audit_questions</code></td>
+<td data-label="Purpose">Reduces the audit to the few dozen calls a human must actually make</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>eval.audit_metrics</code></td>
+<td data-label="Purpose">Turns hand verdicts into accuracy figures with Wilson intervals</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>release.assemble</code></td>
+<td data-label="Purpose">Builds the released database in five formats</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>release.snapshot</code></td>
+<td data-label="Purpose">Frozen 90 GB mmCIF archive, for the full-scale fidelity check</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>release.verify_archive</code></td>
+<td data-label="Purpose">Compares the parsed source field against the archive, for every entry</td>
+</tr>
+</tbody>
+</table></div>
+<h2>📦 Output</h2>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>File</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="File"><code>toppdblx-conditions-v0.1.0.jsonl.gz</code></td>
+<td data-label="Contents">Canonical form, one nested record per line</td>
+</tr>
+<tr>
+<td data-label="File"><code>toppdblx-conditions-v0.1.0.parquet</code></td>
+<td data-label="Contents">Record level, sequence linkage flattened on</td>
+</tr>
+<tr>
+<td data-label="File"><code>toppdblx-components-v0.1.0.parquet</code></td>
+<td data-label="Contents">One row per reagent</td>
+</tr>
+<tr>
+<td data-label="File"><code>toppdblx-components-v0.1.0.csv.gz</code></td>
+<td data-label="Contents">The same, for spreadsheets</td>
+</tr>
+<tr>
+<td data-label="File"><code>toppdblx.duckdb</code></td>
+<td data-label="Contents">Both tables, plus <code>usable_conditions</code> and <code>condition_components</code> views</td>
+</tr>
+<tr>
+<td data-label="File"><code>schema-v0.1.0-draft.json</code></td>
+<td data-label="Contents">JSON Schema, generated from the pydantic model</td>
+</tr>
+</tbody>
+</table></div>
+<pre><code class="language-sql">-- which reagents crystallise the widest range of protein families,
+-- without lysozyme and trypsin drowning the answer
+SELECT name_canonical,
+       count(DISTINCT cluster_30) AS families,
+       count(*) AS uses
+FROM condition_components
+WHERE name_canonical IS NOT NULL
+GROUP BY name_canonical
+ORDER BY families DESC
+LIMIT 10;
+</code></pre>
+<h2>🧱 Stack</h2>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Layer</th>
+<th>Choice</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Layer">Pipeline</td>
+<td data-label="Choice">Python 3.14, polars, pyarrow, duckdb, pydantic</td>
+</tr>
+<tr>
+<td data-label="Layer">Structure parsing</td>
+<td data-label="Choice">gemmi (mmCIF), used only for fidelity checking</td>
+</tr>
+<tr>
+<td data-label="Layer">Text</td>
+<td data-label="Choice"><code>regex</code>, for variable-width lookbehind and better unicode handling</td>
+</tr>
+<tr>
+<td data-label="Layer">Clustering</td>
+<td data-label="Choice">MMseqs2, shelled out</td>
+</tr>
+<tr>
+<td data-label="Layer">Interfaces</td>
+<td data-label="Choice">Single-file HTML and vanilla JavaScript, no build step</td>
+</tr>
+</tbody>
+</table></div>
+<h2>⚠️ Known limitations</h2>
+<p>These determine what conclusions the data can support, and are stated in full in <a href="DATASHEET.md"><code>DATASHEET.md</code></a>.</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Limitation</th>
+<th>Consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Limitation">The PDB contains only successes</td>
+<td data-label="Consequence">Supports P(condition given crystallised), says nothing about P(crystallised given sequence)</td>
+</tr>
+<tr>
+<td data-label="Limitation">Frequency reflects screen popularity</td>
+<td data-label="Consequence">A common condition is evidence about what was tried, not about what works best</td>
+</tr>
+<tr>
+<td data-label="Limitation">About 80% of percentage concentrations carry no w/v or v/v marker</td>
+<td data-label="Consequence">Where a unit was inferred it is flagged <code>unit_inferred</code>: filter on it before treating a unit as reported fact</td>
+</tr>
+<tr>
+<td data-label="Limitation">Only 2.2% of entries name a cryoprotectant explicitly</td>
+<td data-label="Consequence"><code>cryo_evidence</code> separates <code>explicit</code> from <code>inferred</code>, and four in five are inferences</td>
+</tr>
+<tr>
+<td data-label="Limitation">Depositor errors are reproduced, not corrected</td>
+<td data-label="Consequence">A handful of records state nanomolar concentrations of bulk reagents</td>
+</tr>
+<tr>
+<td data-label="Limitation">Screen matching cannot validate reagent naming</td>
+<td data-label="Consequence">Both sides use the same lexicon, so a systematic naming error moves both identically</td>
+</tr>
+</tbody>
+</table></div>
+<h2>✅ To Do</h2>
+<ul class="emd-tasklist">
+<li><span class="emd-check">&#9989;</span> Ingest the whole archive, with a byte-level fidelity gate</li>
+<li><span class="emd-check">&#9989;</span> Build the reagent lexicon, and the corpus mining that drives it</li>
+<li><span class="emd-check">&#9989;</span> Deterministic rule parser with a stable discard taxonomy</li>
+<li><span class="emd-check">&#9989;</span> Commercial screen library, extracted verbatim from vendor sources</li>
+<li><span class="emd-check">&#9989;</span> Sequence linkage and MMseqs2 redundancy control</li>
+<li><span class="emd-check">&#9989;</span> Decision-level audit interface, and applied expert corrections</li>
+<li><span class="emd-check">&#9989;</span> Assemble the release in five formats, with a generated datasheet</li>
+<li><span class="emd-check">&#9989;</span> Settle licensing: CC-BY-4.0 data, MIT code</li>
+<li><span class="emd-check">&#11036;</span> Complete the 90 GB archive snapshot and run the full-scale fidelity check</li>
+<li><span class="emd-check">&#11036;</span> Fine-tune SmolLM2 on the parse residual (20.5% of components still unresolved)</li>
+<li><span class="emd-check">&#11036;</span> Publish to Zenodo for a citable DOI, and mirror on HuggingFace Datasets</li>
+<li><span class="emd-check">&#11036;</span> Phase 1: curated condition ontology, with commercial screen cross-references</li>
+<li><span class="emd-check">&#11036;</span> Phase 2: homology retrieval recommender and browser front end</li>
+<li><span class="emd-check">&#11036;</span> Phase 3: learned recommender, construct designer, crystallisation propensity model</li>
+</ul>
+<h2>📄 Licence</h2>
+<p><strong>Data:</strong> Creative Commons Attribution 4.0 International, see <a href="LICENSE-DATA"><code>LICENSE-DATA</code></a>. <strong>Code:</strong> MIT, see <a href="LICENSE"><code>LICENSE</code></a>.</p>
+<p>Attributing TopPDBLX does not discharge the obligation to the sources it derives from: the Protein Data Bank (CC0), SIFTS and UniProt (both CC BY 4.0). Commercial screen formulations in <code>ontology/screens/</code> are transcriptions of vendor-published support materials, kept structurally separable so they can be withdrawn without breaking the release. Screen names are trademarks of their owners, used nominatively.</p>
+<p><strong>Cite as:</strong> Deller, M. C. (2026). TopPDBLX: a parsed, normalised and sequence-linked database of crystallisation conditions from the Protein Data Bank. Version 0.1.0.</p>
+<hr>
+<h2>👤 Author</h2>
+<p><strong>Marc C. Deller, D.Phil.</strong><br>
+Structural biologist &amp; drug discovery scientist  </p>
+<table class="emd-info-table">
+<tr>
+<td>🌐</td><td><a href="https://marcdeller.com" target="_blank" rel="noopener noreferrer">marcdeller.com</a></td>
+<td>✉️</td><td><a href="mailto:marc@marcdeller.com">marc@marcdeller.com</a></td>
+<td>🐙</td><td><a href="https://github.com/bellcheddar/TopPDBLX" target="_blank" rel="noopener noreferrer">github.com/bellcheddar/TopPDBLX</a></td>
+</tr>
+</table>
