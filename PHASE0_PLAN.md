@@ -833,7 +833,7 @@ for WP6 labelling as well as WP8 auditing, is what keeps this number down.
 | 12.4 | Multi-label ground truth: entry, 90% or 50% cluster | **No** | Phase 2. The only Phase 0 obligation is to ship 30%, 50% **and 90%** cluster ids so all three options stay open. Covered in WP7 |
 | 12.5 | Which TargetTrack transition counts as positive | **No** | Phase 3. But **acquire and checksum the dump in WP1**. It is archived and unmaintained, and losing it would end the propensity work. One hour now |
 | 12.6 | Include cryo-EM and NMR entries | **Yes, as ingest scope** | Agree with the spec: exclude from conditions, but ingest polymer entity sequences and UniProt links for **all** experimental entries (256,789 rather than 205,949). Adds about an hour to WP1 and avoids a full re-ingest when Phase 3 boundary work starts |
-| 12.7 | Licensing and hosting | **Yes, by week 5** | Recommend CC-BY-4.0 for data, MIT for code, Zenodo for the DOI, HuggingFace `Dellboy` as the working mirror, GitHub for code. Caveat: `ontology/screens/` is a transcription of vendor formulations. Formulations are published facts and citing the vendor is normal practice, but keep that directory separable so it can be pulled without breaking the release if anyone objects |
+| 12.7 | Licensing and hosting | **DECIDED 2026-07-29** | **CC-BY-4.0** for data (`LICENSE-DATA`), **MIT** for code (`LICENSE`), Zenodo for the citable DOI, HuggingFace `Dellboy` as the working mirror, GitHub for code. Upstream obligations stated explicitly: PDB (CC0), SIFTS and UniProt (CC BY 4.0). `ontology/screens/` carries its own README recording that it is a verbatim transcription of vendor support materials, is structurally separable, and that screen names are trademarks used nominatively |
 
 **A new decision, surfaced by the WP1 ingest and not anticipated in the spec.** 194 non-X-ray entries
 carry a populated `exptl_crystal_grow` record: neutron diffraction 88, electron crystallography 69,
@@ -885,4 +885,4 @@ Ingest route and 12.3 are decided, so the path is clear:
 
 Nothing downstream should start before the WP1 fidelity gate passes.
 
-Open, but not blocking today: **12.7** licensing and hosting, needed by week 5.
+All of section 12 is now resolved. 12.7 was settled on 2026-07-29: CC-BY-4.0 data, MIT code, Zenodo DOI, HuggingFace mirror.

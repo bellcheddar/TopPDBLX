@@ -143,12 +143,27 @@ value and refuses to guess its meaning.
 
 ## 6. Licence and citation
 
-**To be completed before public release (spec decision 12.7).** The intended terms are
-CC-BY-4.0 for the data and MIT for the code, with a Zenodo DOI and a HuggingFace mirror.
+**Data:** Creative Commons Attribution 4.0 International (`CC-BY-4.0`). Share and adapt for any
+purpose including commercially, with credit, a link to the licence, and an indication of
+changes. Full terms in `LICENSE-DATA`.
 
-One caveat needs a decision rather than a default: `ontology/screens/` is a transcription of
-published vendor formulations. Formulations are published facts and citing the vendor is
-normal practice, but that directory is kept structurally separable so it can be withdrawn
-without breaking the rest of the release.
+**Code:** MIT (`LICENSE`).
+
+**Cite as:** Deller, M. C. (2026). Crystal Ball: a parsed, normalised and sequence-linked
+database of crystallisation conditions from the Protein Data Bank. Version
+0.1.0-dev.
+
+**Cite the upstream sources too.** Attributing Crystal Ball does not discharge the obligation
+to the sources it derives from: the **Protein Data Bank** (every condition string and sequence
+originates there; PDB data are CC0), **SIFTS** and **UniProt** (both CC BY 4.0).
+
+**Commercial screen formulations.** `ontology/screens/` transcribes screen formulations from
+their vendors' own published support materials. Formulations are published facts and citing
+the originator is normal practice, but the directory is kept structurally separable: deleting
+it costs the `commercial_screen_match` field and nothing else. Screen names are trademarks of
+their owners, used nominatively.
+
+**Distribution:** Zenodo (versioned, with a DOI) as the citable archive, mirrored on
+HuggingFace Datasets under `Dellboy` for working access, with the code on GitHub.
 
 Author: Marc C. Deller, D.Phil.
