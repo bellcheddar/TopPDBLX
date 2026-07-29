@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Hand-audit tool for Crystal Ball crystallisation condition parses.">
+<meta name="author" content="Marc C. Deller, D.Phil.">
+<title>Condition Courtroom | Crystal Ball parse audit | Marc C. Deller</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/tabulator-tables@6.3.1/dist/css/tabulator.min.css" rel="stylesheet">
+<script src="https://unpkg.com/tabulator-tables@6.3.1/dist/js/tabulator.min.js"></script>
+<style>
+:root{
+  --md-primary:#1e73be; --md-primary-dark:#155a9c; --md-primary-light:#4a9fd4;
+  --md-bg:#ffffff; --md-bg-alt:#f4f7fb; --md-surface:#ffffff; --md-border:#dde4ed;
+  --md-text:#1a1a2e; --md-text-muted:#6b7c93; --md-text-light:#ffffff;
+  --md-accent-green:#00d084; --md-accent-orange:#ff6900;
+  --md-accent-purple:#9b51e0; --md-accent-amber:#fcb900;
+  --md-shadow-sm:6px 6px 9px rgba(0,0,0,0.12);
+  --md-shadow-md:12px 12px 50px rgba(0,0,0,0.18);
+  --md-radius:8px; --md-radius-lg:16px;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;overflow-x:hidden;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+     font-size:15px;line-height:1.6;color:var(--md-text);background:var(--md-bg-alt)}
+code,pre,.mono{font-family:'Roboto Mono',monospace}
+
+/* header */
+.md-header{background:linear-gradient(135deg,var(--md-primary-dark) 0%,var(--md-primary) 100%);
+  color:var(--md-text-light);box-shadow:var(--md-shadow-sm);position:sticky;top:0;z-index:100}
+.md-header-inner{max-width:1400px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;
+  gap:16px;flex-wrap:wrap}
+.md-header-brand a{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.9);
+  text-decoration:none;font-weight:600;font-size:13px;letter-spacing:.02em;transition:color .2s;white-space:nowrap}
+.md-header-brand a:hover{color:#fff}
+.md-logo-dot{width:10px;height:10px;background:var(--md-accent-amber);border-radius:50%;flex-shrink:0}
+.md-header-title{flex:1;min-width:0}
+.md-header-title h1{font-size:16px;font-weight:700;color:#fff;margin:0;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.md-header-links{display:flex;gap:10px;flex-shrink:0;flex-wrap:wrap}
+.md-header-links a{color:rgba(255,255,255,.85);text-decoration:none;font-size:12px;padding:4px 12px;
+  border:1px solid rgba(255,255,255,.3);border-radius:20px;transition:all .2s;white-space:nowrap}
+.md-header-links a:hover{background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.6)}
+
+.md-main{max-width:1400px;margin:0 auto;padding:20px 24px 60px}
+.md-card{background:var(--md-surface);border:1px solid var(--md-border);border-radius:var(--md-radius);
+  padding:20px;box-shadow:var(--md-shadow-sm)}
+
+/* drop zone */
+#dropzone{border:2px dashed var(--md-primary-light);border-radius:var(--md-radius-lg);
+  padding:56px 24px;text-align:center;background:var(--md-surface);transition:all .2s;cursor:pointer}
+#dropzone.hot{background:#eaf3fb;border-color:var(--md-primary);transform:scale(1.01)}
+#dropzone h2{margin:0 0 8px;font-size:20px}
+#dropzone p{color:var(--md-text-muted);margin:4px 0}
+.btn{display:inline-block;background:var(--md-primary);color:#fff;border:none;border-radius:var(--md-radius);
+  padding:9px 18px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .2s}
+.btn:hover{background:var(--md-primary-dark)}
+.btn:disabled{background:var(--md-border);color:var(--md-text-muted);cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--md-primary);border:1px solid var(--md-border)}
+.btn.ghost:hover{background:var(--md-bg-alt)}
+.btn.green{background:var(--md-accent-green);color:#06301f}
+.btn.green:hover{filter:brightness(.93)}
+.btn.orange{background:var(--md-accent-orange)}
+.btn.orange:hover{filter:brightness(.93)}
+
+/* toolbar */
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.toolbar select,.toolbar input[type=search]{padding:8px 10px;border:1px solid var(--md-border);
+  border-radius:var(--md-radius);font-family:inherit;font-size:13px;background:#fff;color:var(--md-text)}
+.progress-wrap{flex:1;min-width:180px}
+.progress-bar{height:10px;background:var(--md-border);border-radius:6px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--md-primary),var(--md-accent-green));
+  width:0;transition:width .3s}
+.progress-label{font-size:12px;color:var(--md-text-muted);margin-top:4px}
+
+/* layout */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.raw{background:#0f1626;color:#e8eefc;border-radius:var(--md-radius);padding:18px;
+  font-family:'Roboto Mono',monospace;font-size:15px;line-height:1.75;white-space:pre-wrap;
+  word-break:break-word;min-height:120px;border-left:5px solid var(--md-accent-amber)}
+.meta-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;padding:3px 10px;border-radius:20px;
+  background:var(--md-bg-alt);border:1px solid var(--md-border);color:var(--md-text-muted);white-space:nowrap}
+.pill.strong{background:#eaf3fb;border-color:var(--md-primary-light);color:var(--md-primary-dark);font-weight:600}
+.pill.warn{background:#fff4e6;border-color:var(--md-accent-orange);color:#a33f00}
+.pill.bad{background:#ffe9e9;border-color:#e05252;color:#a11}
+.pill.good{background:#e6faf2;border-color:var(--md-accent-green);color:#06663f}
+
+h3.section{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--md-text-muted);
+  margin:0 0 10px;font-weight:700}
+
+/* component list */
+.comp{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;
+  border:1px solid var(--md-border);border-radius:var(--md-radius);padding:10px 12px;margin-bottom:8px;
+  cursor:pointer;transition:all .15s;background:#fff}
+.comp:hover{border-color:var(--md-primary-light);background:#fafcff}
+.comp.bad{border-color:#e05252;background:#fff5f5}
+.comp.bad .comp-name{text-decoration:line-through;text-decoration-color:#e05252}
+.comp-flag{width:22px;height:22px;border-radius:5px;border:2px solid var(--md-border);
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.comp.bad .comp-flag{background:#e05252;border-color:#e05252}
+.comp-name{font-weight:600;font-size:14px}
+.comp-sub{font-size:12px;color:var(--md-text-muted);font-family:'Roboto Mono',monospace}
+.comp-conc{font-family:'Roboto Mono',monospace;font-size:13.5px;text-align:right;white-space:nowrap}
+.inferred{color:var(--md-accent-orange);font-weight:700}
+.unresolved{color:#a11;font-style:italic}
+
+/* verdict */
+.verdict{position:sticky;bottom:0;background:var(--md-surface);border-top:2px solid var(--md-border);
+  padding:14px 0 0;margin-top:18px}
+.verdict-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tag{font-size:12px;padding:5px 11px;border-radius:20px;border:1px solid var(--md-border);
+  background:#fff;cursor:pointer;user-select:none;transition:all .15s;font-family:inherit;color:var(--md-text)}
+.tag:hover{border-color:var(--md-primary-light)}
+.tag.on{background:var(--md-primary);color:#fff;border-color:var(--md-primary)}
+.tag kbd{opacity:.65;font-size:10px;margin-left:3px}
+kbd{font-family:'Roboto Mono',monospace;background:var(--md-bg-alt);border:1px solid var(--md-border);
+  border-radius:4px;padding:1px 5px;font-size:11px}
+textarea{width:100%;padding:9px;border:1px solid var(--md-border);border-radius:var(--md-radius);
+  font-family:inherit;font-size:13px;resize:vertical;min-height:52px;color:var(--md-text)}
+.hint{font-size:12px;color:var(--md-text-muted);margin-top:10px}
+.empty{text-align:center;padding:40px;color:var(--md-text-muted)}
+.md-footer{text-align:center;padding:20px;color:var(--md-text-muted);font-size:13px}
+.md-footer a{color:var(--md-primary)}
+#recordTable{margin-top:18px}
+.stat-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin-bottom:14px}
+.stat{background:var(--md-bg-alt);border:1px solid var(--md-border);border-radius:var(--md-radius);padding:10px 12px}
+.stat .n{font-size:20px;font-weight:700;color:var(--md-primary-dark);line-height:1.2}
+.stat .l{font-size:11px;color:var(--md-text-muted);text-transform:uppercase;letter-spacing:.05em}
+
+@media (max-width:900px){ .split{grid-template-columns:1fr} }
+@media (max-width:768px){
+  .md-card{padding:14px} .md-main{padding:14px}
+  .md-header-inner{padding:10px 16px;gap:8px}
+  .md-header-title h1{font-size:14px}
+  .md-logo-text{display:none}
+  .md-header-links a{font-size:11px;padding:3px 8px}
+  .hide-mobile{display:none!important}
+  .raw{font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<header class="md-header">
+  <div class="md-header-inner">
+    <div class="md-header-brand">
+      <a href="https://marcdeller.com" target="_blank" rel="noopener noreferrer">
+        <span class="md-logo-dot"></span>
+        <span class="md-logo-text">Marc C. Deller, D.Phil.</span>
+      </a>
+    </div>
+    <div class="md-header-title"><h1>Condition Courtroom &middot; Crystal Ball parse audit</h1></div>
+    <div class="md-header-links">
+      <a href="https://marcdeller.com" target="_blank" rel="noopener noreferrer">🌐 marcdeller.com</a>
+      <a href="mailto:marc@marcdeller.com">✉️ marc@marcdeller.com</a>
+    </div>
+  </div>
+</header>
+
+<main class="md-main">
+
+  <section id="loader">
+    <div id="dropzone" role="button" tabindex="0" aria-label="Load audit sample JSON">
+      <h2>⚖️ Drop <code>audit_sample.json</code> here</h2>
+      <p>or click to choose a file</p>
+      <p style="font-size:13px;margin-top:14px">
+        Produced by <code>./run.sh eval.sample_audit</code> &middot;
+        found in <code>data/interim/</code>
+      </p>
+      <input type="file" id="fileInput" accept=".json,application/json" hidden>
+    </div>
+    <p class="hint" id="resumeNote" style="text-align:center"></p>
+  </section>
+
+  <section id="workspace" hidden>
+    <div class="toolbar">
+      <button class="btn ghost" id="prevBtn" aria-label="Previous record">← Prev</button>
+      <button class="btn ghost" id="nextBtn" aria-label="Next record">Next →</button>
+      <select id="filterSelect" aria-label="Filter records">
+        <option value="unaudited">Unaudited only</option>
+        <option value="all">All records</option>
+        <option value="incorrect">Marked incorrect</option>
+        <option value="correct">Marked correct</option>
+      </select>
+      <select id="stratumSelect" aria-label="Filter by stratum"><option value="">Every stratum</option></select>
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-label" id="progressLabel">0 of 0 audited</div>
+      </div>
+      <button class="btn green" id="exportBtn">⬇ Export verdicts</button>
+      <button class="btn ghost hide-mobile" id="resetBtn">Reset</button>
+    </div>
+
+    <div class="stat-grid" id="statGrid"></div>
+
+    <div class="md-card">
+      <div class="split">
+        <div>
+          <h3 class="section">Raw <code>pdbx_details</code> as deposited</h3>
+          <div class="raw" id="rawText"></div>
+          <div class="meta-row" id="metaRow"></div>
+        </div>
+        <div>
+          <h3 class="section">Parsed components <span style="text-transform:none;font-weight:400">(click any row that is wrong)</span></h3>
+          <div id="componentList"></div>
+          <div id="screenMatch"></div>
+        </div>
+      </div>
+
+      <div class="verdict">
+        <div class="verdict-row" style="margin-bottom:10px">
+          <button class="btn green" id="correctBtn">✓ Correct <kbd>C</kbd></button>
+          <button class="btn orange" id="incorrectBtn">✗ Incorrect <kbd>X</kbd></button>
+          <button class="btn ghost" id="skipBtn">Skip <kbd>S</kbd></button>
+          <span id="verdictState" class="pill"></span>
+        </div>
+        <div class="verdict-row" id="errorTags"></div>
+        <div style="margin-top:10px">
+          <textarea id="notes" placeholder="Notes: what is wrong, and what the right answer is (optional)"></textarea>
+        </div>
+        <p class="hint">
+          <kbd>←</kbd><kbd>→</kbd> navigate &middot; <kbd>C</kbd> correct &middot; <kbd>X</kbd> incorrect &middot;
+          <kbd>S</kbd> skip &middot; <kbd>1</kbd>–<kbd>9</kbd> toggle an error tag &middot;
+          <kbd>Shift</kbd>+<kbd>1..9</kbd> flag that component. Work is saved in this browser automatically.
+        </p>
+      </div>
+    </div>
+
+    <div class="md-card" id="recordTable"></div>
+  </section>
+</main>
+
+<footer class="md-footer">
+  Built by <a href="https://marcdeller.com" target="_blank" rel="noopener noreferrer">Marc C. Deller, D.Phil.</a>
+  &middot; <a href="mailto:marc@marcdeller.com">marc@marcdeller.com</a>
+  &middot; Condition Courtroom v2
+</footer>
+
+<script>
+/* ------------------------------------------------------------------ config */
+// Error tags map onto the metrics WP8 has to produce, so they are fixed rather
+// than free text: per-field accuracy needs to know *which* field was wrong.
+const ERROR_TAGS = [
+  {id:'name',        label:'Reagent name'},
+  {id:'concentration',label:'Concentration'},
+  {id:'unit',        label:'Unit (w/v vs v/v)'},
+  {id:'role',        label:'Role'},
+  {id:'ph',          label:'pH or pH source'},
+  {id:'temperature', label:'Temperature'},
+  {id:'missing',     label:'Component missing'},
+  {id:'extra',       label:'Extra component'},
+  {id:'discard',     label:'Keep/discard call'}
+];
+const STORAGE_PREFIX = 'crystalball.courtroom.';
+
+/* ------------------------------------------------------------------- state */
+let DATA = null;            // the loaded sample payload
+let ORDER = [];             // indices into DATA.records, after filtering
+let cursor = 0;             // position within ORDER
+let verdicts = {};          // key -> verdict object
+let storageKey = null;
+let table = null;
+
+const $ = id => document.getElementById(id);
+const keyOf = r => `${r.pdb_id}/${r.crystal_id}`;
+const current = () => DATA.records[ORDER[cursor]];
+
+/* ------------------------------------------------------------- persistence */
+function save(){
+  if(!storageKey) return;
+  try{ localStorage.setItem(storageKey, JSON.stringify(verdicts)); }
+  catch(e){ console.warn('could not save to localStorage', e); }
+}
+function load(){
+  if(!storageKey) return {};
+  try{ return JSON.parse(localStorage.getItem(storageKey) || '{}'); }
+  catch(e){ return {}; }
+}
+
+/* -------------------------------------------------------------- data entry */
+function ingest(payload){
+  if(!payload || !Array.isArray(payload.records))
+    throw new Error('That file has no "records" array. Expected the output of ./run.sh eval.sample_audit.');
+  DATA = payload;
+  storageKey = STORAGE_PREFIX + (payload.seed ?? 'nokey');
+  verdicts = load();
+  $('loader').hidden = true;
+  $('workspace').hidden = false;
+  buildStratumOptions();
+  applyFilter();
+  render();
+  // Deferred to the next frame: Tabulator measures its container, and #workspace was
+  // unhidden in this same tick, so the browser has not laid it out yet. In Safari that
+  // surfaces as "null is not an object (evaluating 'e.offsetWidth')".
+  requestAnimationFrame(() => {
+    try{
+      buildTable();
+    }catch(err){
+      console.error('record index unavailable:', err);
+      $('recordTable').innerHTML =
+        '<div class="empty">Record index unavailable (' + err.message + ').' +
+        '<br>Auditing is unaffected: use the arrow keys or the Prev/Next buttons.</div>';
+    }
+  });
+}
+
+function readFile(file){
+  if(!file) return;
+  if(!/\.json$/i.test(file.name)){
+    alert('Please choose a .json file (the output of ./run.sh eval.sample_audit).');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => {
+    let payload;
+    try{
+      payload = JSON.parse(e.target.result);
+    }catch(err){
+      alert('That file is not valid JSON:\n\n' + err.message);
+      return;
+    }
+    // Rendering failures are reported separately: conflating them with a parse error
+    // sends you looking at the data when the bug is in this page.
+    try{
+      ingest(payload);
+    }catch(err){
+      console.error(err);
+      alert('The file loaded, but the page failed to render it:\n\n' + err.message +
+            '\n\nThis is a bug in the tool, not in your data.');
+    }
+  };
+  reader.onerror = () => alert('Could not read that file.');
+  reader.readAsText(file);
+}
+
+/* ---------------------------------------------------------------- filtering */
+function buildStratumOptions(){
+  const seen = new Set();
+  DATA.records.forEach(r => seen.add(r.stratum.leading_class));
+  const select = $('stratumSelect');
+  [...seen].sort().forEach(v => {
+    const option = document.createElement('option');
+    option.value = v; option.textContent = v;
+    select.appendChild(option);
+  });
+}
+
+function applyFilter(){
+  const mode = $('filterSelect').value;
+  const stratum = $('stratumSelect').value;
+  ORDER = DATA.records.map((r,i) => i).filter(i => {
+    const r = DATA.records[i];
+    if(stratum && r.stratum.leading_class !== stratum) return false;
+    const v = verdicts[keyOf(r)];
+    if(mode === 'unaudited')  return !v || v.verdict === 'skipped';
+    if(mode === 'incorrect')  return v && v.verdict === 'incorrect';
+    if(mode === 'correct')    return v && v.verdict === 'correct';
+    return true;
+  });
+  if(ORDER.length === 0) ORDER = DATA.records.map((r,i) => i);
+  cursor = Math.min(cursor, ORDER.length - 1);
+}
+
+/* ----------------------------------------------------------------- rendering */
+function fmtConc(c){
+  if(c.concentration === null || c.concentration === undefined) return '<span style="color:#9aa">no value</span>';
+  const unit = (c.unit || '').replace('percent_w_v','% w/v').replace('percent_v_v','% v/v')
+    .replace('percent_unspecified','%').replace('millimolar','mM').replace('micromolar','µM')
+    .replace('nanomolar','nM').replace('molar','M').replace('mg_ml','mg/ml').replace('g_l','g/l');
+  const star = c.unit_inferred ? '<span class="inferred" title="unit inferred from chemistry, not stated in the text">*</span>' : '';
+  const range = c.concentration_is_range ? ' <span style="color:#9aa">(range)</span>' : '';
+  return `${(+c.concentration).toLocaleString(undefined,{maximumFractionDigits:3})} ${unit}${star}${range}`;
+}
+
+function renderComponents(record, verdict){
+  const host = $('componentList');
+  host.innerHTML = '';
+  if(!record.components.length){
+    host.innerHTML = '<div class="empty">No components parsed from this record.</div>';
+    return;
+  }
+  record.components.forEach((c, i) => {
+    const bad = (verdict.bad_components || []).includes(i);
+    const row = document.createElement('div');
+    row.className = 'comp' + (bad ? ' bad' : '');
+    row.setAttribute('role','button');
+    row.setAttribute('tabindex','0');
+    row.setAttribute('aria-pressed', bad ? 'true' : 'false');
+    const name = c.name_canonical
+      ? `<span class="comp-name">${c.name_canonical}</span>`
+      : `<span class="comp-name unresolved">unresolved</span>`;
+    const cryo = c.cryo_evidence
+      ? ` <span class="pill ${c.cryo_evidence === 'explicit' ? 'good' : 'warn'}" style="padding:1px 7px">cryo: ${c.cryo_evidence}</span>` : '';
+    row.innerHTML = `
+      <div class="comp-flag">${bad ? '✗' : ''}</div>
+      <div>
+        ${name} <span class="pill" style="padding:1px 8px">${c.role}</span>${cryo}
+        <div class="comp-sub">“${(c.name_raw||'').replace(/</g,'&lt;')}”</div>
+      </div>
+      <div class="comp-conc">${fmtConc(c)}</div>`;
+    row.addEventListener('click', () => toggleComponent(i));
+    row.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggleComponent(i);} });
+    host.appendChild(row);
+  });
+}
+
+function renderMeta(record){
+  const bits = [];
+  bits.push(`<span class="pill strong">${record.pdb_id} · form ${record.crystal_id}</span>`);
+  bits.push(`<span class="pill">${record.stratum.leading_class}</span>`);
+  bits.push(`<span class="pill">${record.stratum.era}</span>`);
+  bits.push(`<span class="pill">confidence ${(+record.parse_confidence).toFixed(2)}</span>`);
+  if(record.ph !== null && record.ph !== undefined)
+    bits.push(`<span class="pill">pH ${record.ph} <em style="opacity:.7">(${record.ph_source})</em></span>`);
+  if(record.ph_reported !== null && record.ph_reported !== undefined && record.ph_reported !== record.ph)
+    bits.push(`<span class="pill warn">mmCIF pH ${record.ph_reported}</span>`);
+  if(record.temperature_k) bits.push(`<span class="pill">${record.temperature_k} K</span>`);
+  if(record.discard_reason) bits.push(`<span class="pill bad">discarded: ${record.discard_reason}</span>`);
+  (record.flags||[]).forEach(f => bits.push(`<span class="pill">${f}</span>`));
+  $('metaRow').innerHTML = bits.join('');
+
+  const sm = record.screen_match;
+  $('screenMatch').innerHTML = sm
+    ? `<div class="pill good" style="margin-top:12px">🧪 matches ${sm.screen} well ${sm.well} (${sm.match_type.replace(/_/g,' ')})</div>`
+    : '';
+}
+
+function renderTags(verdict){
+  const host = $('errorTags');
+  host.innerHTML = '';
+  ERROR_TAGS.forEach((tag, i) => {
+    const on = (verdict.errors || []).includes(tag.id);
+    const button = document.createElement('button');
+    button.className = 'tag' + (on ? ' on' : '');
+    button.type = 'button';
+    button.setAttribute('aria-pressed', on ? 'true' : 'false');
+    button.innerHTML = `${tag.label}<kbd>${i+1}</kbd>`;
+    button.addEventListener('click', () => toggleTag(tag.id));
+    host.appendChild(button);
+  });
+}
+
+function render(){
+  if(!DATA || !ORDER.length) return;
+  const record = current();
+  const verdict = verdicts[keyOf(record)] || {};
+  $('rawText').textContent = record.raw_details || '(no details string in this entry)';
+  renderMeta(record);
+  renderComponents(record, verdict);
+  renderTags(verdict);
+  $('notes').value = verdict.notes || '';
+
+  const state = $('verdictState');
+  if(verdict.verdict === 'correct'){ state.className = 'pill good'; state.textContent = '✓ marked correct'; }
+  else if(verdict.verdict === 'incorrect'){ state.className = 'pill bad'; state.textContent = '✗ marked incorrect'; }
+  else if(verdict.verdict === 'skipped'){ state.className = 'pill warn'; state.textContent = 'skipped'; }
+  else { state.className = 'pill'; state.textContent = 'not yet judged'; }
+
+  updateProgress();
+  if(table) table.redraw();
+}
+
+function updateProgress(){
+  const judged = Object.values(verdicts).filter(v => v.verdict === 'correct' || v.verdict === 'incorrect').length;
+  const total = DATA.records.length;
+  $('progressFill').style.width = (100 * judged / total).toFixed(1) + '%';
+  $('progressLabel').textContent =
+    `${judged.toLocaleString()} of ${total.toLocaleString()} judged · showing ${cursor+1} of ${ORDER.length} in this filter`;
+
+  const correct = Object.values(verdicts).filter(v => v.verdict === 'correct').length;
+  const incorrect = Object.values(verdicts).filter(v => v.verdict === 'incorrect').length;
+  const rate = judged ? (100 * correct / judged).toFixed(1) + '%' : '—';
+  $('statGrid').innerHTML = `
+    <div class="stat"><div class="n">${judged.toLocaleString()}</div><div class="l">judged</div></div>
+    <div class="stat"><div class="n">${correct.toLocaleString()}</div><div class="l">correct</div></div>
+    <div class="stat"><div class="n">${incorrect.toLocaleString()}</div><div class="l">incorrect</div></div>
+    <div class="stat"><div class="n">${rate}</div><div class="l">accuracy so far</div></div>
+    <div class="stat"><div class="n">${(total - judged).toLocaleString()}</div><div class="l">remaining</div></div>`;
+}
+
+/* ------------------------------------------------------------------ actions */
+function ensure(record){
+  const key = keyOf(record);
+  if(!verdicts[key]) verdicts[key] = {pdb_id:record.pdb_id, crystal_id:record.crystal_id,
+                                      verdict:null, errors:[], bad_components:[], notes:''};
+  return verdicts[key];
+}
+function setVerdict(kind){
+  const record = current();
+  const verdict = ensure(record);
+  verdict.verdict = kind;
+  verdict.audited_at = new Date().toISOString();
+  save(); render();
+  if(kind !== 'skipped') setTimeout(() => step(1), 120);
+}
+function toggleTag(id){
+  const verdict = ensure(current());
+  const at = verdict.errors.indexOf(id);
+  if(at >= 0) verdict.errors.splice(at,1); else verdict.errors.push(id);
+  // Tagging an error is itself a judgement that the record is wrong.
+  if(verdict.errors.length && verdict.verdict !== 'incorrect') verdict.verdict = 'incorrect';
+  verdict.audited_at = new Date().toISOString();
+  save(); render();
+}
+function toggleComponent(i){
+  const verdict = ensure(current());
+  const at = verdict.bad_components.indexOf(i);
+  if(at >= 0) verdict.bad_components.splice(at,1); else verdict.bad_components.push(i);
+  if(verdict.bad_components.length && verdict.verdict !== 'incorrect') verdict.verdict = 'incorrect';
+  verdict.audited_at = new Date().toISOString();
+  save(); render();
+}
+function step(delta){
+  if(!ORDER.length) return;
+  cursor = Math.max(0, Math.min(ORDER.length - 1, cursor + delta));
+  render();
+}
+
+function exportVerdicts(){
+  const judged = Object.values(verdicts).filter(v => v.verdict);
+  if(!judged.length){ alert('Nothing judged yet.'); return; }
+  const payload = {
+    tool: 'condition_courtroom_v2',
+    sample_seed: DATA.seed,
+    schema_version: DATA.schema_version,
+    exported_at: new Date().toISOString(),
+    n_records_in_sample: DATA.records.length,
+    n_judged: judged.length,
+    verdicts: judged
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 1)], {type:'application/json'});
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `audit_verdicts_seed${DATA.seed}.json`;
+  document.body.appendChild(link); link.click(); document.body.removeChild(link);
+  URL.revokeObjectURL(link.href);
+}
+
+/* -------------------------------------------------------------------- table */
+function buildTable(){
+  if(typeof Tabulator === 'undefined'){
+    $('recordTable').innerHTML =
+      '<div class="empty">Record index needs Tabulator from the CDN, which did not load ' +
+      '(offline?).<br>Auditing is unaffected: use the arrow keys or the Prev/Next buttons.</div>';
+    return;
+  }
+  table = new Tabulator('#recordTable', {
+    data: DATA.records.map((r,i) => ({
+      idx:i, pdb:r.pdb_id, form:r.crystal_id,
+      cls:r.stratum.leading_class, era:r.stratum.era,
+      conf:+(+r.parse_confidence).toFixed(2),
+      outcome:r.stratum.outcome,
+      details:(r.raw_details||'').slice(0,90)
+    })),
+    height:'320px', layout:'fitColumns', placeholder:'No records',
+    initialSort:[{column:'pdb', dir:'asc'}],
+    columns:[
+      {title:'Verdict', width:88, hozAlign:'center', headerSort:false,
+       formatter:cell => {
+         const r = DATA.records[cell.getRow().getData().idx];
+         const v = verdicts[keyOf(r)];
+         if(!v || !v.verdict) return '<span style="color:#b6c0cf">—</span>';
+         if(v.verdict === 'correct')   return '<span style="color:#06663f;font-weight:700">✓</span>';
+         if(v.verdict === 'incorrect') return '<span style="color:#a11;font-weight:700">✗</span>';
+         return '<span style="color:#a36">skip</span>';
+       }},
+      {title:'PDB', field:'pdb', width:82},
+      {title:'Form', field:'form', width:64, hozAlign:'center'},
+      {title:'Class', field:'cls', width:100},
+      {title:'Era', field:'era', width:96},
+      {title:'Conf', field:'conf', width:78, hozAlign:'right'},
+      {title:'Outcome', field:'outcome', width:150},
+      {title:'Details', field:'details', widthGrow:3}
+    ]
+  });
+  table.on('rowClick', (e, row) => {
+    const target = ORDER.indexOf(row.getData().idx);
+    if(target >= 0){ cursor = target; render(); }
+    else { $('filterSelect').value = 'all'; applyFilter();
+           cursor = ORDER.indexOf(row.getData().idx); render(); }
+  });
+}
+
+/* ------------------------------------------------------------------- events */
+document.addEventListener('DOMContentLoaded', () => {
+  const zone = $('dropzone'), input = $('fileInput');
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); input.click(); } });
+  input.addEventListener('change', e => readFile(e.target.files[0]));
+  ['dragenter','dragover'].forEach(t => zone.addEventListener(t, e => {
+    e.preventDefault(); zone.classList.add('hot'); }));
+  ['dragleave','drop'].forEach(t => zone.addEventListener(t, e => {
+    e.preventDefault(); zone.classList.remove('hot'); }));
+  zone.addEventListener('drop', e => readFile(e.dataTransfer.files[0]));
+
+  $('prevBtn').addEventListener('click', () => step(-1));
+  $('nextBtn').addEventListener('click', () => step(1));
+  $('correctBtn').addEventListener('click', () => setVerdict('correct'));
+  $('incorrectBtn').addEventListener('click', () => setVerdict('incorrect'));
+  $('skipBtn').addEventListener('click', () => setVerdict('skipped'));
+  $('exportBtn').addEventListener('click', exportVerdicts);
+  $('filterSelect').addEventListener('change', () => { cursor = 0; applyFilter(); render(); });
+  $('stratumSelect').addEventListener('change', () => { cursor = 0; applyFilter(); render(); });
+  $('notes').addEventListener('input', e => {
+    const verdict = ensure(current()); verdict.notes = e.target.value; save();
+  });
+  $('resetBtn').addEventListener('click', () => {
+    if(confirm('Discard every verdict recorded in this browser? This cannot be undone.')){
+      verdicts = {}; save(); applyFilter(); render();
+    }
+  });
+
+  // Keyboard shortcuts. Ignored while typing in the notes box, so notes never
+  // trigger a verdict by accident.
+  document.addEventListener('keydown', e => {
+    if(!DATA) return;
+    if(e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+    if(e.metaKey || e.ctrlKey || e.altKey) return;
+    const digit = parseInt(e.key, 10);
+    if(e.shiftKey && digit >= 1 && digit <= 9){
+      e.preventDefault();
+      if(current().components[digit-1]) toggleComponent(digit-1);
+      return;
+    }
+    switch(e.key){
+      case 'ArrowRight': case 'j': e.preventDefault(); step(1); break;
+      case 'ArrowLeft':  case 'k': e.preventDefault(); step(-1); break;
+      case 'c': case 'C': e.preventDefault(); setVerdict('correct'); break;
+      case 'x': case 'X': e.preventDefault(); setVerdict('incorrect'); break;
+      case 's': case 'S': e.preventDefault(); setVerdict('skipped'); break;
+      default:
+        if(digit >= 1 && digit <= ERROR_TAGS.length){ e.preventDefault(); toggleTag(ERROR_TAGS[digit-1].id); }
+    }
+  });
+
+  // Tell Marc if there is work already saved for a sample, before he loads it.
+  const keys = Object.keys(localStorage).filter(k => k.startsWith(STORAGE_PREFIX));
+  if(keys.length){
+    const saved = Object.values(JSON.parse(localStorage.getItem(keys[0]) || '{}'))
+      .filter(v => v.verdict).length;
+    if(saved) $('resumeNote').textContent =
+      `${saved} verdict${saved===1?'':'s'} are saved in this browser and will reload when you open the matching sample.`;
+  }
+});
+</script>
+</body>
+</html>
