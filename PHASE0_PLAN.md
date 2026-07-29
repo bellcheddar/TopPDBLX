@@ -575,7 +575,57 @@ comparison raised concentration agreement from 38.3% to 43.9% and exact matches 
   cluster ids go into every record. 90% is included specifically so that Phase 2 decision 12.4
   (multi-label ground truth construction) can be answered later without re-clustering.
 
-**Packages:** `mmseqs2` (shelled out), `requests`, `polars`, `biotite` (sequence handling).
+**Packages:** `mmseqs2` (shelled out), `requests`, `polars`.
+
+**WP7 built 2026-07-29.**
+
+`link.representative` records **two** representatives per entry, not one. The spec says label
+the condition with the largest polymer entity; that is kept verbatim, but the largest
+*polypeptide* entity is recorded alongside it, because MMseqs2 clustering a protein against an
+RNA chain is meaningless. They differ for **3,443 entries** where the nucleic acid is the
+longest chain, so this is not hypothetical. One row per entry, never one per chain: duplicating
+would let a ribosome contribute fifty copies of one condition.
+
+| Measure | Value |
+|---------|-------|
+| Entries linked | 256,762 |
+| ... with a protein entity | 251,559 |
+| Complexes (more than one polymer entity) | 73,166 |
+| Distinct protein sequences | 124,724 |
+| Distinct UniProt accessions | 56,083 |
+
+**Clustering, and the redundancy it exposes.** MMseqs2 `easy-cluster`, 80% coverage, sensitivity
+raised to 7.5 below 40% identity where the default misses real homologues:
+
+| Level | Groups | Collapse from 251,559 entries |
+|-------|--------|-------------------------------|
+| Distinct sequences | 124,724 | 2.0x |
+| 90% identity | 63,766 | 3.9x |
+| 50% identity | 45,494 | 5.5x |
+| 30% identity | **31,812** | **7.9x** |
+
+The largest 30% clusters are exactly what spec 7.3 predicts: Fab heavy chain 2,876 entries,
+cationic trypsin 2,204, 3C-like proteinase 2,182, lysozyme 1,609, spike glycoprotein 1,567,
+MHC class I 1,531. Splitting by entry rather than by cluster would put near-identical proteins
+on both sides of every split and inflate every metric.
+
+**SIFTS** acquired and version-pinned: release 2026/07/26, PDB 30.26, UniProt 2026.03,
+1,007,697 rows over 239,678 entries. Cross-checked against the accessions the RCSB API reports
+per entity: 239,990 (entry, accession) pairs agree, 4,832 are API-only and 252,894 SIFTS-only.
+The large SIFTS-only count is expected, since SIFTS maps every chain while this pipeline names
+one protein representative per entry.
+
+**UniProt reference sequences** are fetched for the Phase 3 boundary work. This is deliberately
+**not** a Phase 0 release requirement: the deliverable needs the construct sequence, the
+accession and the cluster ids, all of which exist without it. It is taken now for the same
+reason as TargetTrack, to pin the reference version.
+
+**Two bugs worth recording.** SIFTS `PDB_BEG`/`PDB_END` carry author residue numbers including
+insertion codes such as `1H`, so the file cannot be read with inferred integer types. And
+UniProt rejects queries with more than 100 OR conditions, returning HTTP 400 with an empty
+body; the first implementation batched 150 and **swallowed the failure with a bare `continue`**,
+which is indistinguishable from a batch of obsolete accessions. Failed batches are now recorded,
+and the stage aborts if more than 10% fail.
 
 ### WP8. Audit, metrics and quality assurance
 **4 days, of which 1.5 are curation. Depends on WP5, WP6, WP7.**
