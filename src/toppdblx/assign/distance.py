@@ -166,6 +166,25 @@ def featurise(components: Iterable[dict[str, Any]], ph: Optional[float] = None,
     )
 
 
+PRECIPITANT_AXES = ("peg_log_mw", "peg_percent", "salt_hofmeister", "salt_log_molar",
+                    "organic_percent")
+
+
+def shared_axes(a: ConditionFeatures, b: ConditionFeatures) -> list[str]:
+    """Axes both conditions actually have. A small distance over one axis is not similarity."""
+    left, right = a.as_dict(), b.as_dict()
+    return [axis for axis in WEIGHTS if left[axis] is not None and right[axis] is not None]
+
+
+def shares_precipitant_axis(a: ConditionFeatures, b: ConditionFeatures) -> bool:
+    """True when the two agree on something that actually precipitates protein.
+
+    Two conditions matching on pH alone are not chemically similar, and treating them as
+    such lets a condition with no identified precipitant anchor itself to a real screen well.
+    """
+    return any(axis in PRECIPITANT_AXES for axis in shared_axes(a, b))
+
+
 def distance(a: ConditionFeatures, b: ConditionFeatures) -> float:
     """Weighted distance over the axes both conditions share.
 

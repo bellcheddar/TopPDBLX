@@ -1,0 +1,2899 @@
+version: 0.1.0
+groups:
+- id: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  level: 2
+  label: Salt · sulfate/phosphate/citrate
+  l1_class: Salt
+  centroid:
+    peg_log_mw: 3.1761
+    peg_percent: 2.1
+    salt_hofmeister: -3.6666
+    salt_log_molar: 0.1305
+    organic_percent: 2.0115
+    ph: 6.8321
+  n_records_at_creation: 20762
+  screen_anchors: []
+- id: L2_PEG_PEG_3350_4000
+  level: 2
+  label: PEG · PEG 3350-4000
+  l1_class: PEG
+  centroid:
+    peg_log_mw: 3.545
+    peg_percent: 20.6483
+    salt_hofmeister: -1.6261
+    salt_log_molar: -0.8524
+    organic_percent: 2.1133
+    ph: 6.7933
+  n_records_at_creation: 20400
+  screen_anchors: []
+- id: L2_ORGANIC
+  level: 2
+  label: Organic
+  l1_class: Organic
+  centroid:
+    peg_log_mw: 3.1761
+    peg_percent: 2.0
+    salt_hofmeister: -0.5832
+    salt_log_molar: -0.8803
+    organic_percent: 28.3391
+    ph: 6.7726
+  n_records_at_creation: 11442
+  screen_anchors: []
+- id: L2_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE
+  level: 2
+  label: Salt/PEG · PEG 3350-4000 · sulfate/phosphate/citrate
+  l1_class: Salt/PEG
+  centroid:
+    peg_log_mw: 3.5432
+    peg_percent: 21.9138
+    salt_hofmeister: -3.6689
+    salt_log_molar: -0.6683
+    organic_percent: 2.8894
+    ph: 6.91
+  n_records_at_creation: 9069
+  screen_anchors: []
+- id: L2_SALT_PEG_PEG_3350_4000_CHLORIDE
+  level: 2
+  label: Salt/PEG · PEG 3350-4000 · chloride
+  l1_class: Salt/PEG
+  centroid:
+    peg_log_mw: 3.5472
+    peg_percent: 21.9593
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.6173
+    organic_percent: 1.9625
+    ph: 7.2162
+  n_records_at_creation: 7171
+  screen_anchors: []
+- id: L2_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE
+  level: 2
+  label: Salt/PEG · PEG 3350-4000 · acetate/formate
+  l1_class: Salt/PEG
+  centroid:
+    peg_log_mw: 3.5475
+    peg_percent: 21.8476
+    salt_hofmeister: -1.981
+    salt_log_molar: -0.6474
+    organic_percent: 2.233
+    ph: 6.919
+  n_records_at_creation: 6967
+  screen_anchors: []
+- id: L2_PEG_PEG_8000_10000
+  level: 2
+  label: PEG · PEG 8000-10000
+  l1_class: PEG
+  centroid:
+    peg_log_mw: 3.9143
+    peg_percent: 16.9751
+    salt_hofmeister: -1.119
+    salt_log_molar: -0.7323
+    organic_percent: 2.0669
+    ph: 6.9732
+  n_records_at_creation: 6252
+  screen_anchors: []
+- id: L2_ORGANIC_PEG_PEG_3350_4000
+  level: 2
+  label: Organic/PEG · PEG 3350-4000
+  l1_class: Organic/PEG
+  centroid:
+    peg_log_mw: 3.5739
+    peg_percent: 16.5262
+    salt_hofmeister: -1.3432
+    salt_log_molar: -0.9191
+    organic_percent: 14.2656
+    ph: 6.7623
+  n_records_at_creation: 5802
+  screen_anchors: []
+- id: L2_SALT_CHLORIDE
+  level: 2
+  label: Salt · chloride
+  l1_class: Salt
+  centroid:
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.1394
+    organic_percent: 2.4078
+    ph: 6.6016
+  n_records_at_creation: 4352
+  screen_anchors: []
+- id: L2_ORGANIC_CHLORIDE
+  level: 2
+  label: Organic · chloride
+  l1_class: Organic
+  centroid:
+    salt_hofmeister: 0.0
+    salt_log_molar: -1.148
+    organic_percent: 24.7788
+    ph: 6.7806
+  n_records_at_creation: 4218
+  screen_anchors: []
+- id: L2_PEG_PEG_5000_6000
+  level: 2
+  label: PEG · PEG 5000-6000
+  l1_class: PEG
+  centroid:
+    peg_log_mw: 3.7643
+    peg_percent: 18.3646
+    salt_hofmeister: -0.8986
+    salt_log_molar: -0.8878
+    organic_percent: 2.815
+    ph: 6.6106
+  n_records_at_creation: 4082
+  screen_anchors: []
+- id: L2_ORGANIC_SALT_SULFATE_PHOSPHATE_CITRATE
+  level: 2
+  label: Organic/Salt · sulfate/phosphate/citrate
+  l1_class: Organic/Salt
+  centroid:
+    salt_hofmeister: -3.7343
+    salt_log_molar: -0.0507
+    organic_percent: 17.7165
+    ph: 6.7883
+  n_records_at_creation: 4056
+  screen_anchors: []
+- id: L2_SALT_ACETATE_FORMATE
+  level: 2
+  label: Salt · acetate/formate
+  l1_class: Salt
+  centroid:
+    salt_hofmeister: -1.921
+    salt_log_molar: 0.0229
+    organic_percent: 2.1034
+    ph: 6.7201
+  n_records_at_creation: 3840
+  screen_anchors: []
+- id: L2_PEG_PEG_3350_4000_CHLORIDE
+  level: 2
+  label: PEG · PEG 3350-4000 · chloride
+  l1_class: PEG
+  centroid:
+    peg_log_mw: 3.5493
+    peg_percent: 18.7132
+    salt_hofmeister: 0.0
+    salt_log_molar: -1.2817
+    organic_percent: 2.2792
+    ph: 7.0687
+  n_records_at_creation: 3134
+  screen_anchors: []
+- id: L2_SALT
+  level: 2
+  label: Salt
+  l1_class: Salt
+  centroid:
+    salt_hofmeister: -2.4364
+    salt_log_molar: 0.1118
+    organic_percent: 2.219
+    ph: 6.8261
+  n_records_at_creation: 2987
+  screen_anchors: []
+- id: L2_ORGANIC_PEG_PEG_8000_10000
+  level: 2
+  label: Organic/PEG · PEG 8000-10000
+  l1_class: Organic/PEG
+  centroid:
+    peg_log_mw: 3.9097
+    peg_percent: 11.7216
+    salt_hofmeister: -0.1937
+    salt_log_molar: -0.9882
+    organic_percent: 16.2255
+    ph: 7.0892
+  n_records_at_creation: 2541
+  screen_anchors: []
+- id: L2_ORGANIC_SALT_CHLORIDE
+  level: 2
+  label: Organic/Salt · chloride
+  l1_class: Organic/Salt
+  centroid:
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.4894
+    organic_percent: 162.4155
+    ph: 6.9456
+  n_records_at_creation: 2518
+  screen_anchors: []
+- id: L2_PEG_PEG_3350_4000_ACETATE_FORMATE
+  level: 2
+  label: PEG · PEG 3350-4000 · acetate/formate
+  l1_class: PEG
+  centroid:
+    peg_log_mw: 3.5677
+    peg_percent: 22.029
+    salt_hofmeister: -1.971
+    salt_log_molar: -1.0182
+    organic_percent: 2.1411
+    ph: 5.7868
+  n_records_at_creation: 2450
+  screen_anchors: []
+- id: L2_SALT_PEG_PEG_3350_4000_NITRATE_IODIDE_THIOCYANATE
+  level: 2
+  label: Salt/PEG · PEG 3350-4000 · nitrate/iodide/thiocyanate
+  l1_class: Salt/PEG
+  centroid:
+    peg_log_mw: 3.5303
+    peg_percent: 20.1302
+    salt_hofmeister: 2.7608
+    salt_log_molar: -0.642
+    organic_percent: 2.075
+    ph: 7.1397
+  n_records_at_creation: 2343
+  screen_anchors: []
+- id: L2_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE
+  level: 2
+  label: PEG · PEG 3350-4000 · sulfate/phosphate/citrate
+  l1_class: PEG
+  centroid:
+    peg_log_mw: 3.549
+    peg_percent: 18.1834
+    salt_hofmeister: -3.6817
+    salt_log_molar: -1.0586
+    organic_percent: 2.2361
+    ph: 6.5164
+  n_records_at_creation: 1915
+  screen_anchors: []
+- id: L2_PEG
+  level: 2
+  label: PEG
+  l1_class: PEG
+  centroid:
+    peg_log_mw: 3.5403
+    peg_percent: 24.0429
+    salt_hofmeister: 0.6667
+    salt_log_molar: -0.8239
+    organic_percent: 2.3114
+    ph: 6.6728
+  n_records_at_creation: 1898
+  screen_anchors: []
+- id: L2_SALT_PEG_PEG_8000_10000_ACETATE_FORMATE
+  level: 2
+  label: Salt/PEG · PEG 8000-10000 · acetate/formate
+  l1_class: Salt/PEG
+  centroid:
+    peg_log_mw: 3.9071
+    peg_percent: 18.3806
+    salt_hofmeister: -1.9893
+    salt_log_molar: -0.6521
+    organic_percent: 2.0584
+    ph: 6.5884
+  n_records_at_creation: 1874
+  screen_anchors: []
+- id: L2_PEG_PEG_2000
+  level: 2
+  label: PEG · PEG 2000
+  l1_class: PEG
+  centroid:
+    peg_log_mw: 3.2997
+    peg_percent: 22.8913
+    salt_hofmeister: -0.4573
+    salt_log_molar: -0.9743
+    organic_percent: 1.9028
+    ph: 6.8446
+  n_records_at_creation: 1838
+  screen_anchors: []
+- id: L2_PEG_PEG_20000
+  level: 2
+  label: PEG · PEG 20000+
+  l1_class: PEG
+  centroid:
+    peg_log_mw: 4.301
+    peg_percent: 14.3443
+    salt_hofmeister: -1.1168
+    salt_log_molar: -0.9467
+    organic_percent: 2.0389
+    ph: 6.592
+  n_records_at_creation: 1755
+  screen_anchors: []
+- id: L2_SALT_PEG_PEG_5000_6000_CHLORIDE
+  level: 2
+  label: Salt/PEG · PEG 5000-6000 · chloride
+  l1_class: Salt/PEG
+  centroid:
+    peg_log_mw: 3.7752
+    peg_percent: 18.5522
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.3631
+    organic_percent: 2.8214
+    ph: 6.6564
+  n_records_at_creation: 1688
+  screen_anchors: []
+- id: L2_SALT_PEG_PEG_8000_10000_CHLORIDE
+  level: 2
+  label: Salt/PEG · PEG 8000-10000 · chloride
+  l1_class: Salt/PEG
+  centroid:
+    peg_log_mw: 3.9054
+    peg_percent: 16.5877
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.6049
+    organic_percent: 2.2558
+    ph: 7.2694
+  n_records_at_creation: 1528
+  screen_anchors: []
+- id: L2_SALT_PEG_PEG_8000_10000_SULFATE_PHOSPHATE_CITRATE
+  level: 2
+  label: Salt/PEG · PEG 8000-10000 · sulfate/phosphate/citrate
+  l1_class: Salt/PEG
+  centroid:
+    peg_log_mw: 3.9058
+    peg_percent: 21.5418
+    salt_hofmeister: -3.881
+    salt_log_molar: -0.6236
+    organic_percent: 1.25
+    ph: 6.6295
+  n_records_at_creation: 1241
+  screen_anchors: []
+- id: L2_SALT_PEG_PEG_3350_4000
+  level: 2
+  label: Salt/PEG · PEG 3350-4000
+  l1_class: Salt/PEG
+  centroid:
+    peg_log_mw: 3.533
+    peg_percent: 18.5197
+    salt_hofmeister: -1.5805
+    salt_log_molar: -0.4006
+    organic_percent: 2.075
+    ph: 6.5282
+  n_records_at_creation: 1208
+  screen_anchors: []
+- id: L2_PEG_PEG_1000_1500
+  level: 2
+  label: PEG · PEG 1000-1500
+  l1_class: PEG
+  centroid:
+    peg_log_mw: 3.0004
+    peg_percent: 25.339
+    salt_hofmeister: -1.312
+    salt_log_molar: -0.721
+    organic_percent: 2.25
+    ph: 6.6106
+  n_records_at_creation: 1125
+  screen_anchors: []
+- id: L2_ORGANIC_SALT_ACETATE_FORMATE
+  level: 2
+  label: Organic/Salt · acetate/formate
+  l1_class: Organic/Salt
+  centroid:
+    salt_hofmeister: -1.9327
+    salt_log_molar: -0.3926
+    organic_percent: 24.5017
+    ph: 6.5589
+  n_records_at_creation: 1077
+  screen_anchors: []
+- id: L2_ORGANIC_PEG_PEG_5000_6000
+  level: 2
+  label: Organic/PEG · PEG 5000-6000
+  l1_class: Organic/PEG
+  centroid:
+    peg_log_mw: 3.7671
+    peg_percent: 13.3571
+    salt_hofmeister: -0.9044
+    salt_log_molar: -0.7282
+    organic_percent: 11.6723
+    ph: 6.7716
+  n_records_at_creation: 1003
+  screen_anchors: []
+- id: L2_ORGANIC_ACETATE_FORMATE
+  level: 2
+  label: Organic · acetate/formate
+  l1_class: Organic
+  centroid:
+    salt_hofmeister: -1.9291
+    salt_log_molar: -1.305
+    organic_percent: 19.9157
+    ph: 6.4776
+  n_records_at_creation: 949
+  screen_anchors: []
+- id: L2_PEG_PEG_5000_6000_CHLORIDE
+  level: 2
+  label: PEG · PEG 5000-6000 · chloride
+  l1_class: PEG
+  centroid:
+    peg_log_mw: 3.7689
+    peg_percent: 17.7108
+    salt_hofmeister: 0.0
+    salt_log_molar: -1.3679
+    organic_percent: 1.875
+    ph: 6.6744
+  n_records_at_creation: 925
+  screen_anchors: []
+- id: L2_ORGANIC_PEG_PEG_3350_4000_CHLORIDE
+  level: 2
+  label: Organic/PEG · PEG 3350-4000 · chloride
+  l1_class: Organic/PEG
+  centroid:
+    peg_log_mw: 3.5678
+    peg_percent: 16.8991
+    salt_hofmeister: 0.0
+    salt_log_molar: -1.2142
+    organic_percent: 15.4524
+    ph: 7.19
+  n_records_at_creation: 867
+  screen_anchors: []
+- id: L2_PEG_PEG_8000_10000_CHLORIDE
+  level: 2
+  label: PEG · PEG 8000-10000 · chloride
+  l1_class: PEG
+  centroid:
+    peg_log_mw: 3.9086
+    peg_percent: 15.7658
+    salt_hofmeister: 0.0
+    salt_log_molar: -1.2881
+    organic_percent: 2.2178
+    ph: 7.0979
+  n_records_at_creation: 811
+  screen_anchors: []
+- id: L2_ORGANIC_SULFATE_PHOSPHATE_CITRATE
+  level: 2
+  label: Organic · sulfate/phosphate/citrate
+  l1_class: Organic
+  centroid:
+    salt_hofmeister: -3.8508
+    salt_log_molar: -1.4083
+    organic_percent: 26.8074
+    ph: 6.7821
+  n_records_at_creation: 756
+  screen_anchors: []
+- id: L2_PEG_PEG_8000_10000_ACETATE_FORMATE
+  level: 2
+  label: PEG · PEG 8000-10000 · acetate/formate
+  l1_class: PEG
+  centroid:
+    peg_log_mw: 3.9337
+    peg_percent: 15.1486
+    salt_hofmeister: -1.9744
+    salt_log_molar: -1.0883
+    organic_percent: 3.1875
+    ph: 6.2432
+  n_records_at_creation: 642
+  screen_anchors: []
+- id: L2_ORGANIC_PEG_SALT_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE
+  level: 2
+  label: Organic/PEG/Salt · PEG 3350-4000 · sulfate/phosphate/citrate
+  l1_class: Organic/PEG/Salt
+  centroid:
+    peg_log_mw: 3.5491
+    peg_percent: 20.4076
+    salt_hofmeister: -3.6526
+    salt_log_molar: -0.6041
+    organic_percent: 12.7791
+    ph: 6.5999
+  n_records_at_creation: 609
+  screen_anchors: []
+- id: L2_ORGANIC_PEG_SALT_PEG_3350_4000_ACETATE_FORMATE
+  level: 2
+  label: Organic/PEG/Salt · PEG 3350-4000 · acetate/formate
+  l1_class: Organic/PEG/Salt
+  centroid:
+    peg_log_mw: 3.5467
+    peg_percent: 19.0192
+    salt_hofmeister: -1.9422
+    salt_log_molar: -0.6215
+    organic_percent: 12.0053
+    ph: 6.9733
+  n_records_at_creation: 560
+  screen_anchors: []
+- id: L2_ORGANIC_PEG_SALT_PEG_3350_4000_CHLORIDE
+  level: 2
+  label: Organic/PEG/Salt · PEG 3350-4000 · chloride
+  l1_class: Organic/PEG/Salt
+  centroid:
+    peg_log_mw: 3.5537
+    peg_percent: 19.3218
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.538
+    organic_percent: 13.9715
+    ph: 7.0367
+  n_records_at_creation: 553
+  screen_anchors: []
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_1_1_5_M_PH_7_8
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · 1-1.5 M · pH 7-8
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.4606
+    salt_log_molar: 0.1444
+    ph: 7.3704
+  n_records_at_creation: 2660
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '32'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '38'
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_1_1_5_M_PH_6_7
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · 1-1.5 M · pH 6-7
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.6255
+    salt_log_molar: 0.1547
+    ph: 6.427
+  n_records_at_creation: 2199
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '30'
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '20'
+- id: L3_PEG_PEG_3350_4000_10_20_PH_7_8
+  level: 3
+  label: PEG · PEG 3350-4000 · 10-20% · pH 7-8
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5401
+    peg_percent: 17.2519
+    ph: 7.2894
+  n_records_at_creation: 2067
+  screen_anchors:
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '45'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '2'
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_1_8_M_PH_7_8
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · >1.8 M · pH 7-8
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.6791
+    salt_log_molar: 0.361
+    ph: 7.2602
+  n_records_at_creation: 1669
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '5'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '32'
+- id: L3_PEG_PEG_3350_4000_PH_UNSTATED
+  level: 3
+  label: PEG · PEG 3350-4000 · pH unstated
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5422
+  n_records_at_creation: 1516
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '32'
+  - screen: Index
+    catalogue: HR2-144
+    well: '40'
+- id: L3_PEG_PEG_3350_4000_PH_7_8
+  level: 3
+  label: PEG · PEG 3350-4000 · pH 7-8
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5487
+    ph: 7.3221
+  n_records_at_creation: 1505
+  screen_anchors:
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '1'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '3'
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_1_1_5_M_PH_8_9
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · 1-1.5 M · pH 8-9
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.5445
+    salt_log_molar: 0.1356
+    ph: 8.2612
+  n_records_at_creation: 1484
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '19'
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '42'
+- id: L3_PEG_PEG_3350_4000_20_30_PH_7_8
+  level: 3
+  label: PEG · PEG 3350-4000 · 20-30% · pH 7-8
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5336
+    peg_percent: 26.0784
+    ph: 7.3264
+  n_records_at_creation: 1467
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '44'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '31'
+- id: L3_SALT_PEG_PEG_3350_4000_CHLORIDE_20_30_0_1_0_3_M_PH_8_9
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · chloride · 20-30% · 0.1-0.3 M · pH 8-9
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_CHLORIDE
+  centroid:
+    peg_log_mw: 3.5668
+    peg_percent: 26.3716
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.6887
+    ph: 8.4513
+  n_records_at_creation: 1261
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '39'
+  - screen: Index
+    catalogue: HR2-144
+    well: '45'
+- id: L3_ORGANIC_PH_7_8
+  level: 3
+  label: Organic · pH 7-8
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    ph: 7.3229
+  n_records_at_creation: 1178
+  screen_anchors: []
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_1_8_M_PH_6_7
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · >1.8 M · pH 6-7
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.832
+    salt_log_molar: 0.3429
+    ph: 6.358
+  n_records_at_creation: 1155
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '5'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '32'
+- id: L3_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE_10_20_0_1_0
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · sulfate/phosphate/citrate · 10-20% · 0.1-0.3 M · pH unstated
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    peg_log_mw: 3.529
+    peg_percent: 19.0682
+    salt_hofmeister: -3.2202
+    salt_log_molar: -0.6935
+  n_records_at_creation: 1141
+  screen_anchors:
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '10'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '12'
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_1_8_M_PH_5_6
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · >1.8 M · pH 5-6
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.9139
+    salt_log_molar: 0.3497
+    ph: 5.4207
+  n_records_at_creation: 1139
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '5'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '32'
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_1_8_M_PH_8_9
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · >1.8 M · pH 8-9
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.8302
+    salt_log_molar: 0.3567
+    ph: 8.3098
+  n_records_at_creation: 1115
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '5'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '32'
+- id: L3_PEG_PEG_3350_4000_PH_6_7
+  level: 3
+  label: PEG · PEG 3350-4000 · pH 6-7
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5564
+    ph: 6.39
+  n_records_at_creation: 1105
+  screen_anchors:
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '39'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '1'
+- id: L3_PEG_PEG_3350_4000_10_20_PH_6_7
+  level: 3
+  label: PEG · PEG 3350-4000 · 10-20% · pH 6-7
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5475
+    peg_percent: 17.1032
+    ph: 6.3487
+  n_records_at_creation: 1055
+  screen_anchors:
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '45'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '39'
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_1_1_5_M_PH_5_6
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · 1-1.5 M · pH 5-6
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.7965
+    salt_log_molar: 0.1542
+    ph: 5.4135
+  n_records_at_creation: 1052
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '15'
+  - screen: Index
+    catalogue: HR2-144
+    well: '3'
+- id: L3_PEG_PEG_3350_4000_PH_8_9
+  level: 3
+  label: PEG · PEG 3350-4000 · pH 8-9
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5715
+    ph: 8.291
+  n_records_at_creation: 1051
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '31'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '1'
+- id: L3_PEG_PEG_3350_4000_10_20_PH_UNSTATED
+  level: 3
+  label: PEG · PEG 3350-4000 · 10-20% · pH unstated
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5291
+    peg_percent: 18.522
+  n_records_at_creation: 1041
+  screen_anchors:
+  - screen: PEGRx™ 1
+    catalogue: HR2-082
+    well: '29'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '2'
+- id: L3_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE_20_30_0_1_0
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · sulfate/phosphate/citrate · 20-30% · 0.1-0.3 M · pH 7-8
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    peg_log_mw: 3.5367
+    peg_percent: 25.8523
+    salt_hofmeister: -3.855
+    salt_log_molar: -0.6615
+    ph: 7.2799
+  n_records_at_creation: 1038
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '44'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '31'
+- id: L3_ORGANIC_PH_6_7
+  level: 3
+  label: Organic · pH 6-7
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    ph: 6.3901
+  n_records_at_creation: 971
+  screen_anchors: []
+- id: L3_PEG_PEG_3350_4000_ACETATE_FORMATE_20_30_0_1_0_3_M_PH_4_5
+  level: 3
+  label: PEG · PEG 3350-4000 · acetate/formate · 20-30% · 0.1-0.3 M · pH 4-5
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000_ACETATE_FORMATE
+  centroid:
+    peg_log_mw: 3.6018
+    peg_percent: 27.3464
+    salt_hofmeister: -1.9994
+    salt_log_molar: -1.0011
+    ph: 4.5954
+  n_records_at_creation: 970
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '41'
+  - screen: PEGRx™ 1
+    catalogue: HR2-082
+    well: '34'
+- id: L3_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE_20_30_0__2
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · sulfate/phosphate/citrate · 20-30% · 0.1-0.3 M · pH 8-9
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    peg_log_mw: 3.557
+    peg_percent: 26.7007
+    salt_hofmeister: -3.9406
+    salt_log_molar: -0.6935
+    ph: 8.4128
+  n_records_at_creation: 962
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '45'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '17'
+- id: L3_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE_10_20_0_1_0_3_M_PH_7_
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · acetate/formate · 10-20% · 0.1-0.3 M · pH 7-8
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE
+  centroid:
+    peg_log_mw: 3.5281
+    peg_percent: 18.6558
+    salt_hofmeister: -1.9877
+    salt_log_molar: -0.6872
+    ph: 7.3326
+  n_records_at_creation: 955
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '44'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '28'
+- id: L3_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE_10_20_0__2
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · sulfate/phosphate/citrate · 10-20% · 0.1-0.3 M · pH 7-8
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    peg_log_mw: 3.5296
+    peg_percent: 18.6817
+    salt_hofmeister: -3.3583
+    salt_log_molar: -0.685
+    ph: 7.2605
+  n_records_at_creation: 935
+  screen_anchors:
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '10'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '12'
+- id: L3_PEG_PEG_20000_10_20_PH_6_7
+  level: 3
+  label: PEG · PEG 20000+ · 10-20% · pH 6-7
+  l1_class: PEG
+  parent: L2_PEG_PEG_20000
+  centroid:
+    peg_log_mw: 4.301
+    peg_percent: 15.5515
+    ph: 6.2035
+  n_records_at_creation: 911
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '22'
+  - screen: PEGRx™ 1
+    catalogue: HR2-082
+    well: '44'
+- id: L3_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE_10_20_0_1_0_3_M_PH_UN
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · acetate/formate · 10-20% · 0.1-0.3 M · pH unstated
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE
+  centroid:
+    peg_log_mw: 3.5276
+    peg_percent: 19.3116
+    salt_hofmeister: -1.9984
+    salt_log_molar: -0.6906
+  n_records_at_creation: 911
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '19'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '21'
+- id: L3_PEG_PEG_3350_4000_10_20_PH_5_6
+  level: 3
+  label: PEG · PEG 3350-4000 · 10-20% · pH 5-6
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5338
+    peg_percent: 17.4641
+    ph: 5.3881
+  n_records_at_creation: 909
+  screen_anchors:
+  - screen: PEGRx™ 1
+    catalogue: HR2-082
+    well: '29'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '45'
+- id: L3_PEG_PEG_3350_4000_20_30_PH_5_6
+  level: 3
+  label: PEG · PEG 3350-4000 · 20-30% · pH 5-6
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.544
+    peg_percent: 25.0434
+    ph: 5.4824
+  n_records_at_creation: 896
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '42'
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '25'
+- id: L3_PEG_PEG_3350_4000_20_30_PH_6_7
+  level: 3
+  label: PEG · PEG 3350-4000 · 20-30% · pH 6-7
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5509
+    peg_percent: 25.6671
+    ph: 6.4227
+  n_records_at_creation: 867
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '43'
+  - screen: Index
+    catalogue: HR2-144
+    well: '47'
+- id: L3_PEG_PEG_3350_4000_PH_5_6
+  level: 3
+  label: PEG · PEG 3350-4000 · pH 5-6
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5628
+    ph: 5.4789
+  n_records_at_creation: 790
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '32'
+  - screen: Index
+    catalogue: HR2-144
+    well: '42'
+- id: L3_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE_20_30_0_1_0_3_M_PH_8_
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · acetate/formate · 20-30% · 0.1-0.3 M · pH 8-9
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE
+  centroid:
+    peg_log_mw: 3.5703
+    peg_percent: 27.2554
+    salt_hofmeister: -1.9907
+    salt_log_molar: -0.6912
+    ph: 8.3816
+  n_records_at_creation: 778
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '44'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '19'
+- id: L3_PEG_PEG_3350_4000_20_30_PH_8_9
+  level: 3
+  label: PEG · PEG 3350-4000 · 20-30% · pH 8-9
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5557
+    peg_percent: 25.9047
+    ph: 8.3654
+  n_records_at_creation: 750
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '45'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '6'
+- id: L3_ORGANIC_ORGANIC_30_PH_7_8
+  level: 3
+  label: Organic · organic >30% · pH 7-8
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    organic_percent: 48.7301
+    ph: 7.3738
+  n_records_at_creation: 731
+  screen_anchors:
+  - screen: PEGRx™ 1
+    catalogue: HR2-082
+    well: '3'
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '9'
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_1_1_5_M_PH_UNSTATED
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · 1-1.5 M · pH unstated
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.5584
+    salt_log_molar: 0.1376
+  n_records_at_creation: 721
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '30'
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '32'
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_1_8_M_PH_4_5
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · >1.8 M · pH 4-5
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.8642
+    salt_log_molar: 0.3335
+    ph: 4.4483
+  n_records_at_creation: 721
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '2'
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '5'
+- id: L3_PEG_PEG_3350_4000_20_30_PH_9_10
+  level: 3
+  label: PEG · PEG 3350-4000 · 20-30% · pH 9-10
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.4832
+    peg_percent: 27.9657
+    ph: 9.4701
+  n_records_at_creation: 716
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '31'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '43'
+- id: L3_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE_20_30_0__3
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · sulfate/phosphate/citrate · 20-30% · 0.1-0.3 M · pH 6-7
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    peg_log_mw: 3.531
+    peg_percent: 25.1317
+    salt_hofmeister: -3.9477
+    salt_log_molar: -0.6895
+    ph: 6.4321
+  n_records_at_creation: 703
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '43'
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '8'
+- id: L3_ORGANIC_PEG_PEG_3350_4000_10_20_ORGANIC_10_PH_6_7
+  level: 3
+  label: Organic/PEG · PEG 3350-4000 · 10-20% · organic <10% · pH 6-7
+  l1_class: Organic/PEG
+  parent: L2_ORGANIC_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5962
+    peg_percent: 15.1509
+    organic_percent: 5.38
+    ph: 6.481
+  n_records_at_creation: 697
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '5'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '45'
+- id: L3_PEG_PEG_8000_10000_PH_6_7
+  level: 3
+  label: PEG · PEG 8000-10000 · pH 6-7
+  l1_class: PEG
+  parent: L2_PEG_PEG_8000_10000
+  centroid:
+    peg_log_mw: 3.9053
+    ph: 6.4305
+  n_records_at_creation: 690
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '30'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '42'
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_1_8_M_PH_UNSTATED
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · >1.8 M · pH unstated
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.7466
+    salt_log_molar: 0.3714
+  n_records_at_creation: 685
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '14'
+  - screen: SaltRx™ 2
+    catalogue: HR2-109
+    well: '16'
+- id: L3_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE_20_30_0__4
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · sulfate/phosphate/citrate · 20-30% · 0.1-0.3 M · pH 5-6
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    peg_log_mw: 3.5346
+    peg_percent: 24.8178
+    salt_hofmeister: -3.8992
+    salt_log_molar: -0.6906
+    ph: 5.4601
+  n_records_at_creation: 676
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '42'
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '25'
+- id: L3_ORGANIC_ORGANIC_20_30_PH_6_7
+  level: 3
+  label: Organic · organic 20-30% · pH 6-7
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    organic_percent: 27.8657
+    ph: 6.2124
+  n_records_at_creation: 674
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '3'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '8'
+- id: L3_SALT_PEG_PEG_3350_4000_CHLORIDE_10_20_0_1_0_3_M_PH_7_8
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · chloride · 10-20% · 0.1-0.3 M · pH 7-8
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_CHLORIDE
+  centroid:
+    peg_log_mw: 3.5323
+    peg_percent: 18.5109
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.6783
+    ph: 7.3934
+  n_records_at_creation: 669
+  screen_anchors:
+  - screen: PEG / Ion Screen
+    catalogue: HR2-126
+    well: '4'
+  - screen: PEG / Ion Screen
+    catalogue: HR2-126
+    well: '5'
+- id: L3_SALT_PEG_PEG_3350_4000_CHLORIDE_20_30_0_1_0_3_M_PH_5_6
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · chloride · 20-30% · 0.1-0.3 M · pH 5-6
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_CHLORIDE
+  centroid:
+    peg_log_mw: 3.527
+    peg_percent: 24.8402
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.6723
+    ph: 5.5049
+  n_records_at_creation: 662
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '42'
+  - screen: Index
+    catalogue: HR2-144
+    well: '48'
+- id: L3_PEG_PEG_3350_4000_10_20_PH_8_9
+  level: 3
+  label: PEG · PEG 3350-4000 · 10-20% · pH 8-9
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5465
+    peg_percent: 17.7558
+    ph: 8.274
+  n_records_at_creation: 659
+  screen_anchors:
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '2'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '4'
+- id: L3_SALT_PEG_PEG_3350_4000_CHLORIDE_20_30_0_1_0_3_M_PH_7_8
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · chloride · 20-30% · 0.1-0.3 M · pH 7-8
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_CHLORIDE
+  centroid:
+    peg_log_mw: 3.5352
+    peg_percent: 25.6001
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.6811
+    ph: 7.4065
+  n_records_at_creation: 659
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '12'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '14'
+- id: L3_SALT_ACETATE_FORMATE_1_8_M_PH_7_8
+  level: 3
+  label: Salt · acetate/formate · >1.8 M · pH 7-8
+  l1_class: Salt
+  parent: L2_SALT_ACETATE_FORMATE
+  centroid:
+    salt_hofmeister: -1.9918
+    salt_log_molar: 0.4796
+    ph: 7.2077
+  n_records_at_creation: 654
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '25'
+  - screen: Index
+    catalogue: HR2-144
+    well: '24'
+- id: L3_SALT_PEG_PEG_8000_10000_ACETATE_FORMATE_10_20_0_1_0_3_M_PH_6
+  level: 3
+  label: Salt/PEG · PEG 8000-10000 · acetate/formate · 10-20% · 0.1-0.3 M · pH 6-7
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_8000_10000_ACETATE_FORMATE
+  centroid:
+    peg_log_mw: 3.9047
+    peg_percent: 18.1551
+    salt_hofmeister: -1.9986
+    salt_log_molar: -0.6938
+    ph: 6.4179
+  n_records_at_creation: 652
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '44'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '45'
+- id: L3_ORGANIC_CHLORIDE_0_1_0_3_M_ORGANIC_20_30_PH_7_8
+  level: 3
+  label: Organic · chloride · 0.1-0.3 M · organic 20-30% · pH 7-8
+  l1_class: Organic
+  parent: L2_ORGANIC_CHLORIDE
+  centroid:
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.9784
+    organic_percent: 28.7117
+    ph: 7.3879
+  n_records_at_creation: 622
+  screen_anchors:
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '45'
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '3'
+- id: L3_PEG_PEG_8000_10000_10_20_PH_7_8
+  level: 3
+  label: PEG · PEG 8000-10000 · 10-20% · pH 7-8
+  l1_class: PEG
+  parent: L2_PEG_PEG_8000_10000
+  centroid:
+    peg_log_mw: 3.9347
+    peg_percent: 17.8882
+    ph: 7.4203
+  n_records_at_creation: 595
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '42'
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '38'
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_0_4_0_8_M_PH_7_8
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · 0.4-0.8 M · pH 7-8
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.2519
+    salt_log_molar: -0.1665
+    ph: 7.3061
+  n_records_at_creation: 592
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '29'
+  - screen: SaltRx™ 1
+    catalogue: HR2-107
+    well: '19'
+- id: L3_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE_20_30_0_1_0_3_M_PH_5_
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · acetate/formate · 20-30% · 0.1-0.3 M · pH 5-6
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE
+  centroid:
+    peg_log_mw: 3.5695
+    peg_percent: 26.8351
+    salt_hofmeister: -1.992
+    salt_log_molar: -0.6912
+    ph: 5.5253
+  n_records_at_creation: 585
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '44'
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '7'
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_1_1_5_M_PH_4_5
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · 1-1.5 M · pH 4-5
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.7493
+    salt_log_molar: 0.1595
+    ph: 4.4532
+  n_records_at_creation: 583
+  screen_anchors:
+  - screen: SaltRx™ 2
+    catalogue: HR2-109
+    well: '13'
+  - screen: SaltRx™ 2
+    catalogue: HR2-109
+    well: '22'
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_1_8_M_ORGANIC_10_PH_7_8
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · >1.8 M · organic <10% · pH 7-8
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.9726
+    salt_log_molar: 0.3232
+    organic_percent: 1.9329
+    ph: 7.4232
+  n_records_at_creation: 578
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '32'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '39'
+- id: L3_PEG_PEG_8000_10000_PH_7_8
+  level: 3
+  label: PEG · PEG 8000-10000 · pH 7-8
+  l1_class: PEG
+  parent: L2_PEG_PEG_8000_10000
+  centroid:
+    peg_log_mw: 3.9099
+    ph: 7.342
+  n_records_at_creation: 568
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '30'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '42'
+- id: L3_PEG_PEG_3350_4000_CHLORIDE_10_20_0_1_0_3_M_PH_7_8
+  level: 3
+  label: PEG · PEG 3350-4000 · chloride · 10-20% · 0.1-0.3 M · pH 7-8
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000_CHLORIDE
+  centroid:
+    peg_log_mw: 3.5438
+    peg_percent: 16.3931
+    salt_hofmeister: 0.0
+    salt_log_molar: -1.3034
+    ph: 7.2924
+  n_records_at_creation: 560
+  screen_anchors:
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '20'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '42'
+- id: L3_ORGANIC_CHLORIDE_0_1_0_3_M_ORGANIC_30_PH_7_8
+  level: 3
+  label: Organic · chloride · 0.1-0.3 M · organic >30% · pH 7-8
+  l1_class: Organic
+  parent: L2_ORGANIC_CHLORIDE
+  centroid:
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.9226
+    organic_percent: 36.0954
+    ph: 7.2674
+  n_records_at_creation: 558
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '4'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '45'
+- id: L3_SALT_1_1_5_M_PH_7_8
+  level: 3
+  label: Salt · 1-1.5 M · pH 7-8
+  l1_class: Salt
+  parent: L2_SALT
+  centroid:
+    salt_hofmeister: -2.7374
+    salt_log_molar: 0.1248
+    ph: 7.3323
+  n_records_at_creation: 550
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '38'
+  - screen: Index
+    catalogue: HR2-144
+    well: '20'
+- id: L3_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE_10_20_0__3
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · sulfate/phosphate/citrate · 10-20% · 0.1-0.3 M · pH 6-7
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    peg_log_mw: 3.537
+    peg_percent: 18.527
+    salt_hofmeister: -3.6302
+    salt_log_molar: -0.6843
+    ph: 6.3645
+  n_records_at_creation: 526
+  screen_anchors:
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '39'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '10'
+- id: L3_SALT_CHLORIDE_0_1_0_3_M_PH_7_8
+  level: 3
+  label: Salt · chloride · 0.1-0.3 M · pH 7-8
+  l1_class: Salt
+  parent: L2_SALT_CHLORIDE
+  centroid:
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.751
+    ph: 7.3633
+  n_records_at_creation: 525
+  screen_anchors:
+  - screen: PEG / Ion Screen
+    catalogue: HR2-126
+    well: '4'
+  - screen: PEG / Ion Screen
+    catalogue: HR2-126
+    well: '5'
+- id: L3_SALT_PEG_PEG_3350_4000_NITRATE_IODIDE_THIOCYANATE_10_20_0_1_
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · nitrate/iodide/thiocyanate · 10-20% · 0.1-0.3 M · pH unstated
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_NITRATE_IODIDE_THIOCYANATE
+  centroid:
+    peg_log_mw: 3.5255
+    peg_percent: 19.5406
+    salt_hofmeister: 2.7703
+    salt_log_molar: -0.6885
+  n_records_at_creation: 513
+  screen_anchors:
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '10'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '12'
+- id: L3_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE_10_20_0__4
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · sulfate/phosphate/citrate · 10-20% · 0.1-0.3 M · pH 8-9
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    peg_log_mw: 3.5419
+    peg_percent: 18.6613
+    salt_hofmeister: -3.5361
+    salt_log_molar: -0.6909
+    ph: 8.3122
+  n_records_at_creation: 512
+  screen_anchors:
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '10'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '12'
+- id: L3_SALT_PEG_PEG_3350_4000_CHLORIDE_10_20_0_1_0_3_M_PH_8_9
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · chloride · 10-20% · 0.1-0.3 M · pH 8-9
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_CHLORIDE
+  centroid:
+    peg_log_mw: 3.5591
+    peg_percent: 17.9052
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.681
+    ph: 8.2901
+  n_records_at_creation: 493
+  screen_anchors:
+  - screen: PEG / Ion Screen
+    catalogue: HR2-126
+    well: '4'
+  - screen: PEG / Ion Screen
+    catalogue: HR2-126
+    well: '5'
+- id: L3_SALT_PEG_PEG_3350_4000_CHLORIDE_20_30_0_1_0_3_M_PH_6_7
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · chloride · 20-30% · 0.1-0.3 M · pH 6-7
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_CHLORIDE
+  centroid:
+    peg_log_mw: 3.5349
+    peg_percent: 24.8979
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.702
+    ph: 6.4402
+  n_records_at_creation: 491
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '43'
+  - screen: PEG / Ion Screen
+    catalogue: HR2-126
+    well: '4'
+- id: L3_SALT_PEG_PEG_3350_4000_NITRATE_IODIDE_THIOCYANATE_10_20_0_2
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · nitrate/iodide/thiocyanate · 10-20% · 0.1-0.3 M · pH 7-8
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_NITRATE_IODIDE_THIOCYANATE
+  centroid:
+    peg_log_mw: 3.5273
+    peg_percent: 18.5937
+    salt_hofmeister: 2.7498
+    salt_log_molar: -0.6916
+    ph: 7.3319
+  n_records_at_creation: 478
+  screen_anchors:
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '10'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '12'
+- id: L3_ORGANIC_PEG_PEG_3350_4000_10_20_ORGANIC_10_PH_7_8
+  level: 3
+  label: Organic/PEG · PEG 3350-4000 · 10-20% · organic <10% · pH 7-8
+  l1_class: Organic/PEG
+  parent: L2_ORGANIC_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.586
+    peg_percent: 18.2754
+    organic_percent: 8.8591
+    ph: 7.4257
+  n_records_at_creation: 470
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '8'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '41'
+- id: L3_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE_10_20_0_1_0_3_M_PH_6_
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · acetate/formate · 10-20% · 0.1-0.3 M · pH 6-7
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE
+  centroid:
+    peg_log_mw: 3.5343
+    peg_percent: 18.0233
+    salt_hofmeister: -1.9947
+    salt_log_molar: -0.6906
+    ph: 6.4205
+  n_records_at_creation: 458
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '44'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '21'
+- id: L3_ORGANIC_PH_8_9
+  level: 3
+  label: Organic · pH 8-9
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    ph: 8.2616
+  n_records_at_creation: 453
+  screen_anchors: []
+- id: L3_ORGANIC_ORGANIC_10_PH_7_8
+  level: 3
+  label: Organic · organic <10% · pH 7-8
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    organic_percent: 8.1053
+    ph: 7.4195
+  n_records_at_creation: 443
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '37'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '41'
+- id: L3_ORGANIC_SALT_CHLORIDE_0_1_0_3_M_ORGANIC_20_30_PH_7_8
+  level: 3
+  label: Organic/Salt · chloride · 0.1-0.3 M · organic 20-30% · pH 7-8
+  l1_class: Organic/Salt
+  parent: L2_ORGANIC_SALT_CHLORIDE
+  centroid:
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.6916
+    organic_percent: 28.2379
+    ph: 7.4516
+  n_records_at_creation: 442
+  screen_anchors:
+  - screen: PEG / Ion Screen
+    catalogue: HR2-126
+    well: '4'
+  - screen: PEG / Ion Screen
+    catalogue: HR2-126
+    well: '5'
+- id: L3_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE_20_30_0_1_0_3_M_PH_7_
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · acetate/formate · 20-30% · 0.1-0.3 M · pH 7-8
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE
+  centroid:
+    peg_log_mw: 3.5368
+    peg_percent: 25.3618
+    salt_hofmeister: -1.9893
+    salt_log_molar: -0.687
+    ph: 7.3823
+  n_records_at_creation: 437
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '44'
+  - screen: Index
+    catalogue: HR2-144
+    well: '44'
+- id: L3_PEG_PEG_5000_6000_10_20_PH_6_7
+  level: 3
+  label: PEG · PEG 5000-6000 · 10-20% · pH 6-7
+  l1_class: PEG
+  parent: L2_PEG_PEG_5000_6000
+  centroid:
+    peg_log_mw: 3.7479
+    peg_percent: 17.0677
+    ph: 6.4026
+  n_records_at_creation: 434
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '45'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '46'
+- id: L3_ORGANIC_PEG_PEG_3350_4000_PH_7_8
+  level: 3
+  label: Organic/PEG · PEG 3350-4000 · pH 7-8
+  l1_class: Organic/PEG
+  parent: L2_ORGANIC_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5669
+    ph: 7.3137
+  n_records_at_creation: 432
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '31'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '1'
+- id: L3_ORGANIC_ORGANIC_30_PH_6_7
+  level: 3
+  label: Organic · organic >30% · pH 6-7
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    organic_percent: 44.1361
+    ph: 6.3113
+  n_records_at_creation: 424
+  screen_anchors:
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '3'
+- id: L3_ORGANIC_ORGANIC_20_30_PH_7_8
+  level: 3
+  label: Organic · organic 20-30% · pH 7-8
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    organic_percent: 26.8057
+    ph: 7.304
+  n_records_at_creation: 422
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '3'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '14'
+- id: L3_SALT_CHLORIDE_0_1_0_3_M_PH_8_9
+  level: 3
+  label: Salt · chloride · 0.1-0.3 M · pH 8-9
+  l1_class: Salt
+  parent: L2_SALT_CHLORIDE
+  centroid:
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.6494
+    ph: 8.2406
+  n_records_at_creation: 421
+  screen_anchors:
+  - screen: PEG / Ion Screen
+    catalogue: HR2-126
+    well: '4'
+  - screen: PEG / Ion Screen
+    catalogue: HR2-126
+    well: '5'
+- id: L3_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE_10_20_0_1_0_3_M_PH_8_
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · acetate/formate · 10-20% · 0.1-0.3 M · pH 8-9
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE
+  centroid:
+    peg_log_mw: 3.5467
+    peg_percent: 18.0671
+    salt_hofmeister: -1.9856
+    salt_log_molar: -0.6776
+    ph: 8.2211
+  n_records_at_creation: 419
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '44'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '28'
+- id: L3_SALT_PEG_PEG_3350_4000_CHLORIDE_10_20_0_1_0_3_M_PH_UNSTATED
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · chloride · 10-20% · 0.1-0.3 M · pH unstated
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_CHLORIDE
+  centroid:
+    peg_log_mw: 3.5327
+    peg_percent: 19.0324
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.6965
+  n_records_at_creation: 417
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '10'
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '39'
+- id: L3_PEG_PEG_8000_10000_10_20_PH_6_7
+  level: 3
+  label: PEG · PEG 8000-10000 · 10-20% · pH 6-7
+  l1_class: PEG
+  parent: L2_PEG_PEG_8000_10000
+  centroid:
+    peg_log_mw: 3.9214
+    peg_percent: 16.5385
+    ph: 6.3982
+  n_records_at_creation: 416
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '50'
+  - screen: PEGRx™ 1
+    catalogue: HR2-082
+    well: '44'
+- id: L3_ORGANIC_CHLORIDE_0_1_0_3_M_ORGANIC_10_PH_7_8
+  level: 3
+  label: Organic · chloride · 0.1-0.3 M · organic <10% · pH 7-8
+  l1_class: Organic
+  parent: L2_ORGANIC_CHLORIDE
+  centroid:
+    salt_hofmeister: 0.0
+    salt_log_molar: -1.1431
+    organic_percent: 7.2831
+    ph: 7.231
+  n_records_at_creation: 415
+  screen_anchors:
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '20'
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '37'
+- id: L3_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE_10_20_0__5
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · sulfate/phosphate/citrate · 10-20% · 0.1-0.3 M · pH 5-6
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    peg_log_mw: 3.5442
+    peg_percent: 17.5493
+    salt_hofmeister: -3.5659
+    salt_log_molar: -0.6865
+    ph: 5.3757
+  n_records_at_creation: 408
+  screen_anchors:
+  - screen: PEGRx™ 1
+    catalogue: HR2-082
+    well: '29'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '10'
+- id: L3_ORGANIC_ORGANIC_30_PH_4_5
+  level: 3
+  label: Organic · organic >30% · pH 4-5
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    organic_percent: 43.4899
+    ph: 4.4233
+  n_records_at_creation: 407
+  screen_anchors: []
+- id: L3_SALT_PEG_PEG_3350_4000_NITRATE_IODIDE_THIOCYANATE_10_20_0_3
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · nitrate/iodide/thiocyanate · 10-20% · 0.1-0.3 M · pH 6-7
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_NITRATE_IODIDE_THIOCYANATE
+  centroid:
+    peg_log_mw: 3.528
+    peg_percent: 18.7858
+    salt_hofmeister: 2.6078
+    salt_log_molar: -0.6946
+    ph: 6.5115
+  n_records_at_creation: 400
+  screen_anchors:
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '33'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '10'
+- id: L3_PEG_PEG_3350_4000_10_PH_7_8
+  level: 3
+  label: PEG · PEG 3350-4000 · <10% · pH 7-8
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5455
+    peg_percent: 8.555
+    ph: 7.3768
+  n_records_at_creation: 398
+  screen_anchors:
+  - screen: PEGRx™ 1
+    catalogue: HR2-082
+    well: '30'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '1'
+- id: L3_PEG_PEG_3350_4000_PH_4_5
+  level: 3
+  label: PEG · PEG 3350-4000 · pH 4-5
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.582
+    ph: 4.5094
+  n_records_at_creation: 391
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '31'
+  - screen: Index
+    catalogue: HR2-144
+    well: '41'
+- id: L3_PEG_PEG_3350_4000_20_30_PH_UNSTATED
+  level: 3
+  label: PEG · PEG 3350-4000 · 20-30% · pH unstated
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5366
+    peg_percent: 25.0302
+  n_records_at_creation: 384
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '40'
+  - screen: Index
+    catalogue: HR2-144
+    well: '41'
+- id: L3_ORGANIC_ORGANIC_30_PH_8_9
+  level: 3
+  label: Organic · organic >30% · pH 8-9
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    organic_percent: 48.6637
+    ph: 8.1975
+  n_records_at_creation: 380
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '43'
+- id: L3_ORGANIC_ORGANIC_10_20_PH_6_7
+  level: 3
+  label: Organic · organic 10-20% · pH 6-7
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    organic_percent: 16.784
+    ph: 6.3495
+  n_records_at_creation: 378
+  screen_anchors:
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '8'
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '21'
+- id: L3_PEG_PEG_8000_10000_PH_8_9
+  level: 3
+  label: PEG · PEG 8000-10000 · pH 8-9
+  l1_class: PEG
+  parent: L2_PEG_PEG_8000_10000
+  centroid:
+    peg_log_mw: 3.908
+    ph: 8.2817
+  n_records_at_creation: 373
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '30'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '42'
+- id: L3_ORGANIC_ACETATE_FORMATE_0_1_0_3_M_ORGANIC_10_20_PH_6_7
+  level: 3
+  label: Organic · acetate/formate · 0.1-0.3 M · organic 10-20% · pH 6-7
+  l1_class: Organic
+  parent: L2_ORGANIC_ACETATE_FORMATE
+  centroid:
+    salt_hofmeister: -1.9985
+    salt_log_molar: -1.5463
+    organic_percent: 13.9973
+    ph: 6.6544
+  n_records_at_creation: 370
+  screen_anchors:
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '12'
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '26'
+- id: L3_ORGANIC_PEG_PEG_3350_4000_10_20_ORGANIC_10_20_PH_5_6
+  level: 3
+  label: Organic/PEG · PEG 3350-4000 · 10-20% · organic 10-20% · pH 5-6
+  l1_class: Organic/PEG
+  parent: L2_ORGANIC_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5949
+    peg_percent: 18.4198
+    organic_percent: 18.6427
+    ph: 5.5572
+  n_records_at_creation: 369
+  screen_anchors:
+  - screen: PEGRx™ 1
+    catalogue: HR2-082
+    well: '29'
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '28'
+- id: L3_PEG_PEG_1000_1500_20_30_PH_6_7
+  level: 3
+  label: PEG · PEG 1000-1500 · 20-30% · pH 6-7
+  l1_class: PEG
+  parent: L2_PEG_PEG_1000_1500
+  centroid:
+    peg_log_mw: 3.0003
+    peg_percent: 29.4698
+    ph: 6.0514
+  n_records_at_creation: 364
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '43'
+  - screen: Index
+    catalogue: HR2-144
+    well: '37'
+- id: L3_SALT_CHLORIDE_1_8_M_PH_7_8
+  level: 3
+  label: Salt · chloride · >1.8 M · pH 7-8
+  l1_class: Salt
+  parent: L2_SALT_CHLORIDE
+  centroid:
+    salt_hofmeister: 0.0
+    salt_log_molar: 0.5089
+    ph: 7.2998
+  n_records_at_creation: 363
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '11'
+  - screen: SaltRx™ 1
+    catalogue: HR2-107
+    well: '13'
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_0_1_0_3_M_PH_7_8
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · 0.1-0.3 M · pH 7-8
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.6975
+    salt_log_molar: -0.695
+    ph: 7.3214
+  n_records_at_creation: 361
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '30'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '31'
+- id: L3_SALT_ACETATE_FORMATE_1_8_M_PH_4_5
+  level: 3
+  label: Salt · acetate/formate · >1.8 M · pH 4-5
+  l1_class: Salt
+  parent: L2_SALT_ACETATE_FORMATE
+  centroid:
+    salt_hofmeister: -1.9818
+    salt_log_molar: 0.4019
+    ph: 4.5003
+  n_records_at_creation: 354
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '34'
+  - screen: SaltRx™ 1
+    catalogue: HR2-107
+    well: '27'
+- id: L3_SALT_PH_7_8
+  level: 3
+  label: Salt · pH 7-8
+  l1_class: Salt
+  parent: L2_SALT
+  centroid:
+    ph: 7.1609
+  n_records_at_creation: 349
+  screen_anchors: []
+- id: L3_ORGANIC_PH_5_6
+  level: 3
+  label: Organic · pH 5-6
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    ph: 5.4423
+  n_records_at_creation: 349
+  screen_anchors: []
+- id: L3_ORGANIC_SALT_SULFATE_PHOSPHATE_CITRATE_1_1_5_M_ORGANIC_10_PH
+  level: 3
+  label: Organic/Salt · sulfate/phosphate/citrate · 1-1.5 M · organic <10% · pH 6-7
+  l1_class: Organic/Salt
+  parent: L2_ORGANIC_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.9117
+    salt_log_molar: 0.1921
+    organic_percent: 8.5724
+    ph: 6.4626
+  n_records_at_creation: 349
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '20'
+  - screen: Index
+    catalogue: HR2-144
+    well: '30'
+- id: L3_PEG_PEG_3350_4000_CHLORIDE_10_20_0_1_0_3_M_PH_8_9
+  level: 3
+  label: PEG · PEG 3350-4000 · chloride · 10-20% · 0.1-0.3 M · pH 8-9
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000_CHLORIDE
+  centroid:
+    peg_log_mw: 3.547
+    peg_percent: 16.2609
+    salt_hofmeister: 0.0
+    salt_log_molar: -1.1371
+    ph: 8.3011
+  n_records_at_creation: 348
+  screen_anchors:
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '35'
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '20'
+- id: L3_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE_10_20_0__6
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · sulfate/phosphate/citrate · 10-20% · 0.1-0.3 M · organic <10% · pH
+    8-9
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    peg_log_mw: 3.6012
+    peg_percent: 18.9423
+    salt_hofmeister: -3.9971
+    salt_log_molar: -0.699
+    organic_percent: 2.9889
+    ph: 8.4983
+  n_records_at_creation: 343
+  screen_anchors:
+  - screen: PEG / Ion Screen
+    catalogue: HR2-126
+    well: '31'
+  - screen: PEG / Ion Screen
+    catalogue: HR2-126
+    well: '32'
+- id: L3_PEG_PEG_5000_6000_PH_6_7
+  level: 3
+  label: PEG · PEG 5000-6000 · pH 6-7
+  l1_class: PEG
+  parent: L2_PEG_PEG_5000_6000
+  centroid:
+    peg_log_mw: 3.753
+    ph: 6.2925
+  n_records_at_creation: 340
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '1'
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '26'
+- id: L3_SALT_PEG_PEG_3350_4000_CHLORIDE_10_20_0_1_0_3_M_PH_6_7
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · chloride · 10-20% · 0.1-0.3 M · pH 6-7
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_CHLORIDE
+  centroid:
+    peg_log_mw: 3.5422
+    peg_percent: 17.3561
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.6778
+    ph: 6.3585
+  n_records_at_creation: 335
+  screen_anchors:
+  - screen: PEG / Ion Screen
+    catalogue: HR2-126
+    well: '4'
+  - screen: PEG / Ion Screen
+    catalogue: HR2-126
+    well: '5'
+- id: L3_ORGANIC_ORGANIC_10_20_PH_7_8
+  level: 3
+  label: Organic · organic 10-20% · pH 7-8
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    organic_percent: 16.9877
+    ph: 7.3202
+  n_records_at_creation: 333
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '27'
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '12'
+- id: L3_SALT_ACETATE_FORMATE_0_1_0_3_M_PH_8_9
+  level: 3
+  label: Salt · acetate/formate · 0.1-0.3 M · pH 8-9
+  l1_class: Salt
+  parent: L2_SALT_ACETATE_FORMATE
+  centroid:
+    salt_hofmeister: -1.4565
+    salt_log_molar: -0.5357
+    ph: 8.4403
+  n_records_at_creation: 330
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '16'
+  - screen: SaltRx™ 1
+    catalogue: HR2-107
+    well: '25'
+- id: L3_ORGANIC_ORGANIC_20_30_PH_8_9
+  level: 3
+  label: Organic · organic 20-30% · pH 8-9
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    organic_percent: 26.493
+    ph: 8.2564
+  n_records_at_creation: 328
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '3'
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '40'
+- id: L3_PEG_PEG_3350_4000_10_20_PH_4_5
+  level: 3
+  label: PEG · PEG 3350-4000 · 10-20% · pH 4-5
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5463
+    peg_percent: 16.9679
+    ph: 4.4813
+  n_records_at_creation: 327
+  screen_anchors:
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '31'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '45'
+- id: L3_ORGANIC_PEG_PEG_8000_10000_10_ORGANIC_10_PH_7_8
+  level: 3
+  label: Organic/PEG · PEG 8000-10000 · <10% · organic <10% · pH 7-8
+  l1_class: Organic/PEG
+  parent: L2_ORGANIC_PEG_PEG_8000_10000
+  centroid:
+    peg_log_mw: 3.9125
+    peg_percent: 9.3758
+    organic_percent: 7.5712
+    ph: 7.4575
+  n_records_at_creation: 326
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '37'
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '43'
+- id: L3_PEG_PEG_3350_4000_CHLORIDE_20_30_0_1_0_3_M_PH_7_8
+  level: 3
+  label: PEG · PEG 3350-4000 · chloride · 20-30% · 0.1-0.3 M · pH 7-8
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000_CHLORIDE
+  centroid:
+    peg_log_mw: 3.5425
+    peg_percent: 24.4263
+    salt_hofmeister: 0.0
+    salt_log_molar: -1.4575
+    ph: 7.3997
+  n_records_at_creation: 325
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '44'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '42'
+- id: L3_ORGANIC_SALT_SULFATE_PHOSPHATE_CITRATE_1_1_5_M_ORGANIC_10_2
+  level: 3
+  label: Organic/Salt · sulfate/phosphate/citrate · 1-1.5 M · organic <10% · pH 7-8
+  l1_class: Organic/Salt
+  parent: L2_ORGANIC_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.7376
+    salt_log_molar: 0.1703
+    organic_percent: 6.5067
+    ph: 7.2876
+  n_records_at_creation: 323
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '32'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '16'
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_0_1_0_3_M_PH_6_7
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · 0.1-0.3 M · pH 6-7
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.8447
+    salt_log_molar: -0.6829
+    ph: 6.4162
+  n_records_at_creation: 320
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '30'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '31'
+- id: L3_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE_20_30_0_1_0_3_M_PH_6_
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · acetate/formate · 20-30% · 0.1-0.3 M · pH 6-7
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE
+  centroid:
+    peg_log_mw: 3.5466
+    peg_percent: 25.6017
+    salt_hofmeister: -1.9885
+    salt_log_molar: -0.6834
+    ph: 6.3744
+  n_records_at_creation: 316
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '44'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '21'
+- id: L3_SALT_CHLORIDE_0_1_0_3_M_PH_6_7
+  level: 3
+  label: Salt · chloride · 0.1-0.3 M · pH 6-7
+  l1_class: Salt
+  parent: L2_SALT_CHLORIDE
+  centroid:
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.7131
+    ph: 6.3292
+  n_records_at_creation: 312
+  screen_anchors:
+  - screen: PEG / Ion Screen
+    catalogue: HR2-126
+    well: '4'
+  - screen: PEG / Ion Screen
+    catalogue: HR2-126
+    well: '5'
+- id: L3_ORGANIC_ORGANIC_30_PH_5_6
+  level: 3
+  label: Organic · organic >30% · pH 5-6
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    organic_percent: 41.253
+    ph: 5.41
+  n_records_at_creation: 309
+  screen_anchors:
+  - screen: PEGRx™ 1
+    catalogue: HR2-082
+    well: '2'
+  - screen: Index
+    catalogue: HR2-144
+    well: '48'
+- id: L3_SALT_CHLORIDE_1_1_5_M_PH_4_5
+  level: 3
+  label: Salt · chloride · 1-1.5 M · pH 4-5
+  l1_class: Salt
+  parent: L2_SALT_CHLORIDE
+  centroid:
+    salt_hofmeister: 0.0
+    salt_log_molar: 0.1128
+    ph: 4.5146
+  n_records_at_creation: 308
+  screen_anchors:
+  - screen: SaltRx™ 1
+    catalogue: HR2-107
+    well: '3'
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '8'
+- id: L3_PEG_PEG_8000_10000_10_PH_8_9
+  level: 3
+  label: PEG · PEG 8000-10000 · <10% · pH 8-9
+  l1_class: PEG
+  parent: L2_PEG_PEG_8000_10000
+  centroid:
+    peg_log_mw: 3.9092
+    peg_percent: 8.0043
+    ph: 8.2217
+  n_records_at_creation: 300
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '1'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '36'
+- id: L3_PEG_PEG_3350_4000_10_PH_4_5
+  level: 3
+  label: PEG · PEG 3350-4000 · <10% · pH 4-5
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5901
+    peg_percent: 7.4879
+    ph: 4.5183
+  n_records_at_creation: 298
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '37'
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '1'
+- id: L3_PEG_PEG_8000_10000_PH_UNSTATED
+  level: 3
+  label: PEG · PEG 8000-10000 · pH unstated
+  l1_class: PEG
+  parent: L2_PEG_PEG_8000_10000
+  centroid:
+    peg_log_mw: 3.909
+  n_records_at_creation: 297
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '37'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '15'
+- id: L3_PEG_PEG_5000_6000_10_20_PH_5_6
+  level: 3
+  label: PEG · PEG 5000-6000 · 10-20% · pH 5-6
+  l1_class: PEG
+  parent: L2_PEG_PEG_5000_6000
+  centroid:
+    peg_log_mw: 3.7719
+    peg_percent: 17.3427
+    ph: 5.2486
+  n_records_at_creation: 293
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '50'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '42'
+- id: L3_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE_20_30_0__5
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · sulfate/phosphate/citrate · 20-30% · 0.1-0.3 M · pH unstated
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    peg_log_mw: 3.552
+    peg_percent: 25.0391
+    salt_hofmeister: -3.5744
+    salt_log_molar: -0.6732
+  n_records_at_creation: 289
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '40'
+  - screen: Index
+    catalogue: HR2-144
+    well: '41'
+- id: L3_SALT_PEG_PEG_8000_10000_CHLORIDE_10_20_0_1_0_3_M_PH_8_9
+  level: 3
+  label: Salt/PEG · PEG 8000-10000 · chloride · 10-20% · 0.1-0.3 M · pH 8-9
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_8000_10000_CHLORIDE
+  centroid:
+    peg_log_mw: 3.9048
+    peg_percent: 18.5305
+    salt_hofmeister: 0.0
+    salt_log_molar: -0.6829
+    ph: 8.3981
+  n_records_at_creation: 287
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '39'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '42'
+- id: L3_PEG_PEG_8000_10000_10_20_PH_5_6
+  level: 3
+  label: PEG · PEG 8000-10000 · 10-20% · pH 5-6
+  l1_class: PEG
+  parent: L2_PEG_PEG_8000_10000
+  centroid:
+    peg_log_mw: 3.9173
+    peg_percent: 17.8584
+    ph: 5.4379
+  n_records_at_creation: 286
+  screen_anchors:
+  - screen: PEGRx™ 1
+    catalogue: HR2-082
+    well: '41'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '42'
+- id: L3_ORGANIC_PH_4_5
+  level: 3
+  label: Organic · pH 4-5
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    ph: 4.4873
+  n_records_at_creation: 280
+  screen_anchors: []
+- id: L3_ORGANIC_ORGANIC_10_20_PH_8_9
+  level: 3
+  label: Organic · organic 10-20% · pH 8-9
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    organic_percent: 17.9377
+    ph: 8.328
+  n_records_at_creation: 279
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '44'
+  - screen: PEGRx™ 1
+    catalogue: HR2-082
+    well: '6'
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_1_1_5_M_PH_9_10
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · 1-1.5 M · pH 9-10
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.4985
+    salt_log_molar: 0.1285
+    ph: 9.2816
+  n_records_at_creation: 279
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '26'
+  - screen: Index
+    catalogue: HR2-144
+    well: '21'
+- id: L3_PEG_20_30_PH_UNSTATED
+  level: 3
+  label: PEG · 20-30% · pH unstated
+  l1_class: PEG
+  parent: L2_PEG
+  centroid:
+    peg_log_mw: 3.1761
+    peg_percent: 25.5795
+  n_records_at_creation: 279
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '37'
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '19'
+- id: L3_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE_20_30_0__6
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · sulfate/phosphate/citrate · 20-30% · 0.1-0.3 M · pH 4-5
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    peg_log_mw: 3.5858
+    peg_percent: 25.446
+    salt_hofmeister: -3.9627
+    salt_log_molar: -0.689
+    ph: 4.5674
+  n_records_at_creation: 278
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '20'
+  - screen: Index
+    catalogue: HR2-144
+    well: '41'
+- id: L3_PEG_PEG_3350_4000_ACETATE_FORMATE_10_20_0_1_0_3_M_PH_7_8
+  level: 3
+  label: PEG · PEG 3350-4000 · acetate/formate · 10-20% · 0.1-0.3 M · pH 7-8
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000_ACETATE_FORMATE
+  centroid:
+    peg_log_mw: 3.5364
+    peg_percent: 16.3667
+    salt_hofmeister: -1.9347
+    salt_log_molar: -1.0282
+    ph: 7.277
+  n_records_at_creation: 270
+  screen_anchors:
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '27'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '10'
+- id: L3_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE_20_30_0_1_0_3_M_PH_UN
+  level: 3
+  label: Salt/PEG · PEG 3350-4000 · acetate/formate · 20-30% · 0.1-0.3 M · pH unstated
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_3350_4000_ACETATE_FORMATE
+  centroid:
+    peg_log_mw: 3.5407
+    peg_percent: 25.9099
+    salt_hofmeister: -1.9931
+    salt_log_molar: -0.6846
+  n_records_at_creation: 270
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '19'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '21'
+- id: L3_ORGANIC_ORGANIC_10_PH_8_9
+  level: 3
+  label: Organic · organic <10% · pH 8-9
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    organic_percent: 6.2586
+    ph: 8.1731
+  n_records_at_creation: 268
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '5'
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '27'
+- id: L3_PEG_PEG_8000_10000_10_PH_7_8
+  level: 3
+  label: PEG · PEG 8000-10000 · <10% · pH 7-8
+  l1_class: PEG
+  parent: L2_PEG_PEG_8000_10000
+  centroid:
+    peg_log_mw: 3.9078
+    peg_percent: 8.3509
+    ph: 7.4305
+  n_records_at_creation: 267
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '37'
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '43'
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_1_8_M_PH_9_10
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · >1.8 M · pH 9-10
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.8115
+    salt_log_molar: 0.4224
+    ph: 9.0904
+  n_records_at_creation: 266
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '5'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '32'
+- id: L3_SALT_PEG_PEG_8000_10000_ACETATE_FORMATE_20_30_0_1_0_3_M_PH_6
+  level: 3
+  label: Salt/PEG · PEG 8000-10000 · acetate/formate · 20-30% · 0.1-0.3 M · pH 6-7
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_8000_10000_ACETATE_FORMATE
+  centroid:
+    peg_log_mw: 3.9038
+    peg_percent: 28.3722
+    salt_hofmeister: -1.9996
+    salt_log_molar: -0.6908
+    ph: 6.4308
+  n_records_at_creation: 266
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '44'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '21'
+- id: L3_SALT_SULFATE_PHOSPHATE_CITRATE_0_1_0_3_M_PH_UNSTATED
+  level: 3
+  label: Salt · sulfate/phosphate/citrate · 0.1-0.3 M · pH unstated
+  l1_class: Salt
+  parent: L2_SALT_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    salt_hofmeister: -3.4632
+    salt_log_molar: -0.6781
+  n_records_at_creation: 263
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '43'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '5'
+- id: L3_ORGANIC_CHLORIDE_0_1_0_3_M_ORGANIC_20_30_PH_6_7
+  level: 3
+  label: Organic · chloride · 0.1-0.3 M · organic 20-30% · pH 6-7
+  l1_class: Organic
+  parent: L2_ORGANIC_CHLORIDE
+  centroid:
+    salt_hofmeister: 0.0
+    salt_log_molar: -1.2086
+    organic_percent: 27.8881
+    ph: 6.3712
+  n_records_at_creation: 260
+  screen_anchors:
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '20'
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '24'
+- id: L3_ORGANIC_ORGANIC_10_PH_6_7
+  level: 3
+  label: Organic · organic <10% · pH 6-7
+  l1_class: Organic
+  parent: L2_ORGANIC
+  centroid:
+    organic_percent: 7.8419
+    ph: 6.288
+  n_records_at_creation: 258
+  screen_anchors:
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '8'
+  - screen: Crystal Screen 2
+    catalogue: HR2-112
+    well: '23'
+- id: L3_PEG_PEG_3350_4000_20_30_PH_4_5
+  level: 3
+  label: PEG · PEG 3350-4000 · 20-30% · pH 4-5
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000
+  centroid:
+    peg_log_mw: 3.5621
+    peg_percent: 25.2462
+    ph: 4.4934
+  n_records_at_creation: 256
+  screen_anchors:
+  - screen: Index
+    catalogue: HR2-144
+    well: '41'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '20'
+- id: L3_PEG_PEG_8000_10000_10_20_PH_8_9
+  level: 3
+  label: PEG · PEG 8000-10000 · 10-20% · pH 8-9
+  l1_class: PEG
+  parent: L2_PEG_PEG_8000_10000
+  centroid:
+    peg_log_mw: 3.9251
+    peg_percent: 16.9239
+    ph: 8.2759
+  n_records_at_creation: 255
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '50'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '42'
+- id: L3_PEG_PEG_3350_4000_CHLORIDE_10_20_0_1_0_3_M_PH_6_7
+  level: 3
+  label: PEG · PEG 3350-4000 · chloride · 10-20% · 0.1-0.3 M · pH 6-7
+  l1_class: PEG
+  parent: L2_PEG_PEG_3350_4000_CHLORIDE
+  centroid:
+    peg_log_mw: 3.5524
+    peg_percent: 16.5453
+    salt_hofmeister: 0.0
+    salt_log_molar: -1.1947
+    ph: 6.37
+  n_records_at_creation: 254
+  screen_anchors:
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '20'
+  - screen: PEG / Ion 2 Screen
+    catalogue: HR2-098
+    well: '39'
+- id: L3_SALT_PEG_PEG_8000_10000_SULFATE_PHOSPHATE_CITRATE_20_30_0_1_
+  level: 3
+  label: Salt/PEG · PEG 8000-10000 · sulfate/phosphate/citrate · 20-30% · 0.1-0.3 M · pH 6-7
+  l1_class: Salt/PEG
+  parent: L2_SALT_PEG_PEG_8000_10000_SULFATE_PHOSPHATE_CITRATE
+  centroid:
+    peg_log_mw: 3.9035
+    peg_percent: 28.5998
+    salt_hofmeister: -3.902
+    salt_log_molar: -0.688
+    ph: 6.4829
+  n_records_at_creation: 253
+  screen_anchors:
+  - screen: PEGRx™ 2
+    catalogue: HR2-084
+    well: '8'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '15'
+- id: L3_ORGANIC_PEG_PEG_8000_10000_PH_7_8
+  level: 3
+  label: Organic/PEG · PEG 8000-10000 · pH 7-8
+  l1_class: Organic/PEG
+  parent: L2_ORGANIC_PEG_PEG_8000_10000
+  centroid:
+    peg_log_mw: 3.9147
+    ph: 7.3492
+  n_records_at_creation: 250
+  screen_anchors:
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '30'
+  - screen: Crystal Screen
+    catalogue: HR2-110
+    well: '42'

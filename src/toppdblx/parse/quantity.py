@@ -25,7 +25,11 @@ _NUMBER = r"\d+(?:[.,]\d+)?"
 # word forms are tried before the bare hyphen.
 _RANGE_SEP = r"(?:\s*(?:to|-|–|through)\s*)"
 
-_QUANTITY = re.compile(rf"""
+# Anchored deliberately, at the start or at the end, mirroring `text.strip_quantity`. An
+# unanchored search finds a number anywhere in the clause, so "peg 1000" yielded PEG_1000 at
+# 1000% while strip_quantity correctly kept the 1000 as part of the name. That disagreement
+# put 17,256 components into the database with their molecular weight as their concentration.
+_QUANTITY_BODY = rf"""
     (?P<low>{_NUMBER})
     # A unit on the FIRST endpoint, but only when a range separator follows: "28% to 32%".
     # The lookahead matters: without it "30% (w/v)" consumes the % here and the (w/v) marker
@@ -42,7 +46,13 @@ _QUANTITY = re.compile(rf"""
       | mm | µm | um | nm | m
     )?
     (?![a-z0-9])
-""", re.VERBOSE | re.IGNORECASE)
+"""
+
+# Leading form: the unit may be omitted ("1.7 to 2.1 ammonium sulfate" means molar).
+_LEADING_QUANTITY = re.compile(rf"^\s*{_QUANTITY_BODY}", re.VERBOSE | re.IGNORECASE)
+# Trailing form: a unit is required, or a reagent name ending in digits ("PEG 8000") would
+# have its identity read as an amount.
+_TRAILING_QUANTITY = re.compile(rf"{_QUANTITY_BODY}\s*$", re.VERBOSE | re.IGNORECASE)
 
 _UNIT_MAP: dict[str, Unit] = {
     "%": "percent_unspecified",
@@ -93,7 +103,12 @@ def extract(clause: str) -> Quantity:
     Only the first match is taken. A clause containing two quantities is a splitting
     failure upstream, not something to silently average.
     """
-    match = _QUANTITY.search(clause)
+    match = _LEADING_QUANTITY.match(clause)
+    if not match:
+        trailing = _TRAILING_QUANTITY.search(clause)
+        # A trailing number without a unit is part of the name, not a concentration.
+        match = trailing if (trailing and (trailing.group("unit")
+                                           or trailing.group("unit_low"))) else None
     if not match:
         return Quantity()
 
