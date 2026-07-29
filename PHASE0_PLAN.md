@@ -645,7 +645,44 @@ and the stage aborts if more than 10% fail.
 - **Disagreement analysis** between the reported `exptl_crystal_grow.pH` field and the pH parsed from
   text. A publishable finding in its own right and free.
 
-**Packages:** `polars`, `numpy`, `scikit-learn` (metrics only), `plotly`.
+**Packages:** `polars`, `numpy`.
+
+**WP8 machinery built 2026-07-29; the audit itself is Marc's.**
+
+`eval.sample_audit` draws **1,484 records** stratified on four axes (leading precipitant
+class, release era, confidence band, outcome), with a floor of 3 per populated stratum so the
+rare cells are represented at all. The result deliberately over-samples the hard cases: 370
+low-confidence and 311 medium against 627 perfect, where a uniform draw would have been almost
+entirely perfect-confidence PEG records and would have said nothing useful.
+
+**A stratification bug caught before it cost any of Marc's time.** Era was first derived from
+`entry_version`, which is the latest *revision* date, so 1AIQ (deposited 1997, revised 2021)
+was stratified as a 2020s record. Era exists as a stratum precisely because older depositions
+have sparser text, so the axis was measuring nothing. Fixed to use `initial_release_date`,
+giving pre-2000 117, 2000s 324, 2010s 563, 2020s 445.
+
+`app/condition_courtroom_v1.html` is the audit interface: single file, no server, vanilla
+JavaScript with Tabulator for the record index, marcdeller.com brand theme, mobile responsive.
+It loads the sample by drag and drop, shows the raw `pdbx_details` beside the parsed
+components, and is keyboard-driven throughout, because at 1,484 records the interaction cost
+is the whole budget: <kbd>C</kbd> correct, <kbd>X</kbd> incorrect, <kbd>1</kbd>-<kbd>9</kbd>
+tag which field is wrong, <kbd>Shift</kbd>+<kbd>n</kbd> flag a specific component. Verdicts
+autosave to `localStorage` keyed by sample seed, so a closed tab costs nothing.
+
+`eval.audit_metrics` turns the exported verdicts into the reported figures. Three deliberate
+choices:
+
+- **Record accuracy and component precision are reported separately.** A record with four
+  components and one bad reagent is a failed record but a 75% component score, and the two
+  answer different questions.
+- **Wilson score intervals**, not the normal approximation, which goes out of range near 0
+  and 1 and at small stratum sizes.
+- **The raw sample figure is not archive-wide** and is never presented as such. The sample
+  over-samples hard cases by design, so the stage also computes an estimate reweighted by
+  stratum population and labels which is which.
+
+Unit inference is measured on its own, since it fires on 31.5% of components and a systematic
+error there would disappear inside any aggregate score.
 
 ### WP9. Release
 **3 days. Depends on WP8.**
