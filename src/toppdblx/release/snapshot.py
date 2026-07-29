@@ -41,7 +41,14 @@ HEADROOM_BYTES = 20 * 1024**3      # keep 20 GB spare after the transfer
 # so a retry costs only the file that was in flight. These are the exit codes worth
 # retrying: everything else (bad arguments, permissions) would just fail again.
 RETRYABLE_EXIT_CODES = {1, 5, 10, 11, 12, 23, 24, 30, 35, 255}
-MAX_ATTEMPTS = 12
+
+# Retries are NOT capped at a fixed count. Observed against the live server: the connection
+# resets or stalls every few minutes, so 90 GB needs dozens of attempts, and a fixed budget
+# aborts a transfer that is in fact progressing perfectly well. What matters is whether an
+# attempt moved any bytes: keep going while it does, give up only when several consecutive
+# attempts achieve nothing, which is the real "stuck" signal.
+MAX_ATTEMPTS = 500
+MAX_ATTEMPTS_WITHOUT_PROGRESS = 5
 BACKOFF_SECONDS = 30
 
 
@@ -100,6 +107,8 @@ def main(argv: Optional[list[str]] = None) -> int:
 
         attempts: list[dict[str, Any]] = []
         result = None
+        previous_bytes = 0
+        barren = 0
         for attempt in range(1, MAX_ATTEMPTS + 1):
             result = subprocess.run(rsync_command(args.dest, args.dry_run),
                                     capture_output=True, text=True)
@@ -110,14 +119,29 @@ def main(argv: Optional[list[str]] = None) -> int:
                              "stderr": result.stderr.strip()[-300:]})
             if result.returncode == 0:
                 break
-            if result.returncode not in RETRYABLE_EXIT_CODES or attempt == MAX_ATTEMPTS:
+
+            gained = fetched - previous_bytes
+            barren = 0 if gained > 0 else barren + 1
+            previous_bytes = fetched
+            attempts[-1]["bytes_gained"] = gained
+
+            if result.returncode not in RETRYABLE_EXIT_CODES:
                 raise RuntimeError(
-                    f"rsync failed ({result.returncode}) on attempt {attempt}:\n"
-                    f"{result.stderr[-2000:]}")
-            print(f"  attempt {attempt}: rsync exit {result.returncode} "
-                  f"({result.stderr.strip().splitlines()[-1][:80] if result.stderr.strip() else 'no message'})"
-                  f"; {fetched / 1e9:.1f} GB on disk, resuming in {BACKOFF_SECONDS}s",
-                  flush=True)
+                    f"rsync failed with non-retryable code {result.returncode} on attempt "
+                    f"{attempt}:\n{result.stderr[-2000:]}")
+            if barren >= MAX_ATTEMPTS_WITHOUT_PROGRESS:
+                raise RuntimeError(
+                    f"rsync made no progress across {barren} consecutive attempts, stopping "
+                    f"at {fetched / 1e9:.1f} GB:\n{result.stderr[-2000:]}")
+            if attempt == MAX_ATTEMPTS:
+                raise RuntimeError(
+                    f"reached {MAX_ATTEMPTS} attempts at {fetched / 1e9:.1f} GB")
+
+            message = (result.stderr.strip().splitlines()[-1][:70]
+                       if result.stderr.strip() else "no message")
+            print(f"  attempt {attempt}: exit {result.returncode} ({message}); "
+                  f"{fetched / 1e9:.1f} GB on disk (+{gained / 1e6:.0f} MB), "
+                  f"resuming in {BACKOFF_SECONDS}s", flush=True)
             time.sleep(BACKOFF_SECONDS)
 
         stats = parse_stats(result.stdout)
