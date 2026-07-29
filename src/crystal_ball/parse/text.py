@@ -98,6 +98,7 @@ _PROTEIN = re.compile(r"""
   | (?:reservoir|well|mother)\s+(?:solution|liquor)
   | drop\s+(?:ratio|volume) | \bmicroliters?\b | \bul\b\s+of | \bµl\b
   | mixed\s+(?:\d\s*:\s*\d|1:1|in\s+a?\s*\d) | \bratio\b | equal\s+volumes?
+  | mixed\s+[^,;]{0,40}?\bwith\b | consisting\s+of | \bdiluted\b
   | total\s+volume | \bnl\b
 """, re.VERBOSE)
 
@@ -225,6 +226,8 @@ def tidy_name(name: str) -> str:
     name = re.sub(r"(?<=\d),(?=\d{3}\b)", "", name)
     # "polyethylene glycol (peg) 3350": a parenthetical abbreviation restating the name.
     name = re.sub(r"\s*\((?:peg|mme|mpeg|w/v|v/v)\)\s*", " ", name)
+    # "2-methyl-2,4-pentanediol (mpd)": the same thing at the end of the name.
+    name = re.sub(r"\s*\([a-z][a-z0-9-]{1,7}\)\s*$", "", name)
     name = _POLYMER_PREFIX.sub(r"\1 \2", name)
     # "peg 2000mme" and "peg2000mme" -> "peg mme 2000", matching how the MME reagents are
     # named in the lexicon. The suffix form is common enough to be worth normalising.

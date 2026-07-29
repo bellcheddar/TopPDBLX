@@ -42,6 +42,9 @@ CRYO_MAX_PERCENT = 15.0
 
 _EXPLICIT_CRYO = re.compile(r"cryo(?:protect\w*|preserv\w*)?|for\s+freezing|flash[- ]?(?:cool|froz)")
 _FINAL_PH = re.compile(r"final\s+ph|ph\s+of\s+the\s+(?:drop|mixture|solution)")
+# A bare number in the pH range at the end of a buffer name. Bounded to 0-14 so a molecular
+# weight or a concentration cannot be mistaken for a pH.
+_TRAILING_BARE_PH = re.compile(r"\s+((?:1[0-4]|\d)(?:\.\d+)?)\s*$")
 _PH_VALUE = re.compile(r"ph\s*[:=]?\s*(\d+(?:\.\d+)?)(?:\s*(?:-|to)\s*(\d+(?:\.\d+)?))?")
 _TEMP_K = re.compile(r"(\d+(?:\.\d+)?)\s*(?:k\b|kelvin)")
 _TEMP_C = re.compile(r"(-?\d+(?:\.\d+)?)\s*(?:deg(?:rees)?\s*)?c(?:elsius)?\b")
@@ -101,6 +104,19 @@ class RuleParser:
         qty = quantity.extract(body)
         name = strip_quantity(body)
         reagent = self.index.get(normalise(name)) if name else None
+
+        # "hepes 7.5", "mes 6.5": a buffer named with a bare pH and no "pH" token. Retrying
+        # without the trailing number resolves it, and the number is kept as the buffer pH.
+        # Doing this in the lexicon would need one alias per buffer per pH value.
+        if reagent is None and name:
+            trimmed = _TRAILING_BARE_PH.sub("", name).strip()
+            if trimmed and trimmed != name:
+                candidate = self.index.get(normalise(trimmed))
+                if candidate is not None and candidate.chem_class == "buffer":
+                    reagent, name = candidate, trimmed
+                    if attached_ph is None:
+                        attached_ph = _TRAILING_BARE_PH.search(
+                            strip_quantity(body)).group(1)
 
         unit, inferred = quantity.infer_unit(
             qty.unit,

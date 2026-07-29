@@ -185,7 +185,7 @@ reagents:
     hofmeister_rank: -4
     default_unit: molar
     aliases: ["ammonium sulphate", "(nh4)2so4", "nh4so4", "amso4", "(nh4)2so",
-              "am sulfate", "ammonium sulfate anhydrous"]
+              "am sulfate", "ammonium sulfate anhydrous", "saturated ammonium sulfate"]
 
   - canonical_id: LITHIUM_SULFATE
     display_name: Lithium sulfate
@@ -261,35 +261,30 @@ reagents:
     display_name: Manganese chloride
     chem_class: salt
     hofmeister_rank: 0
-    default_unit: millimolar
     aliases: ["mncl2", "manganese(ii) chloride"]
 
   - canonical_id: ZINC_CHLORIDE
     display_name: Zinc chloride
     chem_class: salt
     hofmeister_rank: 0
-    default_unit: millimolar
     aliases: ["zncl2"]
 
   - canonical_id: COBALT_CHLORIDE
     display_name: Cobalt chloride
     chem_class: salt
     hofmeister_rank: 0
-    default_unit: millimolar
     aliases: ["cocl2", "cobalt(ii) chloride"]
 
   - canonical_id: NICKEL_CHLORIDE
     display_name: Nickel chloride
     chem_class: salt
     hofmeister_rank: 0
-    default_unit: millimolar
     aliases: ["nicl2"]
 
   - canonical_id: CADMIUM_CHLORIDE
     display_name: Cadmium chloride
     chem_class: salt
     hofmeister_rank: 0
-    default_unit: millimolar
     aliases: ["cdcl2"]
 
   - canonical_id: SODIUM_FLUORIDE
@@ -387,7 +382,6 @@ reagents:
     display_name: Zinc acetate
     chem_class: salt
     hofmeister_rank: -2
-    default_unit: millimolar
     aliases: ["zn acetate", "zinc acetate dihydrate"]
 
   - canonical_id: POTASSIUM_ACETATE
@@ -431,7 +425,8 @@ reagents:
     hofmeister_rank: -3
     default_unit: molar
     aliases: ["k/na tartrate", "na/k tartrate", "sodium potassium tartrate",
-              "potassium sodium tartrate tetrahydrate", "rochelle salt"]
+              "potassium sodium tartrate tetrahydrate", "rochelle salt",
+              "sodium/potassium tartrate"]
 
   - canonical_id: AMMONIUM_TARTRATE
     display_name: Ammonium tartrate
@@ -518,14 +513,12 @@ reagents:
     display_name: Cadmium sulfate
     chem_class: salt
     hofmeister_rank: -4
-    default_unit: millimolar
     aliases: ["cadmium sulphate", "cdso4"]
 
   - canonical_id: IRON_CHLORIDE
     display_name: Iron chloride
     chem_class: salt
     hofmeister_rank: 0
-    default_unit: millimolar
     aliases: ["ferric chloride", "fecl3", "iron chloride hexahydrate"]
 
   - canonical_id: SODIUM_TARTRATE
@@ -608,7 +601,7 @@ reagents:
     buffer_pka: 8.06
     default_unit: molar
     aliases: ["tris-hcl", "tris hcl", "tris/hcl", "tris-cl", "trishcl", "tris buffer",
-              "tris hydrochloride", "tris.hcl", "trizma", "tris base"]
+              "tris hydrochloride", "tris.hcl", "trizma", "tris base", "tris-hcl buffer"]
 
   - canonical_id: BIS_TRIS
     display_name: Bis-Tris
@@ -639,7 +632,7 @@ reagents:
     chem_class: buffer
     buffer_pka: 6.27
     default_unit: molar
-    aliases: ["cacodylate", "na cacodylate", "na-cacodylate", "cacodylic acid",
+    aliases: ["cacodylate", "na cacodylate", "na-cacodylate", "nacacodylate", "cacodylic acid",
               "sodium cacodylate trihydrate", "sodium cacodylate buffer"]
     note: >-
       Bare "cacodylate" is mapped here because the sodium salt is essentially the only form
@@ -703,7 +696,7 @@ reagents:
     default_unit: molar
     aliases: ["na acetate", "na-acetate", "naoac", "naac", "naacetate",
               "sodium acetate trihydrate", "acetic acid sodium salt",
-              "acetate", "sodium acetate buffer"]
+              "acetate", "sodium acetate buffer", "acetate buffer"]
 
   - canonical_id: SODIUM_CITRATE
     display_name: Sodium citrate
@@ -897,6 +890,12 @@ reagents:
       BUTANEDIOL_23 as the closest fuzzy match and it was accepted, but the two isomers are
       distinct reagents and merging them would be a chemistry error in the released data.
 
+  - canonical_id: BUTANOL_1
+    display_name: 1-Butanol
+    chem_class: organic
+    default_unit: percent_v_v
+    aliases: ["1 butanol", "n-butanol", "butan-1-ol"]
+
   - canonical_id: TERT_BUTANOL
     display_name: tert-Butanol
     chem_class: organic
@@ -1011,6 +1010,13 @@ reagents:
 
   # ---------------------------------------------------------------- detergents
 
+  - canonical_id: TMAO
+    display_name: Trimethylamine N-oxide
+    chem_class: additive
+    default_unit: molar
+    aliases: ["trimethylamine n-oxide", "tmao", "trimethylamine oxide"]
+    note: Osmolyte and stabiliser. Added from the 2026-07-29 audit, 182 components.
+
   - canonical_id: SDS
     display_name: SDS
     chem_class: detergent
@@ -1043,7 +1049,6 @@ reagents:
   - canonical_id: MIB_BUFFER
     display_name: MIB buffer
     chem_class: premix
-    default_unit: molar
     premix_components: [MALIC_ACID, IMIDAZOLE, BORIC_ACID]
     aliases: ["mib", "mib ph", "malic acid imidazole boric acid"]
     note: Sodium malonate/imidazole/boric acid system, 2:3:3, used across a wide pH range.
@@ -1051,14 +1056,12 @@ reagents:
   - canonical_id: PHOSPHATE_CITRATE
     display_name: Phosphate-citrate
     chem_class: premix
-    default_unit: molar
     premix_components: [SODIUM_PHOSPHATE, CITRIC_ACID]
     aliases: ["phosphate citrate", "citrate-phosphate", "citrate phosphate"]
 
   - canonical_id: MMT_BUFFER
     display_name: MMT buffer
     chem_class: premix
-    default_unit: molar
     premix_components: [MALIC_ACID, MES, TRIS]
     aliases: ["mmt", "malic acid mes tris", "dl-malic acid mes tris"]
     note: DL-malic acid / MES / Tris in a 1:2:2 molar ratio, used across pH 4 to 9.
@@ -1066,7 +1069,6 @@ reagents:
   - canonical_id: MES_IMIDAZOLE
     display_name: MES/imidazole
     chem_class: premix
-    default_unit: molar
     premix_components: [MES, IMIDAZOLE]
     aliases: ["mes imidazole", "imidazole/mes", "mes-imidazole"]
     note: >-
@@ -1083,7 +1085,6 @@ reagents:
   - canonical_id: TRIS_BICINE
     display_name: Tris/Bicine
     chem_class: premix
-    default_unit: molar
     premix_components: [TRIS, BICINE]
     aliases: ["tris bicine", "bicine/tris", "tris-bicine"]
     note: Mixed buffer system. Added from the 2026-07-29 audit, 220 components.
