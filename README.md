@@ -2,7 +2,7 @@
 
 > **Every crystallisation condition in the Protein Data Bank, parsed, normalised and linked to the sequence that produced it.**
 
-![python](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white) ![records](https://img.shields.io/badge/records-182%2C973-467FF7) ![components](https://img.shields.io/badge/components-594%2C756-467FF7) ![parse coverage](https://img.shields.io/badge/parse%20coverage-91.9%25-00897B) ![tests](https://img.shields.io/badge/tests-192%20passing-00897B) ![data](https://img.shields.io/badge/data-CC--BY--4.0-9b51e0) ![code](https://img.shields.io/badge/code-MIT-9b51e0) ![phase 0](https://img.shields.io/badge/phase%200-complete-fcb900) ![author](https://img.shields.io/badge/author-Marc%20C.%20Deller%2C%20D.Phil.-1C244B)
+![python](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white) ![records](https://img.shields.io/badge/records-182%2C973-467FF7) ![components](https://img.shields.io/badge/components-594%2C756-467FF7) ![parse coverage](https://img.shields.io/badge/parse%20coverage-91.9%25-00897B) ![archive fidelity](https://img.shields.io/badge/archive%20fidelity-100%25-00897B) ![tests](https://img.shields.io/badge/tests-192%20passing-00897B) ![data](https://img.shields.io/badge/data-CC--BY--4.0-9b51e0) ![code](https://img.shields.io/badge/code-MIT-9b51e0) ![phase 0](https://img.shields.io/badge/phase%200-complete-fcb900) ![author](https://img.shields.io/badge/author-Marc%20C.%20Deller%2C%20D.Phil.-1C244B)
 
 <table>
 <tr>
@@ -46,6 +46,7 @@ Parse, normalise and curate every crystallisation condition in the Protein Data 
 | Reagent lexicon | 147 reagents, 501 names |
 | Linked sequences | 195,985 across **23,868** distinct 30% identity clusters |
 | Screen-well matches | 44,989 component-set matches, 20,004 agreeing on every concentration |
+| Archive fidelity | **100.0000%** over 205,943 entries against the 90 GB mmCIF snapshot |
 | Tests | 192 passing |
 
 The project brief anticipated a rule-based parser plateauing near 75%. It reaches 91.9%, because most of the difficulty in this corpus turned out to be clause splitting rather than chemistry: newlines, double spaces, `in`, spaced slashes and stray brackets all separate components, and handling them properly recovered far more than chasing reagent names did.
@@ -184,7 +185,7 @@ These determine what conclusions the data can support, and are stated in full in
 - [x] Decision-level audit interface, and applied expert corrections
 - [x] Assemble the release in five formats, with a generated datasheet
 - [x] Settle licensing: CC-BY-4.0 data, MIT code
-- [ ] Complete the 90 GB archive snapshot and run the full-scale fidelity check
+- [x] Complete the 90 GB archive snapshot and run the full-scale fidelity check
 - [ ] Fine-tune SmolLM2 on the parse residual (20.5% of components still unresolved)
 - [ ] Publish to Zenodo for a citable DOI, and mirror on HuggingFace Datasets
 - [ ] Phase 1: curated condition ontology, with commercial screen cross-references

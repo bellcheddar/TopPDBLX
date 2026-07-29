@@ -98,10 +98,7 @@ value and refuses to guess its meaning.
 
 - **Source.** RCSB Data GraphQL API, `exptl_crystal_grow` and `polymer_entities`, harvested
   over the entry id snapshot in `data/raw/entry_ids/`. Raw responses are retained gzipped.
-- **Fidelity.** The API text was compared byte for byte against `_exptl_crystal_grow.pdbx_details`
-  parsed from archive mmCIF with gemmi. At WP1 this passed on 200 entries and 229 crystal-form
-  rows with zero mismatches, deliberately oversampling multi-form entries. The full-archive
-  check is `./run.sh release.verify_archive`.
+- **Fidelity.** The API text was compared byte for byte against `_exptl_crystal_grow.pdbx_details` parsed from archive mmCIF with gemmi, **across the whole archive**: 205,943 of 205,943 comparable entries agreed on both the details string and the number of rows in the crystal-grow loop, an agreement rate of **100.0000%**. 205,949 entries were checked in total; 6 were present in the entry-id snapshot but absent from the archive snapshot taken a day later, consistent with withdrawal from the PDB in the interim, and are excluded from the rate rather than counted as failures.
 - **Sequence linkage.** One record per entry, never one per chain. The condition is labelled
   with the largest polymer entity, and the largest *polypeptide* entity is recorded separately
   because clustering a protein against an RNA chain is meaningless.

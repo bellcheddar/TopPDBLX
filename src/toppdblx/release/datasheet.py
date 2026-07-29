@@ -74,6 +74,32 @@ def main(argv: Optional[list[str]] = None) -> int:
         n_conc_agree = note("assign.screen_match", "n_all_concentrations_agree", 0)
         n_wells = note("assign.screen_match", "n_wells", 0)
 
+        # Archive-wide fidelity, if release.verify_archive has been run against a snapshot.
+        v_checked = note("release.verify_archive", "n_entries_checked")
+        v_agree = note("release.verify_archive", "n_agree")
+        v_comparable = note("release.verify_archive", "n_comparable")
+        v_rate = note("release.verify_archive", "agreement_rate")
+        v_missing = note("release.verify_archive", "status_counts", {}).get(
+            "missing_from_archive", 0)
+        if v_checked:
+            fidelity = (
+                f"The API text was compared byte for byte against "
+                f"`_exptl_crystal_grow.pdbx_details` parsed from archive mmCIF with gemmi, "
+                f"**across the whole archive**: {v_agree:,} of {v_comparable:,} comparable "
+                f"entries agreed on both the details string and the number of rows in the "
+                f"crystal-grow loop, an agreement rate of **{v_rate:.4%}**. "
+                f"{v_checked:,} entries were checked in total; {v_missing} were present in the "
+                f"entry-id snapshot but absent from the archive snapshot taken a day later, "
+                f"consistent with withdrawal from the PDB in the interim, and are excluded "
+                f"from the rate rather than counted as failures.")
+        else:
+            fidelity = (
+                "The API text was compared byte for byte against "
+                "`_exptl_crystal_grow.pdbx_details` parsed from archive mmCIF with gemmi. At "
+                "WP1 this passed on 200 entries and 229 crystal-form rows with zero "
+                "mismatches, deliberately oversampling multi-form entries. The full-archive "
+                "check is `./run.sh release.verify_archive`.")
+
         text = f"""# Datasheet: {config.DATASET_NAME if hasattr(config, 'DATASET_NAME') else 'toppdblx-conditions'} v{config.DATASET_VERSION}
 
 Generated {date.today().isoformat()} by `./run.sh release.datasheet`. Every figure is read
@@ -158,10 +184,7 @@ value and refuses to guess its meaning.
 
 - **Source.** RCSB Data GraphQL API, `exptl_crystal_grow` and `polymer_entities`, harvested
   over the entry id snapshot in `data/raw/entry_ids/`. Raw responses are retained gzipped.
-- **Fidelity.** The API text was compared byte for byte against `_exptl_crystal_grow.pdbx_details`
-  parsed from archive mmCIF with gemmi. At WP1 this passed on 200 entries and 229 crystal-form
-  rows with zero mismatches, deliberately oversampling multi-form entries. The full-archive
-  check is `./run.sh release.verify_archive`.
+- **Fidelity.** {fidelity}
 - **Sequence linkage.** One record per entry, never one per chain. The condition is labelled
   with the largest polymer entity, and the largest *polypeptide* entity is recorded separately
   because clustering a protein against an RNA chain is meaningless.

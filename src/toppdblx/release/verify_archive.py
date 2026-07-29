@@ -95,8 +95,25 @@ def _compare_chunk(payload: tuple[str, list[dict[str, Any]]]) -> list[dict[str, 
 
 
 def chunks(rows: list[dict[str, Any]], size: int) -> Iterator[list[dict[str, Any]]]:
-    for i in range(0, len(rows), size):
-        yield rows[i:i + size]
+    """Batch by ENTRY, never by row.
+
+    An entry with several crystal forms contributes several rows. Splitting the flat row
+    list would put those rows in different batches, and each batch would then compare a
+    partial pipeline view against the archive's full loop and report a spurious row-count
+    mismatch. That produced exactly two false failures for 4M8A, one per batch.
+    """
+    by_entry: dict[str, list[dict[str, Any]]] = {}
+    for row in rows:
+        by_entry.setdefault(row["pdb_id"], []).append(row)
+
+    batch: list[dict[str, Any]] = []
+    for entry_rows in by_entry.values():
+        if batch and len(batch) + len(entry_rows) > size:
+            yield batch
+            batch = []
+        batch.extend(entry_rows)
+    if batch:
+        yield batch
 
 
 def main(argv: Optional[list[str]] = None) -> int:
@@ -144,6 +161,9 @@ def main(argv: Optional[list[str]] = None) -> int:
 
         failures = [r for r in results if r["status"] in
                     ("text_mismatch", "row_count_mismatch")]
+        # Recorded explicitly: an entry absent from the snapshot is a provenance fact about
+        # the archive date, not a parse failure, and it needs to be checkable.
+        missing = [r["pdb_id"] for r in results if r["status"] == "missing_from_archive"]
         report = {
             "archive": str(args.archive),
             "n_entries_checked": checked,
@@ -152,6 +172,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             "agreement_rate": round(agree / max(1, comparable), 6),
             "status_counts": counts,
             "failures": failures[:200],
+            "missing_from_archive": missing,
         }
         args.out.write_text(json.dumps(report, indent=1))
         m.add_output(args.out).note(**{k: v for k, v in report.items() if k != "failures"},
