@@ -27,6 +27,10 @@ _RANGE_SEP = r"(?:\s*(?:to|-|–|through)\s*)"
 
 _QUANTITY = re.compile(rf"""
     (?P<low>{_NUMBER})
+    # A unit on the FIRST endpoint, but only when a range separator follows: "28% to 32%".
+    # The lookahead matters: without it "30% (w/v)" consumes the % here and the (w/v) marker
+    # can no longer attach, silently downgrading an explicit unit to an ambiguous one.
+    (?: \s*(?P<unit_low>%|mm|m|mg\s*/\s*ml) (?={_RANGE_SEP}) )?
     (?: {_RANGE_SEP} (?P<high>{_NUMBER}) )?
     \s*
     (?P<unit>
@@ -95,7 +99,8 @@ def extract(clause: str) -> Quantity:
 
     low = _to_float(match.group("low"))
     high = _to_float(match.group("high")) if match.group("high") else None
-    unit = _canonical_unit(match.group("unit"))
+    # "28% to 32%": the unit may sit on the first endpoint, the second, or both.
+    unit = _canonical_unit(match.group("unit")) or _canonical_unit(match.group("unit_low"))
 
     if low is None:
         return Quantity()

@@ -20,7 +20,6 @@ import regex as re
 _DASHES = dict.fromkeys(map(ord, "‐‑‒–—―−"), "-")
 
 _NUMBER = r"\d+(?:[.,]\d+)?"
-_RANGE = rf"{_NUMBER}(?:\s*(?:-|to|–)\s*{_NUMBER})?"
 _UNIT_BODY = r"""(?:
       %\s*\(?\s*(?:w\s*/\s*v|v\s*/\s*v|w\s*/\s*w)\s*\)?
     | %
@@ -29,10 +28,17 @@ _UNIT_BODY = r"""(?:
 )"""
 _UNIT = _UNIT_BODY + "?"        # optional: "1.7 to 2.1 ammonium sulfate" omits the unit
 _UNIT_REQUIRED = _UNIT_BODY
+# The unit may appear on the first endpoint as well as the second ("28% to 32% PEG 3350").
+# It is only allowed there when a separator follows, so an explicit "30% (w/v)" keeps its
+# marker instead of having the % consumed here.
+_RANGE = (rf"{_NUMBER}(?:\s*{_UNIT_BODY}(?=\s*(?:-|to|–)\s*\d))?"
+          rf"(?:\s*(?:-|to|–)\s*{_NUMBER})?")
 
 _SPLIT = re.compile(r"""
     \s*(?:
         [;\n]
+      | \.\s+(?=[a-z0-9])  # "protease 2mg/ml. precipitant 0.7M NaCl": a sentence break.
+                          # Requires whitespace after the stop, so "0.1" and "2.4M" are safe
       | ,(?!\d)          # a comma not followed by a digit, so "peg 6,000" stays whole
       | \s--+\s          # "bis-tris ph 7.0 -- 30% peg3350": a real separator in this corpus,
                          # spaced so it cannot eat the hyphen in "bis-tris" or "tris-hcl"
@@ -116,7 +122,11 @@ _POLYMER_PREFIX = re.compile(r"^(m?peg|peg-?mme|mme|pei|ppg)\s*-?\s*(\d{3,6})\b"
 
 # Conjunctions and prepositions left at the head of a clause by splitting. "and 172 mM
 # ammonium nitrate" must become "172 mM ammonium nitrate" or the reagent never resolves.
-_LEADING_CONJUNCTION = re.compile(r"^(?:and|plus|with|in|of|containing|at)\s+")
+_LEADING_CONJUNCTION = re.compile(
+    r"^(?:and|plus|with|in|of|containing|at"
+    # Descriptive labels depositors put in front of the reagent itself:
+    # "precipitant 0.7M NaCl", "reservoir 20% PEG 3350".
+    r"|precipitants?|crystallant|reservoir|mother\s+liquor|well\s+solution)\s+")
 
 
 def normalise(text: str) -> str:
