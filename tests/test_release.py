@@ -8,9 +8,9 @@ from pathlib import Path
 import polars as pl
 import pytest
 
-from crystal_ball.release.assemble import build_records
-from crystal_ball.release.snapshot import parse_stats
-from crystal_ball.release.verify_archive import archive_path
+from toppdblx.release.assemble import build_records
+from toppdblx.release.snapshot import parse_stats
+from toppdblx.release.verify_archive import archive_path
 
 
 # --- archive layout -------------------------------------------------------
@@ -130,7 +130,7 @@ def test_discarded_records_keep_their_raw_text_and_reason(frames):
 @pytest.fixture(scope="module")
 def released():
     path = Path("data/processed")
-    files = list(path.glob("crystalball-conditions-v*.parquet")) if path.exists() else []
+    files = list(path.glob("toppdblx-conditions-v*.parquet")) if path.exists() else []
     if not files:
         pytest.skip("release not built; run ./run.sh release.assemble")
     return pl.read_parquet(files[0])

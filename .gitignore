@@ -1,4 +1,4 @@
-# Data lives outside the repo (symlinks into ~/CrystalBallData). Never commit the payload.
+# Data lives outside the repo (symlinks into ~/TopPDBLXData). Never commit the payload.
 data/
 manifests/*.json
 

@@ -1,4 +1,4 @@
-# Datasheet: crystalball-conditions v0.1.0-dev
+# Datasheet: toppdblx-conditions v0.1.0
 
 Generated 2026-07-29 by `./run.sh release.datasheet`. Every figure is read
 from the data at generation time, so this file cannot drift from what it describes.
@@ -132,11 +132,11 @@ value and refuses to guess its meaning.
 
 | File | Contents |
 |------|----------|
-| `crystalball-conditions-v0.1.0-dev.jsonl.gz` | Canonical, one nested record per line |
-| `crystalball-conditions-v0.1.0-dev.parquet` | Record level, sequence linkage flattened on |
-| `crystalball-components-v0.1.0-dev.parquet` | One row per reagent |
-| `crystalball-components-v0.1.0-dev.csv.gz` | The same, for spreadsheets |
-| `crystalball.duckdb` | Both tables plus `usable_conditions` and `condition_components` views |
+| `toppdblx-conditions-v0.1.0.jsonl.gz` | Canonical, one nested record per line |
+| `toppdblx-conditions-v0.1.0.parquet` | Record level, sequence linkage flattened on |
+| `toppdblx-components-v0.1.0.parquet` | One row per reagent |
+| `toppdblx-components-v0.1.0.csv.gz` | The same, for spreadsheets |
+| `toppdblx.duckdb` | Both tables plus `usable_conditions` and `condition_components` views |
 | `schema-v0.1.0-draft.json` | JSON Schema, generated from the pydantic model |
 
 ---
@@ -149,11 +149,11 @@ changes. Full terms in `LICENSE-DATA`.
 
 **Code:** MIT (`LICENSE`).
 
-**Cite as:** Deller, M. C. (2026). Crystal Ball: a parsed, normalised and sequence-linked
+**Cite as:** Deller, M. C. (2026). TopPDBLX: a parsed, normalised and sequence-linked
 database of crystallisation conditions from the Protein Data Bank. Version
-0.1.0-dev.
+0.1.0.
 
-**Cite the upstream sources too.** Attributing Crystal Ball does not discharge the obligation
+**Cite the upstream sources too.** Attributing TopPDBLX does not discharge the obligation
 to the sources it derives from: the **Protein Data Bank** (every condition string and sequence
 originates there; PDB data are CC0), **SIFTS** and **UniProt** (both CC BY 4.0).
 

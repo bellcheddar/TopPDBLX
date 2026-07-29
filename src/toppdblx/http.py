@@ -3,7 +3,7 @@ files.rcsb.org, SIFTS, UniProt).
 
 Ported from AlphaFraud's `alphafraud/http.py`, which has been in production since
 2026-07-14 and is therefore proven against RCSB's actual rate-limiting behaviour rather
-than assumed. Changes from the donor: Crystal Ball user agent, and `download()` now
+than assumed. Changes from the donor: TopPDBLX user agent, and `download()` now
 cleans up its temp file with a plain `if` instead of a conditional expression used as a
 statement.
 """

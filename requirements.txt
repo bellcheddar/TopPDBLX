@@ -1,4 +1,4 @@
-# Crystal Ball core pipeline dependencies (WP0 to WP5, WP7 to WP9).
+# TopPDBLX core pipeline dependencies (WP0 to WP5, WP7 to WP9).
 # Machine-learning extras live in requirements-ml.txt so the ingest and parse stages
 # stay installable without pulling MLX and its wheels.
 

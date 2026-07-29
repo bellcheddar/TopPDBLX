@@ -12,7 +12,7 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
-# data/{raw,interim,processed} are symlinks to ~/CrystalBallData/. They deliberately live
+# data/{raw,interim,processed} are symlinks to ~/TopPDBLXData/. They deliberately live
 # outside Documents: macOS Optimize Mac Storage evicts large files from iCloud-synced
 # folders, which turns a 90 GB archive snapshot into dataless stubs without warning.
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -51,7 +51,7 @@ UNIPROT_STREAM_URL = "https://rest.uniprot.org/uniprotkb/stream"
 # ---------------------------------------------------------------------------
 HTTP_TIMEOUT = float(os.environ.get("CB_HTTP_TIMEOUT", "60"))
 HTTP_MAX_RETRIES = int(os.environ.get("CB_HTTP_MAX_RETRIES", "5"))
-USER_AGENT = "CrystalBall/0.1 (+https://github.com/marcdeller; marc@marcdeller.com)"
+USER_AGENT = "TopPDBLX/0.1 (+https://github.com/marcdeller; marc@marcdeller.com)"
 
 # 300 verified working against data.rcsb.org on 2026-07-28. Larger batches risk the
 # gateway timing out mid-response, which costs more than the extra round trips save.
@@ -62,7 +62,7 @@ SEARCH_PAGE_SIZE = 10_000
 # Versions: every manifest records all three, and every released record carries them
 # ---------------------------------------------------------------------------
 SCHEMA_VERSION = "0.1.0-draft"       # frozen to 1.0.0 at WP9
-DATASET_VERSION = "0.1.0-dev"        # crystalball-conditions
+DATASET_VERSION = "0.1.0"            # toppdblx-conditions
 # Phase 0 does no group assignment: curated_group is null throughout. The field exists so
 # Phase 1 is a join rather than a schema migration.
 ONTOLOGY_VERSION = "0.0.0-unassigned"

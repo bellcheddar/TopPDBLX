@@ -37,7 +37,7 @@ from ..manifest import Manifest
 
 STAGE = "release.verify_archive"
 
-DEFAULT_ARCHIVE = Path.home() / "CrystalBallData" / "raw" / "mmcif_archive"
+DEFAULT_ARCHIVE = Path.home() / "TopPDBLXData" / "raw" / "mmcif_archive"
 CHUNK = 500
 
 

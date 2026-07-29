@@ -74,7 +74,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         n_conc_agree = note("assign.screen_match", "n_all_concentrations_agree", 0)
         n_wells = note("assign.screen_match", "n_wells", 0)
 
-        text = f"""# Datasheet: {config.DATASET_NAME if hasattr(config, 'DATASET_NAME') else 'crystalball-conditions'} v{config.DATASET_VERSION}
+        text = f"""# Datasheet: {config.DATASET_NAME if hasattr(config, 'DATASET_NAME') else 'toppdblx-conditions'} v{config.DATASET_VERSION}
 
 Generated {date.today().isoformat()} by `./run.sh release.datasheet`. Every figure is read
 from the data at generation time, so this file cannot drift from what it describes.
@@ -192,11 +192,11 @@ value and refuses to guess its meaning.
 
 | File | Contents |
 |------|----------|
-| `crystalball-conditions-v{config.DATASET_VERSION}.jsonl.gz` | Canonical, one nested record per line |
-| `crystalball-conditions-v{config.DATASET_VERSION}.parquet` | Record level, sequence linkage flattened on |
-| `crystalball-components-v{config.DATASET_VERSION}.parquet` | One row per reagent |
-| `crystalball-components-v{config.DATASET_VERSION}.csv.gz` | The same, for spreadsheets |
-| `crystalball.duckdb` | Both tables plus `usable_conditions` and `condition_components` views |
+| `toppdblx-conditions-v{config.DATASET_VERSION}.jsonl.gz` | Canonical, one nested record per line |
+| `toppdblx-conditions-v{config.DATASET_VERSION}.parquet` | Record level, sequence linkage flattened on |
+| `toppdblx-components-v{config.DATASET_VERSION}.parquet` | One row per reagent |
+| `toppdblx-components-v{config.DATASET_VERSION}.csv.gz` | The same, for spreadsheets |
+| `toppdblx.duckdb` | Both tables plus `usable_conditions` and `condition_components` views |
 | `schema-v{config.SCHEMA_VERSION}.json` | JSON Schema, generated from the pydantic model |
 
 ---
@@ -209,11 +209,11 @@ changes. Full terms in `LICENSE-DATA`.
 
 **Code:** MIT (`LICENSE`).
 
-**Cite as:** Deller, M. C. (2026). Crystal Ball: a parsed, normalised and sequence-linked
+**Cite as:** Deller, M. C. (2026). TopPDBLX: a parsed, normalised and sequence-linked
 database of crystallisation conditions from the Protein Data Bank. Version
 {config.DATASET_VERSION}.
 
-**Cite the upstream sources too.** Attributing Crystal Ball does not discharge the obligation
+**Cite the upstream sources too.** Attributing TopPDBLX does not discharge the obligation
 to the sources it derives from: the **Protein Data Bank** (every condition string and sequence
 originates there; PDB data are CC0), **SIFTS** and **UniProt** (both CC BY 4.0).
 

@@ -8,7 +8,7 @@ this pipeline, so it is tested directly.
 
 from __future__ import annotations
 
-from crystal_ball.ingest.flatten import _as_float, entity_rows, entry_rows
+from toppdblx.ingest.flatten import _as_float, entity_rows, entry_rows
 
 
 def make_entry(**overrides):

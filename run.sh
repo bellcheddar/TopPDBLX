@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Crystal Ball stage dispatcher.
+# TopPDBLX stage dispatcher.
 #
 # Build constraint from the spec: "Everything reproducible from a single command per
-# stage." This is that command. Every stage is a python module under crystal_ball and
+# stage." This is that command. Every stage is a python module under toppdblx and
 # writes its own manifest.
 #
 #   ./run.sh ingest.entry_ids            # snapshot the X-ray + experimental entry id lists
@@ -26,10 +26,10 @@ if [[ $# -lt 1 || "${1:-}" == "--list" || "${1:-}" == "-h" || "${1:-}" == "--hel
   echo "usage: ./run.sh <stage> [args...]"
   echo
   echo "available stages:"
-  find "$REPO_ROOT/src/crystal_ball" -name '*.py' \
+  find "$REPO_ROOT/src/toppdblx" -name '*.py' \
     -not -name '__init__.py' -not -name 'config.py' \
     -not -name 'http.py' -not -name 'manifest.py' \
-    | sed "s|$REPO_ROOT/src/crystal_ball/||; s|\.py$||; s|/|.|g" \
+    | sed "s|$REPO_ROOT/src/toppdblx/||; s|\.py$||; s|/|.|g" \
     | sort | sed 's/^/  /'
   exit 0
 fi
@@ -43,4 +43,4 @@ STAGE="$1"; shift
 # `chflags nohidden` on the .pth fixes it until the next reinstall; this does not regress.
 export PYTHONPATH="$REPO_ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
 
-exec "$PYTHON" -m "crystal_ball.$STAGE" "$@"
+exec "$PYTHON" -m "toppdblx.$STAGE" "$@"

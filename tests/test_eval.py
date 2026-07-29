@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from crystal_ball.eval.audit_metrics import wilson_interval
-from crystal_ball.eval.sample_audit import allocate, confidence_band, era
+from toppdblx.eval.audit_metrics import wilson_interval
+from toppdblx.eval.sample_audit import allocate, confidence_band, era
 
 
 # --- stratification helpers ----------------------------------------------

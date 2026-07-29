@@ -1,4 +1,4 @@
-# Crystal Ball: PDB Crystallisation Condition Normalisation and Sequence-Linked Prediction
+# TopPDBLX: PDB Crystallisation Condition Normalisation and Sequence-Linked Prediction
 
 **Project brief for planning. Author: Marc C. Deller, D.Phil.**
 **Status: pre-implementation. This document is input to a planning pass, not a finished plan.**
@@ -276,7 +276,7 @@ Train **ESM-2 t12-35M as a token classifier**: input full-length sequence, outpu
 ## 13. Suggested repository structure
 
 ```
-crystal_ball/
+toppdblx/
   data/
     raw/            # mmCIF mirror, SIFTS, UniProt, TargetTrack dumps
     interim/        # parsed but unassigned records

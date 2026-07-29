@@ -8,10 +8,10 @@ from __future__ import annotations
 
 import pytest
 
-from crystal_ball.assign import screens
-from crystal_ball.parse.lexicon import load as load_lexicon
-from crystal_ball.parse.rules import RuleParser
-from crystal_ball.parse.schema import Component
+from toppdblx.assign import screens
+from toppdblx.parse.lexicon import load as load_lexicon
+from toppdblx.parse.rules import RuleParser
+from toppdblx.parse.schema import Component
 
 
 def component(name, concentration=None, unit=None, cryo=None, chem_class=None):

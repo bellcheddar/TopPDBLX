@@ -10,8 +10,8 @@ from __future__ import annotations
 
 import pytest
 
-from crystal_ball.parse.lexicon import load
-from crystal_ball.parse.rules import RuleParser
+from toppdblx.parse.lexicon import load
+from toppdblx.parse.rules import RuleParser
 
 
 @pytest.fixture(scope="module")

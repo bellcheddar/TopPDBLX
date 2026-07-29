@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "crystal-ball"
+name = "toppdblx"
 version = "0.1.0.dev0"
 description = "PDB crystallisation condition normalisation and sequence-linked prediction"
 readme = "README.md"
@@ -32,5 +32,5 @@ testpaths = ["tests"]
 # Do not rely on the editable install being importable. On this machine every
 # pip-installed file in site-packages carries the macOS UF_HIDDEN flag, and python 3.14's
 # site.py (line 183) skips hidden .pth files, so setuptools' __editable__*.pth is ignored
-# and `import crystal_ball` fails while `pip list` still shows the package. See run.sh.
+# and `import toppdblx` fails while `pip list` still shows the package. See run.sh.
 pythonpath = ["src"]

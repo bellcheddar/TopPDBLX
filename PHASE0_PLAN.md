@@ -1,10 +1,10 @@
-# Crystal Ball: Phase 0 Implementation Plan
+# TopPDBLX: Phase 0 Implementation Plan
 
 **Scope: Phase 0 only.** Ends at a released, sequence-linked, parsed crystallisation condition
 database covering the whole PDB. No ontology assignment, no recommender, no models beyond the
 small language model needed to reach parse coverage.
 
-**Input document:** `crystal_ball_spec_v1.md` (Deller, 2026-07-28).
+**Input document:** `toppdblx_spec_v1.md` (Deller, 2026-07-28).
 **Plan version:** 1.1, 2026-07-28.
 **Convention:** British English, no em dashes, one command per stage, manifest per stage.
 
@@ -116,7 +116,7 @@ hundred MB of gzipped JSON kept verbatim as provenance.
 **This is a fidelity claim and it must be tested, not assumed.** WP1 includes a hard gate: pull 200
 random entries as mmCIF from `files.rcsb.org`, parse `_exptl_crystal_grow.pdbx_details` with gemmi,
 and require byte-identical agreement with the API string. If the gate fails, fall back to the rsync
-route with `data/raw` living **outside** `Documents` (recommend `~/CrystalBallData`, symlinked in).
+route with `data/raw` living **outside** `Documents` (recommend `~/TopPDBLXData`, symlinked in).
 
 ### 0.4 Train the SLM with MLX-LM, not HuggingFace transformers
 
@@ -215,7 +215,7 @@ in the statistics. Retain the rows, collapse them at analysis time, and record h
 
 A release is done when all of the following exist:
 
-1. `crystalball-conditions-v0.1.0` in JSONL, Parquet and DuckDB, one record per
+1. `toppdblx-conditions-v0.1.0` in JSONL, Parquet and DuckDB, one record per
    `(pdb_id, crystal_id)`, conforming to a frozen, versioned JSON Schema.
 2. A component-level flat CSV (one row per reagent) for spreadsheet users.
 3. Every X-ray entry accounted for: either a record, or a row in the discard table with a coded
@@ -244,15 +244,15 @@ because they are the real constraint.
 ### WP0. Repository, environment, conventions
 **2 days. No dependencies.**
 
-- Repo skeleton per spec section 13, rooted at `CrystalBall/`, package at `src/crystal_ball/`.
+- Repo skeleton per spec section 13, rooted at `TopPDBLX/`, package at `src/toppdblx/`.
 - `git init`, MIT licence for code, `.gitignore` covering `data/`, `.venv/`, session transcripts.
   Stage files explicitly, never `git add -A`.
 - venv on python3.14, `requirements.txt` pinned with a comment per dependency explaining why it is
   there (AlphaFraud house style).
 - `brew install mmseqs2`.
-- `data/raw` and `data/interim` as symlinks to `~/CrystalBallData/` so nothing large sits inside
+- `data/raw` and `data/interim` as symlinks to `~/TopPDBLXData/` so nothing large sits inside
   iCloud-synced `Documents`.
-- `src/crystal_ball/manifest.py`: one function that every stage calls on exit, writing
+- `src/toppdblx/manifest.py`: one function that every stage calls on exit, writing
   `manifests/<stage>_<timestamp>.json` with input file SHA256s, output SHA256s, package versions,
   git commit, schema version, wall time.
 - `run.sh <stage>` dispatcher so each stage is genuinely one command.
@@ -264,30 +264,30 @@ because they are the real constraint.
 ### WP1. Ingest
 **3 days. Depends on WP0.**
 
-- `src/crystal_ball/ingest/entry_ids.py`: Search API, all X-ray entry ids plus all experimental
+- `src/toppdblx/ingest/entry_ids.py`: Search API, all X-ray entry ids plus all experimental
   entry ids for the sequence sidecar (see decision 12.6). Snapshot defines the archive version for
   the whole release. **Built and run 2026-07-28:** the Search API accepts `return_all_hits`, which
   returns all 205,949 identifiers in one response, so pagination is avoided entirely. A paginated
   sweep of a live index can duplicate or drop rows between pages, and the loss would be invisible.
   Sorted by `rcsb_id` for determinism. Counts confirmed at 205,949 X-ray and 256,789 experimental.
-- `src/crystal_ball/ingest/fetch_entries.py`: batched GraphQL, 300 ids per request, resumable, raw
+- `src/toppdblx/ingest/fetch_entries.py`: batched GraphQL, 300 ids per request, resumable, raw
   responses written to `data/raw/graphql/<index>_<batch_hash>.json.gz` and never modified again.
   **Measured 2026-07-28:** 1.3 s and 0.58 MB per batch, about 95 KB gzipped, so 857 batches is
   roughly 19 minutes and 80 MB on disk. Requests are serial by choice: the 19 minutes is a one-off
   and parallelising against a free public API to save a quarter of an hour is not a good trade.
-- `src/crystal_ball/ingest/flatten.py`: raw JSON to `data/interim/entries.parquet`, **one row per
+- `src/toppdblx/ingest/flatten.py`: raw JSON to `data/interim/entries.parquet`, **one row per
   `(pdb_id, crystal_id)`** per 0.7, with columns `pdb_id, crystal_id, method, revision_date,
   initial_release_date, resolution, grow_method, temp_k, ph_reported, ph_range, raw_details,
   n_crystal_forms, n_polymer_entities`. The GraphQL query requests `crystal_id` explicitly and the
   flattener iterates the full `exptl_crystal_grow` list, never index 0.
-- `src/crystal_ball/ingest/validate_fidelity.py`: **the gate from 0.3.** 200 random entries fetched
+- `src/toppdblx/ingest/validate_fidelity.py`: **the gate from 0.3.** 200 random entries fetched
   as mmCIF, parsed with gemmi, byte-compared on the details string **and on the row count of the
   `exptl_crystal_grow` loop**. Fails loudly. Oversample deliberately from the roughly 140 known
   multi-row entries so the rare case is actually exercised rather than missed by chance.
 - Sequence sidecar: `data/interim/entities.parquet` with
   `pdb_id, entity_id, seq_one_letter, seq_can, length, type, uniprot_ids, source_organism,
   description` for **all** experimental entries, not just X-ray.
-- `src/crystal_ball/ingest/targettrack.py`: acquire and checksum the **TargetTrack archive now** into
+- `src/toppdblx/ingest/targettrack.py`: acquire and checksum the **TargetTrack archive now** into
   `data/raw/targettrack/`. It is archived and unmaintained, and link rot would end the Phase 3
   propensity work with no recovery. **Located 2026-07-28:** Zenodo DOI `10.5281/zenodo.821654`,
   "Protein Structure Initiative - TargetTrack 2000-2017 - all data files",
@@ -765,7 +765,7 @@ positively validated rather than "corrected" into being wrong.
   report is the artefact that matters. Budget half a day plus download time, and confirm the disk
   has 90 GB free before starting.
 - Freeze the JSON Schema, version it independently of the data (`schema v1.0.0`,
-  `crystalball-conditions v0.1.0`).
+  `toppdblx-conditions v0.1.0`).
 - Emit JSONL (canonical), Parquet, DuckDB, and the component-level flat CSV.
 - **Datasheet**: provenance, archive snapshot date, method, schema, per-field accuracy, discard
   statistics, and spec section 11's biases and limitations reproduced in full. The biases section is

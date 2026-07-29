@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pytest
 
-from crystal_ball.parse.text import (
+from toppdblx.parse.text import (
     classify,
     clauses,
     is_noise,

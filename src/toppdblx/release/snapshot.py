@@ -31,7 +31,7 @@ STAGE = "release.snapshot"
 
 # The archive must not live inside Documents: macOS Optimize Mac Storage evicts large files
 # from iCloud-synced folders, which would turn the snapshot into dataless stubs.
-DEFAULT_DEST = Path.home() / "CrystalBallData" / "raw" / "mmcif_archive"
+DEFAULT_DEST = Path.home() / "TopPDBLXData" / "raw" / "mmcif_archive"
 
 HEADROOM_BYTES = 20 * 1024**3      # keep 20 GB spare after the transfer
 

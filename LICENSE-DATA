@@ -1,4 +1,4 @@
-Crystal Ball crystallisation condition database
+TopPDBLX crystallisation condition database
 Copyright (c) 2026 Marc C. Deller, D.Phil.
 
 SPDX-License-Identifier: CC-BY-4.0
@@ -14,11 +14,11 @@ you give appropriate credit, link to the licence, and indicate if changes were m
 
 WHAT THIS COVERS
 ----------------
-  data/processed/crystalball-conditions-*.jsonl.gz
-  data/processed/crystalball-conditions-*.parquet
-  data/processed/crystalball-components-*.parquet
-  data/processed/crystalball-components-*.csv.gz
-  data/processed/crystalball.duckdb
+  data/processed/toppdblx-conditions-*.jsonl.gz
+  data/processed/toppdblx-conditions-*.parquet
+  data/processed/toppdblx-components-*.parquet
+  data/processed/toppdblx-components-*.csv.gz
+  data/processed/toppdblx.duckdb
   ontology/synonyms.yaml
   DATASHEET.md
 
@@ -26,13 +26,13 @@ The SOURCE CODE is licensed separately under the MIT licence: see LICENSE.
 
 ATTRIBUTION
 -----------
-Deller, M. C. (2026). Crystal Ball: a parsed, normalised and sequence-linked database of
+Deller, M. C. (2026). TopPDBLX: a parsed, normalised and sequence-linked database of
 crystallisation conditions from the Protein Data Bank. Version 0.1.0.
 
 UPSTREAM SOURCES AND THEIR OWN TERMS
 ------------------------------------
 This database is derived from public sources, each of which carries its own terms. Attributing
-Crystal Ball does not discharge any obligation to those sources.
+TopPDBLX does not discharge any obligation to those sources.
 
   Protein Data Bank (RCSB)   The primary source of every condition string and sequence. PDB
                              data are released to the public domain (CC0 1.0). Please cite

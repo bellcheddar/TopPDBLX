@@ -11,7 +11,7 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
-from crystal_ball.parse import lexicon as lex
+from toppdblx.parse import lexicon as lex
 
 
 def make(**overrides):

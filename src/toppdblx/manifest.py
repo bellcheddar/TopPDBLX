@@ -6,7 +6,7 @@ no stage has to remember what a manifest contains.
 
 Usage:
 
-    from crystal_ball.manifest import Manifest
+    from toppdblx.manifest import Manifest
 
     with Manifest("ingest.fetch_entries", params={"batch_size": 300}) as m:
         m.add_input(id_snapshot_path)

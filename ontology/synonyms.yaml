@@ -1,7 +1,7 @@
-# Crystal Ball reagent lexicon
+# TopPDBLX reagent lexicon
 #
 # The load-bearing curation artefact of Phase 0: every downstream stage keys off these
-# canonical ids. Validated on load by crystal_ball.parse.lexicon; an alias claimed by two
+# canonical ids. Validated on load by toppdblx.parse.lexicon; an alias claimed by two
 # reagents is a hard error.
 #
 # Aliases are drawn from the actual corpus ranking produced by `./run.sh parse.mine_reagents`

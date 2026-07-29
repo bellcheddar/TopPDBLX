@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import pytest
 
-from crystal_ball.parse.quantity import extract, infer_unit
+from toppdblx.parse.quantity import extract, infer_unit
 
 
 # --- extraction -----------------------------------------------------------

@@ -12,9 +12,9 @@ from pathlib import Path
 import polars as pl
 import pytest
 
-from crystal_ball.link.cluster import read_clusters
-from crystal_ball.link.representative import sequence_id
-from crystal_ball.link.uniprot import batches, parse_fasta
+from toppdblx.link.cluster import read_clusters
+from toppdblx.link.representative import sequence_id
+from toppdblx.link.uniprot import batches, parse_fasta
 
 
 # --- sequence identity ----------------------------------------------------
@@ -50,7 +50,7 @@ def test_read_clusters_maps_members_to_representatives(tmp_path: Path):
 
 def test_batches_never_exceed_the_uniprot_or_limit():
     """UniProt rejects more than 100 OR conditions per query."""
-    from crystal_ball.link.uniprot import BATCH_SIZE
+    from toppdblx.link.uniprot import BATCH_SIZE
     assert BATCH_SIZE <= 100
     chunks = list(batches([str(i) for i in range(250)], BATCH_SIZE))
     assert all(len(c) <= 100 for c in chunks)

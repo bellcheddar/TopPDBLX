@@ -8,7 +8,7 @@ different questions of it:
   conditions.parquet    record level, for anyone doing analysis in pandas or polars
   components.parquet    one row per reagent, which is the grain most queries actually want
   components.csv.gz     the same, for the large population who will open it in a spreadsheet
-  crystalball.duckdb    both tables plus views, for people who would rather write SQL
+  toppdblx.duckdb    both tables plus views, for people who would rather write SQL
 
 Every X-ray record appears exactly once, whether it parsed or was discarded. Discarded records
 keep their raw text and their reason code, because the discard distribution is a published
@@ -39,7 +39,7 @@ from ..parse.schema import ConditionRecord
 
 STAGE = "release.assemble"
 
-DATASET_NAME = "crystalball-conditions"
+DATASET_NAME = "toppdblx-conditions"
 
 
 def build_records(conditions: pl.DataFrame, components: pl.DataFrame,
@@ -146,7 +146,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     # Built from the stem, not by suffix surgery: a version like "0.1.0-dev" contains dots,
     # and with_suffix would treat "0-dev" as the extension and truncate the name.
     csv_path = args.out_dir / f"{comp_stem}.csv.gz"
-    db_path = args.out_dir / "crystalball.duckdb"
+    db_path = args.out_dir / "toppdblx.duckdb"
     schema_path = args.out_dir / f"schema-v{config.SCHEMA_VERSION}.json"
 
     with Manifest(STAGE, params={"version": args.version}) as m:

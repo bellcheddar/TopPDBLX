@@ -10,8 +10,8 @@ import json
 
 import pytest
 
-from crystal_ball import config
-from crystal_ball.manifest import Manifest
+from toppdblx import config
+from toppdblx.manifest import Manifest
 
 
 @pytest.fixture(autouse=True)
@@ -93,7 +93,7 @@ def test_directory_is_summarised_not_enumerated(tmp_path):
 
 def test_large_file_hash_is_skipped_with_a_reason(tmp_path, monkeypatch):
     """A 90 GB archive snapshot must not be hashed byte by byte."""
-    monkeypatch.setattr("crystal_ball.manifest.HASH_SIZE_LIMIT", 4)
+    monkeypatch.setattr("toppdblx.manifest.HASH_SIZE_LIMIT", 4)
     big = tmp_path / "archive.tar"
     big.write_bytes(b"12345")
 
