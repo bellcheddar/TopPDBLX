@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Decision-level audit of Crystal Ball crystallisation condition parses.">
+<meta name="author" content="Marc C. Deller, D.Phil.">
+<title>Condition Courtroom v3 | Crystal Ball decision audit | Marc C. Deller</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --md-primary:#1e73be; --md-primary-dark:#155a9c; --md-primary-light:#4a9fd4;
+  --md-bg:#ffffff; --md-bg-alt:#f4f7fb; --md-surface:#ffffff; --md-border:#dde4ed;
+  --md-text:#1a1a2e; --md-text-muted:#6b7c93; --md-text-light:#ffffff;
+  --md-accent-green:#00d084; --md-accent-orange:#ff6900;
+  --md-accent-purple:#9b51e0; --md-accent-amber:#fcb900;
+  --md-shadow-sm:6px 6px 9px rgba(0,0,0,0.12); --md-radius:8px; --md-radius-lg:16px;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;overflow-x:hidden;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  font-size:15px;line-height:1.6;color:var(--md-text);background:var(--md-bg-alt)}
+code,pre,.mono{font-family:'Roboto Mono',monospace}
+
+.md-header{background:linear-gradient(135deg,var(--md-primary-dark) 0%,var(--md-primary) 100%);
+  color:var(--md-text-light);box-shadow:var(--md-shadow-sm);position:sticky;top:0;z-index:100}
+.md-header-inner{max-width:1400px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.md-header-brand a{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.9);text-decoration:none;
+  font-weight:600;font-size:13px;letter-spacing:.02em;white-space:nowrap}
+.md-header-brand a:hover{color:#fff}
+.md-logo-dot{width:10px;height:10px;background:var(--md-accent-amber);border-radius:50%;flex-shrink:0}
+.md-header-title{flex:1;min-width:0}
+.md-header-title h1{font-size:16px;font-weight:700;color:#fff;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.md-header-links{display:flex;gap:10px;flex-shrink:0;flex-wrap:wrap}
+.md-header-links a{color:rgba(255,255,255,.85);text-decoration:none;font-size:12px;padding:4px 12px;
+  border:1px solid rgba(255,255,255,.3);border-radius:20px;white-space:nowrap}
+.md-header-links a:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.md-main{max-width:1400px;margin:0 auto;padding:18px 24px 80px}
+.md-card{background:var(--md-surface);border:1px solid var(--md-border);border-radius:var(--md-radius);
+  padding:18px;box-shadow:var(--md-shadow-sm)}
+#dropzone{border:2px dashed var(--md-primary-light);border-radius:var(--md-radius-lg);padding:56px 24px;
+  text-align:center;background:var(--md-surface);cursor:pointer;transition:all .2s}
+#dropzone.hot{background:#eaf3fb;border-color:var(--md-primary)}
+#dropzone h2{margin:0 0 8px;font-size:20px}
+#dropzone p{color:var(--md-text-muted);margin:4px 0}
+
+.btn{background:var(--md-primary);color:#fff;border:none;border-radius:var(--md-radius);padding:9px 16px;
+  font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn:hover{background:var(--md-primary-dark)}
+.btn.ghost{background:transparent;color:var(--md-primary);border:1px solid var(--md-border)}
+.btn.ghost:hover{background:var(--md-bg-alt)}
+.btn.green{background:var(--md-accent-green);color:#06301f}
+
+/* tabs */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tab{padding:9px 15px;border-radius:var(--md-radius);border:1px solid var(--md-border);background:#fff;
+  cursor:pointer;font-family:inherit;font-size:13.5px;color:var(--md-text);display:flex;gap:8px;align-items:center}
+.tab:hover{border-color:var(--md-primary-light)}
+.tab.on{background:var(--md-primary);color:#fff;border-color:var(--md-primary)}
+.tab .count{font-size:11px;opacity:.75;font-family:'Roboto Mono',monospace}
+
+.bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.progress-wrap{flex:1;min-width:200px}
+.progress-bar{height:10px;background:var(--md-border);border-radius:6px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--md-primary),var(--md-accent-green));width:0;transition:width .25s}
+.progress-label{font-size:12px;color:var(--md-text-muted);margin-top:4px}
+
+.explain{background:#eaf3fb;border-left:4px solid var(--md-primary);border-radius:var(--md-radius);
+  padding:12px 16px;font-size:13.5px;margin-bottom:14px;color:var(--md-primary-dark)}
+.explain strong{color:var(--md-primary-dark)}
+
+/* decision cards */
+.deck{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
+.dec{border:1px solid var(--md-border);border-radius:var(--md-radius);background:#fff;padding:13px 15px;
+  cursor:pointer;transition:all .12s;position:relative;border-left:5px solid var(--md-accent-green)}
+.dec:hover{border-color:var(--md-primary-light);box-shadow:var(--md-shadow-sm)}
+.dec.flagged{border-left-color:#e05252;background:#fff6f6}
+.dec.cursor{outline:3px solid var(--md-primary);outline-offset:2px}
+.dec.done{opacity:.55}
+.dec-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.dec-title{font-weight:700;font-size:14.5px;line-height:1.35;word-break:break-word}
+.arrow{color:var(--md-text-muted);margin:0 5px}
+.canon{color:var(--md-primary-dark);font-family:'Roboto Mono',monospace;font-size:13.5px}
+.weight{font-family:'Roboto Mono',monospace;font-size:11.5px;background:var(--md-bg-alt);
+  border:1px solid var(--md-border);border-radius:20px;padding:2px 9px;white-space:nowrap;color:var(--md-text-muted)}
+.weight.big{background:#fff4e6;border-color:var(--md-accent-orange);color:#a33f00;font-weight:700}
+.ex{margin-top:9px;font-family:'Roboto Mono',monospace;font-size:11.5px;color:var(--md-text-muted);
+  background:var(--md-bg-alt);border-radius:6px;padding:7px 9px;white-space:pre-wrap;word-break:break-word}
+.ex b{color:var(--md-text);font-weight:600}
+.units{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+.pill{font-size:11px;padding:2px 9px;border-radius:20px;background:var(--md-bg-alt);
+  border:1px solid var(--md-border);color:var(--md-text-muted);white-space:nowrap}
+.pill.good{background:#e6faf2;border-color:var(--md-accent-green);color:#06663f}
+.pill.warn{background:#fff4e6;border-color:var(--md-accent-orange);color:#a33f00}
+.pill.bad{background:#ffe9e9;border-color:#e05252;color:#a11}
+.fixbox{margin-top:9px;display:none}
+.dec.flagged .fixbox{display:block}
+.fixbox input{width:100%;padding:7px 9px;border:1px solid var(--md-border);border-radius:6px;
+  font-family:'Roboto Mono',monospace;font-size:12.5px;color:var(--md-text)}
+.raw{background:#0f1626;color:#e8eefc;border-radius:6px;padding:11px 13px;font-family:'Roboto Mono',monospace;
+  font-size:12.5px;line-height:1.6;white-space:pre-wrap;word-break:break-word;border-left:4px solid var(--md-accent-amber)}
+.comp-line{font-family:'Roboto Mono',monospace;font-size:12px;padding:3px 0;color:var(--md-text)}
+.inferred{color:var(--md-accent-orange);font-weight:700}
+.unresolved{color:#a11;font-style:italic}
+.empty{text-align:center;padding:36px;color:var(--md-text-muted)}
+kbd{font-family:'Roboto Mono',monospace;background:var(--md-bg-alt);border:1px solid var(--md-border);
+  border-radius:4px;padding:1px 5px;font-size:11px}
+.hint{font-size:12px;color:var(--md-text-muted);margin-top:14px}
+.md-footer{text-align:center;padding:20px;color:var(--md-text-muted);font-size:13px}
+.md-footer a{color:var(--md-primary)}
+.stat-grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));margin-bottom:14px}
+.stat{background:var(--md-bg-alt);border:1px solid var(--md-border);border-radius:var(--md-radius);padding:9px 12px}
+.stat .n{font-size:19px;font-weight:700;color:var(--md-primary-dark);line-height:1.2}
+.stat .l{font-size:10.5px;color:var(--md-text-muted);text-transform:uppercase;letter-spacing:.05em}
+@media (max-width:768px){
+  .md-card{padding:13px} .md-main{padding:13px}
+  .md-header-inner{padding:10px 16px} .md-header-title h1{font-size:14px}
+  .md-logo-text{display:none} .deck{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header class="md-header">
+  <div class="md-header-inner">
+    <div class="md-header-brand">
+      <a href="https://marcdeller.com" target="_blank" rel="noopener noreferrer">
+        <span class="md-logo-dot"></span><span class="md-logo-text">Marc C. Deller, D.Phil.</span>
+      </a>
+    </div>
+    <div class="md-header-title"><h1>Condition Courtroom v3 &middot; decision audit</h1></div>
+    <div class="md-header-links">
+      <a href="https://marcdeller.com" target="_blank" rel="noopener noreferrer">🌐 marcdeller.com</a>
+      <a href="mailto:marc@marcdeller.com">✉️ marc@marcdeller.com</a>
+    </div>
+  </div>
+</header>
+
+<main class="md-main">
+  <section id="loader">
+    <div id="dropzone" role="button" tabindex="0" aria-label="Load audit decisions JSON">
+      <h2>⚖️ Drop <code>audit_decisions.json</code> here</h2>
+      <p>or click to choose a file</p>
+      <p style="font-size:13px;margin-top:14px">
+        Produced by <code>./run.sh eval.audit_decisions</code> &middot; found in <code>data/interim/</code>
+      </p>
+      <input type="file" id="fileInput" accept=".json,application/json" hidden>
+    </div>
+    <p class="hint" id="resumeNote" style="text-align:center"></p>
+  </section>
+
+  <section id="workspace" hidden>
+    <div class="tabs" id="tabs"></div>
+    <div class="explain" id="explain"></div>
+    <div class="stat-grid" id="statGrid"></div>
+    <div class="bar">
+      <button class="btn ghost" id="markAllBtn">✓ Accept everything down to here</button>
+      <button class="btn ghost" id="unreviewedBtn">Show unreviewed only</button>
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-label" id="progressLabel"></div>
+      </div>
+      <button class="btn green" id="exportBtn">⬇ Export</button>
+      <button class="btn ghost" id="resetBtn">Reset</button>
+    </div>
+    <div class="deck" id="deck"></div>
+    <p class="hint">
+      Everything is <strong>accepted by default</strong>. Scan, and flag only what is wrong.
+      <kbd>J</kbd>/<kbd>K</kbd> or arrows move &middot; <kbd>F</kbd> or <kbd>Space</kbd> flags &middot;
+      <kbd>A</kbd> accepts everything above the cursor &middot; <kbd>1</kbd>-<kbd>4</kbd> switch section.
+      Work saves in this browser automatically.
+    </p>
+  </section>
+</main>
+
+<footer class="md-footer">
+  Built by <a href="https://marcdeller.com" target="_blank" rel="noopener noreferrer">Marc C. Deller, D.Phil.</a>
+  &middot; <a href="mailto:marc@marcdeller.com">marc@marcdeller.com</a> &middot; Condition Courtroom v3
+</footer>
+
+<script>
+/* -------------------------------------------------------------- config */
+const STORAGE_PREFIX = 'crystalball.courtroom3.';
+const SECTIONS = [
+  {key:'unit_rules', label:'Unit rules', explain:
+    'Each of these rules decided the unit for thousands of components at once. All 187,390 ' +
+    'inferred units come from just these. This is the highest-leverage screen in the audit: ' +
+    'a wrong rule here is a systematic error across the whole database.'},
+  {key:'mappings', label:'Reagent mappings', explain:
+    'Does this raw string really mean this canonical reagent? Ranked by how many components ' +
+    'each governs. The first 28 cover half of all components; screen matching cannot validate ' +
+    'naming, so this is the only place naming errors surface.'},
+  {key:'unmapped', label:'Unmapped strings', explain:
+    'Strings that resolved to nothing. Flag the ones that are real reagents worth adding to ' +
+    'the lexicon and type the canonical name; leave the junk accepted. This doubles as the ' +
+    'WP2 curation worklist, so one pass does both jobs.'},
+  {key:'records', label:'Whole records', explain:
+    'The only errors invisible at decision level: clause splitting, a component missed ' +
+    'entirely, pH attributed to the wrong thing. Multi-component records only, since that is ' +
+    'where structural mistakes show.'}
+];
+
+/* --------------------------------------------------------------- state */
+let DATA=null, section='unit_rules', cursor=0, marks={}, storageKey=null, unreviewedOnly=false;
+const $ = id => document.getElementById(id);
+const items = () => (DATA && DATA[section]) ? DATA[section] : [];
+const visible = () => unreviewedOnly ? items().filter(d => !marks[d.id]) : items();
+
+/* --------------------------------------------------------- persistence */
+function save(){ if(storageKey){ try{ localStorage.setItem(storageKey, JSON.stringify(marks)); }
+  catch(e){ console.warn('save failed', e); } } }
+function loadMarks(){ if(!storageKey) return {};
+  try{ return JSON.parse(localStorage.getItem(storageKey)||'{}'); }catch(e){ return {}; } }
+
+/* ---------------------------------------------------------------- load */
+function ingest(payload){
+  if(!payload || !Array.isArray(payload.unit_rules))
+    throw new Error('Expected the output of ./run.sh eval.audit_decisions (no "unit_rules" array).');
+  DATA = payload;
+  storageKey = STORAGE_PREFIX + (payload.seed ?? 'nokey');
+  marks = loadMarks();
+  $('loader').hidden = true; $('workspace').hidden = false;
+  buildTabs(); render();
+}
+function readFile(file){
+  if(!file) return;
+  if(!/\.json$/i.test(file.name)){ alert('Please choose a .json file.'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    let payload;
+    try{ payload = JSON.parse(e.target.result); }
+    catch(err){ alert('That file is not valid JSON:\n\n'+err.message); return; }
+    try{ ingest(payload); }
+    catch(err){ console.error(err);
+      alert('The file loaded but the page failed to render it:\n\n'+err.message+
+            '\n\nThis is a bug in the tool, not in your data.'); }
+  };
+  reader.onerror = () => alert('Could not read that file.');
+  reader.readAsText(file);
+}
+
+/* -------------------------------------------------------------- render */
+function fmtUnit(u){
+  return (u||'').replace('percent_w_v','% w/v').replace('percent_v_v','% v/v')
+    .replace('percent_unspecified','%').replace('millimolar','mM').replace('micromolar','µM')
+    .replace('nanomolar','nM').replace('molar','M').replace('mg_ml','mg/ml').replace('g_l','g/l') || '—';
+}
+function esc(s){ return (s||'').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+function buildTabs(){
+  const host = $('tabs'); host.innerHTML='';
+  SECTIONS.forEach((s,i) => {
+    const n = (DATA[s.key]||[]).length;
+    const flagged = (DATA[s.key]||[]).filter(d => marks[d.id] && marks[d.id].flagged).length;
+    const b = document.createElement('button');
+    b.className = 'tab' + (s.key===section ? ' on' : '');
+    b.innerHTML = `${s.label} <span class="count">${n}${flagged?` · ${flagged} flagged`:''}</span>`;
+    b.addEventListener('click', () => { section=s.key; cursor=0; render(); });
+    host.appendChild(b);
+  });
+}
+
+function cardFor(d){
+  const mark = marks[d.id] || {};
+  const flagged = !!mark.flagged;
+  const el = document.createElement('div');
+  el.className = 'dec' + (flagged?' flagged':'') + (mark.reviewed && !flagged ? ' done':'');
+  el.tabIndex = 0;
+
+  let title='', weight='', body='';
+  if(section==='unit_rules'){
+    title = `<span class="canon">${esc(d.rule)}</span><span class="arrow">→</span><b>${fmtUnit(d.unit)}</b>`;
+    weight = `${d.n_components.toLocaleString()} components`;
+    body = d.examples.map(e => `<div class="ex"><b>${esc(e.name_raw)}</b> · ${e.concentration ?? '—'} ${fmtUnit(e.unit)}\n${esc((e.raw_details||'').slice(0,140))}</div>`).join('');
+  } else if(section==='mappings'){
+    title = `“${esc(d.name_raw)}”<span class="arrow">→</span><span class="canon">${esc(d.name_canonical)}</span>`;
+    weight = `${d.n_components.toLocaleString()} · cum ${(d.cumulative_coverage*100).toFixed(1)}%`;
+    body = `<div class="units">${d.units.map(u=>`<span class="pill">${fmtUnit(u.unit)} ×${u.n.toLocaleString()}</span>`).join('')}</div>`
+         + d.examples.slice(0,2).map(e => `<div class="ex">${esc((e.raw_details||'').slice(0,150))}</div>`).join('');
+  } else if(section==='unmapped'){
+    title = `“${esc(d.name_raw)}”<span class="arrow">→</span><span class="unresolved">nothing</span>`;
+    weight = `${d.n_components.toLocaleString()} · ${(d.share_of_unresolved*100).toFixed(1)}% of residual`;
+    body = d.examples.slice(0,2).map(e => `<div class="ex">${esc((e.raw_details||'').slice(0,150))}</div>`).join('');
+  } else {
+    title = `<span class="canon">${esc(d.pdb_id)}</span> · form ${esc(d.crystal_id)}`;
+    weight = `conf ${(+d.parse_confidence).toFixed(2)}`;
+    const comps = d.components.map(c => {
+      const nm = c.name_canonical ? c.name_canonical : '<span class="unresolved">unresolved</span>';
+      const star = c.unit_inferred ? '<span class="inferred">*</span>' : '';
+      const cryo = c.cryo_evidence ? ` <span class="pill ${c.cryo_evidence==='explicit'?'good':'warn'}">cryo ${c.cryo_evidence}</span>`:'';
+      return `<div class="comp-line">${c.role.padEnd(11)} ${nm} — ${c.concentration ?? '—'} ${fmtUnit(c.unit)}${star}${cryo}</div>`;
+    }).join('');
+    body = `<div class="raw">${esc(d.raw_details||'')}</div><div style="margin-top:8px">${comps}</div>`
+         + `<div class="units"><span class="pill">pH ${d.ph ?? '—'} (${d.ph_source})</span>`
+         + `${d.temperature_k?`<span class="pill">${d.temperature_k} K</span>`:''}</div>`;
+  }
+
+  const big = (d.n_components||0) > 5000;
+  el.innerHTML = `
+    <div class="dec-head">
+      <div class="dec-title">${title}</div>
+      <span class="weight ${big?'big':''}">${weight}</span>
+    </div>
+    ${body}
+    <div class="fixbox"><input type="text" placeholder="What should it be? (optional)"
+      value="${esc(mark.correction||'')}" aria-label="Correction"></div>`;
+
+  el.addEventListener('click', ev => {
+    if(ev.target.tagName === 'INPUT') return;
+    toggle(d.id);
+  });
+  const input = el.querySelector('input');
+  input.addEventListener('input', e => {
+    marks[d.id] = Object.assign({flagged:true, reviewed:true}, marks[d.id], {correction:e.target.value});
+    save();
+  });
+  return el;
+}
+
+function render(){
+  if(!DATA) return;
+  const meta = SECTIONS.find(s => s.key===section);
+  $('explain').innerHTML = `<strong>${meta.label}.</strong> ${meta.explain}`;
+  buildTabs();
+
+  const list = visible();
+  const deck = $('deck'); deck.innerHTML='';
+  if(!list.length){ deck.innerHTML = '<div class="empty">Nothing left in this view.</div>'; }
+  cursor = Math.max(0, Math.min(cursor, list.length-1));
+  list.forEach((d,i) => {
+    const card = cardFor(d);
+    if(i===cursor) card.classList.add('cursor');
+    deck.appendChild(card);
+  });
+  updateStats();
+  const active = deck.children[cursor];
+  if(active && active.scrollIntoView) active.scrollIntoView({block:'nearest'});
+}
+
+function updateStats(){
+  const all = items();
+  const reviewed = all.filter(d => marks[d.id] && marks[d.id].reviewed).length;
+  const flagged = all.filter(d => marks[d.id] && marks[d.id].flagged).length;
+  $('progressFill').style.width = (100*reviewed/Math.max(1,all.length)).toFixed(1)+'%';
+  $('progressLabel').textContent =
+    `${reviewed} of ${all.length} reviewed in this section · ${flagged} flagged`;
+
+  // Corpus weight is what makes a decision audit worth doing: show what has been covered.
+  const weightOf = d => d.n_components || 0;
+  const totalW = all.reduce((a,d)=>a+weightOf(d),0);
+  const doneW = all.filter(d=>marks[d.id]&&marks[d.id].reviewed).reduce((a,d)=>a+weightOf(d),0);
+  const grand = (DATA.totals && DATA.totals.n_components) || 0;
+  $('statGrid').innerHTML = `
+    <div class="stat"><div class="n">${reviewed}</div><div class="l">reviewed</div></div>
+    <div class="stat"><div class="n">${flagged}</div><div class="l">flagged</div></div>
+    <div class="stat"><div class="n">${doneW.toLocaleString()}</div><div class="l">components covered</div></div>
+    <div class="stat"><div class="n">${totalW?((100*doneW/totalW).toFixed(0)+'%'):'—'}</div><div class="l">of this section</div></div>
+    <div class="stat"><div class="n">${grand?((100*doneW/grand).toFixed(1)+'%'):'—'}</div><div class="l">of all components</div></div>`;
+}
+
+/* ------------------------------------------------------------- actions */
+function toggle(id){
+  const m = marks[id] || {};
+  marks[id] = {flagged: !m.flagged, reviewed: true, correction: m.correction||''};
+  save(); render();
+}
+function move(delta){ cursor = Math.max(0, Math.min(visible().length-1, cursor+delta)); render(); }
+function acceptDownToCursor(){
+  const list = visible();
+  for(let i=0;i<=cursor && i<list.length;i++){
+    const id = list[i].id;
+    if(!marks[id] || !marks[id].reviewed)
+      marks[id] = {flagged:false, reviewed:true, correction:''};
+  }
+  save(); render();
+}
+function exportMarks(){
+  const out = {tool:'condition_courtroom_v3', seed:DATA.seed, schema_version:DATA.schema_version,
+               exported_at:new Date().toISOString(), sections:{}};
+  SECTIONS.forEach(s => {
+    const all = DATA[s.key]||[];
+    out.sections[s.key] = {
+      n_total: all.length,
+      n_reviewed: all.filter(d=>marks[d.id]&&marks[d.id].reviewed).length,
+      n_components_reviewed: all.filter(d=>marks[d.id]&&marks[d.id].reviewed)
+                                .reduce((a,d)=>a+(d.n_components||0),0),
+      flagged: all.filter(d=>marks[d.id]&&marks[d.id].flagged).map(d => ({
+        id:d.id, name_raw:d.name_raw, name_canonical:d.name_canonical, rule:d.rule, unit:d.unit,
+        pdb_id:d.pdb_id, crystal_id:d.crystal_id,
+        n_components:d.n_components||0, correction:(marks[d.id].correction||'')
+      }))
+    };
+  });
+  const blob = new Blob([JSON.stringify(out,null,1)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = `audit_decisions_verdicts_seed${DATA.seed}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
+}
+
+/* -------------------------------------------------------------- events */
+document.addEventListener('DOMContentLoaded', () => {
+  const zone=$('dropzone'), input=$('fileInput');
+  zone.addEventListener('click', ()=>input.click());
+  zone.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();input.click();} });
+  input.addEventListener('change', e=>readFile(e.target.files[0]));
+  ['dragenter','dragover'].forEach(t=>zone.addEventListener(t,e=>{e.preventDefault();zone.classList.add('hot');}));
+  ['dragleave','drop'].forEach(t=>zone.addEventListener(t,e=>{e.preventDefault();zone.classList.remove('hot');}));
+  zone.addEventListener('drop', e=>readFile(e.dataTransfer.files[0]));
+
+  $('markAllBtn').addEventListener('click', acceptDownToCursor);
+  $('exportBtn').addEventListener('click', exportMarks);
+  $('unreviewedBtn').addEventListener('click', () => {
+    unreviewedOnly = !unreviewedOnly; cursor = 0;
+    $('unreviewedBtn').textContent = unreviewedOnly ? 'Show everything' : 'Show unreviewed only';
+    render();
+  });
+  $('resetBtn').addEventListener('click', () => {
+    if(confirm('Discard every mark recorded in this browser?')){ marks={}; save(); render(); }
+  });
+
+  document.addEventListener('keydown', e => {
+    if(!DATA) return;
+    if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+    if(e.metaKey||e.ctrlKey||e.altKey) return;
+    const list = visible();
+    switch(e.key){
+      case 'ArrowDown': case 'ArrowRight': case 'j': e.preventDefault(); move(1); break;
+      case 'ArrowUp':   case 'ArrowLeft':  case 'k': e.preventDefault(); move(-1); break;
+      case 'f': case 'F': case ' ':
+        e.preventDefault(); if(list[cursor]) toggle(list[cursor].id); break;
+      case 'a': case 'A': e.preventDefault(); acceptDownToCursor(); break;
+      default:
+        const n = parseInt(e.key,10);
+        if(n>=1 && n<=SECTIONS.length){ e.preventDefault(); section=SECTIONS[n-1].key; cursor=0; render(); }
+    }
+  });
+
+  const keys = Object.keys(localStorage).filter(k=>k.startsWith(STORAGE_PREFIX));
+  if(keys.length){
+    const saved = Object.keys(JSON.parse(localStorage.getItem(keys[0])||'{}')).length;
+    if(saved) $('resumeNote').textContent =
+      `${saved} decision${saved===1?'':'s'} already marked in this browser; they reload with the matching file.`;
+  }
+});
+</script>
+</body>
+</html>

@@ -684,6 +684,40 @@ choices:
 Unit inference is measured on its own, since it fires on 31.5% of components and a systematic
 error there would disappear inside any aggregate score.
 
+### WP8 redesigned 2026-07-29: audit decisions, not instances
+
+**The record-by-record design was wrong and Marc called it out.** 1,484 individual verdicts is
+eight to ten hours, and it ignores that this corpus is enormously redundant: judging
+"20% peg 3350 becomes PEG_3350 at 20% w/v" for the thirty-thousandth time buys no new
+evidence. Measured on the parsed corpus:
+
+| Decision unit | Judgements for the same coverage |
+|---------------|----------------------------------|
+| Records, one at a time | 1,484 |
+| **Unit inference: all 187,390 instances come from 19 rules** | **19** |
+| Reagent mappings covering 50% of component mass | **28** |
+| Reagent mappings covering 75% | **209** |
+
+`eval.audit_decisions` emits four worklists, each decision carrying the number of components
+it governs, which a record pass never shows:
+
+- **19 unit rules** governing every inferred unit in the database. The highest-leverage screen
+  in the project: a wrong rule here is a systematic error across the whole corpus.
+- **400 reagent mappings** covering **77% of all 593,974 components**. Screen matching cannot
+  validate naming, so this is the only place naming errors surface.
+- **300 unmapped strings** covering 26% of the unresolved mass. This is the same list as the
+  WP2 lexicon worklist, deliberately: one pass through the interface does both jobs.
+- **200 multi-component records** for the errors that are genuinely invisible at decision
+  level: clause splitting, a component missed entirely, pH attributed to the wrong buffer.
+
+**The interaction model changed too, and that matters as much as the counts.** Everything is
+**accepted by default** and the reviewer flags only exceptions. For a parser that is right
+most of the time, confirming each item individually is the expensive way round. `A` accepts
+everything above the cursor in one keystroke.
+
+`app/condition_courtroom_v3.html` implements this. It has **no CDN dependency at all**, so it
+works offline, unlike v1 and v2 which needed Tabulator from unpkg.
+
 ### WP9. Release
 **3 days. Depends on WP8.**
 
