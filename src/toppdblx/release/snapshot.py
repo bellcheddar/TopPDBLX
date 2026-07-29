@@ -21,8 +21,9 @@ import argparse
 import re
 import shutil
 import subprocess
+import time
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from .. import config
 from ..manifest import Manifest
@@ -35,6 +36,14 @@ DEFAULT_DEST = Path.home() / "TopPDBLXData" / "raw" / "mmcif_archive"
 
 HEADROOM_BYTES = 20 * 1024**3      # keep 20 GB spare after the transfer
 
+# A 90 GB transfer over a public rsync server will be interrupted: observed in practice as
+# "Connection reset by peer" after about 12 GB. rsync resumes by comparing size and mtime,
+# so a retry costs only the file that was in flight. These are the exit codes worth
+# retrying: everything else (bad arguments, permissions) would just fail again.
+RETRYABLE_EXIT_CODES = {1, 5, 10, 11, 12, 23, 24, 30, 35, 255}
+MAX_ATTEMPTS = 12
+BACKOFF_SECONDS = 30
+
 
 def free_bytes(path: Path) -> int:
     usage = shutil.disk_usage(path if path.exists() else path.parent)
@@ -42,7 +51,9 @@ def free_bytes(path: Path) -> int:
 
 
 def rsync_command(dest: Path, dry_run: bool) -> list[str]:
-    command = ["rsync", "-rlpt", "--stats", "--port", str(config.RCSB_RSYNC_PORT)]
+    command = ["rsync", "-rlpt", "--stats", "--partial",
+               "--timeout", "300", "--contimeout", "60",
+               "--port", str(config.RCSB_RSYNC_PORT)]
     if dry_run:
         command.append("-n")
     command += [config.RCSB_RSYNC_HOST + "/", str(dest) + "/"]
@@ -87,15 +98,33 @@ def main(argv: Optional[list[str]] = None) -> int:
                     f"Use --force to override."
                 )
 
-        result = subprocess.run(rsync_command(args.dest, args.dry_run),
-                                capture_output=True, text=True)
-        if result.returncode != 0:
-            raise RuntimeError(f"rsync failed ({result.returncode}):\n{result.stderr[-2000:]}")
+        attempts: list[dict[str, Any]] = []
+        result = None
+        for attempt in range(1, MAX_ATTEMPTS + 1):
+            result = subprocess.run(rsync_command(args.dest, args.dry_run),
+                                    capture_output=True, text=True)
+            fetched = sum(f.stat().st_size for f in args.dest.rglob("*.cif.gz")) \
+                if not args.dry_run else 0
+            attempts.append({"attempt": attempt, "returncode": result.returncode,
+                             "bytes_on_disk": fetched,
+                             "stderr": result.stderr.strip()[-300:]})
+            if result.returncode == 0:
+                break
+            if result.returncode not in RETRYABLE_EXIT_CODES or attempt == MAX_ATTEMPTS:
+                raise RuntimeError(
+                    f"rsync failed ({result.returncode}) on attempt {attempt}:\n"
+                    f"{result.stderr[-2000:]}")
+            print(f"  attempt {attempt}: rsync exit {result.returncode} "
+                  f"({result.stderr.strip().splitlines()[-1][:80] if result.stderr.strip() else 'no message'})"
+                  f"; {fetched / 1e9:.1f} GB on disk, resuming in {BACKOFF_SECONDS}s",
+                  flush=True)
+            time.sleep(BACKOFF_SECONDS)
 
         stats = parse_stats(result.stdout)
         on_disk = sum(1 for _ in args.dest.rglob("*.cif.gz")) if not args.dry_run else 0
         m.add_output(args.dest).note(**stats, n_files_on_disk=on_disk,
-                                     dry_run=args.dry_run)
+                                     dry_run=args.dry_run,
+                                     n_attempts=len(attempts), attempts=attempts)
 
         print(f"\n{'would transfer' if args.dry_run else 'snapshot complete'}: "
               f"{stats.get('n_files', 0):,} files, "
