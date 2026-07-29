@@ -615,10 +615,13 @@ per entity: 239,990 (entry, accession) pairs agree, 4,832 are API-only and 252,8
 The large SIFTS-only count is expected, since SIFTS maps every chain while this pipeline names
 one protein representative per entry.
 
-**UniProt reference sequences** are fetched for the Phase 3 boundary work. This is deliberately
-**not** a Phase 0 release requirement: the deliverable needs the construct sequence, the
-accession and the cluster ids, all of which exist without it. It is taken now for the same
-reason as TargetTrack, to pin the reference version.
+**UniProt reference sequences** fetched for the Phase 3 boundary work: **53,431 of 56,083
+accessions retrieved (95.3%)**, median reference length 350 residues, 14 MB gzipped. The 2,652
+misses are obsolete or demerged accessions, which is the expected failure mode for a corpus
+spanning fifty years of depositions. This is deliberately **not** a Phase 0 release
+requirement: the deliverable needs the construct sequence, the accession and the cluster ids,
+all of which exist without it. It is taken now for the same reason as TargetTrack, to pin the
+reference version.
 
 **Two bugs worth recording.** SIFTS `PDB_BEG`/`PDB_END` carry author residue numbers including
 insertion codes such as `1H`, so the file cannot be read with inferred integer types. And
