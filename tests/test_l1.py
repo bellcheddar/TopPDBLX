@@ -153,3 +153,31 @@ def test_condition_with_only_buffer_is_unassigned():
             chem_class="buffer", concentration=0.1, unit="molar")},
     ])
     assert assign(frame, PEG_MAX, SALT_MIN)["l1_precipitant_class"].item() == "Unassigned"
+
+
+# --- group assignment ----------------------------------------------------
+
+def test_confidence_bands_come_from_the_distance_scale():
+    """The high band is the same 0.25 used to ask whether two groups should merge at all."""
+    from toppdblx.assign.assign_groups import HIGH, MEDIUM, LOW, band
+    from toppdblx.assign.group_questions import MERGE_THRESHOLD
+    assert HIGH == MERGE_THRESHOLD
+    assert HIGH < MEDIUM < LOW
+    assert band(0.1) == "high"
+    assert band(0.3) == "medium"
+    assert band(0.7) == "low"
+    assert band(1.5) == "unassigned"
+    assert band(None) == "unassigned"
+
+
+def test_assignment_requires_a_shared_precipitant_axis():
+    """A condition with only a pH must not be placed by pH alone."""
+    from toppdblx.assign.assign_groups import nearest
+    from toppdblx.assign.distance import ConditionFeatures
+    from toppdblx.assign.groups import Centroid, Group
+
+    ph_only = ConditionFeatures(ph=7.0)
+    group = Group(id="L2_TEST", level=2, label="Test", l1_class="PEG",
+                  centroid=Centroid(peg_log_mw=3.5, peg_percent=20.0, ph=7.0))
+    chosen, dist = nearest(ph_only, [group])
+    assert chosen is None and dist is None

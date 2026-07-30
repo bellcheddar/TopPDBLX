@@ -47,6 +47,7 @@ Parse, normalise and curate every crystallisation condition in the Protein Data 
 | Linked sequences | 195,985 across **23,868** distinct 30% identity clusters |
 | Screen-well matches | 44,989 component-set matches, 20,004 agreeing on every concentration |
 | Archive fidelity | **100.0000%** over 205,943 entries against the 90 GB mmCIF snapshot |
+| Condition ontology | 163 curated groups, **44.4%** of records at L3 with an orderable screen anchor |
 | Tests | 192 passing |
 
 The project brief anticipated a rule-based parser plateauing near 75%. It reaches 91.9%, because most of the difficulty in this corpus turned out to be clause splitting rather than chemistry: newlines, double spaces, `in`, spaced slashes and stray brackets all separate components, and handling them properly recovered far more than chasing reagent names did.
@@ -188,7 +189,7 @@ These determine what conclusions the data can support, and are stated in full in
 - [x] Complete the 90 GB archive snapshot and run the full-scale fidelity check
 - [ ] Fine-tune SmolLM2 on the parse residual (20.5% of components still unresolved)
 - [ ] Publish to Zenodo for a citable DOI, and mirror on HuggingFace Datasets
-- [ ] Phase 1: curated condition ontology, with commercial screen cross-references
+- [x] Phase 1: curated condition ontology, with commercial screen cross-references
 - [ ] Phase 2: homology retrieval recommender and browser front end
 - [ ] Phase 3: learned recommender, construct designer, crystallisation propensity model
 

@@ -63,9 +63,9 @@ SEARCH_PAGE_SIZE = 10_000
 # ---------------------------------------------------------------------------
 SCHEMA_VERSION = "0.1.0-draft"       # frozen to 1.0.0 at WP9
 DATASET_VERSION = "0.1.0"            # toppdblx-conditions
-# Phase 0 does no group assignment: curated_group is null throughout. The field exists so
-# Phase 1 is a join rather than a schema migration.
-ONTOLOGY_VERSION = "0.0.0-unassigned"
+# Set by Phase 1. Kept as a constant for stages that only need to stamp it; the release
+# reads the real version out of ontology/groups.yaml so the two cannot drift.
+ONTOLOGY_VERSION = "0.2.0"
 
 
 def ensure_dirs() -> None:

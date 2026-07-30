@@ -1,9 +1,9 @@
 # Datasheet: toppdblx-conditions v0.1.0
 
-Generated 2026-07-29 by `./run.sh release.datasheet`. Every figure is read
+Generated 2026-07-30 by `./run.sh release.datasheet`. Every figure is read
 from the data at generation time, so this file cannot drift from what it describes.
 
-**Schema version** `0.1.0-draft` · **Ontology version** `0.0.0-unassigned`
+**Schema version** `0.1.0-draft` · **Ontology version** `0.2.0`
 · **Lexicon version** `0.1.0` (147 reagents,
 501 names)
 
@@ -44,12 +44,14 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 |---------|-------|
 | Records (one per `pdb_id` + `crystal_id`) | 199,185 |
 | Distinct PDB entries | 198,691 |
-| Usable records | 183,462 (92.1%) |
-| Discarded, with a reason code | 15,723 |
-| Components | 607,168 |
-| Components resolved to a canonical reagent | 478,756 (78.9%) |
+| Usable records | 183,623 (92.2%) |
+| Discarded, with a reason code | 15,562 |
+| Components | 603,459 |
+| Components resolved to a canonical reagent | 477,489 (79.1%) |
 | Records with a linked protein sequence | 195,985 |
 | Distinct 30% identity sequence clusters | 23,868 |
+| Assigned to an L3 condition group | 81,605 |
+| Assigned at L2 (fallback) | 48,823 |
 
 ### Why records are discarded
 
@@ -58,26 +60,26 @@ distribution is itself a result.
 
 | Reason | Records | Share |
 |--------|---------|-------|
-| `NO_REAGENT_MATCH` | 8,413 | 4.22% |
+| `NO_REAGENT_MATCH` | 8,409 | 4.22% |
 | `TOO_SHORT` | 4,369 | 2.19% |
-| `METHOD_ONLY` | 2,028 | 1.02% |
-| `UNPARSEABLE_RESIDUAL` | 648 | 0.33% |
+| `METHOD_ONLY` | 2,042 | 1.03% |
+| `UNPARSEABLE_RESIDUAL` | 461 | 0.23% |
 | `REFERENCE_ONLY` | 103 | 0.05% |
 | `EMPTY` | 91 | 0.05% |
-| `NON_CRYSTALLISATION_TEXT` | 71 | 0.04% |
+| `NON_CRYSTALLISATION_TEXT` | 87 | 0.04% |
 
 ### Resolved components by chemical class
 
 | Class | Components |
 |-------|-----------|
-| buffer | 156,282 |
-| salt | 138,758 |
-| peg | 121,994 |
-| organic | 21,537 |
-| polyol | 18,166 |
-| additive | 16,360 |
-| premix | 4,106 |
-| other | 985 |
+| buffer | 155,523 |
+| salt | 138,418 |
+| peg | 121,732 |
+| organic | 21,519 |
+| polyol | 18,156 |
+| additive | 16,354 |
+| premix | 4,231 |
+| other | 988 |
 | detergent | 568 |
 
 ### How pH was attributed
@@ -88,9 +90,9 @@ value and refuses to guess its meaning.
 
 | Source | Records |
 |--------|---------|
-| buffer | 94,672 |
-| unstated | 88,738 |
-| final | 52 |
+| buffer | 94,073 |
+| unstated | 89,501 |
+| final | 49 |
 
 ---
 
@@ -117,8 +119,11 @@ value and refuses to guess its meaning.
 - **A component-set match is necessary but not sufficient.** A single-component condition such
   as `2.0 M ammonium sulfate` matches a screen well trivially, whether or not the depositor
   ever used that screen.
-- **`curated_group` is null throughout.** Condition grouping is Phase 1. The field ships now so
-  that later work is a join rather than a schema migration.
+- **`curated_group` is assigned at the level the evidence supports.** 44.4% of usable records
+  reach a specific L3 condition group, 26.6% fall back to their L2 parent, and 29.0% are left
+  unassigned. That is not a failure of the ontology: 122 L3 groups cover under 40% of the
+  corpus by design, because 1,118 would be needed for 90%. Filter on `assignment_confidence`
+  and `assigned_level` rather than assuming every record is placed.
 - **Cryoprotectant labels are mostly inferred.** Only about 2.2% of entries name a
   cryoprotectant explicitly. `cryo_evidence` distinguishes `explicit` from `inferred`, and the
   two must not be conflated: roughly four in five are inferences.

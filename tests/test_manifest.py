@@ -43,7 +43,11 @@ def test_writes_manifest_on_success(tmp_path):
     assert data["error"] is None
     assert data["params"] == {"batch_size": 300}
     assert data["notes"] == {"n_entries": 205949}
-    assert data["versions"]["ontology"] == "0.0.0-unassigned"
+    # Phase 1 produced a real ontology, so this is no longer "0.0.0-unassigned". The
+    # assertion is that the manifest stamps *a* version, since every model trained later is
+    # tied to one (spec 6.6).
+    assert data["versions"]["ontology"]
+    assert data["versions"]["schema"]
     assert data["inputs"][0]["sha256"] == (
         "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"  # sha256("hello")
     )

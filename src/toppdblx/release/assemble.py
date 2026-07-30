@@ -43,7 +43,9 @@ DATASET_NAME = "toppdblx-conditions"
 
 
 def build_records(conditions: pl.DataFrame, components: pl.DataFrame,
-                  sequences: pl.DataFrame, matches: pl.DataFrame) -> list[dict[str, Any]]:
+                  sequences: pl.DataFrame, matches: pl.DataFrame,
+                  assignments: Optional[pl.DataFrame] = None,
+                  ontology_version: str = config.ONTOLOGY_VERSION) -> list[dict[str, Any]]:
     by_record: dict[tuple, list[dict[str, Any]]] = {}
     for row in components.iter_rows(named=True):
         by_record.setdefault((row["pdb_id"], row["crystal_id"]), []).append({
@@ -64,6 +66,13 @@ def build_records(conditions: pl.DataFrame, components: pl.DataFrame,
             "cryo_evidence": row["cryo_evidence"],
             "premix_id": row["premix_id"],
         })
+
+    # Phase 1 group assignment, if it has been run. Absent, curated_group stays null and the
+    # release is exactly the Phase 0 shape, which is why the field shipped null from the start.
+    group_by_key: dict[tuple, dict[str, Any]] = {}
+    if assignments is not None:
+        for row in assignments.iter_rows(named=True):
+            group_by_key[(row["pdb_id"], row["crystal_id"])] = row
 
     seq_by_entry = {r["pdb_id"]: r for r in sequences.iter_rows(named=True)}
     match_by_key = {(r["pdb_id"], r["crystal_id"]): r for r in matches.iter_rows(named=True)}
@@ -107,7 +116,7 @@ def build_records(conditions: pl.DataFrame, components: pl.DataFrame,
                 "screen": match["screen"], "catalogue": match["catalogue"],
                 "well": match["well"], "match_type": match["match_type"],
             },
-            "curated_group": None,
+            "curated_group": _curated_group(group_by_key.get(key)),
             "provenance": {
                 "parser": row["parser"],
                 "parse_confidence": row["parse_confidence"],
@@ -115,10 +124,26 @@ def build_records(conditions: pl.DataFrame, components: pl.DataFrame,
             },
             "discard_reason": row["discard_reason"],
             "schema_version": config.SCHEMA_VERSION,
-            "ontology_version": config.ONTOLOGY_VERSION,
+            "ontology_version": ontology_version,
             "dataset_version": config.DATASET_VERSION,
         })
     return records
+
+
+def _curated_group(row: Optional[dict[str, Any]]) -> Optional[dict[str, Any]]:
+    """The spec 5.5 curated_group block, or None when nothing could be assigned."""
+    if row is None or row["assigned_level"] == 0:
+        return None
+    return {
+        "l1_precipitant_class": row["l1_precipitant_class"],
+        "l2_subclass": row["l2_subclass"],
+        "l3_group_id": row["l3_group_id"],
+        "label": row["l3_label"] or row["l2_label"],
+        "assigned_level": row["assigned_level"],
+        "assignment_distance": row["assignment_distance"],
+        "assignment_confidence": row["assignment_confidence"],
+        "screen_anchor": row["screen_anchor"],
+    }
 
 
 def main(argv: Optional[list[str]] = None) -> int:
@@ -137,6 +162,14 @@ def main(argv: Optional[list[str]] = None) -> int:
                  .join(pl.read_parquet(interim / "sequence_clusters.parquet"),
                        on="seq_id", how="left"))
     matches = pl.read_parquet(interim / "screen_matches.parquet")
+    assignment_path = interim / "group_assignments.parquet"
+    assignments = pl.read_parquet(assignment_path) if assignment_path.exists() else None
+    ontology_version = config.ONTOLOGY_VERSION
+    try:
+        from ..assign.groups import load as load_ontology
+        ontology_version = load_ontology().version
+    except Exception:                                     # noqa: BLE001
+        pass
 
     stem = f"{DATASET_NAME}-v{args.version}"
     jsonl_path = args.out_dir / f"{stem}.jsonl.gz"
@@ -154,7 +187,8 @@ def main(argv: Optional[list[str]] = None) -> int:
                      "sequence_clusters", "screen_matches"):
             m.add_input(interim / f"{name}.parquet")
 
-        records = build_records(conditions, components, sequences, matches)
+        records = build_records(conditions, components, sequences, matches,
+                                assignments, ontology_version)
 
         # Canonical JSONL, gzipped. One record per line so it streams.
         with gzip.open(jsonl_path, "wt", encoding="utf-8") as handle:
@@ -163,6 +197,13 @@ def main(argv: Optional[list[str]] = None) -> int:
 
         # Record-level and component-level tables. The sequence linkage is flattened onto
         # the record table so the common questions need no join.
+        if assignments is not None:
+            conditions = conditions.join(
+                assignments.select("pdb_id", "crystal_id", "l1_precipitant_class",
+                                   "l2_subclass", "l3_group_id", "assignment_distance",
+                                   "assignment_confidence", "assigned_level"),
+                on=["pdb_id", "crystal_id"], how="left")
+
         flat = (conditions
                 .join(sequences.select(
                     "pdb_id",
@@ -220,6 +261,11 @@ def main(argv: Optional[list[str]] = None) -> int:
             "n_with_sequence": linked.height,
             "n_with_cluster_30": flat.filter(pl.col("cluster_30").is_not_null()).height,
             "n_with_screen_match": flat.filter(pl.col("screen_match_name").is_not_null()).height,
+            "ontology_version": ontology_version,
+            "n_assigned_l3": (flat.filter(pl.col("assigned_level") == 3).height
+                              if assignments is not None else 0),
+            "n_assigned_l2": (flat.filter(pl.col("assigned_level") == 2).height
+                              if assignments is not None else 0),
             "n_distinct_entries": conditions["pdb_id"].n_unique(),
             "n_distinct_cluster_30": flat["cluster_30"].drop_nulls().n_unique(),
             "bytes_jsonl": jsonl_path.stat().st_size,
