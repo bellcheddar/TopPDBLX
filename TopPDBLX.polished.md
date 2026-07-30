@@ -21,6 +21,7 @@ Parse, normalise and curate every crystallisation condition in the Protein Data 
 - Project brief: [`toppdblx_spec_v1.md`](toppdblx_spec_v1.md)
 - Phase 0 implementation plan: [`PHASE0_PLAN.md`](PHASE0_PLAN.md)
 - Dataset datasheet: [`DATASHEET.md`](DATASHEET.md)
+- Roadmap to completion: [`ROADMAP.md`](ROADMAP.md)
 
 ---
 
@@ -190,8 +191,10 @@ These determine what conclusions the data can support, and are stated in full in
 - [ ] Fine-tune SmolLM2 on the parse residual (20.5% of components still unresolved)
 - [ ] Publish to Zenodo for a citable DOI, and mirror on HuggingFace Datasets
 - [x] Phase 1: curated condition ontology, with commercial screen cross-references
-- [ ] Phase 2: homology retrieval recommender and browser front end
-- [ ] Phase 3: learned recommender, construct designer, crystallisation propensity model
+- [x] Phase 2: evaluation harness, cluster splits and both baselines
+- [ ] Phase 2: browser front end (exploration tool, not a predictor)
+- [ ] Phase 3: construct boundary model, then propensity, then the condition
+      recommender last with a kill criterion (see ROADMAP.md section 2)
 
 ## 📄 Licence
 
