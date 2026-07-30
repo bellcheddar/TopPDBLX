@@ -149,6 +149,30 @@ def _prepare(text: str) -> str:
     return unicodedata.normalize("NFKC", text).translate(_DASHES).strip().lower()
 
 
+def drop_unclosed_tail(text: str) -> str:
+    """Remove a trailing bracket that never closes, with whatever follows it.
+
+    "22.5% (v/v) PEG Smear Broad (PEG 400" keeps its balanced "(v/v)" but the dangling
+    "(PEG 400" is the head of a constituent list the splitter cut mid-way. Left in place it
+    becomes part of the reagent name and nothing resolves.
+    """
+    if text.count("(") <= text.count(")"):
+        return text
+    depth = 0
+    cut = None
+    for position, char in enumerate(text):
+        if char == "(":
+            if depth == 0:
+                cut = position
+            depth += 1
+        elif char == ")":
+            depth -= 1
+            if depth <= 0:
+                depth = 0
+                cut = None
+    return text[:cut].strip() if cut is not None else text
+
+
 def trim_unmatched_parens(text: str) -> str:
     """Drop brackets left dangling by splitting, without touching balanced formulae.
 
@@ -163,17 +187,37 @@ def trim_unmatched_parens(text: str) -> str:
     return text
 
 
-def clauses(text: str) -> list[str]:
-    """Split into component clauses, tidying each only after the split."""
-    out = []
+def clauses_detailed(text: str) -> list[tuple[str, int]]:
+    """Split into clauses, each with the bracket depth it sits at.
+
+    Depth matters because depositors enumerate the constituents of a premix in brackets:
+
+        22.5% (v/v) PEG Smear Broad (PEG 400, PEG 600, PEG 1000, PEG 2000, ...)
+
+    Splitting on the commas turns one reagent at 22.5% into nine reagents at no
+    concentration. A clause inside an unclosed bracket is explanatory text about the reagent
+    that opened it, not a component of the condition, and the depth is the only thing that
+    distinguishes the two.
+    """
+    out: list[tuple[str, int]] = []
+    depth = 0
     for part in _SPLIT.split(_prepare(text)):
         if not part:
             continue
-        cleaned = _LEADING_CONJUNCTION.sub("", re.sub(r"\s+", " ", part).strip())
-        cleaned = trim_unmatched_parens(cleaned)
+        collapsed = re.sub(r"\s+", " ", part).strip()
+        entry_depth = depth
+        depth += collapsed.count("(") - collapsed.count(")")
+        depth = max(0, depth)
+        cleaned = trim_unmatched_parens(
+            drop_unclosed_tail(_LEADING_CONJUNCTION.sub("", collapsed)))
         if cleaned:
-            out.append(cleaned)
+            out.append((cleaned, entry_depth))
     return out
+
+
+def clauses(text: str) -> list[str]:
+    """Split into component clauses, tidying each only after the split."""
+    return [clause for clause, _ in clauses_detailed(text)]
 
 
 def split_trailing_ph(clause: str) -> tuple[str, str | None]:
@@ -182,10 +226,19 @@ def split_trailing_ph(clause: str) -> tuple[str, str | None]:
     "hepes ph 7.5" -> ("hepes", "7.5"). Without this, every buffer appears once per pH
     value in the candidate ranking and the tail looks far worse than it is.
     """
-    match = _TRAILING_PH.search(clause)
-    if not match:
-        return clause, None
-    return clause[:match.start()].strip(), match.group(1)
+    # Applied repeatedly: "0.1 M HEPES pH 7.5 (final pH 7.4)" carries two, and stripping only
+    # the outer one leaves "hepes ph 7.5" as the reagent name, which resolves to nothing.
+    found = None
+    while True:
+        match = _TRAILING_PH.search(clause)
+        if not match:
+            break
+        found = found or match.group(1)
+        stripped = clause[:match.start()].strip()
+        if stripped == clause:
+            break
+        clause = stripped
+    return clause, found
 
 
 def _unwrap(name: str) -> str:

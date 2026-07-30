@@ -12,6 +12,28 @@ Two artefacts are versioned here, independently:
 
 ## groups.yaml
 
+### 0.2.0 (2026-07-30)
+
+First curated version: 163 groups (41 L2 covering 70.7% of 183,623 usable conditions, 122 L3
+covering 39.2%), built from the corpus plus the curation answers in
+`data/interim/audit_rounds/groups_round1_answers_20260730.json`. Curation answers are now a
+build input, so `groups.yaml` is reproducible from corpus plus answers rather than hand-patched.
+
+All 26 questions were answered with the recommended option, so nothing was merged and nothing
+dropped. Two answers asked for a group to be created:
+
+- **Honoured:** `Salt/PEG · PEG 2000 · sulfate/phosphate/citrate · 20-30% · 0.1-0.3 M · pH 4-5`
+  (279 records). Its L2 parent was promoted alongside it, since an L3 group with no parent in
+  the ontology would have been silently discarded.
+- **Not honoured, and reported rather than ignored:** `Organic · pH unstated` (530 records).
+  Not one member has a single measurable axis, so no centroid exists and nothing could ever be
+  assigned to it. That request exposed an inconsistency in L1, now fixed: the salt branch
+  required a measurable concentration while the organic and PEG branches did not, so L1 was
+  calling a condition "Organic" when nothing quantitative was present.
+
+Coverage fell from 0.1.0 (81.3% L2) because of that fix, not because of curation. The drop is
+the ontology becoming honest rather than worse.
+
 ### 0.1.0 (2026-07-29)
 
 First proposal, derived from the corpus by `./run.sh assign.build_groups` and not yet
@@ -34,9 +56,12 @@ would use.
 
 Known gaps recorded rather than hidden:
 
-- **20,329 conditions (11.1%) have no identified precipitant** and are deliberately given no
+- **40,466 conditions (22.0%) have no identified precipitant** and are deliberately given no
   group. Giving them a centroid would dress an absence of evidence up as a chemical claim.
-  This is the largest hole in the ontology and the best target for lexicon curation.
+  This is the largest hole in the ontology. It is not mainly a parsing failure: about 22,000
+  precipitant components genuinely state no amount in the source text ("PEG 3350, 0.02M Citric
+  Acid, 0.08M Bis-Tris-Propane" names the PEG but never says how much). A concentration-based
+  ontology cannot place them, and inventing a concentration would be worse than admitting it.
 - **One candidate group was dropped** for having no measurable axis on any member: nothing
   could ever have been assigned to it.
 

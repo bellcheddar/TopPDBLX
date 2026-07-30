@@ -99,6 +99,11 @@ def family_of(component: dict[str, Any], peg_max_mw: int,
     molar = to_molar(concentration, unit)
 
     if chem_class == "peg":
+        # A measurable amount is required, exactly as for salts. Crediting a precipitant with
+        # no stated concentration let 530 conditions be classed "Organic" while carrying no
+        # measurable axis at all, so they formed a group nothing could ever be assigned to.
+        if percent is None and molar is None:
+            return None
         if percent is not None and percent < MIN_PRECIPITANT_PERCENT:
             return None
         peg_mw = component.get("peg_mw")
@@ -108,6 +113,8 @@ def family_of(component: dict[str, Any], peg_max_mw: int,
         return "peg"
 
     if chem_class in ("organic", "polyol"):
+        if percent is None and molar is None:
+            return None
         if percent is not None and percent < MIN_PRECIPITANT_PERCENT:
             return None
         return "organic"

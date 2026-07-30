@@ -307,12 +307,15 @@ function exportAnswers(){
       recommended: recommendedFor(q),
       chosen: answers[q.id].value,
       free_text: answers[q.id].text || '',
-      overrode_recommendation: answers[q.id].value !== recommendedFor(q)
+      overrode_recommendation: answers[q.id].value !== recommendedFor(q),
+      accepted_in_bulk: !!answers[q.id].accepted_default,
+      answered_at: answers[q.id].answered_at || null
     }))
   };
   const blob = new Blob([JSON.stringify(out,null,1)],{type:'application/json'});
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = 'audit_answers.json';
+  const stem = (DATA.title || 'audit').toLowerCase().replace(/\W+/g,'_');
+  a.href = URL.createObjectURL(blob); a.download = `${stem}_answers.json`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
 }
 

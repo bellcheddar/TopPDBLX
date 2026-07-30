@@ -25,7 +25,8 @@ import regex as re
 from . import quantity
 from .lexicon import Lexicon, Reagent
 from .schema import Component, ConditionRecord, DiscardReason, Provenance
-from .text import classify, clauses, is_noise, normalise, split_trailing_ph, strip_quantity
+from .text import (classify, clauses_detailed, is_noise, normalise,
+                   split_trailing_ph, strip_quantity)
 
 PARSER_VERSION = "rules_v3"
 
@@ -206,7 +207,18 @@ class RuleParser:
         previous_was_buffer = False
         ph_follows_buffer = False
 
-        for clause in clauses(raw_details):
+        for clause, bracket_depth in clauses_detailed(raw_details):
+            # Inside an unclosed bracket AND carrying no amount: the constituent list of the
+            # reagent that opened it. "PEG Smear Broad (PEG 400, PEG 600, ...)" is one
+            # reagent, and splitting it produced nine phantom PEGs.
+            #
+            # The quantity test is what makes this safe. Brackets are used for both purposes:
+            # "reservoir solution (20% PEG 3350, 0.2 M NaCl)" is the condition itself, and
+            # skipping on depth alone discarded 1,893 records that had their reagents written
+            # that way.
+            if bracket_depth > 0 and not quantity.extract(clause).found:
+                flags.append("parenthetical_enumeration")
+                continue
             kind = classify(clause)
             kinds.append(kind)
 

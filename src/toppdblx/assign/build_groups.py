@@ -23,6 +23,7 @@ whichever level has adequate support.
 from __future__ import annotations
 
 import argparse
+import json
 from datetime import date
 from pathlib import Path
 from typing import Any, Optional
@@ -96,9 +97,29 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument("--l2", type=int, default=DEFAULT_L2)
     parser.add_argument("--l3", type=int, default=DEFAULT_L3)
     parser.add_argument("--min-records", type=int, default=MIN_RECORDS)
+    parser.add_argument("--answers", type=Path, default=None,
+                        help="curation answers to honour, from assign.group_questions")
     args = parser.parse_args(argv)
 
     config.ensure_dirs()
+
+    # Curation decisions are applied as build inputs, so the ontology stays reproducible from
+    # the corpus plus the answers file, and the manifest records which answers were in force.
+    forced_labels: set[str] = set()
+    dropped_ids: set[str] = set()
+    merged_away: set[str] = set()
+    if args.answers and args.answers.exists():
+        for answer in json.loads(args.answers.read_text()).get("answers", []):
+            kind, _, rest = answer["id"].partition("::")
+            chosen = answer["chosen"]
+            if kind == "orphan" and chosen == "create":
+                forced_labels.add(rest)
+            elif kind == "anchorless" and chosen == "drop":
+                dropped_ids.add(rest)
+            elif kind == "merge" and chosen.startswith("merge_into::"):
+                keep = chosen.split("::", 1)[1]
+                merged_away.update(i for i in rest.split("::") if i != keep)
+
     conditions = pl.read_parquet(args.conditions).filter(pl.col("discard_reason").is_null())
     l1 = pl.read_parquet(args.l1)
     keys = set(zip(conditions["pdb_id"], conditions["crystal_id"]))
@@ -148,6 +169,17 @@ def main(argv: Optional[list[str]] = None) -> int:
                      sorted(l3_members.items(), key=lambda kv: -len(kv[1]))[:args.l3]
                      if len(members) >= args.min_records
                      and l3_parent[label] in chosen_l2]
+        # Labels the curator asked for explicitly, even though they fell outside the top N.
+        # The L2 parent is promoted alongside if needed: an L3 group with no parent in the
+        # ontology would be dropped, which silently ignores the curation decision.
+        for label in forced_labels:
+            if label not in l3_members or label in chosen_l3:
+                continue
+            parent = l3_parent.get(label)
+            if parent and parent not in chosen_l2 and parent in l2_members:
+                chosen_l2.append(parent)
+            if parent in chosen_l2:
+                chosen_l3.append(label)
 
         # Anchor groups to real orderable wells, so the output can name something in the
         # fridge rather than a set of numbers (spec 6.5).
@@ -192,6 +224,8 @@ def main(argv: Optional[list[str]] = None) -> int:
 
         for label in chosen_l3:
             group_id = f"L3_{slug(label, used_ids)}"
+            if group_id in dropped_ids or group_id in merged_away:
+                continue
             used_ids.add(group_id[3:])
             centroid = mean_centroid(l3_members[label])
             features = ConditionFeatures(**centroid)
@@ -213,7 +247,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             })
 
         document = {
-            "version": "0.1.0",
+            "version": "0.2.0" if args.answers else "0.1.0",
             "generated": date.today().isoformat(),
             "groups": groups,
         }
@@ -231,6 +265,10 @@ def main(argv: Optional[list[str]] = None) -> int:
             "n_groups": len(groups), "n_l2": len(chosen_l2), "n_l3": len(chosen_l3),
             "n_unassigned_excluded": n_unassigned,
             "n_dropped_no_axes": len(dropped_empty),
+            "answers_applied": str(args.answers) if args.answers else None,
+            "n_forced_by_curation": len(forced_labels),
+            "n_dropped_by_curation": len(dropped_ids),
+            "n_merged_away_by_curation": len(merged_away),
             "l2_coverage": round(covered_l2 / total, 4),
             "l3_coverage": round(covered_l3 / total, 4),
             "n_l3_with_screen_anchor": anchored,
