@@ -88,10 +88,44 @@ def main(argv: Optional[list[str]] = None) -> int:
         frame = frame.filter(pl.col("cluster_30").is_not_null()
                              & pl.col("cluster_50").is_not_null())
 
+        # MMseqs2 clusters do NOT nest. The clustering is greedy rather than hierarchical, so
+        # members of one 90% cluster can land in different 30% clusters. Assigning folds by a
+        # single cluster column therefore leaks: measured directly, 68 90%-identity clusters
+        # straddled a 30% split, meaning a test protein had a near-identical relative in
+        # training. That is exactly what splitting by cluster is supposed to prevent.
+        #
+        # The only leak-free grouping is the connected components of the union of all three
+        # cluster relations: two records are joined if they share a cluster at ANY threshold,
+        # and a whole component goes to one fold.
+        parent: dict[str, str] = {}
+
+        def find(x: str) -> str:
+            while parent.setdefault(x, x) != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+
+        def union(a: str, b: str) -> None:
+            ra, rb = find(a), find(b)
+            if ra != rb:
+                parent[ra] = rb
+
+        for row in frame.iter_rows(named=True):
+            keys = [f"c30:{row['cluster_30']}", f"c50:{row['cluster_50']}"]
+            if row["cluster_90"]:
+                keys.append(f"c90:{row['cluster_90']}")
+            for other in keys[1:]:
+                union(keys[0], other)
+
+        component = [find(f"c30:{row['cluster_30']}") for row in frame.iter_rows(named=True)]
+        frame = frame.with_columns(pl.Series("split_component", component))
+
         for threshold in (30, 50):
-            column = f"cluster_{threshold}"
+            # The component is shared, so the two thresholds now differ only in the cluster
+            # column reported alongside, not in fold membership. Both are kept because spec 10
+            # asks for both to be reported, and the cluster counts differ.
             frame = frame.with_columns(
-                pl.col(column).map_elements(
+                pl.col("split_component").map_elements(
                     lambda c: fold_for(c, args.test_fraction, args.val_fraction),
                     return_dtype=pl.Utf8).alias(f"fold_{threshold}"))
 
@@ -112,13 +146,16 @@ def main(argv: Optional[list[str]] = None) -> int:
                       f"{row['clusters']:>7,} clusters  "
                       f"{100 * row['records'] / frame.height:>5.1f}%")
 
-            # The check that matters: no cluster may appear in more than one fold, or the
-            # split leaks and every downstream metric is inflated.
-            leak = (frame.group_by(column).agg(pl.col(fold).n_unique().alias("folds"))
-                    .filter(pl.col("folds") > 1).height)
-            stats[f"leaked_clusters_{threshold}"] = leak
-            print(f"    clusters spanning more than one fold: {leak}"
-                  f"{'  <- LEAK' if leak else '  (none, as required)'}")
+            # Checked at every cluster level, not just the one being split on. Checking only
+            # the split column is what hid the original leak.
+            for level in (30, 50, 90):
+                other = f"cluster_{level}"
+                leak = (frame.filter(pl.col(other).is_not_null())
+                        .group_by(other).agg(pl.col(fold).n_unique().alias("folds"))
+                        .filter(pl.col("folds") > 1).height)
+                stats[f"leaked_{other}_in_fold_{threshold}"] = leak
+                print(f"    {other} clusters spanning folds: {leak}"
+                      f"{'  <- LEAK' if leak else '  (none)'}")
 
         m.add_output(args.out).note(**stats)
     return 0

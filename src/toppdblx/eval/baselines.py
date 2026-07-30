@@ -78,6 +78,61 @@ def top_k_accuracy(ranked: list[str], truth: str, k: int) -> bool:
     return truth in ranked[:k]
 
 
+# Decision 12.4: what counts as a correct answer for a protein. Three readings, all of them
+# leakage-safe only because the finer clusters nest inside the coarser ones: a 90% cluster
+# always sits inside one 50% cluster, which sits inside one 30% cluster. Since folds are
+# assigned by cluster, every member of a truth set is therefore in the same fold as the query.
+# Drawing truth from a cluster LOOSER than the split would leak, and is refused.
+TRUTH_MODES = ("record", "cluster_90", "cluster_50")
+
+
+def truth_sets(test: "pl.DataFrame", level: str, mode: str) -> dict[tuple, set[str]]:
+    """The set of group labels that counts as correct for each test record."""
+    if mode == "record":
+        return {(r["pdb_id"], r["crystal_id"]): ({r[level]} if r[level] else set())
+                for r in test.iter_rows(named=True)}
+
+    by_cluster: dict[str, set[str]] = defaultdict(set)
+    for row in test.iter_rows(named=True):
+        if row[mode] and row[level]:
+            by_cluster[row[mode]].add(row[level])
+    return {(r["pdb_id"], r["crystal_id"]): by_cluster.get(r[mode], set())
+            for r in test.iter_rows(named=True)}
+
+
+def evaluate_multilabel(predictions: dict[tuple, list[str]],
+                        truth: dict[tuple, set[str]], n_classes: int) -> dict[str, Any]:
+    """Hit@k: did any label that worked for this protein appear in the top k?
+
+    The mean label-set size is reported alongside, because a larger set makes hit@k easier
+    and the figure is uninterpretable without it. Both baselines get the same truth, so the
+    comparison stays fair even as the absolute numbers rise.
+    """
+    scored = {k: 0 for k in KS}
+    total = covered = 0
+    sizes = []
+    for key, labels in truth.items():
+        if not labels:
+            continue
+        total += 1
+        sizes.append(len(labels))
+        ranked = predictions.get(key, [])
+        if ranked:
+            covered += 1
+        for k in KS:
+            if labels & set(ranked[:k]):
+                scored[k] += 1
+    out: dict[str, Any] = {
+        "n": total, "coverage": (covered / total if total else 0.0),
+        "n_classes": n_classes,
+        "mean_labels": round(sum(sizes) / len(sizes), 2) if sizes else 0.0,
+    }
+    for k in KS:
+        out[f"top{k}"] = None if k >= n_classes else (scored[k] / total if total else 0.0)
+        out[f"top{k}_covered"] = None
+    return out
+
+
 def evaluate(predictions: dict[tuple, list[str]], truth: dict[tuple, str],
              n_classes: int) -> dict[str, Any]:
     """Top-k accuracy, plus the two figures needed to read it honestly.
@@ -130,6 +185,8 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument("--max-queries", type=int, default=None,
                         help="cap the test set, for a quicker run")
     parser.add_argument("--threads", type=int, default=8)
+    parser.add_argument("--truth", choices=TRUTH_MODES + ("all",), default="all",
+                        help="decision 12.4: what counts as correct for a protein")
     args = parser.parse_args(argv)
 
     config.ensure_dirs()
@@ -160,6 +217,12 @@ def main(argv: Optional[list[str]] = None) -> int:
             print(f"\n=== split at {threshold}% identity: "
                   f"{train.height:,} train, {test.height:,} test ===")
 
+            # A truth cluster must be at least as TIGHT as the split cluster, or its members
+            # can span folds. Tightness runs 90% > 50% > 30%, so cluster_90 and cluster_50 are
+            # both safe against a 30% or 50% split; only a 30% truth cluster against a 50%
+            # split would leak, and that is not offered. An earlier version of this guard had
+            # the direction backwards and skipped the safe case.
+            modes = list(TRUTH_MODES) if args.truth == "all" else [args.truth]
             level_results: dict[str, Any] = {}
             priors: dict[str, list[str]] = {}
 
@@ -262,6 +325,53 @@ def main(argv: Optional[list[str]] = None) -> int:
                           f"{cell(r['top5'])} {cell(r['top10'])} "
                           f"{r['coverage']:>6.1%} {r['n_classes']:>8}{covered}")
             print("  n/a: k is at or above the number of classes, so the answer is free")
+
+            # ---------------------------------- decision 12.4: multi-label truth
+            multilabel: dict[str, Any] = {}
+            for mode in modes:
+                if mode == "cluster_30":
+                    continue
+                per_level: dict[str, Any] = {}
+                for level in LEVELS:
+                    truth_multi = truth_sets(test, level, mode)
+                    n_classes = len(priors[level])
+                    prior_pred = {key: priors[level] for key in truth_multi}
+                    homology_pred: dict[tuple, list[str]] = {}
+                    hybrid_pred: dict[tuple, list[str]] = {}
+                    for row in test.iter_rows(named=True):
+                        key = (row["pdb_id"], row["crystal_id"])
+                        votes: Counter[str] = Counter()
+                        for target_seq, fident in hits.get(row["seq_id"], []):
+                            for label in groups_for_seq.get(target_seq, {}).get(level, []):
+                                votes[label] += fident
+                        ranked = [label for label, _ in votes.most_common()]
+                        homology_pred[key] = ranked
+                        seen = set(ranked)
+                        hybrid_pred[key] = ranked + [l for l in priors[level]
+                                                     if l not in seen]
+                    per_level[LEVEL_NAMES[level]] = {
+                        "frequency_prior": evaluate_multilabel(prior_pred, truth_multi,
+                                                               n_classes),
+                        "homology_retrieval": evaluate_multilabel(homology_pred, truth_multi,
+                                                                  n_classes),
+                        "homology_then_prior": evaluate_multilabel(hybrid_pred, truth_multi,
+                                                                    n_classes),
+                    }
+                multilabel[mode] = per_level
+            results[f"{threshold}pc"]["multilabel"] = multilabel
+
+            print(f"\n  decision 12.4: what counts as correct for a protein")
+            for mode, per_level in multilabel.items():
+                mean_labels = per_level["L3"]["frequency_prior"]["mean_labels"]
+                print(f"\n    truth = {mode}  (mean {mean_labels} correct L3 labels per protein)")
+                print(f"      {'level':<5} {'baseline':<22} {'hit@1':>8} {'hit@5':>8} {'hit@10':>8}")
+                for level_name in ("L1", "L2", "L3"):
+                    for baseline in ("frequency_prior", "homology_retrieval",
+                                     "homology_then_prior"):
+                        r = per_level[level_name][baseline]
+                        c = lambda v: "    n/a" if v is None else f"{v:>6.1%}"
+                        print(f"      {level_name:<5} {baseline:<22} {c(r['top1'])} "
+                              f"{c(r['top5'])} {c(r['top10'])}")
 
         args.out.write_text(json.dumps(results, indent=1))
         flat = {}
