@@ -2,7 +2,7 @@ screen: PEGRx™ 1
 catalogue: HR2-082
 vendor: Hampton Research
 source_url: https://hamptonresearch.com/uploads/support_materials/HR2-082_Binder.pdf
-retrieved: '2026-07-29'
+retrieved: '2026-07-31'
 n_wells: 48
 wells:
 - well: '1'

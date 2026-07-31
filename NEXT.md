@@ -1,0 +1,87 @@
+# What to do next
+
+Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
+either running, generated and waiting for an answer, or specified and not yet built.
+
+## Running now
+
+**Round 06** is training: 6,000 iterations (a full epoch), LoRA rank 16, 99,189 pairs including
+6,856 whose correct answer is no chemistry at all. Log at `data/interim/slm/train_r1_round06.log`.
+
+When it finishes:
+
+1. Sweep its checkpoints on the frozen benchmark, which is the point of the run:
+   `./run.sh models.eval_slm --frozen --checkpoint N --adapter-dir data/interim/slm/runs/r1-parse-residual-smollm2-360m-round06`
+   for N in 250, 1000, 2000, 4000, 6000.
+2. **This settles the epoch question.** An earlier claim that identification plateaus at 0.09 of
+   an epoch was measured on training data that was 36% duplicates, against a residual that shrank
+   from the easy end each time curation improved. Neither holds now. If identification and
+   grounding are still climbing at 6,000, the plateau claim was an artefact and longer runs are
+   worth it; if flat from ~600, it was right for the wrong reason.
+3. Then run `models.apply_slm`, which has never been run. It is the only thing that would convert
+   the model from a measurement into data: the released database currently contains **zero**
+   model-derived components after six training rounds.
+
+## Waiting on Marc
+
+`data/interim/class_audit_questions.json`, 8 questions, drop on `app/condition_courtroom_v5.html`.
+Each lists 25 conditions of one class and asks only how many are wrong, because an error *rate* is
+what the accuracy figure needs and a count gives the same estimate for an eighth of the answers.
+
+Best answered **after** `apply_slm`, so it can be regenerated stratified by provenance: the same
+8 answers then give accuracy for rules-derived and model-derived conditions separately, which is
+what decides whether the model earned its place.
+
+## Commercial screens: one vendor of six done
+
+`assign.build_screens` handles Hampton's numbered-line binders, exhaustively: all 59 published
+catalogue numbers probed, 19 screens and 894 wells kept, the rest rejected by guard.
+`assign.build_vendor_screens` handles A1-H12 plate layouts and currently carries only Morpheus.
+
+Adding a screen is one entry in `SOURCES` (vendor, catalogue, screen, url, expected_wells), but
+each needs its formulation document located and **verified after extraction**, not just accepted
+because the well count matched.
+
+| Vendor | State |
+|---|---|
+| Hampton Research | done, exhaustive |
+| Molecular Dimensions | Morpheus only. Also publish Morpheus II, Morpheus Fusion, PACT, JCSG-plus, Structure Screen, MIDAS |
+| Rigaku Reagents | reachable, not started |
+| Jena Bioscience | reachable, not started |
+| MiTeGen | reachable, not started |
+| Qiagen / NeXtal | reachable, not started |
+| Emerald Bio | reachable, not started |
+
+**Do JCSG-plus and PACT first.** They are the screens the corpus actually names: `pact`, `jcsg`
+and `proplex` appear in deposition text and are currently caught only as screen *references*,
+never matched to a formulation.
+
+**Verify every extraction by content, not by count.** Morpheus `H12` first came out as
+`Morpheus FX-96 MD1-47-FX`, a product code. That brought the total to exactly the expected 96, so
+the shortfall guard passed: 95 real conditions plus one artefact is indistinguishable from a
+complete plate by counting alone. Check that every well states a concentration.
+
+## Known gaps, each a deliberate choice
+
+- **26 reagents named by a vendor that the lexicon lacks**, chiefly the ionic liquids from
+  PEG/Ionic Liquid 1 and 2. A vendor naming a reagent is the strongest evidence it is real, so
+  this is the highest-quality curation queue available.
+- **Morpheus stocks are unexpanded.** The brochure defines them (`Divalents 0.3M Magnesium
+  chloride hexahydrate; 0.3M Calcium chloride dihydrate`), so `NPS`, `precipitant mix` and
+  `precipitant mix 4` in the unidentified head could be resolved from the vendor's own stock
+  table. That is a second extraction pass over the same document.
+- **59 buffers still have no pKa**, so they cannot be lexicon entries. Many are mixed systems
+  with no single pKa; the rest are clause-splitter failures and are better fixed in the parser.
+- **24,327 conditions (13.1%) stay Unclassified for want of a stated amount.** Classifying them
+  would lift coverage from 59.5% to about 72% in one line. Decided against on 2026-07-31: a
+  condition with no concentration is not a measured condition. Reasoning is in `classify.py`.
+
+## Standing hazards, learned the hard way here
+
+- **Never write `until ! pgrep -f "..."`.** The wait loop matches its own command line and never
+  exits. Cost over two hours in one instance and 75 minutes in another. Poll for the output file.
+- **Verify a process by CPU and RSS, not by name.** A sleeping wrapper shell looks identical to a
+  running trainer in `ps`.
+- **A mechanical rename crosses boundaries a test suite cannot see.** The resolution to
+  identification rename broke `Path.resolve()`, corrupted a column name in a historical document,
+  altered the wording of Marc's own brief, and left serialised JSON keys pointing at nothing.

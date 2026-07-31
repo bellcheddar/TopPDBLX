@@ -2,7 +2,7 @@ screen: Crystal Screen
 catalogue: HR2-110
 vendor: Hampton Research
 source_url: https://hamptonresearch.com/uploads/support_materials/HR2-110_Binder.pdf
-retrieved: '2026-07-29'
+retrieved: '2026-07-31'
 n_wells: 50
 wells:
 - well: '1'
