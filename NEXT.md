@@ -61,6 +61,35 @@ never matched to a formulation.
 the shortfall guard passed: 95 real conditions plus one artefact is indistinguishable from a
 complete plate by counting alone. Check that every well states a concentration.
 
+## Running right now (started 2026-07-31, unattended)
+
+**Round 06 checkpoint sweep**, launched with `nohup`, survives any session reset.
+
+    ls data/interim/slm/sweep06/*.json            # one per finished checkpoint
+    [ -f data/interim/slm/sweep06/DONE ] && echo complete
+    tr '\r' '\n' < data/interim/slm/sweep06/sweep.log | tail -2   # live progress
+
+Scores checkpoints 250, 500, 1000, 2000, 4000 and 6000 against the frozen benchmark.
+Roughly 13 minutes each, so about 80 minutes total: each checkpoint runs a fidelity pass
+(16 batches) and then a residual pass (63 batches) which is four times the work. Resumable,
+because it skips any checkpoint whose JSON already exists.
+
+**Read the results as a ranking, not as headline numbers.** The sweep passes `--limit 500`,
+so it scores 500 of the frozen set's 2,000 records. Same seed and same subset across all six,
+which is what makes "which checkpoint is best" answerable, but the absolute figures must not
+go into the round-by-round table beside full-set scores.
+
+**The question it settles.** Round 06 val loss was 0.022 by iteration 250 and 0.002 at 6,000,
+so the last 4,500 iterations moved it by 0.003. Loss has stopped discriminating. If
+identification and grounding are also flat from 250 onwards, future rounds should be about
+500 iterations rather than 6,000, which is most of a day back on every round. Loss cannot
+answer this: a model that has perfectly learned to imitate the rule parser has by
+construction learned nothing the rule parser does not already know, and near-zero loss is
+what both success and the circularity trap look like from the inside.
+
+**Then run `models.apply_slm`.** Six rounds are trained and the model has still contributed
+zero components to the dataset. It is the only step that turns training into data.
+
 ## Known gaps, each a deliberate choice
 
 - **Morpheus stocks are unexpanded.** The brochure defines them (`Divalents 0.3M Magnesium
