@@ -15,12 +15,12 @@ rather than by withdrawing the dataset.
 
 | Measure | Value |
 |---|---|
-| Screens | 61 (59 reagent-named, 2 compositional) |
-| Wells | 2,622 |
-| Components identified in the 59 reagent-named screens | 93.2% (5,779 of 6,198) |
-| Component-set matches against the corpus | 76,951 |
-| Matches agreeing on every concentration | 36,005 |
-| Vendors | Hampton Research 22, Jena Bioscience 30, Rigaku/MiTeGen 4, Qiagen NeXtal 3, Molecular Dimensions 2 |
+| Screens | 64 (62 reagent-named, 2 compositional) |
+| Wells | 2,910 |
+| Components identified in the 62 reagent-named screens | 93.9% (6,473 of 6,895) |
+| Component-set matches against the corpus | 79,133 |
+| Matches agreeing on every concentration | 37,838 |
+| Vendors | Hampton Research 23, Jena Bioscience 30, Rigaku/MiTeGen 4, Qiagen NeXtal 3, Molecular Dimensions 4 |
 
 The unidentified components are now mostly real chemistry the lexicon has not met rather than
 extraction damage, which is the healthier of the two failures. Two families dominate: Rigaku

@@ -1,0 +1,201 @@
+screen: ProPlex Eco
+catalogue: MD1-38-ECO
+vendor: Molecular Dimensions
+source_url: https://cdn.moleculardimensions.com/public/579/ProPlex-Eco-Screen-(MD1-38-ECO)-brochure.pdf
+extracted_on: '2026-07-31'
+n_conditions: 96
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: 1-1
+  condition_text: 0.1 M Tris 8.0, 25 % v/v PEG 350 MME
+- well: 1-2
+  condition_text: 0.1 M Calcium acetate hydrate, 0.1 M MES 6.0, 15 % v/v PEG 400
+- well: 1-3
+  condition_text: 0.1 M Lithium chloride, 0.1 M Sodium HEPES 7.5, 20 % v/v PEG 400
+- well: 1-4
+  condition_text: 0.1 M Tris 8.0, 25 % v/v PEG 400
+- well: 1-5
+  condition_text: 0.1 M MES 6.5, 15 % v/v PEG 500 MME
+- well: 1-6
+  condition_text: 0.2 M Sodium chloride, 0.1 M Sodium/potassium phosphate 6.5, 25 % w/v PEG 1000
+- well: 1-7
+  condition_text: 0.1 M Ammonium sulfate, 0.1 M Tris 7.5, 20 % w/v PEG 1500
+- well: 1-8
+  condition_text: 0.2 M Ammonium sulfate, 0.1 M Sodium acetate 5.5, 10 % w/v PEG 2000 MME
+- well: 1-9
+  condition_text: 0.2 M Sodium chloride, 0.1 M MES 6.0, 20 % w/v PEG 2000 MME
+- well: 1-10
+  condition_text: 0.1 M Potassium chloride, 0.1 M Tris 8.0, 15 % w/v PEG 2000 MME
+- well: 1-11
+  condition_text: 0.1 M Sodium HEPES 7.5, 25 % w/v PEG 2000 MME
+- well: 1-12
+  condition_text: 0.2 M Sodium acetate trihydrate, 0.1 M Sodium citrate 5.5, 5 % w/v PEG 4000
+- well: 1-13
+  condition_text: 0.2 M Lithium sulfate, 0.1 M Tris 7.5, 5 % w/v PEG 4000
+- well: 1-14
+  condition_text: 0.1 M Calcium acetate hydrate, 0.1 M Sodium acetate 4.5, 10 % w/v PEG 4000
+- well: 1-15
+  condition_text: 0.2 M Sodium acetate trihydrate, 0.1 M Sodium citrate 5.5, 10 % w/v PEG 4000
+- well: 1-16
+  condition_text: 0.2 M Sodium chloride, 0.1 M MES 6.5, 10 % w/v PEG 4000
+- well: 1-17
+  condition_text: 0.1 M Magnesium chloride hexahydrate, 0.1 M Sodium HEPES 7.5, 10 % w/v PEG 4000
+- well: 1-18
+  condition_text: 0.1 M Sodium HEPES 7.0, 10 % w/v PEG 4000
+- well: 1-19
+  condition_text: 0.2 M Ammonium acetate, 0.1 M Sodium acetate 4.0, 15 % w/v PEG 4000
+- well: 1-20
+  condition_text: 0.1 M Magnesium chloride hexahydrate, 0.1 M Sodium citrate 5.0, 15 % w/v PEG 4000
+- well: 1-21
+  condition_text: 0.1 M MES 6.0, 15 % w/v PEG 4000
+- well: 1-22
+  condition_text: 0.15 M Ammonium sulfate, 0.1 M MES 6.0, 15 % w/v PEG 4000
+- well: 1-23
+  condition_text: 0.1 M Sodium HEPES 7.0, 15 % w/v PEG 4000
+- well: 1-24
+  condition_text: 0.1 M Magnesium chloride hexahydrate, 0.1 M Sodium HEPES 7.0, 15 % w/v PEG 4000
+- well: 1-25
+  condition_text: 0.15 M Ammonium sulfate, 0.1 M Tris 8.0, 15 % w/v PEG 4000
+- well: 1-26
+  condition_text: 0.1 M Sodium citrate 4.5, 20 % w/v PEG 4000
+- well: 1-27
+  condition_text: 0.2 M Ammonium acetate, 0.1 M Sodium acetate 5.0, 20 % w/v PEG 4000
+- well: 1-28
+  condition_text: 0.2 M Lithium sulfate, 0.1 M MES 6.0, 20 % w/v PEG 4000
+- well: 1-29
+  condition_text: 0.1 M Tris 8.0, 20 % w/v PEG 4000
+- well: 1-30
+  condition_text: 0.15 M Ammonium sulfate, 0.1 M Sodium HEPES 7.0, 20 % w/v PEG 4000
+- well: 1-31
+  condition_text: 0.1 M Sodium citrate 5.6, 20 % w/v PEG 4000
+- well: 1-32
+  condition_text: 0.2 M Sodium chloride, 0.1 M Tris 8.0, 20 % w/v PEG 4000
+- well: 1-33
+  condition_text: 0.1 M MES 5.5, 25 % w/v PEG 4000
+- well: 1-34
+  condition_text: 0.15 M Ammonium sulfate, 0.1 M MES 5.5, 25 % w/v PEG 4000
+- well: 1-35
+  condition_text: 0.1 M MES 6.5, 25 % w/v PEG 4000
+- well: 1-36
+  condition_text: 0.2 M Potassium iodide, 0.1 M MES 6.5, 25 % w/v PEG 4000
+- well: 1-37
+  condition_text: 0.2 M Sodium chloride, 0.1 M Sodium HEPES 7.5, 25 % w/v PEG 4000
+- well: 1-38
+  condition_text: 0.1 M MES 6.5, 10 % w/v PEG 5000 MME
+- well: 1-39
+  condition_text: 0.1 M Potassium chloride, 0.1 M Sodium HEPES 7.0, 15 % w/v PEG 5000 MME
+- well: 1-40
+  condition_text: 0.2 M Ammonium sulfate, 0.1 M Tris 7.5, 20 % w/v PEG 5000 MME
+- well: 1-41
+  condition_text: 0.1 M Magnesium chloride hexahydrate, 0.1 M MES 6.0, 8 % w/v PEG 6000
+- well: 1-42
+  condition_text: 0.15 M Sodium chloride, 0.1 M Tris 8.0, 8 % w/v PEG 6000
+- well: 1-43
+  condition_text: 0.1 M Sodium citrate 5.5, 15 % w/v PEG 6000
+- well: 1-44
+  condition_text: 0.1 M Magnesium acetate tetrahydrate, 0.1 M MES 6.5, 15 % w/v PEG 6000
+- well: 1-45
+  condition_text: 0.1 M MES 6.5, 15 % w/v PEG 6000
+- well: 1-46
+  condition_text: 0.1 M Potassium chloride, 0.1 M Sodium HEPES 7.5, 15 % w/v PEG 6000
+- well: 1-47
+  condition_text: 0.1 M Tris 8.5, 15 % w/v PEG 6000
+- well: 1-48
+  condition_text: 0.1 M Tris 8.5, 20 % w/v PEG 6000
+- well: 2-1
+  condition_text: 0.1 M Magnesium acetate tetrahydrate, 0.1 M Sodium acetate 4.5, 8 % w/v PEG 8000
+- well: 2-2
+  condition_text: 0.1 M Sodium citrate 5.0, 8 % w/v PEG 8000
+- well: 2-3
+  condition_text: 0.2 M Sodium chloride, 0.1 M MES 6.0, 8 % w/v PEG 8000
+- well: 2-4
+  condition_text: 0.1 M Sodium HEPES 7.0, 8 % w/v PEG 8000
+- well: 2-5
+  condition_text: 0.1 M Tris 8.0, 8 % w/v PEG 8000
+- well: 2-6
+  condition_text: 0.1 M Calcium acetate hydrate, 0.1 M MES 5.5, 12 % w/v PEG 8000
+- well: 2-7
+  condition_text: 0.1 M Sodium phosphate 6.5, 12 % w/v PEG 8000
+- well: 2-8
+  condition_text: 0.1 M Magnesium acetate tetrahydrate, 0.1 M MOPS 7.5, 12 % w/v PEG 8000
+- well: 2-9
+  condition_text: 0.2 M Sodium chloride, 0.1 M Sodium HEPES 7.5, 12 % w/v PEG 8000
+- well: 2-10
+  condition_text: 0.2 M Ammonium sulfate, 0.1 M Tris 8.5, 12 % w/v PEG 8000
+- well: 2-11
+  condition_text: 0.1 M Sodium citrate 5.0, 20 % w/v PEG 8000
+- well: 2-12
+  condition_text: 0.2 M Ammonium sulfate, 0.1 M MES 6.5, 20 % w/v PEG 8000
+- well: 2-13
+  condition_text: 0.1 M Sodium HEPES 7.0, 20 % w/v PEG 8000
+- well: 2-14
+  condition_text: 0.2 M Lithium chloride, 0.1 M Tris 8.0, 20 % w/v PEG 8000
+- well: 2-15
+  condition_text: 0.1 M Magnesium acetate tetrahydrate, 0.1 M MES 6.5, 10 % w/v PEG 10,000
+- well: 2-16
+  condition_text: 0.1 M Sodium HEPES 7.0, 18 % w/v PEG 12,000
+- well: 2-17
+  condition_text: 0.1 M Sodium chloride, 0.1 M Tris 8.0, 8 % w/v PEG 20,000
+- well: 2-18
+  condition_text: 0.1 M Sodium HEPES 7.0, 15 % w/v PEG 20,000
+- well: 2-19
+  condition_text: 0.5 M Ammonium sulfate, 0.1 M MES 6.5
+- well: 2-20
+  condition_text: 1.0 M Ammonium sulfate, 0.1 M Sodium acetate 5.0
+- well: 2-21
+  condition_text: 1.0 M Ammonium sulfate, 0.1 M MES 6.5
+- well: 2-22
+  condition_text: 1.0 M Ammonium sulfate, 0.1 M Tris 8.0
+- well: 2-23
+  condition_text: 1.5 M Ammonium sulfate, 0.1 M Sodium acetate 5.0
+- well: 2-24
+  condition_text: 1.5 M Ammonium sulfate, 0.1 M Sodium HEPES 7.0
+- well: 2-25
+  condition_text: 1.5 M Ammonium sulfate, 0.1 M Tris 8.0
+- well: 2-26
+  condition_text: 2.0 M Ammonium sulfate, 0.1 M Sodium acetate 5.0
+- well: 2-27
+  condition_text: 2.0 M Ammonium sulfate, 0.1 M Sodium HEPES 7.0
+- well: 2-28
+  condition_text: 2.0 M Ammonium sulfate, 0.1 M Tris 8.0
+- well: 2-29
+  condition_text: 1.0 M Ammonium sulfate, 0.1 M Sodium HEPES 7.0
+- well: 2-30
+  condition_text: 2.0 M Sodium formate, 0.1 M Sodium acetate 5.0
+- well: 2-31
+  condition_text: 3.0 M Sodium formate, 0.1 M Tris 7.5
+- well: 2-32
+  condition_text: 0.8 M Sodium/potassium phosphate 7.5
+- well: 2-33
+  condition_text: 1.3 M Sodium/potassium phosphate 7.0
+- well: 2-34
+  condition_text: 1.6 M Sodium/potassium phosphate 6.5
+- well: 2-35
+  condition_text: 1.0 M Sodium acetate trihydrate, 0.1 M Sodium HEPES 7.5
+- well: 2-36
+  condition_text: 1.0 M Sodium citrate tribasic dihydrate, 0.1 M Sodium HEPES 7.0
+- well: 2-37
+  condition_text: 2.0 M Sodium chloride, 0.1 M Sodium citrate 6.0
+- well: 2-38
+  condition_text: 1.0 M Lithium sulfate, 0.1 M MES 6.5
+- well: 2-39
+  condition_text: 1.6 M Lithium sulfate, 0.1 M Tris 8.0
+- well: 2-40
+  condition_text: 1.4 M Sodium malonate dibasic monohydrate 6.0
+- well: 2-41
+  condition_text: 1.2 M Potassium sodium tartrate tetrahydrate, 0.1 M Tris 8.0
+- well: 2-42
+  condition_text: 1.6 M Magnesium sulfate heptahydrate, 0.1 M MES 6.5
+- well: 2-43
+  condition_text: 0.1 M Sodium acetate 5.0, 2 % w/v PEG 4000
+- well: 2-44
+  condition_text: 0.05 M Calcium acetate hydrate, 0.1 M MES 6.0, 25 % v/v MPD
+- well: 2-45
+  condition_text: 0.1 M Imidazole 7.0, 50 % v/v MPD
+- well: 2-46
+  condition_text: 0.05 M Magnesium chloride hexahydrate, 0.1 M MES 6.5, 5 % w/v PEG 4000
+- well: 2-47
+  condition_text: 0.2 M Ammonium acetate, 0.1 M Sodium HEPES 7.5, 25 % v/v 2-Propanol
+- well: 2-48
+  condition_text: 0.1 M Sodium chloride, 0.1 M Tris 8.0, 15 % v/v Ethanol

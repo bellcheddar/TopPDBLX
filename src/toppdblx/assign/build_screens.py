@@ -174,6 +174,7 @@ def extract_columns(pages: list[str]) -> list[tuple[str, str]]:
         if not marks:
             continue
         bounds = [m.start() for m in _COLUMN_HEAD.finditer(text)] + [len(text)]
+        tube_rows = len({int(n) for n in _TUBE_COUNT.findall(text)})
 
         column_order, columns = [], {}
         for index, (start, label) in enumerate(marks):
@@ -192,6 +193,15 @@ def extract_columns(pages: list[str]) -> list[tuple[str, str]]:
                     kept[-1] = f"{kept[-1]} {line}"
                 else:
                     kept.append(line)
+            # The page states how many rows its table has, in the "Tube #" list down its left
+            # edge, and that is the only thing that stops a column overrunning into whatever is
+            # printed beneath it. JCSG+ prints its cryo formulations directly below the screen
+            # table on the same page, so the salt column stopped at 48 by luck while buffer ran
+            # to 50 and precipitant to 51, pulling in cryo conditions as though they were part
+            # of the screen. Unequal columns then failed the length check and the whole screen
+            # was lost, which is the right failure but for the wrong reason.
+            if tube_rows:
+                kept = kept[:tube_rows]
             if kept and label not in columns:
                 column_order.append(label)
                 columns[label] = kept

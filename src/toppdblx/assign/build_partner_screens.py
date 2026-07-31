@@ -10,13 +10,15 @@ line costs one condition instead of corrupting every condition after it.
 **Nothing is transcribed from memory.** Every condition is read out of the vendor's own
 published technical sheet or brochure, verbatim.
 
-Two vendors, two shapes:
+Three vendors, three shapes:
 
   *Rigaku Wizard*    one screen per technical sheet, rows numbered by tube:
                      `1 20% (w/v) PEG 8000 100 mM CHES/ Sodium hydroxide pH 9.5`
   *Jena Bioscience*  many screens in one brochure, rows addressed by well, with the screen
                      name as a heading above each block:
                      `A1 25 % w/v PEG 1,500 100 mM SPG buffer; pH 4.0 none`
+  *Mol. Dimensions*  rows addressed by box and well:
+                     `1-1 0.1 M Tris 8.0 25 % v/v PEG 350 MME`
 
 Rigaku Reagents no longer publishes formulations of its own: its catalogue, including the
 Wizard line, now ships through MiTeGen, so the two are one source here rather than two.
@@ -56,12 +58,26 @@ RIGAKU_SOURCES = [
      "slug": "wps_rigaku2_2015"},
 ]
 
+# Molecular Dimensions prints a box-and-well label, "1-1" for box 1 well 1. The two screens
+# already in the library from this vendor (Morpheus, PACT premier) are both compositional, so
+# until now no Molecular Dimensions screen contributed a single parseable reagent.
+MD_SOURCES = [
+    {"screen": "ProPlex", "catalogue": "MD1-38",
+     "url": "https://cdn.moleculardimensions.com/public/578/ProPlex-(MD1-38)-brochure.pdf"},
+    {"screen": "ProPlex Eco", "catalogue": "MD1-38-ECO",
+     "url": "https://cdn.moleculardimensions.com/public/579/"
+            "ProPlex-Eco-Screen-(MD1-38-ECO)-brochure.pdf"},
+]
+
 JENA_BROCHURE = ("https://www.jenabioscience.com/images/3a38c1d302/"
                  "JBS_brochure_-_Crystal_Screens.pdf")
 
 # A Wizard row: the tube number, then a condition that must start with an amount. Requiring the
 # amount is what keeps page numbers and footnote markers from being read as tube numbers.
 _WIZARD_ROW = re.compile(r"^\s*(\d{1,3})\s+(\d+(?:[.,]\d+)?\s*(?:%|m?M\b).*)$", re.M)
+
+# A Molecular Dimensions row is addressed by box and well, "1-1" being box 1 well 1.
+_MD_ROW = re.compile(r"^\s*(\d{1,2}-\d{1,2})\s+(\d+(?:[.,]\d+)?\s*(?:%|m?M\b).*)$", re.M)
 
 # A Jena row is addressed by well. Both plain (A1) and screen-prefixed (9/A1) forms occur.
 _JENA_ROW = re.compile(r"^\s*(?:\d+/)?([A-H]\d{1,2})\s+(\d+(?:[.,]\d+)?\s*(?:%|m?M\b).*)$",
@@ -222,6 +238,36 @@ def main(argv: Optional[list[str]] = None) -> int:
                                 source["catalogue"], url, wells)
             m.add_output(path)
             written.append(("Rigaku Reagents", source["screen"], len(wells)))
+            print(f"  {source['catalogue']:<10} {source['screen']:<30} {len(wells):>3} wells")
+
+        for source in MD_SOURCES:
+            pdf_path = args.pdf_dir / f"{source['catalogue']}.pdf"
+            if not pdf_path.exists() and http.download(source["url"], pdf_path,
+                                                       skip_if_exists=True) is None:
+                rejected.append({"screen": source["screen"], "why": "download failed"})
+                continue
+            pages = [(page.extract_text() or "") for page in PdfReader(str(pdf_path)).pages]
+            wells = extract_rows(pages, _MD_ROW)
+            # Box-and-well labels carry their own completeness check: every box must hold the
+            # same number of wells, and those wells must run from 1 with no gaps.
+            boxes: dict[str, set[int]] = {}
+            for label, _ in wells:
+                box, well = label.split("-")
+                boxes.setdefault(box, set()).add(int(well))
+            shapes = {frozenset(v) for v in boxes.values()}
+            complete = (len(shapes) == 1
+                        and shapes.copy().pop() == set(range(1, len(shapes.copy().pop()) + 1)))
+            if len(wells) < MIN_WELLS or not complete:
+                print(f"  {source['screen']}: {len(wells)} wells do not fill complete boxes, "
+                      f"rejected rather than shipped incomplete")
+                rejected.append({"screen": source["screen"], "n_extracted": len(wells),
+                                 "why": "incomplete boxes"})
+                continue
+            wells.sort(key=lambda kv: tuple(int(x) for x in kv[0].split("-")))
+            path = write_screen(args.out_dir, "Molecular Dimensions", source["screen"],
+                                source["catalogue"], source["url"], wells)
+            m.add_output(path)
+            written.append(("Molecular Dimensions", source["screen"], len(wells)))
             print(f"  {source['catalogue']:<10} {source['screen']:<30} {len(wells):>3} wells")
 
         jena_pdf = args.pdf_dir / "JBS-BROCHURE.pdf"
