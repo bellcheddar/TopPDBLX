@@ -1,0 +1,57 @@
+screen: JBScreen Membrane 4
+catalogue: JBS-MEMBRANE4
+vendor: Jena Bioscience
+source_url: https://www.jenabioscience.com/images/3a38c1d302/JBS_brochure_-_Crystal_Screens.pdf
+extracted_on: '2026-07-31'
+n_conditions: 24
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: G1
+  condition_text: 12 % w/v MPD, 100 mM Sodium acetate; pH 4.6, 100 mM Sodium chloride
+- well: G2
+  condition_text: 4 % w/v MPD, 100 mM tri-Sodium citrate; pH 5.6, 100 mM Magnesium chloride
+- well: G3
+  condition_text: 12 % w/v MPD, 100 mM ADA; pH 6.5
+- well: G4
+  condition_text: 12 % w/v MPD, 100 mM HEPES; pH 7.5, 100 mM tri-Sodium citrate
+- well: G5
+  condition_text: 12 % w/v MPD, 100 mM TRIS; pH 8.5, 100 mM Lithium sulfate
+- well: G6
+  condition_text: 1 M tri-Sodium citrate, 100 mM HEPES; pH 7.5
+- well: G7
+  condition_text: 200 mM Lithium sulfate, 100 mM TRIS; pH 8.5
+- well: G8
+  condition_text: 100 mM Sodium chloride, 100 mM tri-Sodium citrate; pH 5.6
+- well: G9
+  condition_text: 100 mM Sodium chloride, 100 mM TRIS; pH 8.5
+- well: G10
+  condition_text: 1 M Ammonium di-hydrogen phosphate, 100 mM Sodium acetate; pH 4.6, 100 mM Lithium sulfate
+- well: G11
+  condition_text: 1 M Ammonium di-hydrogen phosphate, 100 mM tri-Sodium citrate; pH 5.6
+- well: G12
+  condition_text: 1 M Ammonium di-hydrogen phosphate, 100 mM ADA; pH 6.5
+- well: H1
+  condition_text: 2 M Ammonium di-hydrogen phosphate, 100 mM TRIS; pH 7.5
+- well: H2
+  condition_text: 1 M Magnesium sulfate, 100 mM Sodium acetate; pH 4.6
+- well: H3
+  condition_text: 1 M Magnesium sulfate, 100 mM tri-Sodium citrate; pH 5.6
+- well: H4
+  condition_text: 1 M Magnesium sulfate, 100 mM ADA; pH 6.5, 100 mM Lithium sulfate
+- well: H5
+  condition_text: 400 mM Magnesium sulfate, 50 mM TRIS; pH 7.5
+- well: H6
+  condition_text: 400 mM Magnesium sulfate, 100 mM TRIS; pH 8.5, 100 mM Potassium Sodium
+- well: H7
+  condition_text: 1 M Potassium Sodium tartrate, 100 mM HEPES; pH 7.5
+- well: H8
+  condition_text: 100 mM Potassium Sodium tartrate, 100 mM HEPES; pH 7.5, 100 mM Lithium sulfate
+- well: H9
+  condition_text: 4 M Sodium formate none
+- well: H10
+  condition_text: 2 M Sodium formate; pH 4.6 none
+- well: H11
+  condition_text: 1.4 M Sodium acetate, 100 mM MES; pH 6.5
+- well: H12
+  condition_text: 100 mM Sodium acetate, 100 mM TRIS; pH 8.5

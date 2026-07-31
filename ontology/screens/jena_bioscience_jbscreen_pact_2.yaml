@@ -1,0 +1,57 @@
+screen: JBScreen PACT++ 2
+catalogue: JBS-PACT2
+vendor: Jena Bioscience
+source_url: https://www.jenabioscience.com/images/3a38c1d302/JBS_brochure_-_Crystal_Screens.pdf
+extracted_on: '2026-07-31'
+n_conditions: 24
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: C1
+  condition_text: 25 % w/v PEG 1,500, 100 mM TBG Buffer; pH 4.0
+- well: C2
+  condition_text: 25 % w/v PEG 1,500, 100 mM TBG Buffer; pH 5.0
+- well: C3
+  condition_text: 25 % w/v PEG 1,500, 100 mM TBG Buffer; pH 6.0
+- well: C4
+  condition_text: 25 % w/v PEG 1,500, 100 mM TBG Buffer; pH 7.0
+- well: C5
+  condition_text: 25 % w/v PEG 1,500, 100 mM TBG Buffer; pH 8.0
+- well: C6
+  condition_text: 25 % w/v PEG 1,500, 100 mM TBG Buffer; pH 9.0
+- well: C7
+  condition_text: 20 % w/v PEG 6,000, 100 mM HEPES; pH 7.0, 200 mM Sodium chloride
+- well: C8
+  condition_text: 20 % w/v PEG 6,000, 100 mM HEPES; pH 7.0, 200 mM Ammonium chloride
+- well: C9
+  condition_text: 20 % w/v PEG 6,000, 100 mM HEPES; pH 7.0, 200 mM Lithium chloride
+- well: C10
+  condition_text: 20 % w/v PEG 6,000, 100 mM HEPES; pH 7.0, 200 mM Magnesium chloride
+- well: C11
+  condition_text: 20 % w/v PEG 6,000, 100 mM HEPES; pH 7.0, 200 mM Calcium chloride
+- well: C12
+  condition_text: 20 % w/v PEG 6,000, 100 mM HEPES; pH 7.0, 10 mM Zinc chloride
+- well: D1
+  condition_text: 25 % w/v PEG 1,500, 100 mM MMT buffer; pH 4.0
+- well: D2
+  condition_text: 25 % w/v PEG 1,500, 100 mM MMT buffer; pH 5.0
+- well: D3
+  condition_text: 25 % w/v PEG 1,500, 100 mM MMT buffer; pH 6.0
+- well: D4
+  condition_text: 25 % w/v PEG 1,500, 100 mM MMT buffer; pH 7.0
+- well: D5
+  condition_text: 25 % w/v PEG 1,500, 100 mM MMT buffer; pH 8.0
+- well: D6
+  condition_text: 25 % w/v PEG 1,500, 100 mM MMT buffer; pH 9.0
+- well: D7
+  condition_text: 20 % w/v PEG 6,000, 100 mM TRIS; pH 8.0, 200 mM Sodium chloride
+- well: D8
+  condition_text: 20 % w/v PEG 6,000, 100 mM TRIS; pH 8.0, 200 mM Ammonium chloride
+- well: D9
+  condition_text: 20 % w/v PEG 6,000, 100 mM TRIS; pH 8.0, 200 mM Lithium chloride
+- well: D10
+  condition_text: 20 % w/v PEG 6,000, 100 mM TRIS; pH 8.0, 200 mM Magnesium chloride
+- well: D11
+  condition_text: 20 % w/v PEG 6,000, 100 mM TRIS; pH 8.0, 200 mM Calcium chloride
+- well: D12
+  condition_text: 20 % w/v PEG 6,000, 100 mM TRIS; pH 8.0, 10 mM Zinc chloride

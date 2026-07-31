@@ -1,0 +1,106 @@
+screen: JBScreen Wizard 2
+catalogue: JBS-WIZARD2
+vendor: Jena Bioscience
+source_url: https://www.jenabioscience.com/images/3a38c1d302/JBS_brochure_-_Crystal_Screens.pdf
+extracted_on: '2026-07-31'
+n_conditions: 48
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: E1
+  condition_text: 10 % w/v PEG 3,000, 100 mM Sodium acetate; pH 4.5, 200 mM Zinc acetate
+- well: E2
+  condition_text: 35 % v/v MPD, 100 mM MES; pH 6.0, 200 mM Lithium sulfate
+- well: E3
+  condition_text: 20 % w/v PEG 8,000, 100 mM TRIS; pH 8.5, 200 mM Magnesium chloride
+- well: E4
+  condition_text: 2 M Ammonium sulfate, 100 mM MES; pH 6.5, 200 mM Sodium chloride
+- well: E5
+  condition_text: 20 % v/v 1,4-Butanediol, 100 mM HEPES; pH 7.5, 200 mM Sodium chloride
+- well: E6
+  condition_text: 10 % v/v 2-Propanol, 100 mM Sodium phosphate citrate; pH 4.2, 200 mM Lithium sulfate
+- well: E7
+  condition_text: 30 % w/v PEG 3,000, 100 mM TRIS; pH 7.0, 200 mM Sodium chloride
+- well: E8
+  condition_text: 10 % w/v PEG 8,000, 100 mM Sodium Potassium phosphate; pH
+- well: E9
+  condition_text: 2 M Ammonium sulfate, 100 mM Sodium phosphate citrate; pH 4.2
+- well: E10
+  condition_text: 1 M di-Ammonium hydrogen phosphate, 100 mM TRIS; pH 8.5
+- well: E11
+  condition_text: 10 % v/v 2-Propanol, 100 mM MES; pH 6.5, 200 mM Zinc acetate
+- well: E12
+  condition_text: 30 % v/v PEG 400, 100 mM MES; pH 6.5, 200 mM Lithium sulfate
+- well: F1
+  condition_text: 15 % v/v Ethanol, 100 mM tri-Sodium citrate; pH 5.5, 200 mM Lithium sulfate
+- well: F2
+  condition_text: 20 % w/v PEG 1,000, 100 mM Sodium Potassium phosphate; pH
+- well: F3
+  condition_text: 1.26 M Ammonium sulfate, 100 mM HEPES; pH 7.5
+- well: F4
+  condition_text: 1 M tri-Sodium citrate, 100 mM CHES; pH 9.5
+- well: F5
+  condition_text: 2.5 M Sodium chloride, 100 mM TRIS; pH 7.0, 200 mM Magnesium chloride
+- well: F6
+  condition_text: 20 % w/v PEG 3,000, 100 mM TRIS; pH 7.0, 200 mM Calcium acetate
+- well: F7
+  condition_text: 1.6 M Sodium di-hydrogen phosphate
+- well: F8
+  condition_text: 15 % v/v Ethanol, 100 mM MES; pH 6.0, 200 mM Zinc acetate
+- well: F9
+  condition_text: 35 % v/v MPD, 100 mM Sodium acetate; pH 4.5
+- well: F10
+  condition_text: 10 % v/v 2-Propanol, 100 mM Imidazole; pH 8.0
+- well: F11
+  condition_text: 15 % v/v Ethanol, 100 mM HEPES; pH 7.5, 200 mM Magnesium chloride
+- well: F12
+  condition_text: 30 % w/v PEG 8,000, 100 mM Imidazole; pH 8.0, 200 mM Sodium chloride
+- well: G1
+  condition_text: 35 % v/v MPD, 100 mM HEPES; pH 7.5, 200 mM Sodium chloride
+- well: G2
+  condition_text: 30 % v/v PEG 400, 100 mM CHES; pH 9.5
+- well: G3
+  condition_text: 10 % w/v PEG 3,000, 100 mM MES; pH 6.5, 200 mM Magnesium chloride
+- well: G4
+  condition_text: 20 % w/v PEG 8,000, 100 mM MES; pH 6.0, 200 mM Calcium acetate
+- well: G5
+  condition_text: 1.26 M Ammonium sulfate, 100 mM CHES; pH 9.5, 200 mM Sodium chloride
+- well: G6
+  condition_text: 20 % v/v 1,4-Butanediol, 100 mM Imidazole; pH 8.0, 200 mM Zinc acetate
+- well: G7
+  condition_text: 1 M tri-Sodium citrate, 100 mM TRIS; pH 7.0, 200 mM Sodium chloride
+- well: G8
+  condition_text: 20 % w/v PEG 1,000, 100 mM TRIS; pH 8.5
+- well: G9
+  condition_text: 1 M di-Ammonium hydrogen phosphate, 100 mM tri-Sodium citrate; pH 5.5, 200 mM Sodium
+    chloride
+- well: G10
+  condition_text: 10 % w/v PEG 8,000, 100 mM Imidazole; pH 8.0
+- well: G11
+  condition_text: 800 mM Sodium di-hydrogen phosphate
+- well: G12
+  condition_text: 10 % w/v PEG 3,000, 100 mM Sodium phosphate citrate; pH 4.2, 200 mM Sodium chloride
+- well: H1
+  condition_text: 1 M Potassium Sodium tartrate, 100 mM TRIS; pH 7.0, 200 mM Lithium sulfate
+- well: H2
+  condition_text: 2.5 M Sodium chloride, 100 mM Sodium acetate; pH 4.5, 200 mM Lithium sulfate
+- well: H3
+  condition_text: 20 % w/v PEG 8,000, 100 mM CAPS; pH 10.5, 200 mM Sodium chloride
+- well: H4
+  condition_text: 20 % w/v PEG 3,000, 100 mM Imidazole; pH 8.0, 200 mM Zinc acetate
+- well: H5
+  condition_text: 2 M Ammonium sulfate, 100 mM TRIS; pH 7.0, 200 mM Lithium sulfate
+- well: H6
+  condition_text: 30 % v/v PEG 400, 100 mM HEPES; pH 7.5, 200 mM Sodium chloride
+- well: H7
+  condition_text: 10 % w/v PEG 8,000, 100 mM TRIS; pH 7.0, 200 mM Magnesium chloride
+- well: H8
+  condition_text: 20 % w/v PEG 1,000, 100 mM MES; pH 6.5, 200 mM Magnesium chloride
+- well: H9
+  condition_text: 1.26 M Ammonium sulfate, 100 mM MES; pH 6.0
+- well: H10
+  condition_text: 1 M di-Ammonium hydrogen phosphate, 100 mM Imidazole; pH 8.0, 200 mM Sodium chloride
+- well: H11
+  condition_text: 2.5 M Sodium chloride, 100 mM Imidazole; pH 8.0, 200 mM Zinc acetate
+- well: H12
+  condition_text: 800 mM Potassium Sodium tartrate, 100 mM MES; pH 6.0

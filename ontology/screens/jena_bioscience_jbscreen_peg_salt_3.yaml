@@ -1,0 +1,57 @@
+screen: JBScreen PEG/Salt 3
+catalogue: JBS-PEGSALT3
+vendor: Jena Bioscience
+source_url: https://www.jenabioscience.com/images/3a38c1d302/JBS_brochure_-_Crystal_Screens.pdf
+extracted_on: '2026-07-31'
+n_conditions: 24
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: E1
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Ammonium acetate
+- well: E2
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Ammonium chloride
+- well: E3
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Ammonium fluoride
+- well: E4
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Ammonium formate
+- well: E5
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Ammonium iodide
+- well: E6
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Ammonium nitrate
+- well: E7
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Ammonium di-hydrogen phosphate
+- well: E8
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM di-Ammonium hydrogen phosphate
+- well: E9
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Ammonium sulfate
+- well: E10
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Ammonium sulfite
+- well: E11
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Calcium acetate
+- well: E12
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Calcium chloride
+- well: F1
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM di-Ammonium tartrate
+- well: F2
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Potassium formate
+- well: F3
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Lithium acetate
+- well: F4
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Lithium chloride
+- well: F5
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM tri-Lithium citrate
+- well: F6
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Lithium nitrate
+- well: F7
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Lithium sulfate
+- well: F8
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Magnesium acetate
+- well: F9
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Magnesium chloride
+- well: F10
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Magnesium formate
+- well: F11
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Magnesium nitrate
+- well: F12
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Magnesium sulfate

@@ -1,0 +1,57 @@
+screen: JBScreen Nuc-Pro 3
+catalogue: JBS-NUCPRO3
+vendor: Jena Bioscience
+source_url: https://www.jenabioscience.com/images/3a38c1d302/JBS_brochure_-_Crystal_Screens.pdf
+extracted_on: '2026-07-31'
+n_conditions: 24
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: E1
+  condition_text: 1.2 M Ammonium sulfate, 100 mM HEPES; pH 7.5, 2 % w/v PEG 400
+- well: E2
+  condition_text: 20 mM Calcium chloride, 100 mM Glycine; pH 8.0
+- well: E3
+  condition_text: 2 M Lithium chloride, 50 mM MES; pH 6.0, 200 mM Calcium acetate, 1 mM Cobalt (II)
+- well: E4
+  condition_text: 600 mM Lithium sulfate, 50 mM MES; pH 6.0, 10 mM Magnesium chloride
+- well: E5
+  condition_text: 1 M Lithium sulfate, 8 % w/v PEG
+- well: E6
+  condition_text: 1 M Lithium sulfate none, 50 mM tri-Sodium citrate, 3 % w/v 2-Propanol
+- well: E7
+  condition_text: 1.2 M Lithium sulfate, 50 mM MES; pH 6.5, 30 mM Magnesium chloride
+- well: E8
+  condition_text: 1.2 M Lithium sulfate, 50 mM MES; pH 6.5, 50 mM Magnesium chloride, 2 mM Cobalt (II)
+- well: E9
+  condition_text: 1.5 M Lithium sulfate, 50 mM TRIS; pH 8.5, 5 % w/v Glycerol
+- well: E10
+  condition_text: 1.6 M Lithium sulfate, 2 % w/v PEG
+- well: E11
+  condition_text: 1.7 M Lithium sulfate, 50 mM HEPES; pH 7.0, 50 mM Magnesium sulfate
+- well: E12
+  condition_text: 1.7 M Lithium sulfate none, 10 % w/v Glycerol
+- well: F1
+  condition_text: 2 M Lithium sulfate none, 3 % w/v MPD
+- well: F2
+  condition_text: 5 mM Magnesium chloride, 50 mM MES; pH 6.5, 2.5 mM Cobalt (II) chloride
+- well: F3
+  condition_text: 40 mM Magnesium chloride, 50 mM MES; pH 6.0
+- well: F4
+  condition_text: 80 mM Magnesium chloride, 50 mM HEPES; pH 7.5
+- well: F5
+  condition_text: 200 mM Sodium chloride, 50 mM BIS-TRIS propane; pH 7.0
+- well: F6
+  condition_text: 400 mM Sodium chloride, 50 mM BIS-TRIS propane; pH 6.8
+- well: F7
+  condition_text: 600 mM Sodium chloride, 50 mM MES; pH 6.0, 100 mM Ammonium acetate, 5 mM Magnesium
+- well: F8
+  condition_text: 2.5 M Sodium chloride, 50 mM TRIS; pH 7.5, 200 mM Magnesium chloride
+- well: F9
+  condition_text: 1.8 M Sodium formate, 100 mM TRIS; pH 8.0
+- well: F10
+  condition_text: 2 M Sodium formate, 100 mM Sodium acetate; pH 4.6
+- well: F11
+  condition_text: 100 mM di-Sodium hydrogen
+- well: F12
+  condition_text: 1 M di-Sodium tartrate, 50 mM TRIS; pH 7.5, 30 mM Magnesium chloride

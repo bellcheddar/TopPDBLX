@@ -1,0 +1,57 @@
+screen: JBScreen Nuc-Pro 4
+catalogue: JBS-NUCPRO4
+vendor: Jena Bioscience
+source_url: https://www.jenabioscience.com/images/3a38c1d302/JBS_brochure_-_Crystal_Screens.pdf
+extracted_on: '2026-07-31'
+n_conditions: 24
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: G1
+  condition_text: 10 % w/v 1,6-Hexanediol, 50 mM MES; pH 6.5, 20 mM Magnesium chloride
+- well: G2
+  condition_text: 20 % w/v 1,6-Hexanediol, 50 mM HEPES; pH 7.0, 50 mM Ammonium chloride, 10 mM Magnesium
+- well: G3
+  condition_text: 35 % w/v 1,6-Hexanediol, 50 mM TRIS; pH 8.5, 75 mM Magnesium sulfate
+- well: G4
+  condition_text: 10 % v/v MPD, 50 mM TRIS; pH 7.5, 50 mM Ammonium acetate
+- well: G5
+  condition_text: 10 % v/v MPD, 50 mM HEPES; pH 7.0, 80 mM Potassium chloride, 10 mM Magnesium
+- well: G6
+  condition_text: 15 % v/v MPD, 50 mM ADA; pH 6.5, 100 mM Sodium acetate
+- well: G7
+  condition_text: 15 % v/v MPD, 50 mM di-Sodium succinate; pH 5.5, 10 mM Magnesium acetate
+- well: G8
+  condition_text: 18 % v/v MPD, 20 mM MES; pH 5.8, 10 mM Magnesium chloride
+- well: G9
+  condition_text: 23 % v/v MPD, 50 mM MES; pH 6.0, 100 mM Sodium chloride
+- well: G10
+  condition_text: 26 % v/v MPD, 50 mM PIPES; pH 7.0, 65 mM Magnesium chloride
+- well: G11
+  condition_text: 27 % v/v MPD, 20 mM MES; pH 5.8, 400 mM Sodium chloride, 120 mM Calcium
+- well: G12
+  condition_text: 35 % v/v MPD, 20 mM BIS-TRIS; pH 6.0, 50 mM Sodium chloride, 10 mM Calcium
+- well: H1
+  condition_text: 50 % v/v MPD, 100 mM tri-Sodium citrate; pH 5.6, 10 mM Magnesium chloride
+- well: H2
+  condition_text: 5 % v/v 2-Propanol, 50 mM TRIS; pH 7.5, 10 mM Magnesium chloride
+- well: H3
+  condition_text: 5 % v/v 2-Propanol, 50 mM MES; pH 6.5, 100 mM Calcium acetate
+- well: H4
+  condition_text: 9 % v/v 2-Propanol, 50 mM Imidazole; pH 7.2, 15 mM Magnesium acetate, 15 mM Magnesium
+- well: H5
+  condition_text: 10 % v/v 2-Propanol, 50 mM MES; pH 6.5, 80 mM Ammonium acetate
+- well: H6
+  condition_text: 10 % v/v 2-Propanol, 50 mM di-Sodium succinate; pH 5.5, 2 mM Cobalt (II) chloride
+- well: H7
+  condition_text: 13 % v/v 2-Propanol, 50 mM MOPS; pH 7.0, 200 mM Potassium chloride, 6 mM Cobalt (III)
+- well: H8
+  condition_text: 15 % v/v 2-Propanol, 50 mM MES; pH 6.0, 20 mM Magnesium chloride
+- well: H9
+  condition_text: 10 % v/v 1,4-Dioxane, 50 mM HEPES; pH 7.5
+- well: H10
+  condition_text: 10 % v/v Ethanol, 50 mM MES; pH 6.5, 20 mM Magnesium chloride, 1 mM Cobalt (II)
+- well: H11
+  condition_text: 20 % v/v Ethylene glycol, 5 % w/v PEG 3,350, 20 mM Magnesium chloride
+- well: H12
+  condition_text: 15 % v/v Glycerol, 100 mM Sodium acetate; pH 4.6, 200 mM Sodium chloride

@@ -1,0 +1,57 @@
+screen: JBScreen Basic 1
+catalogue: JBS-BASIC1
+vendor: Jena Bioscience
+source_url: https://www.jenabioscience.com/images/3a38c1d302/JBS_brochure_-_Crystal_Screens.pdf
+extracted_on: '2026-07-31'
+n_conditions: 24
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: A1
+  condition_text: 25 % v/v Ethylene glycol none none
+- well: A2
+  condition_text: 12 % v/v Glycerol, 1.5 M Ammonium sulfate, 100 mM TRIS; pH 8.5
+- well: A3
+  condition_text: 1 M 1,6-Hexanediol, 100 mM Sodium acetate; pH 4.6, 10 mM Cobalt (II) chloride
+- well: A4
+  condition_text: 2.5 M 1,6-Hexanediol, 100 mM tri-Sodium citrate; pH 5.6
+- well: A5
+  condition_text: 3.4 M 1,6-Hexanediol, 100 mM TRIS; pH 8.5, 200 mM Magnesium chloride
+- well: A6
+  condition_text: 30 % v/v MPD, 100 mM Sodium acetate; pH 4.6, 200 mM Sodium chloride
+- well: A7
+  condition_text: 30 % v/v MPD, 100 mM tri-Sodium citrate; pH 5.6, 200 mM Ammonium acetate
+- well: A8
+  condition_text: 30 % v/v MPD, 100 mM Sodium acetate; pH 4.6, 20 mM Calcium chloride
+- well: A9
+  condition_text: 30 % v/v MPD, 500 mM Ammonium sulfate, 100 mM HEPES; pH 7.5
+- well: A10
+  condition_text: 30 % v/v MPD, 100 mM HEPES; pH 7.5, 200 mM tri-Sodium citrate
+- well: A11
+  condition_text: 50 % v/v MPD, 100 mM TRIS; pH 8.5, 200 mM Ammonium di-
+- well: A12
+  condition_text: 70 % v/v MPD, 100 mM HEPES; pH 7.5
+- well: B1
+  condition_text: 2 % w/v Ethylene imine
+- well: B2
+  condition_text: 2 % v/v PEG 400, 2 M Ammonium sulfate, 100 mM HEPES; pH 7.5
+- well: B3
+  condition_text: 28 % v/v PEG 400, 100 mM HEPES; pH 7.5, 200 mM Calcium chloride
+- well: B4
+  condition_text: 30 % v/v PEG 400, 100 mM TRIS; pH 8.5, 200 mM tri-Sodium citrate
+- well: B5
+  condition_text: 30 % v/v PEG 400, 100 mM HEPES; pH 7.5, 200 mM Magnesium chloride
+- well: B6
+  condition_text: 30 % v/v PEG 400, 100 mM Sodium acetate; pH 4.6, 100 mM Calcium chloride
+- well: B7
+  condition_text: 20 % v/v PEG 550 MME, 100 mM BICINE; pH 9.5, 100 mM Sodium chloride
+- well: B8
+  condition_text: 25 % v/v PEG 550 MME, 100 mM MES; pH 6.5, 10 mM Zinc sulfate
+- well: B9
+  condition_text: 10 % w/v PEG 1,000, 10 % w/v PEG 8,000 none
+- well: B10
+  condition_text: 30 % w/v PEG 1,500 none none
+- well: B11
+  condition_text: 20 % w/v PEG 2,000 MME, 100 mM TRIS; pH 8.5, 10 mM Nickel (II) chloride
+- well: B12
+  condition_text: 30 % w/v PEG 2,000 MME, 100 mM Sodium acetate; pH 4.6, 200 mM Ammonium sulfate

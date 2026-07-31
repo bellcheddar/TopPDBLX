@@ -1,0 +1,57 @@
+screen: JBScreen PACT++ 4
+catalogue: JBS-PACT4
+vendor: Jena Bioscience
+source_url: https://www.jenabioscience.com/images/3a38c1d302/JBS_brochure_-_Crystal_Screens.pdf
+extracted_on: '2026-07-31'
+n_conditions: 24
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: G1
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 7.5, 200 mM Sodium fluoride
+- well: G2
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 7.5, 200 mM Sodium bromide
+- well: G3
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 7.5, 200 mM Sodium iodide
+- well: G4
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 7.5, 200 mM Potassium thiocyanate
+- well: G5
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 7.5, 200 mM Sodium nitrate
+- well: G6
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 7.5, 200 mM Sodium formate
+- well: G7
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 7.5, 200 mM Sodium acetate
+- well: G8
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 7.5, 200 mM Sodium sulfate
+- well: G9
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 7.5, 200 mM Potassium Sodium tartrate
+- well: G10
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 7.5
+- well: G11
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 7.5, 200 mM tri-Sodium citrate
+- well: G12
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 7.5, 200 mM di-Sodium malonate
+- well: H1
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 8.5, 200 mM Sodium fluoride
+- well: H2
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 8.5, 200 mM Sodium bromide
+- well: H3
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 8.5, 200 mM Sodium iodide
+- well: H4
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 8.5, 200 mM Potassium thiocyanate
+- well: H5
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 8.5, 200 mM Sodium nitrate
+- well: H6
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 8.5, 200 mM Sodium formate
+- well: H7
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 8.5, 200 mM Sodium acetate
+- well: H8
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 8.5, 200 mM Sodium sulfate
+- well: H9
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 8.5, 200 mM Potassium Sodium tartrate
+- well: H10
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 8.5, 20 mM Sodium Potassium phosphate
+- well: H11
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 8.5, 200 mM tri-Sodium citrate
+- well: H12
+  condition_text: 20 % w/v PEG 3,350, 100 mM BIS-TRIS propane; pH 8.5, 200 mM di-Sodium malonate

@@ -1,0 +1,121 @@
+screen: Wizard Classic 2
+catalogue: '1009531'
+vendor: Rigaku Reagents
+source_url: https://www.mitegen.com/wp-content/uploads/2017/08/wiz2_rigaku_15.pdf
+extracted_on: '2026-07-31'
+n_conditions: 48
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: '1'
+  condition_text: 10% (w/v) PEG 3000, 100 mM Sodium acetate/ Acetic acid pH 4.5, 200 mM Zinc acetate
+- well: '2'
+  condition_text: 35% (v/v) MPD, 100 mM MES/ Sodium hydroxide pH 6.0, 200 mM Lithium sulfate
+- well: '3'
+  condition_text: 20% (w/v) PEG 8000, 100 mM Tris base/ Hydrochloric acid pH 8.5, 200 mM Magnesium chloride
+- well: '4'
+  condition_text: 2000 mM Ammonium sulfate, 100 mM Sodium cacodylate/ Hydrochloric acid pH 6.5, 200 mM
+    Sodium chloride
+- well: '5'
+  condition_text: 20% (v/v) 1,4-butanediol, 100 mM HEPES/ Sodium hydroxide pH 7.5, 200 mM Sodium chloride
+- well: '6'
+  condition_text: 10% (v/v) 2-propanol, 100 mM Sodium phosphate dibasic/ Citric acid pH 4.2, 200 mM Lithium
+    sulfate
+- well: '7'
+  condition_text: 30% (w/v) PEG 3000, 100 mM Tris base/ Hydrochloric acid pH 7.0, 200 mM Sodium chloride
+- well: '8'
+  condition_text: 10% (w/v) PEG 8000, 100 mM Potassium phosphate monobasic/ Sodium phosphate dibasic pH
+    6.2, 200 mM Sodium chloride
+- well: '9'
+  condition_text: 2000 mM Ammonium sulfate, 100 mM Sodium phosphate dibasic/ Citric acid pH 4.2
+- well: '10'
+  condition_text: 1000 mM Ammonium phosphate dibasic, 100 mM Tris base/ Hydrochloric acid pH 8.5
+- well: '11'
+  condition_text: 10% (v/v) 2-propanol, 100 mM Sodium cacodylate/ Hydrochloric acid pH 6.5, 200 mM Zinc
+    acetate
+- well: '12'
+  condition_text: 30% (v/v) PEG 400, 100 mM Sodium cacodylate/ Hydrochloric acid pH 6.5, 200 mM Lithium
+    sulfate
+- well: '13'
+  condition_text: 15% (v/v) Reagent alcohol, 100 mM Sodium citrate/ Citric acid pH 5.5, 200 mM Lithium
+    sulfate
+- well: '14'
+  condition_text: 20% (w/v) PEG 1000, 100 mM Potassium phosphate monobasic/ Sodium phosphate dibasic pH
+    6.2, 200 mM Sodium chloride
+- well: '15'
+  condition_text: 1260 mM Ammonium sulfate, 100 mM HEPES/ Sodium hydroxide pH 7.5
+- well: '16'
+  condition_text: 1000 mM Sodium citrate tribasic, 100 mM CHES/ Sodium hydroxide pH 9.5
+- well: '17'
+  condition_text: 2500 mM Sodium chloride, 100 mM Tris base/ Hydrochloric acid pH 7.0, 200 mM Magnesium
+    chloride
+- well: '18'
+  condition_text: 20% (w/v) PEG 3000, 100 mM Tris base/ Hydrochloric acid pH 7.0, 200 mM Calcium acetate
+- well: '19'
+  condition_text: 1600 mM Sodium phosphate monobasic/ 400
+- well: '20'
+  condition_text: 15% (v/v) Reagent alcohol, 100 mM MES/ Sodium hydroxide pH 6.0, 200 mM Zinc acetate
+- well: '21'
+  condition_text: 35% (v/v) MPD, 100 mM Sodium acetate/ Acetic acid pH 4.5
+- well: '22'
+  condition_text: 10% (v/v) 2-propanol, 100 mM Imidazole/ Hydrochloric acid pH 8.0
+- well: '23'
+  condition_text: 15% (v/v) Reagent alcohol, 100 mM HEPES/ Sodium hydroxide pH 7.5, 200 mM Magnesium chloride
+- well: '24'
+  condition_text: 30% (w/v) PEG 8000, 100 mM Imidazole/ Hydrochloric acid pH 8.0, 200 mM Sodium chloride
+- well: '25'
+  condition_text: 35% (v/v) MPD, 100 mM HEPES/ Sodium hydroxide pH 7.5, 200 mM Sodium chloride
+- well: '26'
+  condition_text: 30% (v/v) PEG 400, 100 mM CHES/ Sodium hydroxide pH 9.5
+- well: '27'
+  condition_text: 10% (w/v) PEG 3000, 100 mM Sodium cacodylate/ Hydrochloric acid pH 6.5, 200 mM Magnesium
+    chloride
+- well: '28'
+  condition_text: 20% (w/v) PEG 8000, 100 mM MES/ Sodium hydroxide pH 6.0, 200 mM Calcium acetate
+- well: '29'
+  condition_text: 1260 mM Ammonium sulfate, 100 mM CHES/ Sodium hydroxide pH 9.5, 200 mM Sodium chloride
+- well: '30'
+  condition_text: 20% (v/v) 1,4-butanediol, 100 mM Imidazole/ Hydrochloric acid pH 8.0, 200 mM Zinc acetate
+- well: '31'
+  condition_text: 1000 mM Sodium citrate tribasic, 100 mM Tris base/ Hydrochloric acid pH 7.0, 200 mM
+    Sodium chloride
+- well: '32'
+  condition_text: 20% (w/v) PEG 1000, 100 mM Tris base/ Hydrochloric acid pH 8.5
+- well: '33'
+  condition_text: 1000 mM Ammonium phosphate dibasic, 100 mM Sodium citrate/ Citric acid pH 5.5, 200 mM
+    Sodium chloride
+- well: '34'
+  condition_text: 10% (w/v) PEG 8000, 100 mM Imidazole/ Hydrochloric acid pH 8.0
+- well: '35'
+  condition_text: 800 mM Sodium phosphate monobasic/ 1200
+- well: '36'
+  condition_text: 10% (w/v) PEG 3000, 100 mM Sodium phosphate dibasic/ Citric acid pH 4.2, 200 mM Sodium
+    chloride
+- well: '37'
+  condition_text: 1000 mM Potassium sodium tartrate, 100 mM Tris base/ Hydrochloric acid pH 7.0, 200 mM
+    Lithium sulfate
+- well: '38'
+  condition_text: 2500 mM Sodium chloride, 100 mM Sodium acetate/ Acetic acid pH 4.5, 200 mM Lithium sulfate
+- well: '39'
+  condition_text: 20% (w/v) PEG 8000, 100 mM CAPS/ Sodium hydroxide pH 10.5, 200 mM Sodium chloride
+- well: '40'
+  condition_text: 20% (w/v) PEG 3000, 100 mM Imidazole/ Hydrochloric acid pH 8.0, 200 mM Zinc acetate
+- well: '41'
+  condition_text: 2000 mM Ammonium sulfate, 100 mM Tris base/ Hydrochloric acid pH 7.0, 200 mM Lithium
+    sulfate
+- well: '42'
+  condition_text: 30% (v/v) PEG 400, 100 mM HEPES/ Sodium hydroxide pH 7.5, 200 mM Sodium chloride
+- well: '43'
+  condition_text: 10% (w/v) PEG 8000, 100 mM Tris base/ Hydrochloric acid pH 7.0, 200 mM Magnesium chloride
+- well: '44'
+  condition_text: 20% (w/v) PEG 1000, 100 mM Sodium cacodylate/ Hydrochloric acid pH 6.5, 200 mM Magnesium
+    chloride
+- well: '45'
+  condition_text: 1260 mM Ammonium sulfate, 100 mM MES/ Sodium hydroxide pH 6.0
+- well: '46'
+  condition_text: 1000 mM Ammonium phosphate dibasic, 100 mM Imidazole/ Hydrochloric acid pH 8.0, 200
+    mM Sodium chloride
+- well: '47'
+  condition_text: 2500 mM Sodium chloride, 100 mM Imidazole/ Hydrochloric acid pH 8.0, 200 mM Zinc acetate
+- well: '48'
+  condition_text: 1000 mM Potassium sodium tartrate, 100 mM MES/ Sodium hydroxide pH 6.0

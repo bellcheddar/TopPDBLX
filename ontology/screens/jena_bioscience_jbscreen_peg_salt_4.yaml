@@ -1,0 +1,57 @@
+screen: JBScreen PEG/Salt 4
+catalogue: JBS-PEGSALT4
+vendor: Jena Bioscience
+source_url: https://www.jenabioscience.com/images/3a38c1d302/JBS_brochure_-_Crystal_Screens.pdf
+extracted_on: '2026-07-31'
+n_conditions: 24
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: G1
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Potassium acetate
+- well: G2
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Potassium chloride
+- well: G3
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Potassium fluoride
+- well: G4
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Potassium iodide
+- well: G5
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Potassium nitrate
+- well: G6
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Potassium di-hydrogen phosphate
+- well: G7
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM di-Potassium hydrogen phosphate
+- well: G8
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Potassium sulfate
+- well: G9
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Potassium thiocyanate
+- well: G10
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Potassium Sodium tartrate
+- well: G11
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Sodium acetate
+- well: G12
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Sodium chloride
+- well: H1
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM tri-Sodium citrate
+- well: H2
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Sodium fluoride
+- well: H3
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Sodium formate
+- well: H4
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Sodium iodide
+- well: H5
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Sodium thiocyanate
+- well: H6
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Sodium nitrate
+- well: H7
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Sodium di-hydrogen phosphate
+- well: H8
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM di-Sodium hydrogen phosphate
+- well: H9
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Sodium sulfate
+- well: H10
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM di-Sodium tartrate
+- well: H11
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM tri-Potassium citrate
+- well: H12
+  condition_text: 20 % w/v PEG 5,000 MME, 200 mM Zinc acetate

@@ -1,0 +1,58 @@
+screen: JBScreen Kinase 3
+catalogue: JBS-KINASE3
+vendor: Jena Bioscience
+source_url: https://www.jenabioscience.com/images/3a38c1d302/JBS_brochure_-_Crystal_Screens.pdf
+extracted_on: '2026-07-31'
+n_conditions: 24
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: E1
+  condition_text: 8 % w/v PEG 4,000, 50 mM MES; pH 6.5, 10 mM Magnesium chloride, 10 mM Dithiothreitol
+- well: E2
+  condition_text: 10 % w/v PEG 4,000, 50 mM PIPES; pH 7.0, 10 mM Dithiothreitol
+- well: E3
+  condition_text: 10 % w/v PEG 4,000, 100 mM HEPES; pH 7.5, 15 % v/v Ethylene glycol, 10 % v/v 2-Propanol
+- well: E4
+  condition_text: 10 % w/v PEG 4,000, 100 mM HEPES; pH 7.5
+- well: E5
+  condition_text: 15 % w/v PEG 4,000, 100 mM HEPES; pH 7.5, 10 % v/v 2-Propanol
+- well: E6
+  condition_text: 15 % w/v PEG 4,000, 75 mM TRIS; pH 8.5, 200 mM Sodium chloride, 1 % w/v PEG 6,000, 75
+    mM
+- well: E7
+  condition_text: 15 % w/v PEG 4,000, 100 mM di-Sodium DL-malate; pH 5.5, 200 mM Ammonium sulfate
+- well: E8
+  condition_text: 20 % w/v PEG 4,000, 100 mM BIS-TRIS; pH 6.5, 100 mM Sodium chloride
+- well: E9
+  condition_text: 20 % w/v PEG 4,000, 100 mM HEPES; pH 7.5, 200 mM Magnesium chloride
+- well: E10
+  condition_text: 20 % w/v PEG 4,000, 100 mM TRIS; pH 8.5, 200 mM Magnesium chloride
+- well: E11
+  condition_text: 25 % w/v PEG 4,000, 100 mM MES; pH 6.5, 200 mM Magnesium chloride
+- well: E12
+  condition_text: 25 % w/v PEG 4,000, 100 mM TRIS; pH 8.5, 100 mM Lithium sulfate
+- well: F1
+  condition_text: 28 % w/v PEG 4,000, 200 mM Lithium acetate; pH 7.5
+- well: F2
+  condition_text: 30 % w/v PEG 4,000, 100 mM MES; pH 6.5, 200 mM Sodium acetate
+- well: F3
+  condition_text: 30 % w/v PEG 4,000, 150 mM TRIS; pH 8.5, 200 mM Ammonium sulfate
+- well: F4
+  condition_text: 8 % w/v PEG 5,000 MME, 100 mM HEPES; pH 7.5, 10 % v/v 2-Propanol
+- well: F5
+  condition_text: 25 % w/v PEG 5,000 MME, 100 mM MES; pH 6.5, 200 mM Ammonium sulfate
+- well: F6
+  condition_text: 30 % w/v PEG 5,000 MME, 100 mM HEPES; pH 7.5, 200 mM Ammonium sulfate
+- well: F7
+  condition_text: 30 % w/v PEG 5,000 MME, 100 mM ADA; pH 6.5, 100 mM Ammonium sulfate
+- well: F8
+  condition_text: 20 % w/v PEG 6,000, 100 mM MES; pH 6.5
+- well: F9
+  condition_text: 28 % w/v PEG 6,000, 100 mM MES; pH 6.5, 10 mM Dithiothreitol
+- well: F10
+  condition_text: 30 % w/v PEG 6,000, 100 mM HEPES; pH 7.5, 175 mM Lithium sulfate
+- well: F11
+  condition_text: 30 % w/v PEG 6,000, 100 mM PIPES; pH 7.0, 10 mM Dithiothreitol
+- well: F12
+  condition_text: 32 % w/v PEG 6,000, 100 mM MES; pH 6.5

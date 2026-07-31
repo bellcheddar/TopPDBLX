@@ -1,0 +1,59 @@
+screen: JBScreen Membrane 1
+catalogue: JBS-MEMBRANE1
+vendor: Jena Bioscience
+source_url: https://www.jenabioscience.com/images/3a38c1d302/JBS_brochure_-_Crystal_Screens.pdf
+extracted_on: '2026-07-31'
+n_conditions: 24
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: A1
+  condition_text: 15 % w/v PEG 400, 15 % w/v Glycerol, 100 mM HEPES; pH 7.5, 200 mM Calcium chloride
+- well: A2
+  condition_text: 20 % w/v PEG 400, 100 mM Sodium chloride, 100 mM tri-Sodium citrate; pH 5.6, 20 mM Magnesium
+    chloride
+- well: A3
+  condition_text: 25 % w/v PEG 400, 50 mM Sodium acetate; pH 4.6, 50 mM Magnesium acetate
+- well: A4
+  condition_text: 30 % w/v PEG 400, 50 mM Sodium sulfate, 50 mM TRIS; pH 8.5, 50 mM Lithium sulfate
+- well: A5
+  condition_text: 48 % w/v PEG 400, 100 mM HEPES; pH 7.5, 200 mM Calcium chloride
+- well: A6
+  condition_text: 20 % w/v PEG 550 MME, 10 mM TRIS; pH 7.5
+- well: A7
+  condition_text: 30 % w/v PEG 550 MME, 50 mM TRIS; pH 8.5, 100 mM Magnesium chloride
+- well: A8
+  condition_text: 35 % w/v PEG 600 none none
+- well: A9
+  condition_text: 28 % w/v PEG 1,000, 10 % w/v Glycerol, 100 mM TRICINE; pH 8.0, 350 mM Sodium chloride
+- well: A10
+  condition_text: 10 % w/v PEG 1,500, 5 % w/v Ethanol, 100 mM Magnesium chloride
+- well: A11
+  condition_text: 30 % w/v PEG 1,500 none none
+- well: A12
+  condition_text: 5 % w/v PEG 2,000 none none
+- well: B1
+  condition_text: 10 % w/v PEG 2,000, 100 mM TRIS; pH 8.5, 500 mM Magnesium chloride
+- well: B2
+  condition_text: 15 % w/v PEG 2,000 none none
+- well: B3
+  condition_text: 15 % w/v PEG 2,000 none, 100 mM Lithium chloride
+- well: B4
+  condition_text: 15 % w/v PEG 2,000, 100 mM di-Sodium hydrogen
+- well: B5
+  condition_text: 15 % w/v PEG 2,000, 100 mM di-Sodium hydrogen
+- well: B6
+  condition_text: 15 % w/v PEG 2,000, 20 mM BIS-TRIS; pH 7.0
+- well: B7
+  condition_text: 15 % w/v PEG 2,000, 50 mM HEPES; pH 7.5, 100 mM Magnesium chloride
+- well: B8
+  condition_text: 20 % w/v PEG 2,000, 2 % w/v MPD, 100 mM TRIS; pH 8.0, 300 mM Magnesium nitrate
+- well: B9
+  condition_text: 25 % w/v PEG 2,000, 15 % w/v Glycerol, 100 mM BICINE; pH 9.0, 300 mM Magnesium chloride
+- well: B10
+  condition_text: 30 % w/v PEG 2,000, 200 mM di-Sodium hydrogen
+- well: B11
+  condition_text: 8 % w/v PEG 2,000 MME, 100 mM Sodium acetate; pH 4.6
+- well: B12
+  condition_text: 10 % w/v PEG 2,000 MME, 20 % w/v Glycerol, 100 mM tri-Sodium citrate; pH 5.6, 3 % w/v
+    PEG 200

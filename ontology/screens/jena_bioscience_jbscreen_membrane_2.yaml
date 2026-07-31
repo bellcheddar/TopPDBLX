@@ -1,0 +1,57 @@
+screen: JBScreen Membrane 2
+catalogue: JBS-MEMBRANE2
+vendor: Jena Bioscience
+source_url: https://www.jenabioscience.com/images/3a38c1d302/JBS_brochure_-_Crystal_Screens.pdf
+extracted_on: '2026-07-31'
+n_conditions: 24
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: C1
+  condition_text: 12 % w/v PEG 2,000
+- well: C2
+  condition_text: 10 % w/v PEG 3,350, 50 mM tri-Sodium citrate; pH 5.6, 150 mM Sodium chloride
+- well: C3
+  condition_text: 2 % w/v PEG 4,000, 50 mM TRIS; pH 7.5
+- well: C4
+  condition_text: 5 % w/v PEG 4,000 none none
+- well: C5
+  condition_text: 5 % w/v PEG 4,000 none, 100 mM Potassium chloride
+- well: C6
+  condition_text: 5 % w/v PEG 4,000, 10 % w/v Glycerol, 50 mM MES; pH 6.5, 100 mM Sodium chloride
+- well: C7
+  condition_text: 5 % w/v PEG 4,000, 50 mM di-Sodium hydrogen
+- well: C8
+  condition_text: 10 % w/v PEG 4,000, 50 mM TRIS; pH 8.5, 500 mM Sodium chloride
+- well: C9
+  condition_text: 12 % w/v PEG 4,000, 100 mM ADA; pH 6.5, 100 mM Lithium sulfate
+- well: C10
+  condition_text: 12 % w/v PEG 4,000, 50 mM di-Sodium hydrogen
+- well: C11
+  condition_text: 12 % w/v PEG 4,000, 20 % w/v Glycerol, 50 mM MOPS; pH 7.0, 500 mM Potassium chloride
+- well: C12
+  condition_text: 15 % w/v PEG 4,000, 10 mM TRIS; pH 7.5, 100 mM Lithium chloride
+- well: D1
+  condition_text: 20 % w/v PEG 4,000, 100 mM BIS-TRIS; pH 7.0, 500 mM Sodium chloride
+- well: D2
+  condition_text: 20 % w/v PEG 4,000, 100 mM di-Sodium hydrogen
+- well: D3
+  condition_text: 20 % w/v PEG 4,000, 150 mM Zinc acetate, 50 mM TRIS; pH 7.5, 50 mM Zinc chloride
+- well: D4
+  condition_text: 22 % w/v PEG 4,000, 50 mM TRICINE; pH 8.0
+- well: D5
+  condition_text: 22 % w/v PEG 4,000, 50 mM TRIS; pH 8.5, 500 mM Sodium chloride
+- well: D6
+  condition_text: 30 % w/v PEG 4,000 none none
+- well: D7
+  condition_text: 10 % w/v PEG 5,000
+- well: D8
+  condition_text: 5 % w/v PEG 6,000 none, 100 mM Magnesium sulfate
+- well: D9
+  condition_text: 10 % w/v PEG 6,000, 150 mM Zinc acetate, 50 mM TRIS; pH 7.5, 50 mM Zinc chloride
+- well: D10
+  condition_text: 15 % w/v PEG 6,000, 50 mM di-Sodium succinate; pH 6.5
+- well: D11
+  condition_text: 12 % w/v PEG 8,000, 10 % w/v MPD, 25 mM Potassium di-hydrogen
+- well: D12
+  condition_text: 8 % w/v PEG 10,000, 100 mM tri-Sodium citrate; pH 5.6, 100 mM Magnesium acetate

@@ -1,0 +1,59 @@
+screen: JBScreen Nuc-Pro 1
+catalogue: JBS-NUCPRO1
+vendor: Jena Bioscience
+source_url: https://www.jenabioscience.com/images/3a38c1d302/JBS_brochure_-_Crystal_Screens.pdf
+extracted_on: '2026-07-31'
+n_conditions: 24
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: A1
+  condition_text: 20 % v/v PEG 200, 50 mM HEPES; pH 7.5, 200 mM Potassium chloride, 25 mM Magnesium sulfate
+- well: A2
+  condition_text: 50 % v/v PEG 200, 100 mM TRIS; pH 8.0
+- well: A3
+  condition_text: 5 % v/v PEG 400, 50 mM PIPES; pH 7.0, 30 mM Magnesium chloride
+- well: A4
+  condition_text: 5 % v/v PEG 400, 20 mM MES; pH 5.8, 15 mM Magnesium formate, 2 mM Cobalt (II) chloride
+- well: A5
+  condition_text: 10 % v/v PEG 400, 50 mM HEPES; pH 7.0, 100 mM Potassium chloride
+- well: A6
+  condition_text: 15 % v/v PEG 400, 50 mM MES; pH 6.5, 80 mM Magnesium acetate, 15 mM Magnesium chloride
+- well: A7
+  condition_text: 15 % v/v PEG 400, 100 mM TRIS; pH 8.0, 80 mM Calcium chloride, 20 mM Sodium chloride
+- well: A8
+  condition_text: 20 % v/v PEG 400, 50 mM BIS-TRIS propane; pH 6.8, 60 mM Magnesium chloride
+- well: A9
+  condition_text: 25 % v/v PEG 400, 100 mM tri-Sodium citrate; pH 5.6, 130 mM Sodium chloride, 60 mM Magnesium
+    chloride
+- well: A10
+  condition_text: 30 % v/v PEG 400, 100 mM HEPES; pH 7.5, 200 mM Calcium chloride
+- well: A11
+  condition_text: 30 % v/v PEG 400, 50 mM TRIS; pH 8.5, 100 mM Potassium chloride, 10 mM Magnesium chloride
+- well: A12
+  condition_text: 25 % v/v PEG 550 MME, 50 mM HEPES; pH 7.0, 10 mM Magnesium chloride
+- well: B1
+  condition_text: 20 % w/v PEG 1,000, 50 mM MES; pH 6.5, 200 mM Magnesium chloride, 100 mM Sodium chloride
+- well: B2
+  condition_text: 30 % w/v PEG 2,000
+- well: B3
+  condition_text: 10 % w/v PEG 3,350, 100 mM MES; pH 6.5, 100 mM Calcium chloride, 13 % v/v Glycerol
+- well: B4
+  condition_text: 25 % w/v PEG 3,350, 50 mM MES; pH 6.0, 200 mM Sodium formate, 10 % v/v Glycerol
+- well: B5
+  condition_text: 30 % w/v PEG 3,350, 50 mM di-Sodium succinate; pH 5.5, 100 mM Sodium chloride
+- well: B6
+  condition_text: 35 % w/v PEG 3,350, 50 mM TRIS; pH 7.5, 50 mM Potassium chloride
+- well: B7
+  condition_text: 5 % w/v PEG 4,000, 50 mM HEPES; pH 7.0, 200 mM Ammonium sulfate, 20 mM Magnesium acetate
+- well: B8
+  condition_text: 5 % w/v PEG 4,000, 50 mM MES; pH 6.0, 5 mM Magnesium sulfate
+- well: B9
+  condition_text: 10 % w/v PEG 4,000, 50 mM MES; pH 6.5, 200 mM Ammonium acetate, 10 mM Calcium chloride
+- well: B10
+  condition_text: 10 % w/v PEG 4,000, 50 mM Imidazole; pH 7.2, 20 mM Zinc sulfate
+- well: B11
+  condition_text: 15 % w/v PEG 4,000, 50 mM TRIS; pH 7.5, 150 mM Potassium chloride, 20 mM Magnesium chloride
+- well: B12
+  condition_text: 15 % w/v PEG 4,000, 50 mM tri-Sodium citrate; pH 5.0, 100 mM Sodium chloride, 20 mM
+    Ammonium sulfate

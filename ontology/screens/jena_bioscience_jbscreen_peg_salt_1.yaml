@@ -1,0 +1,57 @@
+screen: JBScreen PEG/Salt 1
+catalogue: JBS-PEGSALT1
+vendor: Jena Bioscience
+source_url: https://www.jenabioscience.com/images/3a38c1d302/JBS_brochure_-_Crystal_Screens.pdf
+extracted_on: '2026-07-31'
+n_conditions: 24
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: A1
+  condition_text: 20 % w/v PEG 3,350, 200 mM Ammonium acetate
+- well: A2
+  condition_text: 20 % w/v PEG 3,350, 200 mM Ammonium chloride
+- well: A3
+  condition_text: 20 % w/v PEG 3,350, 200 mM Ammonium fluoride
+- well: A4
+  condition_text: 20 % w/v PEG 3,350, 200 mM Ammonium formate
+- well: A5
+  condition_text: 20 % w/v PEG 3,350, 200 mM Ammonium iodide
+- well: A6
+  condition_text: 20 % w/v PEG 3,350, 200 mM Ammonium nitrate
+- well: A7
+  condition_text: 20 % w/v PEG 3,350, 200 mM Ammonium di-hydrogen phosphate
+- well: A8
+  condition_text: 20 % w/v PEG 3,350, 200 mM di-Ammonium hydrogen phosphate
+- well: A9
+  condition_text: 20 % w/v PEG 3,350, 200 mM Ammonium sulfate
+- well: A10
+  condition_text: 20 % w/v PEG 3,350, 200 mM Ammonium sulfite
+- well: A11
+  condition_text: 20 % w/v PEG 3,350, 200 mM Calcium acetate
+- well: A12
+  condition_text: 20 % w/v PEG 3,350, 200 mM Calcium chloride
+- well: B1
+  condition_text: 20 % w/v PEG 3,350, 200 mM di-Ammonium tartrate
+- well: B2
+  condition_text: 20 % w/v PEG 3,350, 200 mM Potassium formate
+- well: B3
+  condition_text: 20 % w/v PEG 3,350, 200 mM Lithium acetate
+- well: B4
+  condition_text: 20 % w/v PEG 3,350, 200 mM Lithium chloride
+- well: B5
+  condition_text: 20 % w/v PEG 3,350, 200 mM tri-Lithium citrate
+- well: B6
+  condition_text: 20 % w/v PEG 3,350, 200 mM Lithium nitrate
+- well: B7
+  condition_text: 20 % w/v PEG 3,350, 200 mM Lithium sulfate
+- well: B8
+  condition_text: 20 % w/v PEG 3,350, 200 mM Magnesium acetate
+- well: B9
+  condition_text: 20 % w/v PEG 3,350, 200 mM Magnesium chloride
+- well: B10
+  condition_text: 20 % w/v PEG 3,350, 200 mM Magnesium formate
+- well: B11
+  condition_text: 20 % w/v PEG 3,350, 200 mM Magnesium nitrate
+- well: B12
+  condition_text: 20 % w/v PEG 3,350, 200 mM Magnesium sulfate

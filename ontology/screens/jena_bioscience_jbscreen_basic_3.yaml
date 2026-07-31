@@ -1,0 +1,57 @@
+screen: JBScreen Basic 3
+catalogue: JBS-BASIC3
+vendor: Jena Bioscience
+source_url: https://www.jenabioscience.com/images/3a38c1d302/JBS_brochure_-_Crystal_Screens.pdf
+extracted_on: '2026-07-31'
+n_conditions: 24
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: E1
+  condition_text: 10 % w/v PEG 10,000, 2 % v/v 1,4-Dioxane, 100 mM BICINE; pH 9.5
+- well: E2
+  condition_text: 20 % w/v PEG 10,000, 100 mM HEPES; pH 7.5
+- well: E3
+  condition_text: 12 % w/v PEG 20,000, 100 mM MES; pH 6.5
+- well: E4
+  condition_text: 5 % v/v 2-Propanol, 2 M Ammonium sulfate none
+- well: E5
+  condition_text: 20 % v/v 2-Propanol, 100 mM HEPES; pH 7.5, 200 mM tri-Sodium citrate
+- well: E6
+  condition_text: 20 % v/v 2-Propanol, 100 mM Sodium acetate
+- well: E7
+  condition_text: 30 % v/v 2-Propanol, 100 mM HEPES; pH 7.5, 200 mM Magnesium chloride
+- well: E8
+  condition_text: 30 % v/v 2-Propanol, 100 mM TRIS; pH 8.5, 200 mM Ammonium acetate
+- well: E9
+  condition_text: 10 % v/v 1,4-Dioxane, 1.6 M Ammonium sulfate, 100 mM MES; pH 6.5
+- well: E10
+  condition_text: 35 % v/v 1,4-Dioxane none none
+- well: E11
+  condition_text: 10 % v/v Ethanol, 1.5 M Sodium chloride none
+- well: E12
+  condition_text: 20 % v/v Ethanol, 100 mM TRIS; pH 8.5
+- well: F1
+  condition_text: 25 % v/v 2-Methyl-2-propanol, 100 mM TRIS; pH 8.5
+- well: F2
+  condition_text: 35 % v/v 2-Methyl-2-propanol, 100 mM tri-Sodium citrate
+- well: F3
+  condition_text: 1 M Imidazole; pH 7.0 none none
+- well: F4
+  condition_text: 1 M Lithium sulfate, 100 mM TRIS; pH 8.5, 10 mM Nickel (II) chloride
+- well: F5
+  condition_text: 1.5 M Lithium sulfate, 100 mM HEPES; pH 7.5
+- well: F6
+  condition_text: 400 mM Potassium Sodium
+- well: F7
+  condition_text: 800 mM Potassium Sodium
+- well: F8
+  condition_text: 1.4 M tri-Sodium citrate, 100 mM HEPES; pH 7.5
+- well: F9
+  condition_text: 1.6 M tri-Sodium citrate; pH 6.5 none none
+- well: F10
+  condition_text: 10 % v/v Jeffamine® M-600, 100 mM tri-Sodium citrate
+- well: F11
+  condition_text: 20 % v/v Jeffamine® M-600, 100 mM HEPES; pH 7.5
+- well: F12
+  condition_text: 30 % v/v Jeffamine® M-600, 100 mM MES; pH 6.5, 50 mM Cesium chloride

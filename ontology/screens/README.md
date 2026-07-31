@@ -15,15 +15,20 @@ rather than by withdrawing the dataset.
 
 | Measure | Value |
 |---|---|
-| Screens | 26 (24 reagent-named, 2 compositional) |
-| Wells | 1,518 |
-| Components identified in the 24 reagent-named screens | 97.3% (3,292 of 3,384) |
-| Component-set matches against the corpus | 68,077 |
-| Matches agreeing on every concentration | 31,397 |
+| Screens | 60 (58 reagent-named, 2 compositional) |
+| Wells | 2,526 |
+| Components identified in the 58 reagent-named screens | 93.4% (5,547 of 5,942) |
+| Component-set matches against the corpus | 76,951 |
+| Matches agreeing on every concentration | 35,993 |
+| Vendors | Hampton Research 21, Jena Bioscience 30, Rigaku/MiTeGen 4, Qiagen NeXtal 3, Molecular Dimensions 2 |
 
-The 92 unidentified components are all in the three NeXtal suites, whose PDF text layer runs the
-salt, buffer and precipitant columns together and splits numbers at kerning pairs. They are
-extraction damage rather than unknown chemistry: every other screen reads at 100%.
+The unidentified components are now mostly real chemistry the lexicon has not met rather than
+extraction damage, which is the healthier of the two failures. Two families dominate: Rigaku
+writes buffers as conjugate pairs ("HEPES/ Sodium hydroxide", "Imidazole/ Hydrochloric acid"),
+and Jena's Pentaerythritol series uses the vendor abbreviations PEP 629 and PEE 270, which the
+brochure's own product listing confirms are pentaerythritol propoxylate and ethoxylate. Both are
+curation queues. The remainder is the three NeXtal suites, whose PDF text layer runs the salt,
+buffer and precipitant columns together and splits numbers at kerning pairs.
 
 **Two screens are stored compositionally.** Morpheus and PACT premier name vendor stocks (Buffer
 System, Precipitant Mix, Divalents, SPG) rather than reagents, so they are held verbatim and

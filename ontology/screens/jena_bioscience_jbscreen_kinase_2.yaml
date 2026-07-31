@@ -1,0 +1,59 @@
+screen: JBScreen Kinase 2
+catalogue: JBS-KINASE2
+vendor: Jena Bioscience
+source_url: https://www.jenabioscience.com/images/3a38c1d302/JBS_brochure_-_Crystal_Screens.pdf
+extracted_on: '2026-07-31'
+n_conditions: 24
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: C1
+  condition_text: 10 % v/v PEG 400, 50 mM TRIS; pH 8.5
+- well: C2
+  condition_text: 15 % v/v PEG 400, 100 mM HEPES; pH 7.5, 200 mM Calcium chloride
+- well: C3
+  condition_text: 25 % v/v PEG 400, 100 mM MES; pH 6.5, 10 % v/v 2-Propanol
+- well: C4
+  condition_text: 25 % v/v PEG 400, 100 mM TRIS; pH 8.5, 150 mM tri-Sodium citrate
+- well: C5
+  condition_text: 15 % v/v PEG 550 MME, 100 mM Sodium acetate; pH 4.6, 5 % v/v Ethylene glycol
+- well: C6
+  condition_text: 20 % v/v PEG 550 MME, 100 mM BICINE; pH 9.0, 100 mM Sodium chloride
+- well: C7
+  condition_text: 20 % w/v PEG 1,000, 100 mM TRIS; pH 8.5, 1 mM Dithiothreitol
+- well: C8
+  condition_text: 35 % w/v PEG 1,000, 100 mM HEPES; pH 7.5, 50 mM Lithium sulfate
+- well: C9
+  condition_text: 12 % w/v PEG 2,000, 100 mM MES; pH 6.5, 200 mM Magnesium acetate
+- well: C10
+  condition_text: 25 % w/v PEG 2,000, 100 mM Sodium acetate; pH 4.6, 100 mM Magnesium chloride
+- well: C11
+  condition_text: 30 % w/v PEG 2,000, 100 mM Sodium acetate; pH 4.6, 50 mM Magnesium chloride
+- well: C12
+  condition_text: 24 % w/v PEG 2,000 MME, 100 mM Sodium phosphate citrate; pH 5.0
+- well: D1
+  condition_text: 12 % w/v PEG 3,350, 100 mM MES; pH 6.5, 500 mM Sodium chloride
+- well: D2
+  condition_text: 12 % w/v PEG 3,350, 50 mM tri-Sodium citrate; pH 5.6, 200 mM Ammonium sulfate, 50 mM
+    Magnesium
+- well: D3
+  condition_text: 15 % w/v PEG 3,350, 100 mM Imidazole; pH 7.5, 250 mM Ammonium sulfate, 10 mM Cadmium
+- well: D4
+  condition_text: 20 % w/v PEG 3,350, 150 mM di-Sodium DL-malate; pH 7.0
+- well: D5
+  condition_text: 20 % w/v PEG 3,350, 100 mM HEPES; pH 7.5, 200 mM Sodium chloride, 20 mM L-Glutathione
+- well: D6
+  condition_text: 20 % w/v PEG 3,350, 100 mM TRIS; pH 8.5, 120 mM Sodium chloride, 5 mM Dithiothreitol
+- well: D7
+  condition_text: 20 % w/v PEG 3,350, 200 mM Potassium nitrate
+- well: D8
+  condition_text: 22 % w/v PEG 3,350, 100 mM Ammonium formate
+- well: D9
+  condition_text: 24 % w/v PEG 3,350, 100 mM tri-Sodium citrate; pH 5.0
+- well: D10
+  condition_text: 30 % w/v PEG 3,350, 100 mM Sodium acetate; pH 4.6, 200 mM Ammonium acetate
+- well: D11
+  condition_text: 30 % w/v PEG 3,350, 200 mM Ammonium acetate; pH 5.6, 20 % v/v 2-Propanol, 200 mM Calcium
+    chloride
+- well: D12
+  condition_text: 32.5 % w/v PEG 3,350, 100 mM TRIS; pH 8.5, 500 mM Sodium chloride, 200 mM Magnesium

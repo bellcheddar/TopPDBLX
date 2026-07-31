@@ -67,6 +67,19 @@ complete plate by counting alone. Check that every well states a concentration.
   chloride hexahydrate; 0.3M Calcium chloride dihydrate`), so `NPS`, `precipitant mix` and
   `precipitant mix 4` in the unidentified head could be resolved from the vendor's own stock
   table. That is a second extraction pass over the same document.
+- **Eight partner screens are extracted but refused**, each for a stated reason: Wizard
+  Precipitant Synergy is two 96-condition screens printed as one numbered run of 192 and only
+  191 read; JBScreen LCP came out 95 of 96; JCSG++ 1 to 4, Basic 2 and Membrane 3 fail the
+  sibling-size check, because the brochure prints these families in fours of equal size and a
+  member disagreeing with every sibling is the signature of a heading carried past its block.
+- **Rigaku's conjugate-pair buffer notation is the largest lexicon gap in the screen library**
+  ("HEPES/ Sodium hydroxide", "Imidazole/ Hydrochloric acid", "Sodium acetate/ Acetic acid").
+  Splitting on the slash and identifying the first half would recover most of it, but it needs
+  care: the pair names a buffer system, and treating the conjugate acid as a separate reagent
+  would invent a component the vendor did not list.
+- **PEP 629 and PEE 270** are pentaerythritol propoxylate and ethoxylate, confirmed by Jena's
+  own product listing rather than inferred. 96 wells of the Pentaerythritol series depend on
+  them and they are unambiguously real, so they are the cheapest lexicon win available.
 - **Four Hampton HT binders reconstruct cleanly but ship nothing.** Crystal Screen HT, MembFac
   HT, Index HT and Grid Screen Salt HT are column-only layouts whose binders print no tube list,
   so there is no independent witness to a dropped line and they are refused. Crystal Screen HT
