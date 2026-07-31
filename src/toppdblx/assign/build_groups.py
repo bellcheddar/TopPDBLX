@@ -1,4 +1,12 @@
-"""Stage `assign.build_groups`: propose the group ontology from the corpus.
+"""SUPERSEDED by `assign.classify` at ontology 0.3.0.
+
+The three-level ontology this stage belongs to was withdrawn: its groups were binned
+from the corpus and then had labels retrofitted, which spec 6.1 rejects, and several
+were not chemically coherent (median L2 purity 49%). Classification is now the seven
+JCSG Top96 precipitant classes with no sub-levels. Kept for provenance and because the
+diagnostics behind that decision are worth being able to reproduce.
+
+Stage `assign.build_groups`: propose the group ontology from the corpus.
 
 Spec 6.1 wants an ontology that is hand-defined but **derived from the full data**: "cluster
 the parsed conditions, find the clusters with no curated home, and add curated groups to cover

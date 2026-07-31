@@ -152,7 +152,8 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 | Components resolved to a canonical reagent | {resolved.height:,} ({resolved.height / components.height:.1%}) |
 | Records with a linked protein sequence | {note('release.assemble', 'n_with_sequence', 0):,} |
 | Distinct 30% identity sequence clusters | {note('release.assemble', 'n_distinct_cluster_30', 0):,} |
-| Assigned to an L3 condition group | {note('release.assemble', 'n_assigned_l3', 0):,} |
+| Classified into a precipitant class | {note('release.assemble', 'n_classified', 0):,} |
+| Unclassified, with the reason recorded | {note('release.assemble', 'n_unclassified', 0):,} |
 | Assigned at L2 (fallback) | {note('release.assemble', 'n_assigned_l2', 0):,} |
 
 ### Why records are discarded
@@ -205,11 +206,11 @@ value and refuses to guess its meaning.
 - **A component-set match is necessary but not sufficient.** A single-component condition such
   as `2.0 M ammonium sulfate` matches a screen well trivially, whether or not the depositor
   ever used that screen.
-- **`curated_group` is assigned at the level the evidence supports.** 44.4% of usable records
-  reach a specific L3 condition group, 26.6% fall back to their L2 parent, and 29.0% are left
-  unassigned. That is not a failure of the ontology: 122 L3 groups cover under 40% of the
-  corpus by design, because 1,118 would be needed for 90%. Filter on `assignment_confidence`
-  and `assigned_level` rather than assuming every record is placed.
+- **`curated_group` carries a precipitant class, and Unclassified is a real answer.** Every
+  condition is sorted into one of the seven JCSG Top96 classes, or left Unclassified with the
+  reason recorded: an unresolved reagent, no stated amount for a precipitant, no precipitant at
+  all, or a premixed system that does not fit a seven-class taxonomy. Unclassified is the single
+  largest outcome and should be filtered on rather than assumed away.
 - **Cryoprotectant labels are mostly inferred.** Only about 2.2% of entries name a
   cryoprotectant explicitly. `cryo_evidence` distinguishes `explicit` from `inferred`, and the
   two must not be conflated: roughly four in five are inferences.

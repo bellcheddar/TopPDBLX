@@ -24,6 +24,9 @@ import regex as re
 
 from . import quantity
 from .lexicon import Lexicon, Reagent
+# Aliased: `.text` already exports a `classify` for a different job (condition-level text kind).
+from .noncomponent import classify as classify_non_component
+from .prose import strip_prose
 from .schema import Component, ConditionRecord, DiscardReason, Provenance
 from .text import (classify, clauses_detailed, is_noise, normalise,
                    split_trailing_ph, strip_quantity)
@@ -101,6 +104,24 @@ class RuleParser:
 
     def parse_component(self, clause: str, explicit_cryo: bool) -> tuple[Component, Optional[str]]:
         """Parse one reagent clause. Returns the component and any buffer pH found on it."""
+        component, buffer_ph = self._parse_component(clause, explicit_cryo)
+        if component.name_canonical is not None or component.role == "not_a_component":
+            return component, buffer_ph
+
+        # The clause did not resolve. Depositors write sentences, so it may be chemistry wrapped
+        # in narrative: "crystal conditions were 100 mm bis-tris propane". Retried with the prose
+        # removed, and the retry is kept only if it actually resolves, so a working parse can
+        # never be made worse. Measured: 13.7% of unresolved components are longer than 40
+        # characters and 7.1% contain a verb.
+        stripped = strip_prose(clause)
+        if stripped:
+            retried, retried_ph = self._parse_component(stripped, explicit_cryo)
+            if retried.name_canonical is not None:
+                return retried, retried_ph
+        return component, buffer_ph
+
+    def _parse_component(self, clause: str,
+                         explicit_cryo: bool) -> tuple[Component, Optional[str]]:
         body, attached_ph = split_trailing_ph(clause)
         qty = quantity.extract(body)
         name = strip_quantity(body)
@@ -131,6 +152,16 @@ class RuleParser:
         if evidence is not None:
             role = "cryo"
 
+        # Only asked when the lexicon found nothing. A clause that resolved to a reagent is a
+        # reagent, whatever else its wording looks like, so the classifier never gets to
+        # second-guess a positive match.
+        non_component_reason = None
+        if reagent is None:
+            non_component_reason = classify_non_component(
+                name or clause, has_quantity=qty.value is not None)
+            if non_component_reason is not None:
+                role = "not_a_component"
+
         component = Component(
             role=role,
             name_raw=name or clause,
@@ -147,7 +178,11 @@ class RuleParser:
             concentration_range=(qty.low, qty.high) if qty.is_range else None,
             cryo_evidence=evidence,
             premix_id=reagent.canonical_id if reagent and reagent.chem_class == "premix" else None,
-            parse_confidence=1.0 if reagent else 0.2,
+            # A confident non-reagent is a correct parse, not a failed one: the text genuinely
+            # holds no chemistry. Scoring it 0.2 like an unrecognised reagent would drag record
+            # confidence down for getting something right.
+            parse_confidence=1.0 if (reagent or non_component_reason) else 0.2,
+            non_component_reason=non_component_reason,
         )
         buffer_ph = attached_ph if (reagent and reagent.chem_class == "buffer") else None
         return component, buffer_ph
@@ -308,7 +343,16 @@ class RuleParser:
 
         # -- confidence and discard ------------------------------------------
         resolved = sum(1 for c in components if c.name_canonical)
-        resolution = resolved / n_reagent_clauses if n_reagent_clauses else 0.0
+        # Clauses confidently identified as containing no chemistry are removed from the
+        # denominator, exactly as they are from the corpus-level resolution rate. Leaving them in
+        # capped record confidence below 1.0 for any record mentioning its own method: 2,539
+        # records with every reagent resolved still scored a median 0.735 and a maximum 0.925,
+        # purely for containing a phrase like "streak seeded". That silently excluded every one
+        # of them from the fine-tuning set, so the model saw no example of the non-reagent verdict
+        # and had no way to learn it.
+        n_non_component = sum(1 for c in components if c.role == "not_a_component")
+        n_chemistry_clauses = max(0, n_reagent_clauses - n_non_component)
+        resolution = resolved / n_chemistry_clauses if n_chemistry_clauses else 0.0
         unresolved_chars = sum(len(u) for u in unresolved)
         char_coverage = max(0.0, 1.0 - unresolved_chars / max(1, len(text)))
         confidence = round(0.7 * resolution + 0.3 * char_coverage, 3)
@@ -326,6 +370,11 @@ class RuleParser:
                 "METHOD_ONLY" if any(k in ("method", "temperature", "ph") for k in kinds)
                 else "NON_CRYSTALLISATION_TEXT"
             )
+        elif n_chemistry_clauses == 0:
+            # Clauses were found but every one of them is method text, a screen reference or an
+            # unnamed macromolecule. That is method-only, not a failure to match a reagent: there
+            # was no reagent named to match.
+            discard = "METHOD_ONLY"
         elif resolved == 0:
             discard = "NO_REAGENT_MATCH"
         elif confidence < 0.25:

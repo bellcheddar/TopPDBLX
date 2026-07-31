@@ -1,11 +1,11 @@
 # Datasheet: toppdblx-conditions v0.1.0
 
-Generated 2026-07-30 by `./run.sh release.datasheet`. Every figure is read
+Generated 2026-07-31 by `./run.sh release.datasheet`. Every figure is read
 from the data at generation time, so this file cannot drift from what it describes.
 
 **Schema version** `0.1.0-draft` · **Ontology version** `0.2.0`
-· **Lexicon version** `0.1.0` (147 reagents,
-501 names)
+· **Lexicon version** `0.3.0` (502 reagents,
+1265 names)
 
 ---
 
@@ -20,8 +20,8 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 2. **Condition frequency reflects screen popularity, not intrinsic success rate.** PEG 3350
    and PEG/Ion dominate because they are in everyone's screens. A condition being common here
    is evidence about what crystallographers tried, not about what works best.
-3. **Reported conditions are often optimised, not screen hits.** Of the 44,984 records
-   whose component set matches a published screen well, only 20,029 agree on every
+3. **Reported conditions are often optimised, not screen hits.** Of the 45,547 records
+   whose component set matches a published screen well, only 20,339 agree on every
    concentration. The rest are flagged `optimised_not_screen`, but it remains a confounder.
 4. **Protein concentration, drop ratio and equilibration volume are usually missing**, and
    they matter. They are captured where present and null otherwise.
@@ -44,14 +44,15 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 |---------|-------|
 | Records (one per `pdb_id` + `crystal_id`) | 199,185 |
 | Distinct PDB entries | 198,691 |
-| Usable records | 183,623 (92.2%) |
-| Discarded, with a reason code | 15,562 |
+| Usable records | 186,162 (93.5%) |
+| Discarded, with a reason code | 13,023 |
 | Components | 603,459 |
-| Components resolved to a canonical reagent | 477,489 (79.1%) |
+| Components resolved to a canonical reagent | 514,084 (85.2%) |
 | Records with a linked protein sequence | 195,985 |
 | Distinct 30% identity sequence clusters | 23,868 |
-| Assigned to an L3 condition group | 81,605 |
-| Assigned at L2 (fallback) | 48,823 |
+| Classified into a precipitant class | 109,683 |
+| Unclassified, with the reason recorded | 76,479 |
+| Assigned at L2 (fallback) | 0 |
 
 ### Why records are discarded
 
@@ -60,10 +61,10 @@ distribution is itself a result.
 
 | Reason | Records | Share |
 |--------|---------|-------|
-| `NO_REAGENT_MATCH` | 8,409 | 4.22% |
+| `NO_REAGENT_MATCH` | 5,795 | 2.91% |
 | `TOO_SHORT` | 4,369 | 2.19% |
-| `METHOD_ONLY` | 2,042 | 1.03% |
-| `UNPARSEABLE_RESIDUAL` | 461 | 0.23% |
+| `METHOD_ONLY` | 2,400 | 1.20% |
+| `UNPARSEABLE_RESIDUAL` | 178 | 0.09% |
 | `REFERENCE_ONLY` | 103 | 0.05% |
 | `EMPTY` | 91 | 0.05% |
 | `NON_CRYSTALLISATION_TEXT` | 87 | 0.04% |
@@ -72,15 +73,15 @@ distribution is itself a result.
 
 | Class | Components |
 |-------|-----------|
-| buffer | 155,523 |
-| salt | 138,418 |
-| peg | 121,732 |
-| organic | 21,519 |
-| polyol | 18,156 |
-| additive | 16,354 |
-| premix | 4,231 |
-| other | 988 |
-| detergent | 568 |
+| buffer | 163,701 |
+| salt | 146,227 |
+| peg | 127,394 |
+| additive | 25,167 |
+| organic | 23,357 |
+| polyol | 20,152 |
+| premix | 5,890 |
+| detergent | 1,182 |
+| other | 1,014 |
 
 ### How pH was attributed
 
@@ -90,8 +91,8 @@ value and refuses to guess its meaning.
 
 | Source | Records |
 |--------|---------|
-| buffer | 94,073 |
-| unstated | 89,501 |
+| buffer | 98,542 |
+| unstated | 87,571 |
 | final | 49 |
 
 ---
@@ -119,11 +120,11 @@ value and refuses to guess its meaning.
 - **A component-set match is necessary but not sufficient.** A single-component condition such
   as `2.0 M ammonium sulfate` matches a screen well trivially, whether or not the depositor
   ever used that screen.
-- **`curated_group` is assigned at the level the evidence supports.** 44.4% of usable records
-  reach a specific L3 condition group, 26.6% fall back to their L2 parent, and 29.0% are left
-  unassigned. That is not a failure of the ontology: 122 L3 groups cover under 40% of the
-  corpus by design, because 1,118 would be needed for 90%. Filter on `assignment_confidence`
-  and `assigned_level` rather than assuming every record is placed.
+- **`curated_group` carries a precipitant class, and Unclassified is a real answer.** Every
+  condition is sorted into one of the seven JCSG Top96 classes, or left Unclassified with the
+  reason recorded: an unresolved reagent, no stated amount for a precipitant, no precipitant at
+  all, or a premixed system that does not fit a seven-class taxonomy. Unclassified is the single
+  largest outcome and should be filtered on rather than assumed away.
 - **Cryoprotectant labels are mostly inferred.** Only about 2.2% of entries name a
   cryoprotectant explicitly. `cryo_evidence` distinguishes `explicit` from `inferred`, and the
   two must not be conflated: roughly four in five are inferences.

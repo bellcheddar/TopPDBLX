@@ -155,6 +155,17 @@ def main(argv: Optional[list[str]] = None) -> int:
             "component_resolution_rate": round(
                 comp_df.filter(pl.col("name_canonical").is_not_null()).height
                 / max(1, comp_df.height), 4),
+            # Both denominators are reported, because they answer different questions and
+            # quoting only one is misleading either way. The raw rate divides by every component,
+            # including the 10,206 that contain no chemistry (method notes, screen references,
+            # unnamed inhibitors) and that no lexicon entry could ever match. The chemistry rate
+            # excludes those, and is the number that actually measures the parser. R1's 85% gate
+            # is judged on the chemistry rate.
+            "n_components_not_a_component": comp_df.filter(
+                pl.col("role") == "not_a_component").height,
+            "component_resolution_rate_chemistry_only": round(
+                comp_df.filter(pl.col("name_canonical").is_not_null()).height
+                / max(1, comp_df.filter(pl.col("role") != "not_a_component").height), 4),
             "median_confidence": float(kept["parse_confidence"].median() or 0),
             "n_unit_inferred": comp_df.filter(pl.col("unit_inferred")).height,
             "n_cryo_explicit": comp_df.filter(pl.col("cryo_evidence") == "explicit").height,
@@ -177,6 +188,9 @@ def main(argv: Optional[list[str]] = None) -> int:
 
         print(f"\ncomponents: {comp_df.height:,}, "
               f"{stats['component_resolution_rate']:.1%} resolved to a canonical reagent")
+        print(f"  excluding {stats['n_components_not_a_component']:,} that contain no chemistry: "
+              f"{stats['component_resolution_rate_chemistry_only']:.1%} "
+              f"(the rate that measures the parser)")
         print(f"  unit inferred:  {stats['n_unit_inferred']:>7,} "
               f"({stats['n_unit_inferred'] / max(1, comp_df.height):.1%} of components)")
         print(f"  cryo explicit:  {stats['n_cryo_explicit']:>7,}")

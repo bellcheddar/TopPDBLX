@@ -25,7 +25,20 @@ from pydantic import BaseModel, Field
 
 from .. import config
 
-Role = Literal["precipitant", "salt", "buffer", "additive", "cryo", "protein", "unknown"]
+# `not_a_component` is distinct from `unknown`. `unknown` means "a reagent the lexicon does not
+# recognise", and belongs in the resolution denominator as a genuine miss. `not_a_component`
+# means "there is no reagent in this text at all" (method notes, screen references, an unnamed
+# inhibitor), and must be excluded from that denominator: no lexicon entry could ever match it,
+# so scoring it as a failure to resolve measures an artefact rather than the parser. Measured at
+# 10,206 components, worth 1.36 points of apparent resolution.
+Role = Literal["precipitant", "salt", "buffer", "additive", "cryo", "protein",
+               "not_a_component", "unknown"]
+
+# Why a clause was judged to contain no reagent. Kept alongside the role so the decision is
+# auditable: a false positive here silently deletes real chemistry, so it must never be a
+# verdict without a recorded reason.
+NonComponentReason = Literal["method_text", "unnamed_macromolecule", "screen_reference",
+                             "publication_reference", "splitter_fragment"]
 
 Unit = Literal["percent_w_v", "percent_v_v", "percent_unspecified",
                "molar", "millimolar", "micromolar", "nanomolar",
@@ -74,6 +87,8 @@ class Component(BaseModel, extra="forbid"):
     cryo_evidence: Optional[CryoEvidence] = None
     premix_id: Optional[str] = None
     parse_confidence: float = 1.0
+    # Set only when role is `not_a_component`, so the exclusion can be audited by reason.
+    non_component_reason: Optional[NonComponentReason] = None
 
 
 class Provenance(BaseModel, extra="forbid"):

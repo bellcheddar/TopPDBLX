@@ -11,6 +11,23 @@ condition database, the sequence linkage and the parser are all unaffected; only
 separation is deliberate, so a vendor objection can be accommodated by removing one directory
 rather than by withdrawing the dataset.
 
+## 📊 What is here
+
+| Measure | Value |
+|---|---|
+| Screens | 9 |
+| Wells | 434, all of which resolve to typed components |
+| Component-set matches against the corpus | 45,547 |
+| Matches agreeing on every concentration | 20,339 |
+
+Every L3 group in the condition ontology is anchored to one of these wells, so a group can name
+something orderable rather than a set of numbers.
+
+**A match is not a validation of reagent naming.** Both the screen library and the parsed
+conditions are resolved through the same lexicon, so a systematic naming error moves both sides
+identically and the agreement rate would not notice. The matches test concentration and
+composition, not nomenclature.
+
 Screen names and product codes are trademarks of their respective owners. Their use here is
 nominative, to identify which formulation is meant, and implies no endorsement or affiliation.
 

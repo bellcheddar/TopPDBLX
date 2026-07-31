@@ -1,4 +1,12 @@
-"""Stage `assign.assign_groups`: place every condition in the curated ontology.
+"""SUPERSEDED by `assign.classify` at ontology 0.3.0.
+
+The three-level ontology this stage belongs to was withdrawn: its groups were binned
+from the corpus and then had labels retrofitted, which spec 6.1 rejects, and several
+were not chemically coherent (median L2 purity 49%). Classification is now the seven
+JCSG Top96 precipitant classes with no sub-levels. Kept for provenance and because the
+diagnostics behind that decision are worth being able to reproduce.
+
+Stage `assign.assign_groups`: place every condition in the curated ontology.
 
 Fills the `curated_group` block that Phase 0 deliberately shipped as null, so this is a join
 rather than a schema migration. Per spec 5.5 the block carries the three levels, the distance
@@ -30,6 +38,7 @@ Confidence bands come from the distance function's own scale rather than being i
 from __future__ import annotations
 
 import argparse
+import re
 from pathlib import Path
 from typing import Any, Optional
 
@@ -69,11 +78,67 @@ def band(value: Optional[float]) -> str:
     return "unassigned"
 
 
+# The molecular-weight band a group's label states. Three forms exist in the vocabulary and all
+# three must be recognised: a closed range ("PEG 3350-4000"), an open one ("PEG 20000+") and a
+# single value ("PEG 2000"). Matching only ranges left the single-value bins unconstrained, which
+# is why "PEG · PEG 2000" still held mostly PEG 3350 and PEG 3000 after the first fix.
+_PEG_BAND = re.compile(r"PEG (\d+)-(\d+)")
+_PEG_OPEN_BAND = re.compile(r"PEG (\d+)\+")
+_PEG_EXACT_BAND = re.compile(r"PEG (\d+)(?![\d\-+])")
+
+
+def peg_band_of(label: str) -> Optional[tuple[float, float]]:
+    """The molecular-weight range a group's own label promises, if it states one."""
+    text = label or ""
+    closed = _PEG_BAND.search(text)
+    if closed:
+        return float(closed.group(1)), float(closed.group(2))
+    open_ended = _PEG_OPEN_BAND.search(text)
+    if open_ended:
+        return float(open_ended.group(1)), float("inf")
+    exact = _PEG_EXACT_BAND.search(text)
+    if exact:
+        # A single-value bin still covers the grades sold around it (PEG 2000 against PEG 2050),
+        # so it is read as a narrow band rather than an exact equality.
+        value = float(exact.group(1))
+        return value * 0.9, value * 1.1
+    return None
+
+
+def label_is_true_of(features, group) -> bool:
+    """Whether a group's stated molecular-weight band actually holds for this condition.
+
+    **A categorical claim in a label must be a hard constraint, not a soft preference.** The
+    distance metric scales PEG molecular weight at one unit per decade, so PEG 3350 against PEG
+    8000 is only 0.378 units apart, while a 0.4 pH difference costs the same and a six-point
+    concentration difference costs more. The axis that names the group therefore carried less
+    weight than axes that do not appear in the name, and records scattered across bands whenever
+    pH or percentage happened to fit better: a group labelled "PEG 5000-6000" held 452 records of
+    PEG 8000 and 275 of PEG 3350, with only 31% of its members inside its own band.
+
+    Distance still chooses among candidates; it just may no longer choose one whose label would
+    be false of the record. Groups that state no band are unaffected.
+    """
+    bounds = peg_band_of(getattr(group, "label", "") or "")
+    if bounds is None:
+        return True
+    if features.peg_log_mw is None:
+        # The label promises a PEG size and this condition has no PEG to check it against.
+        return False
+    low, high = bounds
+    mw = 10 ** features.peg_log_mw
+    # A little tolerance, because the band edges are round numbers and PEG 3,350 sits against a
+    # 3350 boundary: floating point should not exclude a reagent the band was drawn around.
+    return low * 0.98 <= mw <= high * 1.02
+
+
 def nearest(features, candidates) -> tuple[Optional[Any], Optional[float]]:
     best, best_distance = None, None
     for group in candidates:
         centroid = group.centroid.to_features()
         if not shares_precipitant_axis(features, centroid):
+            continue
+        if not label_is_true_of(features, group):
             continue
         d = distance(features, centroid)
         if best_distance is None or d < best_distance:

@@ -1,0 +1,105 @@
+"""Tests for recognising clauses that contain no reagent.
+
+The asymmetry that shapes every test here: leaving a real reagent unresolved is **visible** in
+the coverage report, but classifying a real reagent as "not a component" **silently deletes
+chemistry**. So the tests weight false positives far more heavily than false negatives, and the
+recall tests below are deliberately the shorter half.
+"""
+
+from __future__ import annotations
+
+import pytest
+
+from toppdblx.parse.noncomponent import classify
+
+# --- must never be discarded: real chemistry ---------------------------------------------
+
+@pytest.mark.parametrize("name", [
+    "peg",                       # bare PEG: molecular weight unstated, but a real precipitant
+    "mpd",                       # two-letter reagent, would match the fragment rule
+    "spg",                       # succinate-phosphate-glycine buffer system
+    "tris",
+    "nad",
+    "sodium chloride",
+    "methyl-2,4-pentanediol",    # an MPD synonym missing from the lexicon, still a reagent
+    "ca(oac)2",
+    "bacl2",
+    "peg 3400",
+    "1,3-propanediol",
+    "sodium citrate tribasic dehydrate",
+    "imidazole malate",
+    "glycerol ethoxylate",
+    "potassium/sodium tartrate",
+])
+def test_real_reagents_are_never_classified_as_non_components(name):
+    assert classify(name) is None, f"{name!r} is chemistry and must survive"
+
+
+def test_a_method_phrase_beside_a_reagent_does_not_discard_the_reagent():
+    """The substring rule can fire on a clause that also names a substance. A concentration is
+    strong evidence a substance is being named, so it must win: discarding this would lose the
+    sodium chloride entirely."""
+    assert classify("sodium chloride was mixed with", has_quantity=True) is None
+
+
+def test_protein_as_a_modifier_is_not_an_unnamed_macromolecule():
+    """"protein" alone names no substance, but the unnamed rule is anchored to the whole clause,
+    so a real reagent that merely contains the word survives."""
+    assert classify("protein buffer with sodium chloride") is None
+
+
+# --- must be discarded: not chemistry ----------------------------------------------------
+
+@pytest.mark.parametrize("name,reason", [
+    ("streak seeded", "method_text"),
+    ("crystal obtained by streak-seeding", "method_text"),
+    ("the crystals grew extremely slowly", "method_text"),
+    ("reproducibility was improved by seeding", "method_text"),
+    ("small tubes", "method_text"),
+    ("batch", "method_text"),
+    ("hanging drop", "method_text"),
+    ("protein", "unnamed_macromolecule"),
+    ("inhibitor", "unnamed_macromolecule"),
+    ("compound", "unnamed_macromolecule"),
+    ("ligands", "unnamed_macromolecule"),
+    ("hampton research index screen", "screen_reference"),
+    ("molecular dimensions morpheus screen condition d8", "screen_reference"),
+    ("buffer system 3", "screen_reference"),
+    ("proplex condition b12", "screen_reference"),
+    ("as given in reference 4", "publication_reference"),
+    ("see also: sawyer et al", "publication_reference"),
+    ("na", "splitter_fragment"),
+    ("ca", "splitter_fragment"),
+    ("nh4", "splitter_fragment"),
+    ("po4", "splitter_fragment"),
+    ("unknown", "splitter_fragment"),
+    ("---", "splitter_fragment"),
+])
+def test_non_chemistry_is_classified_with_the_right_reason(name, reason):
+    assert classify(name) == reason
+
+
+def test_a_concentration_does_not_rescue_an_unnamed_ligand():
+    """"1 mM inhibitor" is the case that motivated splitting the quantity veto. The depositor
+    gave a role, not a compound: no lexicon entry can ever match it, and the concentration does
+    not make it identifiable. Measured at 340 occurrences of bare "inhibitor" carrying a
+    quantity."""
+    assert classify("inhibitor", has_quantity=True) == "unnamed_macromolecule"
+
+
+def test_a_concentration_does_not_rescue_a_screen_reference():
+    assert classify("buffer system 3", has_quantity=True) == "screen_reference"
+
+
+def test_a_bare_counter_ion_is_a_fragment_even_with_a_concentration():
+    """"0.2 M na" names no salt, because the counter-ion is what makes it one. Honest to flag as
+    a splitter artefact rather than to report it as a reagent the lexicon lacks."""
+    assert classify("na", has_quantity=True) == "splitter_fragment"
+
+
+# --- edges -------------------------------------------------------------------------------
+
+@pytest.mark.parametrize("name", ["", "   ", None])
+def test_empty_input_is_not_a_verdict(name):
+    """Absent text is not evidence of anything, so it must not be labelled non-chemistry."""
+    assert classify(name) is None

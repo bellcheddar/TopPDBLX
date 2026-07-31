@@ -116,7 +116,10 @@ def build_records(conditions: pl.DataFrame, components: pl.DataFrame,
                 "screen": match["screen"], "catalogue": match["catalogue"],
                 "well": match["well"], "match_type": match["match_type"],
             },
-            "curated_group": _curated_group(group_by_key.get(key)),
+            "curated_group": _curated_group(
+                group_by_key.get(key),
+                f"{match['screen']} {match['well']}" if match and
+                match.get("screen") and match.get("well") else None),
             "provenance": {
                 "parser": row["parser"],
                 "parse_confidence": row["parse_confidence"],
@@ -130,19 +133,29 @@ def build_records(conditions: pl.DataFrame, components: pl.DataFrame,
     return records
 
 
-def _curated_group(row: Optional[dict[str, Any]]) -> Optional[dict[str, Any]]:
-    """The spec 5.5 curated_group block, or None when nothing could be assigned."""
-    if row is None or row["assigned_level"] == 0:
+def _curated_group(row: Optional[dict[str, Any]],
+                   screen_anchor: Optional[str] = None) -> Optional[dict[str, Any]]:
+    """The spec 5.5 curated_group block.
+
+    Carries the seven JCSG Top96 precipitant classes and nothing else. The three-level ontology
+    of binned centroids that preceded it was dropped: its groups were derived by binning the
+    corpus on PEG molecular weight and salt family and then having names retrofitted, which is
+    the emergent approach spec 6.1 rejects in its first line, and no level below the precipitant
+    class proved readable.
+
+    `Unclassified` is a first-class answer here rather than a null, and it is the largest single
+    outcome at 47.7%. The reason is always recorded, so the share is explicable: an unresolved
+    reagent, a precipitant with no stated amount, no precipitant at all, or a premixed system
+    that does not fit a seven-class taxonomy.
+    """
+    if row is None:
         return None
     return {
-        "l1_precipitant_class": row["l1_precipitant_class"],
-        "l2_subclass": row["l2_subclass"],
-        "l3_group_id": row["l3_group_id"],
-        "label": row["l3_label"] or row["l2_label"],
-        "assigned_level": row["assigned_level"],
-        "assignment_distance": row["assignment_distance"],
-        "assignment_confidence": row["assignment_confidence"],
-        "screen_anchor": row["screen_anchor"],
+        "condition_class": row["condition_class"],
+        "unclassified_reason": row["unclassified_reason"],
+        # Independent of the classification and worth keeping: spec 6.5's payoff is that output
+        # becomes orderable, and a screen well is orderable whatever class the condition is in.
+        "screen_anchor": screen_anchor,
     }
 
 
@@ -162,14 +175,10 @@ def main(argv: Optional[list[str]] = None) -> int:
                  .join(pl.read_parquet(interim / "sequence_clusters.parquet"),
                        on="seq_id", how="left"))
     matches = pl.read_parquet(interim / "screen_matches.parquet")
-    assignment_path = interim / "group_assignments.parquet"
+    # The seven-class classification, which replaced the three-level centroid ontology.
+    assignment_path = interim / "condition_classes.parquet"
     assignments = pl.read_parquet(assignment_path) if assignment_path.exists() else None
     ontology_version = config.ONTOLOGY_VERSION
-    try:
-        from ..assign.groups import load as load_ontology
-        ontology_version = load_ontology().version
-    except Exception:                                     # noqa: BLE001
-        pass
 
     stem = f"{DATASET_NAME}-v{args.version}"
     jsonl_path = args.out_dir / f"{stem}.jsonl.gz"
@@ -199,9 +208,8 @@ def main(argv: Optional[list[str]] = None) -> int:
         # the record table so the common questions need no join.
         if assignments is not None:
             conditions = conditions.join(
-                assignments.select("pdb_id", "crystal_id", "l1_precipitant_class",
-                                   "l2_subclass", "l3_group_id", "assignment_distance",
-                                   "assignment_confidence", "assigned_level"),
+                assignments.select("pdb_id", "crystal_id", "condition_class",
+                                   "unclassified_reason"),
                 on=["pdb_id", "crystal_id"], how="left")
 
         flat = (conditions
@@ -262,10 +270,12 @@ def main(argv: Optional[list[str]] = None) -> int:
             "n_with_cluster_30": flat.filter(pl.col("cluster_30").is_not_null()).height,
             "n_with_screen_match": flat.filter(pl.col("screen_match_name").is_not_null()).height,
             "ontology_version": ontology_version,
-            "n_assigned_l3": (flat.filter(pl.col("assigned_level") == 3).height
-                              if assignments is not None else 0),
-            "n_assigned_l2": (flat.filter(pl.col("assigned_level") == 2).height
-                              if assignments is not None else 0),
+            "n_classified": (flat.filter(
+                pl.col("condition_class").is_not_null()
+                & (pl.col("condition_class") != "Unclassified")).height
+                if assignments is not None else 0),
+            "n_unclassified": (flat.filter(pl.col("condition_class") == "Unclassified").height
+                               if assignments is not None else 0),
             "n_distinct_entries": conditions["pdb_id"].n_unique(),
             "n_distinct_cluster_30": flat["cluster_30"].drop_nulls().n_unique(),
             "bytes_jsonl": jsonl_path.stat().st_size,
