@@ -103,3 +103,37 @@ def test_a_bare_counter_ion_is_a_fragment_even_with_a_concentration():
 def test_empty_input_is_not_a_verdict(name):
     """Absent text is not evidence of anything, so it must not be labelled non-chemistry."""
     assert classify(name) is None
+
+
+# --- text that is not chemistry, found in the unidentified head ----------------------------
+
+@pytest.mark.parametrize("name,reason", [
+    ("millimolar", "splitter_fragment"),      # a unit that became a name: a splitter bug
+    ("molar", "splitter_fragment"),
+    ("ul", "splitter_fragment"),
+    ("ul protein", "method_text"),
+    ("ul reservoir", "method_text"),
+    ("20 ul drop", "method_text"),
+    ("soaked", "method_text"),
+    ("then soaked", "method_text"),
+    ("precipitant mix", "screen_reference"),
+    ("precipitant mix 4", "screen_reference"),
+    ("solution b", "screen_reference"),
+])
+def test_apparatus_units_and_recipe_references_are_not_reagents(name, reason):
+    """Each of these sat in the unidentified head with real corpus weight, counted as a reagent
+    the parser had failed to identify. `millimolar` is the clearest case: it is a unit, so its
+    presence as a component name is evidence of a clause split between a number and its
+    reagent, not of a missing lexicon entry."""
+    assert classify(name) == reason
+
+
+@pytest.mark.parametrize("name", [
+    "mega 8", "peg smear medium", "sodium chloride", "ammonium sulfate",
+    "glycerol", "mpd", "tris", "peg 3350", "lithium sulfate", "sodium malonate",
+])
+def test_the_new_patterns_do_not_swallow_real_reagents(name):
+    """The patterns above are anchored to whole clauses, and the risk of over-reach is that a
+    real reagent silently disappears rather than showing up as unidentified. `mega 8` is the
+    sharpest test: it looks like an apparatus note and is a detergent."""
+    assert classify(name) is None

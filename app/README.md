@@ -62,6 +62,8 @@ reproducible from corpus plus answers rather than hand-patched:
 ./run.sh eval.audit_metrics --verdicts ~/Downloads/audit_answers.json
 ```
 
+**Batching a repeated judgement into one question.** The accuracy audit asks "how many of these 25 are wrong" rather than putting 25 separate verdicts on screen: an error *rate* is what the number needs, and a count yields the same estimate for an eighth of the answers. Counts are banded rather than exact, because nobody counts 25 items reliably and false precision in a published figure is worse than a wide interval.
+
 **Only touched questions are exported.** A question absent from the export is an accepted
 recommendation, not an unanswered one, and the apply stages record which of the two each change
 was so the distinction survives into the changelog.

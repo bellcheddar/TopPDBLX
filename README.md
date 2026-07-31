@@ -2,7 +2,7 @@
 
 > **Every crystallisation condition in the Protein Data Bank, parsed, normalised and linked to the sequence that produced it.**
 
-![python](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white) ![records](https://img.shields.io/badge/records-186%2C162-467FF7) ![components](https://img.shields.io/badge/components-603%2C459-467FF7) ![parse coverage](https://img.shields.io/badge/parse%20coverage-93.5%25-00897B) ![archive fidelity](https://img.shields.io/badge/archive%20fidelity-100%25-00897B) ![tests](https://img.shields.io/badge/tests-388%20passing-00897B) ![data](https://img.shields.io/badge/data-CC--BY--4.0-9b51e0) ![code](https://img.shields.io/badge/code-MIT-9b51e0) ![phase 0](https://img.shields.io/badge/phase%200-complete-fcb900) ![phase 1](https://img.shields.io/badge/phase%201-complete-fcb900) ![author](https://img.shields.io/badge/author-Marc%20C.%20Deller%2C%20D.Phil.-1C244B)
+![python](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white) ![records](https://img.shields.io/badge/records-186%2C180-467FF7) ![components](https://img.shields.io/badge/components-603%2C459-467FF7) ![parse coverage](https://img.shields.io/badge/parse%20coverage-93.5%25-00897B) ![archive fidelity](https://img.shields.io/badge/archive%20fidelity-100%25-00897B) ![tests](https://img.shields.io/badge/tests-400%20passing-00897B) ![data](https://img.shields.io/badge/data-CC--BY--4.0-9b51e0) ![code](https://img.shields.io/badge/code-MIT-9b51e0) ![phase 0](https://img.shields.io/badge/phase%200-complete-fcb900) ![phase 1](https://img.shields.io/badge/phase%201-complete-fcb900) ![author](https://img.shields.io/badge/author-Marc%20C.%20Deller%2C%20D.Phil.-1C244B)
 
 <table>
 <tr>
@@ -115,15 +115,15 @@ for deposition in archive:
 | Measure | Value |
 |---|---|
 | Records | 199,185 |
-| Usable | **186,162 (93.5%)** |
-| Components | 603,459, **85.2% identified** as a canonical reagent (87.0% excluding text that names no chemistry) |
+| Usable | **186,180 (93.5%)** |
+| Components | 603,459, **85.2% identified** as a canonical reagent (87.5% excluding text that names no chemistry) |
 | Reagent lexicon | 502 reagents, 1,265 names (v0.3.0) |
 | Linked sequences | 184,229 across **23,159** distinct 30% identity clusters |
 | Screen-well matches | 45,547 component-set matches, 20,339 agreeing on every concentration |
 | Archive fidelity | **100.0000%** over 205,943 entries against the 90 GB mmCIF snapshot |
-| Condition classes | Seven JCSG Top96 precipitant classes (v0.3.0), **58.9% classified**, 41.1% honestly unclassified |
+| Condition classes | Seven JCSG Top96 precipitant classes (v0.3.0), **59.5% classified**, 40.5% honestly unclassified |
 | Leak-free splits | 181,007 records, no cluster spanning folds at 30%, 50% or 90% |
-| Tests | 388 passing |
+| Tests | 400 passing |
 
 The project brief anticipated a rule-based parser plateauing near 75%. It reaches 93.5%, because most of the difficulty in this corpus turned out to be clause splitting rather than chemistry: newlines, double spaces, `in`, spaced slashes and stray brackets all separate components, and handling them properly recovered far more than chasing reagent names did.
 
@@ -155,15 +155,15 @@ There are seven buckets, plus an eighth for conditions that cannot be sorted hon
 
 | Class | Conditions | Share |
 |---|---|---|
-| Unclassified | 76,479 | 41.1% |
-| Salt/PEG | 45,710 | 24.6% |
-| PEG | 21,445 | 11.5% |
-| Salt | 19,398 | 10.4% |
-| Organic/PEG | 7,053 | 3.8% |
-| Organic/PEG/Salt | 7,049 | 3.8% |
-| Organic/Salt | 6,309 | 3.4% |
-| Organic | 2,719 | 1.5% |
-| **Classified** | **109,683** | **58.9%** |
+| Unclassified | 75,413 | 40.5% |
+| Salt/PEG | 46,309 | 24.9% |
+| PEG | 21,543 | 11.6% |
+| Salt | 19,516 | 10.5% |
+| Organic/PEG/Salt | 7,173 | 3.9% |
+| Organic/PEG | 7,095 | 3.8% |
+| Organic/Salt | 6,380 | 3.4% |
+| Organic | 2,751 | 1.5% |
+| **Classified** | **110,767** | **59.5%** |
 
 **For the crystallographer:** the seven classes are the JCSG Top96 precipitant classes, which are the non-empty subsets of {Organic, PEG, Salt}. Classification is by presence with no thresholds: a PEG is a PEG whatever its molecular weight and concentration, a salt is a salt whatever its chemistry and concentration. Buffers are excluded, since at 0.1 M a buffer sets the pH rather than precipitating anything (spec 6.3), and the pH is carried separately.
 
@@ -171,10 +171,13 @@ Unclassified is a first-class answer with its reason recorded, never a null:
 
 | Reason it cannot be classified | Share |
 |---|---|
-| An unidentified reagent: the lexicon does not recognise a name, so nothing can be asserted | 22.0% |
+| An unidentified reagent: the lexicon does not recognise a name, so nothing can be asserted | 21.3% |
 | No amount stated for a precipitant: naming PEG without saying how much is not a measured condition | 13.1% |
-| No precipitant at all | 3.4% |
+
+| No precipitant at all | 3.5% |
 | A premixed system (Morpheus, PACT, Tacsimate) that does not fit a seven-class taxonomy | 2.7% |
+
+**The second row is a deliberate choice and the expensive one.** Those 24,327 conditions name their precipitant unambiguously and simply never state a concentration: `PEG6000, Sodium Chloride, VAPOR DIFFUSION`. Classifying them as `Salt/PEG` would lift classified coverage from 58.9% to roughly 72% in one line, and the rule that a PEG is a PEG whatever its concentration would arguably support it. They stay Unclassified because a condition with no concentration is not a measured condition, and coverage is not worth buying with a claim the deposition does not make.
 
 The premix decision settles spec 6.4, which had been open since Phase 0. Components stay expanded with their `premix_id`, so nothing is lost and the choice is reversible.
 
@@ -189,7 +192,8 @@ An earlier three-level ontology of 163 binned groups was withdrawn at v0.3.0. It
 | Seeded from corpus mining | 147 | 501 | 79.1% |
 | Round 1: 40 frequency-ranked decisions | 165 | 570 | 80.1% |
 | Round 2: 10 grouped decisions, 1,004 names | 502 | 1,265 | 84.5% |
-| Prose stripping (a parser fix, not curation) | 502 | 1,265 | **85.2%** |
+| Prose stripping (a parser fix, not curation) | 502 | 1,265 | 85.2% |
+| Separating apparatus notes and bare units from reagents | 502 | 1,265 | **85.2%** (87.5% on chemistry alone) |
 
 **For the crystallographer:** every reagent carries the chemistry the ontology needs, and each field is enforced on load rather than being optional documentation. A `peg` entry must state its molecular weight, a `buffer` must state its pKa, and a `premix` must list its constituents. Those invariants caught three separate attempts to bulk-add entries that could not satisfy them.
 
@@ -240,9 +244,9 @@ Training data is deduplicated before oversampling: see [Redundancy](#-redundancy
 
 **For the crystallographer:** none of these is accuracy. There is no structured ground truth for a crystallisation condition anywhere in the PDB, which is the reason this project exists, so nothing can be scored against an authoritative answer. Fidelity comes closest, but only on the easy population: it compares the model to the rule parser on text the rules already read, so it is a ceiling on imitation rather than evidence of skill. The only genuinely external checks are the commercial screen cross-reference, where 20,339 conditions match a vendor-published formulation on every concentration, and the human audit.
 
-### What the model has delivered
+### 🤗 What the model has delivered
 
-Tracked honestly, including the rounds that delivered nothing. Identification and grounding are measured on the residual, the records the rule parser could not read; components contributed counts rows that actually reached the dataset.
+Tracked honestly, including the rounds that delivered nothing. From round 05 onwards these are measured on the **frozen benchmark**, so they are comparable to each other; earlier rounds were scored against a live residual that shrank from the easy end every time curation improved, and are not comparable to anything. Components contributed counts rows that actually reached the dataset.
 
 | Round | What changed | Identification | Grounding | Components contributed |
 |---|---|---|---|---|
@@ -250,7 +254,8 @@ Tracked honestly, including the rounds that delivered nothing. Identification an
 | 02 | `not_a_component` class, confidence gate fixed | 89.7% | not measured | 0 |
 | 03 | Cosine schedule, dropout, class rebalanced | 88.4% | not measured | 0 |
 | 04 | Retrained on the 502-reagent lexicon | abandoned, trained on duplicated data | | 0 |
-| 05 | Deduplicated training set, 95,818 distinct pairs | pending | pending | 0 |
+| 05 | Deduplicated training set, 95,818 distinct pairs | 87.58% | 93.41% | 0 |
+| 06 | Full epoch, LoRA rank 16, 6,856 empty-answer examples | in progress | in progress | 0 |
 
 **The last column is the one that counts, and it has been zero throughout.** Five training rounds have produced measurements, not data: `models.apply_slm` exists but has not been run, so no component in the released database came from the model. Every gain in component identification this project has made came from the reagent lexicon and from the rule parser:
 

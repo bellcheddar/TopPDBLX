@@ -58,7 +58,7 @@
 <blockquote>
 <p><strong>Every crystallisation condition in the Protein Data Bank, parsed, normalised and linked to the sequence that produced it.</strong></p>
 </blockquote>
-<p><img alt="python" src="https://img.shields.io/badge/python-3.14-3776AB?logo=python&amp;logoColor=white"> <img alt="records" src="https://img.shields.io/badge/records-182%2C973-467FF7"> <img alt="components" src="https://img.shields.io/badge/components-594%2C756-467FF7"> <img alt="parse coverage" src="https://img.shields.io/badge/parse%20coverage-91.9%25-00897B"> <img alt="archive fidelity" src="https://img.shields.io/badge/archive%20fidelity-100%25-00897B"> <img alt="tests" src="https://img.shields.io/badge/tests-192%20passing-00897B"> <img alt="data" src="https://img.shields.io/badge/data-CC--BY--4.0-9b51e0"> <img alt="code" src="https://img.shields.io/badge/code-MIT-9b51e0"> <img alt="phase 0" src="https://img.shields.io/badge/phase%200-complete-fcb900"> <img alt="author" src="https://img.shields.io/badge/author-Marc%20C.%20Deller%2C%20D.Phil.-1C244B"></p>
+<p><img alt="python" src="https://img.shields.io/badge/python-3.14-3776AB?logo=python&amp;logoColor=white"> <img alt="records" src="https://img.shields.io/badge/records-186%2C180-467FF7"> <img alt="components" src="https://img.shields.io/badge/components-603%2C459-467FF7"> <img alt="parse coverage" src="https://img.shields.io/badge/parse%20coverage-93.5%25-00897B"> <img alt="archive fidelity" src="https://img.shields.io/badge/archive%20fidelity-100%25-00897B"> <img alt="tests" src="https://img.shields.io/badge/tests-400%20passing-00897B"> <img alt="data" src="https://img.shields.io/badge/data-CC--BY--4.0-9b51e0"> <img alt="code" src="https://img.shields.io/badge/code-MIT-9b51e0"> <img alt="phase 0" src="https://img.shields.io/badge/phase%200-complete-fcb900"> <img alt="phase 1" src="https://img.shields.io/badge/phase%201-complete-fcb900"> <img alt="author" src="https://img.shields.io/badge/author-Marc%20C.%20Deller%2C%20D.Phil.-1C244B"></p>
 <table class="emd-info-table">
 <tr>
 <td>🌐 <b>Website</b></td><td><a href="https://marcdeller.com" target="_blank" rel="noopener noreferrer">marcdeller.com</a></td>
@@ -92,7 +92,11 @@
 </tr>
 <tr>
 <td data-label="Capability"><strong>Typed components</strong></td>
-<td data-label="Detail">594,756 reagents with role, concentration, unit, PEG molecular weight, Hofmeister rank and buffer pKa</td>
+<td data-label="Detail">603,459 reagents with role, concentration, unit, PEG molecular weight, Hofmeister rank and buffer pKa</td>
+</tr>
+<tr>
+<td data-label="Capability"><strong>Separates text from chemistry</strong></td>
+<td data-label="Detail">Method notes, screen references and unnamed ligands are labelled <code>not_a_component</code>, so they never inflate a failure rate</td>
 </tr>
 <tr>
 <td data-label="Capability"><strong>Accounts for every record</strong></td>
@@ -100,11 +104,15 @@
 </tr>
 <tr>
 <td data-label="Capability"><strong>Links to sequence</strong></td>
-<td data-label="Detail">195,985 records carry the construct sequence, UniProt accessions and cluster ids at 30%, 50% and 90% identity</td>
+<td data-label="Detail">184,229 usable records carry the construct sequence, UniProt accessions and cluster ids at 30%, 50% and 90% identity</td>
 </tr>
 <tr>
 <td data-label="Capability"><strong>Cross-references screens</strong></td>
 <td data-label="Detail">434 wells across 9 commercial screens, extracted verbatim from vendor support materials</td>
+</tr>
+<tr>
+<td data-label="Capability"><strong>Refuses to guess</strong></td>
+<td data-label="Detail">A condition with an unrecognised reagent, no stated amount or a premixed system is Unclassified, with the reason recorded</td>
 </tr>
 <tr>
 <td data-label="Capability"><strong>Records its own uncertainty</strong></td>
@@ -116,6 +124,104 @@
 </tr>
 </tbody>
 </table></div>
+<h2>🔄 Workflow</h2>
+<p><strong>In plain terms:</strong> the Protein Data Bank holds about 200,000 crystallisation recipes, and every one was typed in free-hand by a different scientist. There is no agreed format. The same chemical appears as "PEG 3350", "peg3350" and "polyethylene glycol 3,350", amounts are written in a dozen notations, and some entries are whole paragraphs of narrative. The work is to turn that text into a table you can query, without inventing anything that is not there.</p>
+<p>It runs as a chain of stages. Each is one command, each writes a manifest recording its inputs, tool versions and git state, and each can be re-run on its own.</p>
+<pre><code class="language-text">   RCSB PDB archive
+          │
+          │  ingest.*          fetch every deposition over GraphQL, then byte-compare
+          ▼                    the text against the archive mmCIF: 100.0000% agreement
+   199,185 condition strings
+          │
+          │  parse.run_parser  split into clauses, read amounts and units, look each
+          ▼                    name up in the reagent lexicon
+   603,459 typed components  ─────────────┐
+          │                               │ 15% the rules cannot read
+          │  assign.classify              ▼
+          ▼                        models.train_slm    a small language model, taught
+   7 precipitant classes             (SmolLM2-360M)    by the rules' own correct output
+   or Unclassified + reason               │
+          │                               │ names it wants but the lexicon lacks
+          │  link.*                       ▼
+          ▼                        parse.curation_queue   grouped into ~10 decisions
+   sequences + MMseqs2 clusters           │               for an expert to accept
+          │                               │
+          │  release.assemble             └──► ontology/synonyms.yaml ──┐
+          ▼                                                            │
+   JSONL · Parquet · CSV · DuckDB · JSON Schema · datasheet   ◄─────────┘
+                                                        the lexicon feeds back
+                                                        into the next parse
+</code></pre>
+<p>The two loops on the right are what makes it improve. The model learns from the text the rules already read correctly, so it costs nothing in hand-labelling; and the names it reaches for but cannot find become the next curation round, so an expert only ever sees decisions the machine could not make alone.</p>
+<p><strong>The core of it is about ten lines.</strong> Everything else is provenance, validation and the lexicon:</p>
+<pre><code class="language-python">for deposition in archive:
+    components = []
+    for clause in split_into_clauses(deposition.text):     # &quot;;&quot; &quot;,&quot; newlines, &quot; and &quot;, ...
+        amount, unit, name = read_quantity(clause)          # &quot;20% (w/v) PEG 3350&quot;
+        reagent = lexicon.lookup(name)
+        if reagent is None:                                 # retry, never destructive
+            reagent = lexicon.lookup(strip_prose(clause))   # &quot;crystal conditions were 0.1 M ...&quot;
+        components.append(reagent or Unidentified(name))
+
+    families = {family_of(c) for c in components            # {Organic, PEG, Salt}
+                if c.is_precipitant and c.amount is not None}
+
+    if any(c.is_premix or c.is_unidentified for c in components) or not families:
+        condition_class = Unclassified(reason)              # an answer, not a failure
+    else:
+        condition_class = SEVEN_CLASSES[families]
+</code></pre>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Tool</th>
+<th>What it does here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Tool">RCSB Data GraphQL API</td>
+<td data-label="What it does here">Fetches every deposition, batched and resumable</td>
+</tr>
+<tr>
+<td data-label="Tool">gemmi</td>
+<td data-label="What it does here">Reads the archive mmCIF for the byte-level fidelity gate</td>
+</tr>
+<tr>
+<td data-label="Tool"><code>regex</code></td>
+<td data-label="What it does here">Clause splitting, which turned out to be the hard part rather than the chemistry</td>
+</tr>
+<tr>
+<td data-label="Tool"><code>ontology/synonyms.yaml</code></td>
+<td data-label="What it does here">The reagent dictionary: 502 reagents, 1,265 spellings</td>
+</tr>
+<tr>
+<td data-label="Tool">pydantic</td>
+<td data-label="What it does here">Enforces the schema and the chemical invariants on load</td>
+</tr>
+<tr>
+<td data-label="Tool">polars, pyarrow, duckdb</td>
+<td data-label="What it does here">Tables, joins and the queryable release</td>
+</tr>
+<tr>
+<td data-label="Tool">MMseqs2</td>
+<td data-label="What it does here">Sequence clustering at 30%, 50% and 90% identity, to control redundancy</td>
+</tr>
+<tr>
+<td data-label="Tool">MLX-LM, SmolLM2-360M</td>
+<td data-label="What it does here">Reads the residual the rules cannot, fine-tuned on Apple Silicon</td>
+</tr>
+<tr>
+<td data-label="Tool">Weights &amp; Biases</td>
+<td data-label="What it does here">Training runs, one named run per round</td>
+</tr>
+<tr>
+<td data-label="Tool"><code>condition_courtroom_v5.html</code></td>
+<td data-label="What it does here">Single-file browser tool for expert curation, no server</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Why the fidelity gate comes first.</strong> Everything downstream is a claim about what a depositor wrote, so the first stage proves the text was fetched intact: every condition string is byte-compared against the mmCIF in the 90 GB archive snapshot, including loop row counts. It agrees on 205,943 entries at 100.0000%. Without that, a parsing statistic would be measuring the API rather than the archive.</p>
 <h2>📊 Results</h2>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
@@ -131,39 +237,45 @@
 </tr>
 <tr>
 <td data-label="Measure">Usable</td>
-<td data-label="Value"><strong>182,973 (91.9%)</strong></td>
+<td data-label="Value"><strong>186,180 (93.5%)</strong></td>
 </tr>
 <tr>
 <td data-label="Measure">Components</td>
-<td data-label="Value">594,756, <strong>79.5% resolved</strong> to a canonical reagent</td>
+<td data-label="Value">603,459, <strong>85.2% identified</strong> as a canonical reagent (87.5% excluding text that names no chemistry)</td>
 </tr>
 <tr>
 <td data-label="Measure">Reagent lexicon</td>
-<td data-label="Value">147 reagents, 501 names</td>
+<td data-label="Value">502 reagents, 1,265 names (v0.3.0)</td>
 </tr>
 <tr>
 <td data-label="Measure">Linked sequences</td>
-<td data-label="Value">195,985 across <strong>23,868</strong> distinct 30% identity clusters</td>
+<td data-label="Value">184,229 across <strong>23,159</strong> distinct 30% identity clusters</td>
 </tr>
 <tr>
 <td data-label="Measure">Screen-well matches</td>
-<td data-label="Value">44,989 component-set matches, 20,004 agreeing on every concentration</td>
+<td data-label="Value">45,547 component-set matches, 20,339 agreeing on every concentration</td>
 </tr>
 <tr>
 <td data-label="Measure">Archive fidelity</td>
 <td data-label="Value"><strong>100.0000%</strong> over 205,943 entries against the 90 GB mmCIF snapshot</td>
 </tr>
 <tr>
-<td data-label="Measure">Condition ontology</td>
-<td data-label="Value">163 curated groups, <strong>44.4%</strong> of records at L3 with an orderable screen anchor</td>
+<td data-label="Measure">Condition classes</td>
+<td data-label="Value">Seven JCSG Top96 precipitant classes (v0.3.0), <strong>59.5% classified</strong>, 40.5% honestly unclassified</td>
+</tr>
+<tr>
+<td data-label="Measure">Leak-free splits</td>
+<td data-label="Value">181,007 records, no cluster spanning folds at 30%, 50% or 90%</td>
 </tr>
 <tr>
 <td data-label="Measure">Tests</td>
-<td data-label="Value">192 passing</td>
+<td data-label="Value">400 passing</td>
 </tr>
 </tbody>
 </table></div>
-<p>The project brief anticipated a rule-based parser plateauing near 75%. It reaches 91.9%, because most of the difficulty in this corpus turned out to be clause splitting rather than chemistry: newlines, double spaces, <code>in</code>, spaced slashes and stray brackets all separate components, and handling them properly recovered far more than chasing reagent names did.</p>
+<p>The project brief anticipated a rule-based parser plateauing near 75%. It reaches 93.5%, because most of the difficulty in this corpus turned out to be clause splitting rather than chemistry: newlines, double spaces, <code>in</code>, spaced slashes and stray brackets all separate components, and handling them properly recovered far more than chasing reagent names did.</p>
+<h3>Two denominators, both reported</h3>
+<p>12,295 of the "unidentified" components contain no chemistry at all: method notes (<code>streak seeded</code>), screen references (<code>hampton research index screen</code>), unnamed ligands (<code>protein</code>, <code>inhibitor</code>) and bare splitter fragments (<code>na</code>). No lexicon entry can ever match them, so counting them as reagents the parser failed to identify measures an artefact rather than the parser. They carry the role <code>not_a_component</code> with an auditable reason, and both denominators are published: <strong>85.2%</strong> over every component, <strong>87.0%</strong> over those that actually name a substance.</p>
 <h3>Why records are discarded</h3>
 <p>Every X-ray record is accounted for: it either parsed or carries exactly one reason code.</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
@@ -177,8 +289,8 @@
 <tbody>
 <tr>
 <td data-label="Reason"><code>NO_REAGENT_MATCH</code></td>
-<td data-label="Records">8,774</td>
-<td data-label="Share">4.40%</td>
+<td data-label="Records">7,603</td>
+<td data-label="Share">3.82%</td>
 </tr>
 <tr>
 <td data-label="Reason"><code>TOO_SHORT</code></td>
@@ -187,22 +299,17 @@
 </tr>
 <tr>
 <td data-label="Reason"><code>METHOD_ONLY</code></td>
-<td data-label="Records">2,236</td>
-<td data-label="Share">1.12%</td>
+<td data-label="Records">2,400</td>
+<td data-label="Share">1.21%</td>
 </tr>
 <tr>
 <td data-label="Reason"><code>UNPARSEABLE_RESIDUAL</code></td>
-<td data-label="Records">531</td>
-<td data-label="Share">0.27%</td>
+<td data-label="Records">301</td>
+<td data-label="Share">0.15%</td>
 </tr>
 <tr>
 <td data-label="Reason"><code>REFERENCE_ONLY</code></td>
-<td data-label="Records">107</td>
-<td data-label="Share">0.05%</td>
-</tr>
-<tr>
-<td data-label="Reason"><code>NON_CRYSTALLISATION_TEXT</code></td>
-<td data-label="Records">104</td>
+<td data-label="Records">103</td>
 <td data-label="Share">0.05%</td>
 </tr>
 <tr>
@@ -210,9 +317,408 @@
 <td data-label="Records">91</td>
 <td data-label="Share">0.05%</td>
 </tr>
+<tr>
+<td data-label="Reason"><code>NON_CRYSTALLISATION_TEXT</code></td>
+<td data-label="Records">87</td>
+<td data-label="Share">0.04%</td>
+</tr>
 </tbody>
 </table></div>
-<p><code>REFERENCE_ONLY</code> at 107 records is worth noting: the brief expected "see publication" to be a major discard category, and it is negligible.</p>
+<p><code>REFERENCE_ONLY</code> at 103 records is worth noting: the brief expected "see publication" to be a major discard category, and it is negligible.</p>
+<h2>🗂️ Ontology</h2>
+<p><strong>In plain terms:</strong> every crystallisation experiment is a mixture of a few ingredients. This sorts each one into a small set of buckets based on what kind of ingredient is doing the work, so you can ask "what usually crystallises proteins like mine?" and get an answer instead of a quarter of a million sentences.</p>
+<p>There are seven buckets, plus an eighth for conditions that cannot be sorted honestly. That eighth is large, and that is the point: guessing would be worse than admitting the text does not say.</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Class</th>
+<th>Conditions</th>
+<th>Share</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Class">Unclassified</td>
+<td data-label="Conditions">75,413</td>
+<td data-label="Share">40.5%</td>
+</tr>
+<tr>
+<td data-label="Class">Salt/PEG</td>
+<td data-label="Conditions">46,309</td>
+<td data-label="Share">24.9%</td>
+</tr>
+<tr>
+<td data-label="Class">PEG</td>
+<td data-label="Conditions">21,543</td>
+<td data-label="Share">11.6%</td>
+</tr>
+<tr>
+<td data-label="Class">Salt</td>
+<td data-label="Conditions">19,516</td>
+<td data-label="Share">10.5%</td>
+</tr>
+<tr>
+<td data-label="Class">Organic/PEG/Salt</td>
+<td data-label="Conditions">7,173</td>
+<td data-label="Share">3.9%</td>
+</tr>
+<tr>
+<td data-label="Class">Organic/PEG</td>
+<td data-label="Conditions">7,095</td>
+<td data-label="Share">3.8%</td>
+</tr>
+<tr>
+<td data-label="Class">Organic/Salt</td>
+<td data-label="Conditions">6,380</td>
+<td data-label="Share">3.4%</td>
+</tr>
+<tr>
+<td data-label="Class">Organic</td>
+<td data-label="Conditions">2,751</td>
+<td data-label="Share">1.5%</td>
+</tr>
+<tr>
+<td data-label="Class"><strong>Classified</strong></td>
+<td data-label="Conditions"><strong>110,767</strong></td>
+<td data-label="Share"><strong>59.5%</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>For the crystallographer:</strong> the seven classes are the JCSG Top96 precipitant classes, which are the non-empty subsets of {Organic, PEG, Salt}. Classification is by presence with no thresholds: a PEG is a PEG whatever its molecular weight and concentration, a salt is a salt whatever its chemistry and concentration. Buffers are excluded, since at 0.1 M a buffer sets the pH rather than precipitating anything (spec 6.3), and the pH is carried separately.</p>
+<p>Unclassified is a first-class answer with its reason recorded, never a null:</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Reason it cannot be classified</th>
+<th>Share</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Reason it cannot be classified">An unidentified reagent: the lexicon does not recognise a name, so nothing can be asserted</td>
+<td data-label="Share">21.3%</td>
+</tr>
+<tr>
+<td data-label="Reason it cannot be classified">No amount stated for a precipitant: naming PEG without saying how much is not a measured condition</td>
+<td data-label="Share">13.1%</td>
+</tr>
+</tbody>
+</table></div>
+<p>| No precipitant at all | 3.5% |
+| A premixed system (Morpheus, PACT, Tacsimate) that does not fit a seven-class taxonomy | 2.7% |</p>
+<p><strong>The second row is a deliberate choice and the expensive one.</strong> Those 24,327 conditions name their precipitant unambiguously and simply never state a concentration: <code>PEG6000, Sodium Chloride, VAPOR DIFFUSION</code>. Classifying them as <code>Salt/PEG</code> would lift classified coverage from 58.9% to roughly 72% in one line, and the rule that a PEG is a PEG whatever its concentration would arguably support it. They stay Unclassified because a condition with no concentration is not a measured condition, and coverage is not worth buying with a claim the deposition does not make.</p>
+<p>The premix decision settles spec 6.4, which had been open since Phase 0. Components stay expanded with their <code>premix_id</code>, so nothing is lost and the choice is reversible.</p>
+<p>An earlier three-level ontology of 163 binned groups was withdrawn at v0.3.0. Its groups were derived by binning the corpus and then having labels retrofitted, which spec 6.1 rejects in its first line, and several were not chemically coherent: median purity across the 41 second-level groups was 49%. The full reasoning is in <a href="ontology/CHANGELOG.md"><code>ontology/CHANGELOG.md</code></a>.</p>
+<h2>⚗️ Reagent classes</h2>
+<p><strong>In plain terms:</strong> depositors write the same chemical a dozen different ways. "PEG 3350", "peg3350", "polyethylene glycol 3350" and "PEG 3,350" are one substance. The lexicon is the dictionary that maps every spelling onto one canonical name, and it is what makes the whole database queryable.</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Round</th>
+<th>Reagents</th>
+<th>Names</th>
+<th>Component identification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Round">Seeded from corpus mining</td>
+<td data-label="Reagents">147</td>
+<td data-label="Names">501</td>
+<td data-label="Component identification">79.1%</td>
+</tr>
+<tr>
+<td data-label="Round">Round 1: 40 frequency-ranked decisions</td>
+<td data-label="Reagents">165</td>
+<td data-label="Names">570</td>
+<td data-label="Component identification">80.1%</td>
+</tr>
+<tr>
+<td data-label="Round">Round 2: 10 grouped decisions, 1,004 names</td>
+<td data-label="Reagents">502</td>
+<td data-label="Names">1,265</td>
+<td data-label="Component identification">84.5%</td>
+</tr>
+<tr>
+<td data-label="Round">Prose stripping (a parser fix, not curation)</td>
+<td data-label="Reagents">502</td>
+<td data-label="Names">1,265</td>
+<td data-label="Component identification">85.2%</td>
+</tr>
+<tr>
+<td data-label="Round">Separating apparatus notes and bare units from reagents</td>
+<td data-label="Reagents">502</td>
+<td data-label="Names">1,265</td>
+<td data-label="Component identification"><strong>85.2%</strong> (87.5% on chemistry alone)</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>For the crystallographer:</strong> every reagent carries the chemistry the ontology needs, and each field is enforced on load rather than being optional documentation. A <code>peg</code> entry must state its molecular weight, a <code>buffer</code> must state its pKa, and a <code>premix</code> must list its constituents. Those invariants caught three separate attempts to bulk-add entries that could not satisfy them.</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Chemical class</th>
+<th>Entries</th>
+<th>What it carries</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Chemical class">additive</td>
+<td data-label="Entries">167</td>
+<td data-label="What it carries">ligands, cofactors and inhibitors carried into the drop</td>
+</tr>
+<tr>
+<td data-label="Chemical class">salt</td>
+<td data-label="Entries">116</td>
+<td data-label="What it carries">Hofmeister rank, spanning sulfate (-4) to thiocyanate (+4)</td>
+</tr>
+<tr>
+<td data-label="Chemical class">peg</td>
+<td data-label="Entries">91</td>
+<td data-label="What it carries">molecular weight, log-scaled; v/v below 600 and w/v above</td>
+</tr>
+<tr>
+<td data-label="Chemical class">buffer</td>
+<td data-label="Entries">36</td>
+<td data-label="What it carries">pKa, since buffer identity collapses to the pH it sets</td>
+</tr>
+<tr>
+<td data-label="Chemical class">organic</td>
+<td data-label="Entries">33</td>
+<td data-label="What it carries">alcohols and small organics reported v/v</td>
+</tr>
+<tr>
+<td data-label="Chemical class">polyol</td>
+<td data-label="Entries">28</td>
+<td data-label="What it carries">glycerol, sugars and sugar alcohols</td>
+</tr>
+<tr>
+<td data-label="Chemical class">detergent</td>
+<td data-label="Entries">16</td>
+<td data-label="What it carries"></td>
+</tr>
+<tr>
+<td data-label="Chemical class">premix</td>
+<td data-label="Entries">9</td>
+<td data-label="What it carries">constituent ids for Tacsimate, Morpheus and similar</td>
+</tr>
+<tr>
+<td data-label="Chemical class">other</td>
+<td data-label="Entries">6</td>
+<td data-label="What it carries"></td>
+</tr>
+</tbody>
+</table></div>
+<p>Two rounds of curation and one parser fix took identification from 79.1% to 85.2%. The marginal return has since fallen to roughly 15 components per decision, so further rounds are no longer the best use of expert time.</p>
+<h2>🎓 Training</h2>
+<p><strong>In plain terms:</strong> the rule-based parser reads most of the archive, but some depositions are written in prose it cannot follow. A small language model was trained to read those, by learning from the hundreds of thousands of examples the rule parser already handles correctly. It costs nothing in hand-labelling, because the rule parser writes its own teaching material.</p>
+<p>Progress per round, and what each has actually delivered, is tracked in <a href="#-how-the-model-is-measured">How the model is measured</a>.</p>
+<p><strong>For the crystallographer:</strong> SmolLM2-360M under MLX-LM LoRA on an M1 Max, prompt masked so the loss falls on the answer rather than on echoing the question, evaluated only on the residual the rule parser could not read.</p>
+<p>Three findings shaped how it is trained, and two of them contradict the obvious approach:</p>
+<ul>
+<li><strong>Validation loss is the wrong stopping signal.</strong> The labels are the rule parser's own output, so validation loss measures fidelity to the teacher rather than skill on the residual. It flattens by iteration 400 while identification is still climbing, and fidelity keeps improving to 91% long after identification has plateaued. Checkpoints are chosen by sweeping residual identification instead.</li>
+<li><strong>How long to train is an open question, and an earlier claim here was wrong.</strong> Identification appeared to plateau at about iteration 600, on two curves with different batch sizes and schedules. Both were measured on training data that was 36% duplicate rows, where extra iterations largely repeated conditions already seen, and against a residual that shrank from the easy end every time curation improved. Neither condition holds now, so the plateau evidence does not transfer and a full epoch is being run to settle it against the frozen benchmark.</li>
+<li><strong>Gates are judged on the lower confidence bound</strong>, so a lucky sample cannot pass them. An 800-record sweep once put two checkpoints on opposite sides of the identification gate whose intervals overlapped entirely.</li>
+</ul>
+<p>Training data is deduplicated before oversampling: see <a href="#-redundancy">Redundancy</a> for why that is not a detail. Every run is named <code>r1-parse-residual-smollm2-360m-roundNN</code> and logged to Weights &amp; Biases, with the adapter directory carrying the same name so a checkpoint on disk traces back to the run that produced it.</p>
+<h2>📐 How the model is measured</h2>
+<p><strong>In plain terms:</strong> it is easy to build a metric that a bad model passes. If you only ask "did it output a real chemical name", a model that answers <em>sodium chloride</em> to every question scores well, because sodium chloride is a real chemical. The measures below were chosen so that answering confidently and wrongly is penalised, not rewarded.</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Measure</th>
+<th>Asks</th>
+<th>Blind to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Measure"><strong>Schema validity</strong></td>
+<td data-label="Asks">Is the output parseable JSON using only the allowed roles and units?</td>
+<td data-label="Blind to">Whether any of it is true</td>
+</tr>
+<tr>
+<td data-label="Measure"><strong>Identification</strong></td>
+<td data-label="Asks">Does each named reagent exist in the curated lexicon?</td>
+<td data-label="Blind to">Whether it is the <em>right</em> reagent for this text</td>
+</tr>
+<tr>
+<td data-label="Measure"><strong>Grounding</strong></td>
+<td data-label="Asks">Is each named reagent actually mentioned in the text it was given?</td>
+<td data-label="Blind to">Whether the amount and unit are right</td>
+</tr>
+<tr>
+<td data-label="Measure"><strong>Fidelity</strong></td>
+<td data-label="Asks">On text the rules <em>can</em> read, does the model produce the same components?</td>
+<td data-label="Blind to">The residual, which is by definition harder</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Identification is the weakest of the four and was quoted alone for too long.</strong> A model reading <code>20% PEG 3350</code> and emitting <code>SODIUM_CHLORIDE</code> scores as identified: the name is real, it is simply not the reagent in front of it. Since the whole purpose of curation is to make names mean something, a measure that cannot tell a real name from the correct one is not measuring the thing that matters.</p>
+<p><strong>Grounding closes that hole and needs no labels.</strong> If the model names a reagent, some spelling of that reagent should appear in the source string. Punctuation and spacing are stripped on both sides, so <code>peg-3350</code>, <code>PEG3350</code> and <code>peg 3,350</code> all match one alias. A failure is either a hallucination or a spelling the lexicon has never seen, and both are worth knowing about, so ungrounded cases are written out for inspection rather than only counted.</p>
+<p><strong>For the crystallographer:</strong> none of these is accuracy. There is no structured ground truth for a crystallisation condition anywhere in the PDB, which is the reason this project exists, so nothing can be scored against an authoritative answer. Fidelity comes closest, but only on the easy population: it compares the model to the rule parser on text the rules already read, so it is a ceiling on imitation rather than evidence of skill. The only genuinely external checks are the commercial screen cross-reference, where 20,339 conditions match a vendor-published formulation on every concentration, and the human audit.</p>
+<h3>🤗 What the model has delivered</h3>
+<p>Tracked honestly, including the rounds that delivered nothing. From round 05 onwards these are measured on the <strong>frozen benchmark</strong>, so they are comparable to each other; earlier rounds were scored against a live residual that shrank from the easy end every time curation improved, and are not comparable to anything. Components contributed counts rows that actually reached the dataset.</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Round</th>
+<th>What changed</th>
+<th>Identification</th>
+<th>Grounding</th>
+<th>Components contributed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Round">01</td>
+<td data-label="What changed">Bootstrap distillation, lexicon 0.1.0</td>
+<td data-label="Identification">87.0%</td>
+<td data-label="Grounding">not measured</td>
+<td data-label="Components contributed">0</td>
+</tr>
+<tr>
+<td data-label="Round">02</td>
+<td data-label="What changed"><code>not_a_component</code> class, confidence gate fixed</td>
+<td data-label="Identification">89.7%</td>
+<td data-label="Grounding">not measured</td>
+<td data-label="Components contributed">0</td>
+</tr>
+<tr>
+<td data-label="Round">03</td>
+<td data-label="What changed">Cosine schedule, dropout, class rebalanced</td>
+<td data-label="Identification">88.4%</td>
+<td data-label="Grounding">not measured</td>
+<td data-label="Components contributed">0</td>
+</tr>
+<tr>
+<td data-label="Round">04</td>
+<td data-label="What changed">Retrained on the 502-reagent lexicon</td>
+<td data-label="Identification">abandoned, trained on duplicated data</td>
+<td data-label="Grounding"></td>
+<td data-label="Components contributed">0</td>
+</tr>
+<tr>
+<td data-label="Round">05</td>
+<td data-label="What changed">Deduplicated training set, 95,818 distinct pairs</td>
+<td data-label="Identification">87.58%</td>
+<td data-label="Grounding">93.41%</td>
+<td data-label="Components contributed">0</td>
+</tr>
+<tr>
+<td data-label="Round">06</td>
+<td data-label="What changed">Full epoch, LoRA rank 16, 6,856 empty-answer examples</td>
+<td data-label="Identification">in progress</td>
+<td data-label="Grounding">in progress</td>
+<td data-label="Components contributed">0</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>The last column is the one that counts, and it has been zero throughout.</strong> Five training rounds have produced measurements, not data: <code>models.apply_slm</code> exists but has not been run, so no component in the released database came from the model. Every gain in component identification this project has made came from the reagent lexicon and from the rule parser:</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Change</th>
+<th>Identification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Change">Starting point</td>
+<td data-label="Identification">79.1%</td>
+</tr>
+<tr>
+<td data-label="Change">Lexicon curation, rounds 1 and 2</td>
+<td data-label="Identification">84.5%</td>
+</tr>
+<tr>
+<td data-label="Change">Prose stripping, a parser fix of about forty lines</td>
+<td data-label="Identification"><strong>85.2%</strong></td>
+</tr>
+<tr>
+<td data-label="Change">The fine-tuned model</td>
+<td data-label="Identification">no contribution yet</td>
+</tr>
+</tbody>
+</table></div>
+<p>Whether the model earns its place will be settled by running it over the residual and auditing the result by provenance, not by another held-out metric.</p>
+<h2>🔁 Redundancy</h2>
+<p><strong>In plain terms:</strong> the same experiment appears in the archive over and over. Popular proteins are solved hundreds of times, and a successful recipe gets copied. One condition string in this corpus appears <strong>1,784 times</strong>. That sounds harmless, and it quietly corrupts three different things if you let it.</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Where it bites</th>
+<th>Left alone</th>
+<th>Handled</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Where it bites">Expert curation</td>
+<td data-label="Left alone">1,484 near-identical records to judge</td>
+<td data-label="Handled">10 grouped decisions covering 1,004 names</td>
+</tr>
+<tr>
+<td data-label="Where it bites">Train and test splits</td>
+<td data-label="Left alone">The same protein on both sides, so accuracy measures memory</td>
+<td data-label="Handled">Split by sequence cluster, leak-free at 30%, 50% and 90%</td>
+</tr>
+<tr>
+<td data-label="Where it bites">Training data</td>
+<td data-label="Left alone">45.7% of rows repeated; one string took 1.3% of all training</td>
+<td data-label="Handled">Deduplicated: 135,793 rows to 95,818, all distinct bar a deliberate 8x</td>
+</tr>
+<tr>
+<td data-label="Where it bites">Validation loss</td>
+<td data-label="Left alone">Scored on duplicated conditions</td>
+<td data-label="Handled">17,292 rows to 12,730, fully distinct</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>For the crystallographer:</strong> the corpus is not a sample of crystallisation space, it is a sample of <em>what people deposited</em>, and deposition is heavily skewed. A single 30% identity cluster holds up to 2,876 entries. Lysozyme, trypsin and Fab fragments alone would dominate any statistic computed per record.</p>
+<p>Three consequences, each of which had to be designed for rather than discovered late:</p>
+<ul>
+<li><strong>Splits are by sequence cluster, never by entry</strong> (spec 7.3). Splitting at random would put near-identical proteins on both sides and every metric would measure memorisation. The folds are the connected components of the union of all three clustering thresholds, because MMseqs2 clusters do not nest: 68 clusters at 90% identity straddled a 30% split until that was fixed.</li>
+<li><strong>Audits rank distinct decisions, not instances.</strong> Judging "20% PEG 3350 becomes PEG_3350" for the thirty-thousandth time buys no evidence. Each question stands for every occurrence of the string it names.</li>
+<li><strong>Training data is deduplicated before oversampling, not after.</strong> This one was caught late: 36% of training rows were exact duplicates, and because the rare <code>not_a_component</code> records were themselves duplicated, multiplying them first produced an effective 11.7x where 8x was specified. Deduplicating the validation set matters more still, since a repeated condition there distorts the loss curve used to judge the run.</li>
+</ul>
+<p>The general lesson is that a redundant corpus punishes anything counted per record. Every figure in this README that could be inflated by repetition is either computed over distinct strings or over sequence clusters, and says which.</p>
+<h2>🧪 Curation interfaces</h2>
+<p>Expert time is the scarcest input, so every audit is reduced to <strong>tens of decisions ranked by corpus reach</strong>, never a row-per-instance review.</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Round</th>
+<th>Questions</th>
+<th>Reach</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Round">Reagent lexicon, rounds 1 and 2</td>
+<td data-label="Questions">35, then 13</td>
+<td data-label="Reach">Seeded the original lexicon</td>
+</tr>
+<tr>
+<td data-label="Round">Lexicon gaps</td>
+<td data-label="Questions">40</td>
+<td data-label="Reach">7,018 unidentified components</td>
+</tr>
+<tr>
+<td data-label="Round">Lexicon gaps, grouped</td>
+<td data-label="Questions">10</td>
+<td data-label="Reach">1,004 names, 34% of the unidentified mass</td>
+</tr>
+<tr>
+<td data-label="Round">Classification accuracy</td>
+<td data-label="Questions">200</td>
+<td data-label="Reach">The per-class accuracy number (spec 6.6)</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>app/condition_courtroom_v5.html</code> renders any payload with the same shape, so a new audit is a new generator stage rather than a new page.</p>
+<p><strong>A recommendation is an answer, not a suggestion.</strong> Every dropdown is pre-set and there is an accept-all button, so a wrong recommendation is not caught, it is accepted in bulk. Generators therefore carry explicit chemistry guards: numbers must match exactly (a number in a reagent name is molecular weight or substitution position, never decoration), element and acid words must agree, and a family name such as bare <code>peg</code> identifies to nothing rather than inventing a member. Guards decide what is <strong>recommended</strong>, never what is <strong>available</strong>.</p>
 <h2>🔧 Installation</h2>
 <pre><code class="language-bash">git clone https://github.com/bellcheddar/TopPDBLX.git
 cd TopPDBLX
@@ -235,6 +741,7 @@ ln -sfn ~/TopPDBLXData/processed data/processed
 ./run.sh ingest.flatten            # raw JSON to parquet
 ./run.sh ingest.validate_fidelity  # gate: API text against archive mmCIF
 ./run.sh parse.run_parser          # free text to typed components
+./run.sh assign.classify           # the seven JCSG Top96 precipitant classes
 ./run.sh assign.screen_match       # cross-reference commercial screens
 ./run.sh link.representative       # one sequence per entry
 ./run.sh link.cluster              # MMseqs2 at 30%, 50% and 90%
@@ -276,7 +783,7 @@ ln -sfn ~/TopPDBLXData/processed data/processed
 </tr>
 <tr>
 <td data-label="Stage"><code>parse.lexicon_coverage</code></td>
-<td data-label="Purpose">Measures what share of the corpus the lexicon resolves</td>
+<td data-label="Purpose">Measures what share of the corpus the lexicon identifies</td>
 </tr>
 <tr>
 <td data-label="Stage"><code>parse.run_parser</code></td>
@@ -303,12 +810,48 @@ ln -sfn ~/TopPDBLXData/processed data/processed
 <td data-label="Purpose">PDB to UniProt mapping, and full-length reference sequences</td>
 </tr>
 <tr>
-<td data-label="Stage"><code>eval.audit_questions</code></td>
-<td data-label="Purpose">Reduces the audit to the few dozen calls a human must actually make</td>
+<td data-label="Stage"><code>parse.lexicon_questions</code></td>
+<td data-label="Purpose">Ranks unidentified names by corpus mass into a few dozen curation calls</td>
 </tr>
 <tr>
-<td data-label="Stage"><code>eval.audit_metrics</code></td>
-<td data-label="Purpose">Turns hand verdicts into accuracy figures with Wilson intervals</td>
+<td data-label="Stage"><code>parse.apply_lexicon_answers</code></td>
+<td data-label="Purpose">Folds audit answers back into the lexicon, with the reasoning recorded</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>parse.curation_queue</code></td>
+<td data-label="Purpose">Groups the remaining gaps into ten bucketed decisions</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>parse.apply_curation_queue</code></td>
+<td data-label="Purpose">Applies a bucketed answer to every name in its bucket</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>assign.classify</code></td>
+<td data-label="Purpose">The seven JCSG Top96 precipitant classes, or Unclassified with a reason</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>eval.class_audit</code></td>
+<td data-label="Purpose">Stratified accuracy audit, 25 conditions per class</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>eval.splits</code></td>
+<td data-label="Purpose">Cluster-based train, validation and test splits, leak-free at all three thresholds</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>eval.baselines</code></td>
+<td data-label="Purpose">Frequency prior and homology retrieval, the baselines any model must beat</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>models.build_slm_dataset</code></td>
+<td data-label="Purpose">Bootstrap training data for the residual parser, no hand labelling</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>models.train_slm</code></td>
+<td data-label="Purpose">LoRA fine-tune under MLX-LM, W&amp;B logged, one named run per round</td>
+</tr>
+<tr>
+<td data-label="Stage"><code>models.eval_slm</code></td>
+<td data-label="Purpose">Fidelity and residual identification, with Wilson intervals on both gates</td>
 </tr>
 <tr>
 <td data-label="Stage"><code>release.assemble</code></td>
@@ -435,25 +978,34 @@ LIMIT 10;
 <td data-label="Limitation">Screen matching cannot validate reagent naming</td>
 <td data-label="Consequence">Both sides use the same lexicon, so a systematic naming error moves both identically</td>
 </tr>
+<tr>
+<td data-label="Limitation">R1 labels come from the rule parser</td>
+<td data-label="Consequence">Fidelity to <code>rules_v3</code> is a ceiling, not evidence of beating it: only residual identification, where no label exists, measures a real gain</td>
+</tr>
+<tr>
+<td data-label="Limitation">The residual parser cannot discover new chemistry</td>
+<td data-label="Consequence">It emits only names it has seen, so a genuinely absent reagent looks the same as a model error. Closing that gap is curation, not modelling</td>
+</tr>
 </tbody>
 </table></div>
 <h2>✅ To Do</h2>
 <ul class="emd-tasklist">
 <li><span class="emd-check">&#9989;</span> Ingest the whole archive, with a byte-level fidelity gate</li>
-<li><span class="emd-check">&#9989;</span> Build the reagent lexicon, and the corpus mining that drives it</li>
 <li><span class="emd-check">&#9989;</span> Deterministic rule parser with a stable discard taxonomy</li>
 <li><span class="emd-check">&#9989;</span> Commercial screen library, extracted verbatim from vendor sources</li>
 <li><span class="emd-check">&#9989;</span> Sequence linkage and MMseqs2 redundancy control</li>
-<li><span class="emd-check">&#9989;</span> Decision-level audit interface, and applied expert corrections</li>
 <li><span class="emd-check">&#9989;</span> Assemble the release in five formats, with a generated datasheet</li>
 <li><span class="emd-check">&#9989;</span> Settle licensing: CC-BY-4.0 data, MIT code</li>
 <li><span class="emd-check">&#9989;</span> Complete the 90 GB archive snapshot and run the full-scale fidelity check</li>
-<li><span class="emd-check">&#11036;</span> Fine-tune SmolLM2 on the parse residual (20.5% of components still unresolved)</li>
+<li><span class="emd-check">&#9989;</span> Reagent lexicon: two curation rounds, 147 to 502 reagents</li>
+<li><span class="emd-check">&#9989;</span> Seven-class condition ontology, replacing the withdrawn three-level version</li>
+<li><span class="emd-check">&#9989;</span> Fine-tune SmolLM2 on the parse residual, and strip narrative prose in the parser</li>
+<li><span class="emd-check">&#11036;</span> Classification accuracy audit: 200 judgements outstanding (spec 6.6)</li>
+<li><span class="emd-check">&#11036;</span> Apply the trained model over the residual, so it identifies components rather than sitting idle</li>
+<li><span class="emd-check">&#11036;</span> Supply pKa values for 59 buffers, or fix the clause splitter that produced them</li>
 <li><span class="emd-check">&#11036;</span> Publish to Zenodo for a citable DOI, and mirror on HuggingFace Datasets</li>
-<li><span class="emd-check">&#9989;</span> Phase 1: curated condition ontology, with commercial screen cross-references</li>
-<li><span class="emd-check">&#9989;</span> Phase 2: evaluation harness, cluster splits and both baselines</li>
-<li><span class="emd-check">&#11036;</span> Phase 2: browser front end (exploration tool, not a predictor)</li>
-<li><span class="emd-check">&#11036;</span> Phase 3: construct boundary model, then propensity, then the condition recommender last with a kill criterion (see ROADMAP.md section 2)</li>
+<li><span class="emd-check">&#11036;</span> Browser front end (an exploration tool, not a predictor)</li>
+<li><span class="emd-check">&#11036;</span> Construct boundary model, then crystallisation propensity</li>
 </ul>
 <h2>📄 Licence</h2>
 <p><strong>Data:</strong> Creative Commons Attribution 4.0 International, see <a href="LICENSE-DATA"><code>LICENSE-DATA</code></a>. <strong>Code:</strong> MIT, see <a href="LICENSE"><code>LICENSE</code></a>.</p>

@@ -33,7 +33,8 @@ _METHOD = re.compile(
     r"\b(?:streak[- ]?seed\w*|micro[- ]?seed\w*|macro[- ]?seed\w*|seeded|seeding|"
     r"hanging[- ]drop|sitting[- ]drop|vapou?r[- ]diffusion|free[- ]interface|"
     r"micro[- ]?batch|batch method|counter[- ]?diffusion|liquid[- ]liquid|"
-    r"equilibrat\w+|incubat\w+|dialy\w+|centrifug\w+|pipett\w+|"
+    r"equilibrat\w+|incubat\w+|dialy\w+|centrifug\w+|pipett\w+|soak\w*|"
+    r"transferr?\w+|harvest\w+|mount\w+|frozen|thaw\w+|"
     r"reproducibility|was improved|were improved|obtained by|grown (?:by|in|at|from)|"
     r"crystals? (?:were|was|appeared|grew|grown|formed|obtained)|"
     r"small tubes?|capillar\w+|siliconi[sz]ed|coverslip|"
@@ -46,6 +47,23 @@ _METHOD = re.compile(
 
 # A clause that is nothing but a method noun. "batch" alone is a method; "batch" inside
 # "ammonium sulfate batch 3" is not the whole clause and is left alone.
+# A bare unit, left behind when the splitter cut a clause between the number and its reagent.
+# "millimolar" is not a substance, and counting it as an unidentified reagent inflates both the
+# unidentified denominator and the Unclassified share.
+_BARE_UNIT = re.compile(
+    r"^(?:milli|micro|nano|centi)?(?:molar|litre|liter|gram|mole)s?$|"
+    r"^(?:m|mm|um|µm|nm|ml|ul|µl|nl|l|g|mg|ug|µg|kda|da|w/v|v/v|w/w|%)$", re.I)
+
+# Apparatus and volume notes: "ul", "ul protein", "ul reservoir", "20 ul drop".
+_APPARATUS = re.compile(
+    r"^(?:[\d.]+\s*)?[muµn]?l(?:\s+(?:of\s+)?(?:protein|reservoir|well|drop|solution|"
+    r"buffer|mother liquor|precipitant))?$", re.I)
+
+# An internal recipe reference: "precipitant mix", "precipitant mix 4", "solution b", "mix 2".
+_MIX_REFERENCE = re.compile(
+    r"^(?:precipitant|reservoir|crystallisation|crystallization|screen|stock|salt|buffer)?\s*"
+    r"(?:mix|mixture|solution|soln|reagent|component)\s*[a-z]?\d*$", re.I)
+
 _METHOD_ONLY = re.compile(
     r"^(?:batch|vapou?r diffusion|hanging drop|sitting drop|microbatch|micro[- ]batch|"
     r"dialysis|free interface diffusion|counter[- ]?diffusion|lcp|"
@@ -123,6 +141,12 @@ def classify(name: str, has_quantity: bool = False) -> Optional[str]:
         return None
 
     # Anchored rules: the pattern is the whole clause, so a quantity changes nothing.
+    if _BARE_UNIT.match(lowered):
+        return "splitter_fragment"
+    if _APPARATUS.match(lowered):
+        return "method_text"
+    if _MIX_REFERENCE.match(lowered):
+        return "screen_reference"
     if _FRAGMENT.match(lowered):
         return "splitter_fragment"
     if _UNNAMED.match(lowered):

@@ -102,6 +102,15 @@ def classify_condition(components: list[dict[str, Any]]) -> tuple[str, Optional[
 
         # A precipitant with no stated amount is not a measured condition. Checked only for the
         # families that decide the class, so a missing additive concentration is not fatal.
+        #
+        # **Decided deliberately, 2026-07-31, and it is the expensive choice.** 24,327 conditions
+        # (13.1% of the corpus) name their precipitant unambiguously and simply never say how
+        # much: "PEG6000, Sodium Chloride, VAPOR DIFFUSION". Classifying those as Salt/PEG would
+        # take classified coverage from 58.9% to about 72% at a stroke, and the rule that a PEG
+        # is a PEG whatever its concentration would arguably support it. They stay Unclassified
+        # anyway: a condition with no concentration is not a measured condition, and asserting a
+        # class for it claims more than the deposition does. Coverage is not worth buying with a
+        # claim the text does not make.
         if component.get("concentration") is None or not component.get("unit"):
             return UNCLASSIFIED, "no_amount"
 
