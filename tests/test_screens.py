@@ -158,3 +158,21 @@ def test_wells_have_stable_fingerprints(library):
     """Every identified well must produce a non-empty fingerprint, or it can never match."""
     empty = [(w.catalogue, w.well) for w in library.wells if not w.fingerprint]
     assert not empty
+
+
+def test_index_ships_all_96_conditions():
+    """Index is the only Hampton screen larger than one printed page, and it shipped at 48 of 96.
+
+    `extract_screen` took the single page with the most conditions, which is correct for every
+    other binder because they fit on one page. Index prints 1 to 48 on one page and 49 to 96 on
+    the next, so half the screen was silently dropped, and Index 42 is the most-matched well in
+    the whole corpus. Pinned by number and by contiguity: a partial screen is worse than an
+    absent one, because it still matches and its matches are counted as validation.
+    """
+    import yaml
+
+    from toppdblx.assign.screens import SCREENS_DIR
+
+    document = yaml.safe_load((SCREENS_DIR / "index_hr2-144.yaml").read_text())
+    numbers = [int(well["well"]) for well in document["wells"]]
+    assert numbers == list(range(1, 97)), "Index must ship conditions 1 to 96 with no gaps"

@@ -106,13 +106,31 @@ def extract_screen(pdf_path: Path) -> dict[str, Any]:
 
     # The scoring-sheet page holds complete one-line conditions; the formulation page holds
     # the same data split across columns. Take the page with the most complete lines.
-    best: list[tuple[str, str]] = []
+    per_page: list[list[tuple[str, str]]] = []
     for text in pages:
         found = [(n, tidy_condition(re.sub(r"\s+", " ", c)))
                  for n, c in _CONDITION.findall(text)]
-        found = [(n, c) for n, c in found if len(c) >= MIN_CONDITION_LENGTH]
-        if len(found) > len(best):
-            best = found
+        per_page.append([(n, c) for n, c in found if len(c) >= MIN_CONDITION_LENGTH])
+    best = max(per_page, key=len, default=[])
+
+    # A screen larger than one printed page continues on the next one, and taking only the best
+    # page silently halves it. Index (HR2-144) prints 1 to 48 on one page and 49 to 96 on the
+    # next, and shipped as a 48-condition screen for exactly this reason: every other Hampton
+    # binder fits on a single page, so nothing else exposed it. Conditions the best page does
+    # not carry are filled in from the others, keyed by the tube number the vendor printed.
+    #
+    # Gap-filling rather than merging is deliberate. The formulation page repeats the same
+    # conditions in column form, and a merge that preferred one reading over another would let
+    # a column fragment overwrite a complete line. A number already read is never replaced.
+    seen = {n for n, _ in best}
+    for page in per_page:
+        if page is best:
+            continue
+        for number, condition in page:
+            if number not in seen and not _PLATE_COORDINATE.match(condition):
+                seen.add(number)
+                best.append((number, condition))
+    best.sort(key=lambda item: int(item[0]))
 
     # Independent check: the column-wise table lists every tube number on its own line.
     declared = max((len(set(_TUBE_COUNT.findall(text))) for text in pages), default=0)
@@ -179,12 +197,27 @@ def main(argv: Optional[list[str]] = None) -> int:
                                  "why": "screen name unreadable"})
                 continue
 
-            # The two representations should describe the same number of wells. A gap means
-            # the extraction missed lines, so it is surfaced rather than quietly accepted.
+            # The two representations should describe the same number of wells. A shortfall
+            # means the extraction missed lines, and a screen that ships with half its
+            # conditions is worse than one that does not ship: Index shipped 48 of 96 for
+            # months, and its corpus matches were counted against that half. Printing the
+            # disagreement was not enough, because a warning among nineteen success lines is a
+            # warning nobody reads. A short screen is now rejected on the same principle as an
+            # unreadable one. An excess is still only noted: the tube column can list a control
+            # or a blank that is not a condition.
             if info["n_tubes_declared"] and info["n_tubes_declared"] != info["n_conditions"]:
                 mismatches.append({"catalogue": catalogue,
                                    "conditions": info["n_conditions"],
                                    "tubes_declared": info["n_tubes_declared"]})
+                if info["n_conditions"] < info["n_tubes_declared"]:
+                    print(f"  {catalogue}: {info['n_conditions']} conditions read but the tube "
+                          f"column lists {info['n_tubes_declared']}, rejected rather than "
+                          f"shipped as a partial screen")
+                    rejected.append({"catalogue": catalogue,
+                                     "n_extracted": info["n_conditions"],
+                                     "expected": info["n_tubes_declared"],
+                                     "why": "fewer conditions than tubes declared"})
+                    continue
 
             document = {
                 "screen": info["screen"],

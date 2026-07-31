@@ -3,7 +3,7 @@ catalogue: HR2-144
 vendor: Hampton Research
 source_url: https://hamptonresearch.com/uploads/support_materials/HR2-144_Binder.pdf
 retrieved: '2026-07-31'
-n_wells: 48
+n_wells: 96
 wells:
 - well: '1'
   condition_text: 0.1 M Citric acid pH 3.5, 2.0 M Ammonium sulfate
@@ -101,3 +101,99 @@ wells:
   condition_text: 0.1 M BIS-TRIS pH 6.5, 28% w/v Polyethylene glycol monomethyl ether 2,000
 - well: '48'
   condition_text: 0.2 M Calcium chloride dihydrate, 0.1 M BIS-TRIS pH 5.5, 45% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '49'
+  condition_text: 0.2 M Calcium chloride dihydrate, 0.1 M BIS-TRIS pH 6.5, 45% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '50'
+  condition_text: 0.2 M Ammonium acetate, 0.1 M BIS-TRIS pH 5.5, 45% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '51'
+  condition_text: 0.2 M Ammonium acetate, 0.1 M BIS-TRIS pH 6.5, 45% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '52'
+  condition_text: 0.2 M Ammonium acetate, 0.1 M HEPES pH 7.5, 45% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '53'
+  condition_text: 0.2 M Ammonium acetate, 0.1 M Tris pH 8.5, 45% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '54'
+  condition_text: 0.05 M Calcium chloride dihydrate, 0.1 M BIS-TRIS pH 6.5, 30% v/v Polyethylene glycol monomethyl ether 550
+- well: '55'
+  condition_text: 0.05 M Magnesium chloride hexahydrate, 0.1 M HEPES pH 7.5, 30% v/v Polyethylene glycol monomethyl ether 550
+- well: '56'
+  condition_text: 0.2 M Potassium chloride, 0.05 M HEPES pH 7.5, 35% v/v Pentaerythritol propoxylate (5/4 PO/OH)
+- well: '57'
+  condition_text: 0.05 M Ammonium sulfate, 0.05 M BIS-TRIS pH 6.5, 30% v/v Pentaerythritol ethoxylate (15/4 EO/OH)
+- well: '58'
+  condition_text: 0.1 M BIS-TRIS pH 6.5, 45% v/v Polypropylene glycol P 400
+- well: '59'
+  condition_text: 0.02 M Magnesium chloride hexahydrate, 0.1 M HEPES pH 7.5, 22% w/v Poly(acrylic acid sodium salt) 5,100
+- well: '60'
+  condition_text: 0.01 M Cobalt(II) chloride hexahydrate, 0.1 M Tris pH 8.5, 20% w/v Polyvinylpyrrolidone K 15
+- well: '61'
+  condition_text: 0.2 M L-Proline, 0.1 M HEPES pH 7.5, 10% w/v Polyethylene glycol 3,350
+- well: '62'
+  condition_text: 0.2 M Trimethylamine N-oxide dihydrate, 0.1 M Tris pH 8.5, 20% w/v Polyethylene glycol monomethyl ether 2,000
+- well: '63'
+  condition_text: 5% v/v Tacsimate
+- well: '64'
+  condition_text: 0.005 M Cobalt(II) chloride hexahydrate, 0.005 M Nickel(II) chloride hexahydrate, 0.005 M Cadmium chloride hydrate,
+- well: '65'
+  condition_text: 0.1 M Ammonium acetate, 0.1 M BIS-TRIS pH 5.5, 17% w/v Polyethylene glycol 10,000
+- well: '66'
+  condition_text: 0.2 M Ammonium sulfate, 0.1 M BIS-TRIS pH 5.5, 25% w/v Polyethylene glycol 3,350
+- well: '67'
+  condition_text: 0.2 M Ammonium sulfate, 0.1 M BIS-TRIS pH 6.5, 25% w/v Polyethylene glycol 3,350
+- well: '68'
+  condition_text: 0.2 M Ammonium sulfate, 0.1 M HEPES pH 7.5, 25% w/v Polyethylene glycol 3,350
+- well: '69'
+  condition_text: 0.2 M Ammonium sulfate, 0.1 M Tris pH 8.5, 25% w/v Polyethylene glycol 3,350
+- well: '70'
+  condition_text: 0.2 M Sodium chloride, 0.1 M BIS-TRIS pH 5.5, 25% w/v Polyethylene glycol 3,350
+- well: '71'
+  condition_text: 0.2 M Sodium chloride, 0.1 M BIS-TRIS pH 6.5, 25% w/v Polyethylene glycol 3,350
+- well: '72'
+  condition_text: 0.2 M Sodium chloride, 0.1 M HEPES pH 7.5, 25% w/v Polyethylene glycol 3,350
+- well: '73'
+  condition_text: 0.2 M Sodium chloride, 0.1 M Tris pH 8.5, 25% w/v Polyethylene glycol 3,350
+- well: '74'
+  condition_text: 0.2 M Lithium sulfate monohydrate, 0.1 M BIS-TRIS pH 5.5, 25% w/v Polyethylene glycol 3,350
+- well: '75'
+  condition_text: 0.2 M Lithium sulfate monohydrate, 0.1 M BIS-TRIS pH 6.5, 25% w/v Polyethylene glycol 3,350
+- well: '76'
+  condition_text: 0.2 M Lithium sulfate monohydrate, 0.1 M HEPES pH 7.5, 25% w/v Polyethylene glycol 3,350
+- well: '77'
+  condition_text: 0.2 M Lithium sulfate monohydrate, 0.1 M Tris pH 8.5, 25% w/v Polyethylene glycol 3,350
+- well: '78'
+  condition_text: 0.2 M Ammonium acetate, 0.1 M BIS-TRIS pH 5.5, 25% w/v Polyethylene glycol 3,350
+- well: '79'
+  condition_text: 0.2 M Ammonium acetate, 0.1 M BIS-TRIS pH 6.5, 25% w/v Polyethylene glycol 3,350
+- well: '80'
+  condition_text: 0.2 M Ammonium acetate, 0.1 M HEPES pH 7.5, 25% w/v Polyethylene glycol 3,350
+- well: '81'
+  condition_text: 0.2 M Ammonium acetate, 0.1 M Tris pH 8.5, 25% w/v Polyethylene glycol 3,350
+- well: '82'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M BIS-TRIS pH 5.5, 25% w/v Polyethylene glycol 3,350
+- well: '83'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M BIS-TRIS pH 6.5, 25% w/v Polyethylene glycol 3,350
+- well: '84'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M HEPES pH 7.5, 25% w/v Polyethylene glycol 3,350
+- well: '85'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M Tris pH 8.5, 25% w/v Polyethylene glycol 3,350
+- well: '86'
+  condition_text: 0.2 M Potassium sodium tartrate tetrahydrate, 20% w/v Polyethylene glycol 3,350
+- well: '87'
+  condition_text: 0.2 M Sodium malonate pH 7.0, 20% w/v Polyethylene glycol 3,350
+- well: '88'
+  condition_text: 0.2 M Ammonium citrate tribasic pH 7.0, 20% w/v Polyethylene glycol 3,350
+- well: '89'
+  condition_text: 0.1 M Succinic acid pH 7.0, 15% w/v Polyethylene glycol 3,350
+- well: '90'
+  condition_text: 0.2 M Sodium formate, 20% w/v Polyethylene glycol 3,350
+- well: '91'
+  condition_text: 0.15 M DL-Malic acid pH 7.0, 20% w/v Polyethylene glycol 3,350
+- well: '92'
+  condition_text: 0.1 M Magnesium formate dihydrate, 15% w/v Polyethylene glycol 3,350
+- well: '93'
+  condition_text: 0.05 M Zinc acetate dihydrate, 20% w/v Polyethylene glycol 3,350
+- well: '94'
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate, 20% w/v Polyethylene glycol 3,350
+- well: '95'
+  condition_text: 0.1 M Potassium thiocyanate, 30% w/v Polyethylene glycol monomethyl ether 2,000
+- well: '96'
+  condition_text: 0.15 M Potassium bromide, 30% w/v Polyethylene glycol monomethyl ether 2,000

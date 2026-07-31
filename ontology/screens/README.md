@@ -16,12 +16,12 @@ rather than by withdrawing the dataset.
 | Measure | Value |
 |---|---|
 | Screens | 24 (22 reagent-named, 2 compositional) |
-| Wells | 1,374 |
-| Components identified in the 22 reagent-named screens | 96.8% (2,772 of 2,863) |
-| Component-set matches against the corpus | 60,225 |
-| Matches agreeing on every concentration | 28,257 |
+| Wells | 1,422 |
+| Components identified in the 22 reagent-named screens | 96.9% (2,901 of 2,993) |
+| Component-set matches against the corpus | 64,664 |
+| Matches agreeing on every concentration | 30,281 |
 
-The 91 unidentified components are all in the three NeXtal suites, whose PDF text layer runs the
+The 92 unidentified components are all in the three NeXtal suites, whose PDF text layer runs the
 salt, buffer and precipitant columns together and splits numbers at kerning pairs. They are
 extraction damage rather than unknown chemistry: every other screen reads at 100%.
 
