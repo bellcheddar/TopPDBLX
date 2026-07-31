@@ -1,0 +1,103 @@
+screen: Wizard Screen 2
+catalogue: HR2-105
+vendor: Hampton Research
+source_url: https://hamptonresearch.com/uploads/support_materials/HR2-105_Binder.pdf
+retrieved: '2026-07-31'
+n_wells: 48
+wells:
+- well: '1'
+  condition_text: 0.2 M Zinc acetate dihydrate, 0.1 M Sodium acetate trihydrate pH 4.5, 10% w/v Polyethylene glycol 3,000
+- well: '2'
+  condition_text: 0.2 M Lithium sulfate monohydrate, 0.1 M MES monohydrate pH 6.0, 35% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '3'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M Tris pH 8.5, 20% w/v Polyethylene glycol 8,000
+- well: '4'
+  condition_text: 0.2 M Sodium chloride, 0.1 M Sodium cacodylate trihydrate pH 6.5, 2.0 M Ammonium sulfate
+- well: '5'
+  condition_text: 0.2 M Sodium chloride, 0.1 M HEPES pH 7.5, 20% v/v 1,4-Butanediol
+- well: '6'
+  condition_text: 0.2 M Lithium sulfate monohydrate, 0.1 M Sodium citrate tribasic dihydrate pH 4.2, 10% v/v 2-Propanol
+- well: '7'
+  condition_text: 0.2 M Sodium chloride, 0.1 M Tris pH 7.0, 30% w/v Polyethylene glycol 3,000
+- well: '8'
+  condition_text: 0.2 M Sodium chloride, 00.068 M Sodium phosphate monobasic monohydrate, 0.032 M Potassium phosphate dibasic pH 6.2, 10% w/v Polyethylene glycol 8,000
+- well: '9'
+  condition_text: 0.1 M Sodium citrate tribasic dihydrate pH 4.2, 2.0 M Ammonium sulfate
+- well: '10'
+  condition_text: 0.1 M Tris pH 8.5, 1.0 M Ammonium phosphate dibasic
+- well: '11'
+  condition_text: 0.2 M Zinc acetate dihydrate, 0.1 M Sodium cacodylate trihydrate pH 6.5, 10% v/v 2-Propanol
+- well: '12'
+  condition_text: 0.2 M Lithium sulfate monohydrate, 0.1 M Sodium cacodylate trihydrate pH 6.5, 30% v/v Polyethylene glycol 400
+- well: '13'
+  condition_text: 0.2 M Lithium sulfate monohydrate, 0.1 M Sodium citrate tribasic dihydrate pH 5.5, 15% v/v Ethanol
+- well: '14'
+  condition_text: 0.2 M Sodium chloride, 00.068 M Sodium phosphate monobasic monohydrate, 0.032 M Potassium phosphate dibasic pH 6.2, 20% w/v Polyethylene glycol 1,000
+- well: '15'
+  condition_text: 0.1 M HEPES pH 7.5, 1.26 M Ammonium sulfate
+- well: '16'
+  condition_text: 0.1 M CHES pH 9.5, 1.0 M Sodium citrate tribasic dihydrate
+- well: '17'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M Tris pH 7.0, 2.5 M Sodium chloride
+- well: '18'
+  condition_text: 0.2 M Calcium acetate hydrate, 0.1 M Tris pH 7.0, 20% w/v Polyethylene glycol 3,000
+- well: '19'
+  condition_text: 0.1 M Sodium citrate tribasic dihydrate pH 4.2, 0.4 M Potassium phosphate dibasic, 1.6 M Sodium phosphate monobasic monohydrate
+- well: '20'
+  condition_text: 0.2 M Zinc acetate dihydrate, 0.1 M MES monohydrate pH 6.0, 15% v/v Ethanol
+- well: '21'
+  condition_text: 0.1 M Sodium acetate trihydrate pH 4.5, 35% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '22'
+  condition_text: 0.1 M Imidazole pH 8.0, 10% v/v 2-Propanol
+- well: '23'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M HEPES pH 7.5, 15% v/v Ethanol
+- well: '24'
+  condition_text: 0.2 M Sodium chloride, 0.1 M Imidazole pH 8.0, 30% w/v Polyethylene glycol 8,000
+- well: '25'
+  condition_text: 0.2 M Sodium chloride, 0.1 M HEPES pH 7.5, 35% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '26'
+  condition_text: 0.1 M CHES pH 9.5, 30% v/v Polyethylene glycol 400
+- well: '27'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M Sodium cacodylate trihydrate pH 6.5, 0% w/v Polyethylene glycol 3,000
+- well: '28'
+  condition_text: 0.2 M Calcium acetate hydrate, 0.1 M MES monohydrate pH 6.0, 20% w/v Polyethylene glycol 8,000
+- well: '29'
+  condition_text: 0.2 M Sodium chloride, 0.1 M CHES pH 9.5, 1.26 M Ammonium sulfate
+- well: '30'
+  condition_text: 0.2 M Zinc acetate dihydrate, 0.1 M Imidazole pH 8.0, 20% v/v 1,4-Butanediol
+- well: '31'
+  condition_text: 0.2 M Sodium chloride, 0.1 M Tris pH 7.0, 1.0 M Sodium citrate tribasic dihydrate
+- well: '32'
+  condition_text: 0.1 M Tris pH 8.5, 20% w/v Polyethylene glycol 1,000
+- well: '33'
+  condition_text: 0.2 M Sodium chloride, 0.1 M Sodium citrate tribasic dihydrate pH 5.5, 1.0 M Ammonium phosphate dibasic
+- well: '34'
+  condition_text: 0.1 M Imidazole pH 8.0, 10% w/v Polyethylene glycol 8,000
+- well: '35'
+  condition_text: 0.1 M Sodium acetate trihydrate pH 4.5, 0.8 M Sodium phosphate monobasic monohydrate, 1.2 M Potassium phosphate dibasic
+- well: '36'
+  condition_text: 0.2 M Sodium chloride, 0.1 M Sodium citrate tribasic dihydrate pH 4.2, 10% w/v Polyethylene glycol 3,000
+- well: '37'
+  condition_text: 0.2 M Lithium sulfate monohydrate, 0.1 M Tris pH 7.0, 1.0 M Potassium sodium tartrate tetrahydrate
+- well: '38'
+  condition_text: 0.2 M Lithium sulfate monohydrate, 0.1 M Sodium acetate trihydrate pH 4.5, 2.5 M Sodium chloride
+- well: '39'
+  condition_text: 0.2 M Sodium chloride, 0.1 M CAPS pH 10.5, 20% w/v Polyethylene glycol 8,000
+- well: '40'
+  condition_text: 0.2 M Zinc acetate dihydrate, 0.1 M Imidazole pH 8.0, 20% w/v Polyethylene glycol 3,000
+- well: '41'
+  condition_text: 0.2 M Lithium sulfate monohydrate, 0.1 M Tris pH 7.0, 2.0 M Ammonium sulfate
+- well: '42'
+  condition_text: 0.2 M Sodium chloride, 0.1 M HEPES pH 7.5, 30% v/v Polyethylene glycol 400
+- well: '43'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M Tris pH 7.0, 10% w/v Polyethylene glycol 8,000
+- well: '44'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M Sodium cacodylate trihydrate pH 6.5, 20% w/v Polyethylene glycol 1,000
+- well: '45'
+  condition_text: 0.1 M MES monohydrate pH 6., 1.26 M Ammonium sulfate
+- well: '46'
+  condition_text: 0.2 M Sodium chloride, 0.1 M Imidazole pH 8.0, 1.0 M Ammonium phosphate dibasic
+- well: '47'
+  condition_text: 0.2 M Zinc acetate dihydrate, 0.1 M Imidazole pH 8.0, 2.5 M Sodium chloride
+- well: '48'
+  condition_text: 0.1 M MES monohydrate pH 6.0, 1.0 M Potassium sodium tartrate tetrahydrate

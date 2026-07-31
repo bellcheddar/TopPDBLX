@@ -46,7 +46,7 @@ wells:
 - well: '20'
   condition_text: 0.08 M MES monohydrate pH 6.5, 1.28 M Magnesium sulfate heptahydrate, 20% v/v Glycerol
 - well: '21'
-  condition_text: 0.075 M Sodium phosphate monobasic monohydrate, 0.075 M Potassium phosphate monobasic, 0.075 M MES monohydrate pH 6.5,
+  condition_text: 0.075 M Sodium phosphate monobasic monohydrate, 0.075 M Potassium phosphate monobasic, 0.075 M MES monohydrate pH 6.5, 1.5 M Sodium chloride, 25% v/v Glycerol
 - well: '22'
   condition_text: 0.065 M MES monohydrate pH 6.5, 7.8% w/v Polyethylene glycol 20,000, 35% v/v Glycerol
 - well: '23'

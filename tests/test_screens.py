@@ -176,3 +176,37 @@ def test_index_ships_all_96_conditions():
     document = yaml.safe_load((SCREENS_DIR / "index_hr2-144.yaml").read_text())
     numbers = [int(well["well"]) for well in document["wells"]]
     assert numbers == list(range(1, 97)), "Index must ship conditions 1 to 96 with no gaps"
+
+
+def test_wrapped_condition_lines_are_reattached():
+    """A condition too long for one printed line wraps, and matching to end of line truncates it.
+
+    Crystal Screen 2 condition 21 shipped as its two phosphates alone, without the MES buffer
+    and 2.0 M sodium chloride printed on the continuation line. That is a different condition,
+    not a shorter one, and it matched corpus records on the strength of the half we had. Thirty
+    five conditions across the library were affected.
+    """
+    import yaml
+
+    from toppdblx.assign.screens import SCREENS_DIR
+
+    document = yaml.safe_load((SCREENS_DIR / "crystal_screen_2_hr2-112.yaml").read_text())
+    condition = next(w["condition_text"] for w in document["wells"] if w["well"] == "21")
+    assert "MES" in condition and "Sodium chloride" in condition, condition
+
+
+def test_column_rebuilt_screens_carry_an_independent_well_count():
+    """Column reconstruction pairs reagents by position, with no tube number to catch a shift.
+
+    Screens rebuilt that way are only shipped when the binder's own tube list confirms the
+    count. Index HT is why: it rebuilt a well-formed 48 conditions for a 96-well product and
+    nothing inside the reconstruction could tell. Wizard Screen 2 is the case that passes, at
+    48 rebuilt against 48 declared.
+    """
+    import yaml
+
+    from toppdblx.assign.screens import SCREENS_DIR
+
+    assert not (SCREENS_DIR / "index_ht_hr2-134.yaml").exists()
+    wizard = yaml.safe_load((SCREENS_DIR / "wizard_screen_2_hr2-105.yaml").read_text())
+    assert len(wizard["wells"]) == 48

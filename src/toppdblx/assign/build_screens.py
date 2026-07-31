@@ -59,6 +59,20 @@ CATALOGUES = [
 _CONDITION = re.compile(r"^\s*(\d{1,3})\.\s{2,}(\S.*)$", re.M)
 _SCREEN_NAME = re.compile(r"^(.*?)\s*(?:™|\(TM\))?\s*" + r"(HR\d-\d+)\s+Reagent Formulation",
                           re.M | re.I)
+
+# The name does not always sit before the catalogue number on the same line. Two other layouts
+# occur, and both cost a real screen:
+#
+#   Natrix \n TM HR2-116 Reagent Formulation     the trademark wraps, so the line-anchored match
+#                                                captures "TM" and Natrix was rejected as
+#                                                unnameable, while its 48 conditions read fine
+#   HR2-136 Reagent FormulationSaltRx HT TM      the name trails the header with no separator
+#
+# Both are recovered rather than guessed: the name is still read out of the binder, from an
+# adjacent position rather than the expected one.
+_NAME_AFTER = re.compile(r"(HR\d-\d+)\s+Reagent Formulation\s*(.{3,60}?)\s*(?:™|\(TM\))",
+                         re.I)
+_DEGENERATE_NAME = re.compile(r"^(?:tm|\(tm\)|reagent|solutions.*|)$", re.I)
 _TUBE_COUNT = re.compile(r"^\s*(\d{1,3})\.\s*$", re.M)
 
 MIN_CONDITION_LENGTH = 12
@@ -82,9 +96,122 @@ _PLATE_COORDINATE = re.compile(r"^\(([A-H])(\d{1,2})\)\s")
 _SPLIT_WORD = re.compile(r"\b([A-Z]) ([a-z]{3,})")
 
 
+# A condition too long for one printed line wraps onto an indented continuation, and matching
+# only to end of line silently truncates it:
+#
+#   21.   0.1 M Sodium phosphate monobasic monohydrate, 0.1 M Potassium phosphate monobasic
+#            0.1 M MES monohydrate pH 6.5, 2.0 M Sodium chloride
+#
+# Crystal Screen 2 condition 21 shipped as the two phosphates alone, with its buffer and its
+# 2.0 M sodium chloride missing, which is a different condition rather than a shorter one. It
+# was found by reconstructing Crystal Screen HT from its columns and noticing that the
+# supposedly authoritative tube version was the shorter of the two.
+#
+# A continuation must be indented and must itself state an amount, so a footer, a footnote or a
+# page header cannot be absorbed into the condition above it.
+_CONTINUATION = re.compile(r"^\s+(\d+(?:\.\d+)?\s*(?:M\b|mM\b|%).*)$")
+
+
+def _joined_condition_lines(text: str) -> list[tuple[str, str]]:
+    """Numbered conditions with their wrapped continuation lines reattached."""
+    conditions: list[tuple[str, str]] = []
+    for line in text.split("\n"):
+        start = _CONDITION.match(line)
+        if start:
+            conditions.append((start.group(1), start.group(2)))
+            continue
+        carry = _CONTINUATION.match(line)
+        if carry and conditions:
+            number, body = conditions[-1]
+            separator = " " if body.rstrip().endswith(",") else ", "
+            conditions[-1] = (number, f"{body.rstrip()}{separator}{carry.group(1)}")
+    return conditions
+
+
 def tidy_condition(text: str) -> str:
     """Repair artefacts introduced by the PDF text layer, never by the vendor."""
     return _SPLIT_WORD.sub(r"\1\2", text).strip()
+
+
+# The HT binders print no tube numbers. They lay the screen out as three parallel columns, a
+# whole Salt column, then a whole Buffer column, then a whole Precipitant column, with "None"
+# where a condition has no component of that kind. A condition is recovered by position: the
+# nth salt belongs with the nth buffer and the nth precipitant.
+#
+# Position is the only key available, which makes this the most dangerous extractor in the
+# project. One dropped line shifts every condition after it and produces plausible chemistry
+# that no vendor ever sold, with no tube number to catch it. Three things constrain it:
+#
+#   1. each column is truncated at its first non-chemistry line, so tube lists, footnotes and
+#      the contact block cannot be read as reagents
+#   2. the truncated columns must then be exactly equal in length, which is the check that a
+#      dropped line would fail
+#   3. the result is validated against a screen already extracted from numbered lines
+#      (Crystal Screen HT against Crystal Screen), so the method is tested where the answer is
+#      independently known before it is trusted where it is not
+_COLUMN_HEAD = re.compile(r"(?m)^\s*(Salt|Buffer\s*◊?|Precipitant)\s*$")
+
+# A component states an amount, or is the vendor's own "None". Anything else ends the column:
+# "47. (D11)", "1. Available separately", "Website: hamptonresearch.com".
+#
+# The word boundary goes after M and mM only. "%" is itself a non-word character, so "30% v/v"
+# has no boundary after the percent sign and a trailing \b rejected every precipitant line in
+# the screen.
+_COMPONENT_LINE = re.compile(r"^(?:None$|\d+(?:\.\d+)?\s*(?:M\b|mM\b|%))", re.I)
+
+
+def extract_columns(pages: list[str]) -> list[tuple[str, str]]:
+    """Recover conditions from the column-wise HT layout, or return nothing if it cannot."""
+    conditions: list[tuple[str, str]] = []
+    for text in pages:
+        marks = [(m.end(), m.group(1).split()[0]) for m in _COLUMN_HEAD.finditer(text)]
+        if not marks:
+            continue
+        bounds = [m.start() for m in _COLUMN_HEAD.finditer(text)] + [len(text)]
+
+        column_order, columns = [], {}
+        for index, (start, label) in enumerate(marks):
+            body = [line.strip() for line in text[start:bounds[index + 1]].split("\n")
+                    if line.strip()]
+            kept: list[str] = []
+            for line in body:
+                if not _COMPONENT_LINE.match(line):
+                    break
+                # A cell holding two components wraps onto a second line, and the vendor's own
+                # trailing comma is what marks the continuation: "0.8 M Sodium phosphate
+                # monobasic monohydrate," then "0.8 M Potassium phosphate monobasic" is one
+                # precipitant, not two. Four such cells are why Crystal Screen HT's precipitant
+                # column held 52 lines against the salt column's 48.
+                if kept and kept[-1].endswith(","):
+                    kept[-1] = f"{kept[-1]} {line}"
+                else:
+                    kept.append(line)
+            if kept and label not in columns:
+                column_order.append(label)
+                columns[label] = kept
+
+        # Unequal columns mean the text layer dropped a line, and a positional zip would then
+        # pair the wrong reagents together. There is no way to tell which column lost it, so
+        # the page is abandoned rather than repaired.
+        # The precipitant column is mandatory, not merely one of three. Allowing a page through
+        # on any two columns produced 42 Crystal Screen HT conditions that each looked entirely
+        # plausible and had silently lost their precipitant: condition 1 came out as the calcium
+        # chloride and acetate buffer with no mention of the 30% MPD that makes it a
+        # crystallisation condition at all. A condition missing its precipitant is not a partial
+        # reading, it is a different condition.
+        # A two-column page is legitimate where the screen has no salt at all: Low Ionic
+        # Strength prints only Buffer and Precipitant. What is never legitimate is losing the
+        # precipitant, so that column is required rather than merely counted.
+        sizes = {len(v) for v in columns.values()}
+        if "Precipitant" not in columns or len(columns) < 2 or len(sizes) != 1:
+            continue
+
+        for row in range(sizes.pop()):
+            parts = [columns[label][row] for label in column_order
+                     if columns[label][row].lower() != "none"]
+            if parts:
+                conditions.append((str(len(conditions) + 1), tidy_condition(", ".join(parts))))
+    return conditions
 
 
 def slugify(name: str) -> str:
@@ -99,17 +226,28 @@ def extract_screen(pdf_path: Path) -> dict[str, Any]:
     name, catalogue = None, None
     for text in pages:
         match = _SCREEN_NAME.search(text)
-        if match:
-            name = re.sub(r"\s+", " ", match.group(1)).strip(" ™-")
-            catalogue = match.group(2).upper()
-            break
+        if not match:
+            continue
+        name = re.sub(r"\s+", " ", match.group(1)).strip(" ™-")
+        catalogue = match.group(2).upper()
+
+        if _DEGENERATE_NAME.match(name):
+            # The line before the match, for the wrapped-trademark layout.
+            head = text[:match.start()].rstrip().rsplit("\n", 1)
+            previous = re.sub(r"\s+", " ", head[-1]).strip(" ™-") if head else ""
+            after = _NAME_AFTER.search(text)
+            if previous and not _DEGENERATE_NAME.match(previous):
+                name = previous
+            elif after:
+                name = re.sub(r"\s+", " ", after.group(2)).strip(" ™-")
+        break
 
     # The scoring-sheet page holds complete one-line conditions; the formulation page holds
     # the same data split across columns. Take the page with the most complete lines.
     per_page: list[list[tuple[str, str]]] = []
     for text in pages:
         found = [(n, tidy_condition(re.sub(r"\s+", " ", c)))
-                 for n, c in _CONDITION.findall(text)]
+                 for n, c in _joined_condition_lines(text)]
         per_page.append([(n, c) for n, c in found if len(c) >= MIN_CONDITION_LENGTH])
     best = max(per_page, key=len, default=[])
 
@@ -135,6 +273,14 @@ def extract_screen(pdf_path: Path) -> dict[str, Any]:
     # Independent check: the column-wise table lists every tube number on its own line.
     declared = max((len(set(_TUBE_COUNT.findall(text))) for text in pages), default=0)
 
+    # The HT binders print no numbered condition lines at all, so the line extractor returns a
+    # handful of spurious matches and the screen is rejected. Fall back to the column layout.
+    from_columns = False
+    if len(best) < MIN_WELLS:
+        recovered = extract_columns(pages)
+        if len(recovered) > len(best):
+            best, from_columns = recovered, True
+
     # A plate-coordinate prefix means this is a 96-well layout the line extractor only partly
     # reads, so what came out is a fragment of a screen rather than a small screen.
     plate_layout = sum(1 for _, c in best if _PLATE_COORDINATE.match(c))
@@ -143,6 +289,7 @@ def extract_screen(pdf_path: Path) -> dict[str, Any]:
         "screen": name,
         "catalogue": catalogue,
         "plate_layout_lines": plate_layout,
+        "from_columns": from_columns,
         "n_conditions": len(best),
         "n_tubes_declared": declared,
         "wells": [{"well": n, "condition_text": c} for n, c in best],
@@ -175,6 +322,25 @@ def main(argv: Optional[list[str]] = None) -> int:
                 continue
 
             info = extract_screen(pdf_path)
+
+            # A column-reconstructed screen has no tube number on each condition, so nothing in
+            # the reconstruction itself can reveal a dropped line. The tube list printed
+            # elsewhere in the same binder is the only independent witness, and it is required
+            # rather than merely compared: Index HT reconstructed 48 conditions for a 96-well
+            # product and looked perfectly well-formed doing it. Where the binder prints no tube
+            # list at all there is no witness, and the screen is refused however plausible it
+            # looks. That costs Crystal Screen HT, which reconstructs all 96 and matches Crystal
+            # Screen 1 and 2 exactly; it is the same chemistry under a second catalogue number,
+            # so the library loses nothing but a duplicate.
+            if info["from_columns"] and len(info["wells"]) != info["n_tubes_declared"]:
+                print(f"  {catalogue}: {len(info['wells'])} conditions rebuilt from the column "
+                      f"layout but the binder declares {info['n_tubes_declared']} tubes, "
+                      f"rejected for want of an independent check")
+                rejected.append({"catalogue": catalogue, "n_extracted": len(info["wells"]),
+                                 "expected": info["n_tubes_declared"],
+                                 "why": "column layout with no matching tube count"})
+                continue
+
             if len(info["wells"]) < MIN_WELLS:
                 print(f"  {catalogue}: only {len(info['wells'])} conditions extracted "
                       f"(minimum {MIN_WELLS}), rejected rather than shipped incomplete")

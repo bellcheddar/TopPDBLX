@@ -67,6 +67,16 @@ complete plate by counting alone. Check that every well states a concentration.
   chloride hexahydrate; 0.3M Calcium chloride dihydrate`), so `NPS`, `precipitant mix` and
   `precipitant mix 4` in the unidentified head could be resolved from the vendor's own stock
   table. That is a second extraction pass over the same document.
+- **Four Hampton HT binders reconstruct cleanly but ship nothing.** Crystal Screen HT, MembFac
+  HT, Index HT and Grid Screen Salt HT are column-only layouts whose binders print no tube list,
+  so there is no independent witness to a dropped line and they are refused. Crystal Screen HT
+  reconstructs all 96 and matches Crystal Screen 1 and 2 exactly, which is what validated the
+  column extractor, but it is a duplicate so nothing is lost. Index HT is the warning: it
+  reconstructed a well-formed 48 for a 96-well product.
+- **Low Ionic Strength Screen (HR2-120) still fails**, because a page header interrupts its
+  precipitant column six entries in, leaving 6 against the buffer column's 18. Skipping page
+  furniture would recover 18 conditions, but it also weakens the equal-length check that is the
+  only thing standing between a positional zip and invented chemistry.
 - **The three NeXtal suites read at 84 to 90%, every other screen at 100%.** Their PDF text layer
   runs the salt, buffer and precipitant columns together and splits numbers at kerning pairs, so
   `hepes ph 7 .5 10% peg 8000`, `peg 6000 4.0` and `ammonium sulfate 25,5% peg 4000` arrive as

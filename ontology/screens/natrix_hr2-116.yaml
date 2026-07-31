@@ -1,0 +1,103 @@
+screen: Natrix
+catalogue: HR2-116
+vendor: Hampton Research
+source_url: https://hamptonresearch.com/uploads/support_materials/HR2-116_Binder.pdf
+retrieved: '2026-07-31'
+n_wells: 48
+wells:
+- well: '1'
+  condition_text: 0.01 M Magnesium chloride hexahydrate, 0.05 M MES monohydrate pH 5.6, 1.8 M Lithium sulfate monohydrate
+- well: '2'
+  condition_text: 0.01 M Magnesium acetate tetrahydrate, 0.05 M MES monohydrate pH 5.6, 2.5 M Ammonium sulfate
+- well: '3'
+  condition_text: 0.1 M Magnesium acetate tetrahydrate, 0.05 M MES monohydrate pH 5.6, 20% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '4'
+  condition_text: 0.2 M Potassium chloride, 0.01 M Magnesium sulfate heptahydrate, 0.05 M MES monohydrate pH 5.6, 10% v/v Polyethylene glycol 400
+- well: '5'
+  condition_text: 0.2 M Potassium chloride, 0.01 M Magnesium chloride hexahydrate, 0.05 M MES monohydrate pH 5.6, 5% w/v Polyethylene glycol 8,000
+- well: '6'
+  condition_text: 0.1 M Ammonium sulfate, 0.01 M Magnesium chloride hexahydrate, 0.05 M MES monohydrate pH 5.6, 20% w/v Polyethylene glycol 8,000
+- well: '7'
+  condition_text: 0.02 M Magnesium chloride hexahydrate, 0.05 M MES monohydrate pH 6.0, 15% v/v 2-Propanol
+- well: '8'
+  condition_text: 0.1 M Ammonium acetate, 0.005 M Magnesium sulfate heptahydrate, 0.05 M MES monohydrate pH 6.0, 0.6 M Sodium chloride
+- well: '9'
+  condition_text: 0.1 M Potassium chloride, 0.01 M Magnesium chloride hexahydrate, 0.05 M MES monohydrate pH 6.0, 10% v/v Polyethylene glycol 400
+- well: '10'
+  condition_text: 0.005 M Magnesium sulfate heptahydrate, 0.05 M MES monohydrate pH 6.0, 5% w/v Polyethylene glycol 4,000
+- well: '11'
+  condition_text: 0.01 M Magnesium chloride hexahydrate, 0.05 M Sodium cacodylate trihydrate pH 6.0, 1.0 M Lithium sulfate monohydrate
+- well: '12'
+  condition_text: 0.01 M Magnesium sulfate heptahydrate, 0.05 M Sodium cacodylate trihydrate pH 6.0, 1.8 M Lithium sulfate monohydrate
+- well: '13'
+  condition_text: 0.015 M Magnesium acetate tetrahydrate, 0.05 M Sodium cacodylate trihydrate pH 6.0, 1.7 M Ammonium sulfate
+- well: '14'
+  condition_text: 0.1 M Potassium chloride, 0.025 M Magnesium chloride hexahydrate, 0.05 M Sodium cacodylate trihydrate pH 6.0, 15% v/v 2-Propanol
+- well: '15'
+  condition_text: 0.04 M Magnesium chloride hexahydrate, 0.05 M Sodium cacodylate trihydrate pH 6.0, 5% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '16'
+  condition_text: 0.04 M Magnesium acetate tetrahydrate, 0.05 M Sodium cacodylate trihydrate pH 6.0, 30% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '17'
+  condition_text: 0.2 M Potassium chloride, 0.01 M Calcium chloride dihydrate, 0.05 M Sodium cacodylate trihydrate pH 6.0, 10% w/v Polyethylene glycol 4,000
+- well: '18'
+  condition_text: 0.01 M Magnesium acetate tetrahydrate, 0.05 M Sodium cacodylate trihydrate pH 6.5, 1.3 M Lithium sulfate monohydrate
+- well: '19'
+  condition_text: 0.01 M Magnesium sulfate heptahydrate, 0.05 M Sodium cacodylate trihydrate pH 6.5, 2.0 M Ammonium sulfate
+- well: '20'
+  condition_text: 0.1 M Ammonium acetate, 0.015 M Magnesium acetate tetrahydrate, 0.05 M Sodium cacodylate trihydrate pH 6.5, 10% v/v 2-Propanol
+- well: '21'
+  condition_text: 0.2 M Potassium chloride, 0.005 M Magnesium chloride hexahydrate, 0.05 M Sodium cacodylate trihydrate pH 6.5, 0.9 M 1,6-Hexanediol
+- well: '22'
+  condition_text: 0.08 M Magnesium acetate tetrahydrate, 0.05 M Sodium cacodylate trihydrate pH 6.5, 15% v/v Polyethylene glycol 400
+- well: '23'
+  condition_text: 0.2 M Potassium chloride, 0.01 M Magnesium chloride hexahydrate, 0.05 M Sodium cacodylate trihydrate pH 6.5, 10% w/v Polyethylene glycol 4,000
+- well: '24'
+  condition_text: 0.2 M Ammonium acetate, 0.01 M Calcium chloride dihydrate, 0.05 M Sodium cacodylate trihydrate pH 6.5, 10% w/v Polyethylene glycol 4,000
+- well: '25'
+  condition_text: 0.08 M Magnesium acetate tetrahydrate, 0.05 M Sodium cacodylate trihydrate pH 6.5, 30% w/v Polyethylene glycol 4,000
+- well: '26'
+  condition_text: 0.2 M Potassium chloride, 0.1 M Magnesium acetate tetrahydrate, 0.05 M Sodium cacodylate trihydrate pH 6.5, 10 % w/v Polyethylene glycol 8,000
+- well: '27'
+  condition_text: 0.2 M Ammonium acetate, 0.01 M Magnesium acetate tetrahydrate, 0.05 M Sodium cacodylate trihydrate pH 6.5, 30% w/v Polyethylene glycol 8,000
+- well: '28'
+  condition_text: 0.05 M Magnesium sulfate hydrate, 0.05 M HEPES sodium pH 7.0, 1.6 M Lithium sulfate monohydrate
+- well: '29'
+  condition_text: 0.01 M Magnesium chloride hexahydrate, 0.05 M HEPES sodium pH 7.0, 4.0 M Lithium chloride
+- well: '30'
+  condition_text: 0.01 M Magnesium chloride hexahydrate, 0.05 M HEPES sodium pH 7.0, 1.6 M Ammonium sulfate
+- well: '31'
+  condition_text: 0.005 M Magnesium chloride hexahydrate, 0.05 M HEPES sodium pH 7.0, 25% v/v Polyethylene glycol monomethyl ether 550
+- well: '32'
+  condition_text: 0.2 M Potassium chloride, 0.01 M Magnesium chloride hexahydrate, 0.05 M HEPES sodium pH 7.0, 1.7 M 1,6-Hexanediol
+- well: '33'
+  condition_text: 0.2 M Ammonium chloride, 0.01 M Magnesium chloride hexahydrate, 0.05 M HEPES sodium pH 7.0, 2.5 M 1,6-Hexanediol
+- well: '34'
+  condition_text: 0.1 M Potassium chloride, 0.005 M Magnesium sulfate hydrate, 0.05 M HEPES sodium pH 7.0, 15% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '35'
+  condition_text: 0.1 M Potassium chloride, 0.01 M Magnesium chloride hexahydrate, 0.05 M HEPES sodium pH 7.0, 5% v/v Polyethylene glycol 400
+- well: '36'
+  condition_text: 0.1 M Potassium chloride, 0.01 M Calcium chloride dihydrate, 0.05 M HEPES sodium pH 7.0, 10% v/v Polyethylene glycol 400
+- well: '37'
+  condition_text: 0.2 M Potassium chloride, 0.025 M Magnesium sulfate hydrate, 0.05 M HEPES sodium pH 7.0, 20% v/v Polyethylene glycol 200
+- well: '38'
+  condition_text: 0.2 M Ammonium acetate, 0.15 M Magnesium acetate tetrahydrate, 0.05 M HEPES sodium pH 7.0, 5% w/v Polyethylene glycol 4,000
+- well: '39'
+  condition_text: 0.1 M Ammonium acetate, 0.02 M Magnesium chloride hexahydrate, 0.05 M HEPES sodium pH 7.0, 5% w/v Polyethylene glycol 8,000
+- well: '40'
+  condition_text: 0.01 M Magnesium chloride hexahydrate, 0.05 M TRIS hydrochloride pH 7.5, 1.6 M Ammonium sulfate
+- well: '41'
+  condition_text: 0.1 M Potassium chloride, 0.015 M Magnesium chloride hexahydrate, 0.05 M TRIS hydrochloride pH 7.5, 10% v/v Polyethylene glycol monomethyl ether 550
+- well: '42'
+  condition_text: 0.01 M Magnesium chloride hexahydrate, 0.05 M TRIS hydrochloride pH 7.5, 5% v/v 2-Propanol
+- well: '43'
+  condition_text: 0.05 M Ammonium acetate, 0.01 M Magnesium chloride hexahydrate, 0.05 M TRIS hydrochloride pH 7.5, 10% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '44'
+  condition_text: 0.2 M Potassium chloride, 0.05 M Magnesium chloride hexahydrate, 0.05 M TRIS hydrochloride pH 7.5, 10% w/v Polyethylene glycol 4,000
+- well: '45'
+  condition_text: 0.025 M Magnesium sulfate hydrate, 0.05 M TRIS hydrochloride pH 8.5, 1.8 M Ammonium sulfate
+- well: '46'
+  condition_text: 0.005 M Magnesium sulfate hydrate, 0.05 M TRIS hydrochloride pH 8.5, 2.9 M 1,6-Hexanediol
+- well: '47'
+  condition_text: 0.1 M Potassium chloride, 0.01 M Magnesium chloride hexahydrate, 0.05 M TRIS hydrochloride pH 8.5, 30% v/v Polyethylene glycol 400
+- well: '48'
+  condition_text: 0.2 M Ammonium chloride, 0.01 M Calcium chloride dihydrate, 0.05 M TRIS hydrochloride pH 8.5, 30% w/v Polyethylene glycol 4,000

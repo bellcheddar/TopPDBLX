@@ -32,7 +32,8 @@ wells:
 - well: '13'
   condition_text: 0.05 M Sodium cacodylate trihydrate pH 6.0, 30% v/v (+/-)-2-Methyl-2,4-pentanediol
 - well: '14'
-  condition_text: 0.08 M Sodium chloride, 0.012 M Potassium chloride, 0.02 M Magnesium chloride hexahydrate, 0.04 M Sodium cacodylate trihydrate pH 6.0, 30% v/v (+/-)-2-Methyl-2,4-pentanediol,
+  condition_text: 0.08 M Sodium chloride, 0.012 M Potassium chloride, 0.02 M Magnesium chloride hexahydrate, 0.04 M Sodium cacodylate trihydrate pH 6.0, 30% v/v (+/-)-2-Methyl-2,4-pentanediol, 0.012 M Spermine
+    tetrahydrochloride
 - well: '15'
   condition_text: 0.08 M Sodium chloride, 0.02 M Magnesium chloride hexahydrate, 0.04 M Sodium cacodylate trihydrate pH 6.0, 35% v/v (+/-)-2-Methyl-2,4-pentanediol, 0.012 M Spermine tetrahydrochloride
 - well: '16'
@@ -72,7 +73,8 @@ wells:
 - well: '33'
   condition_text: 0.04 M Lithium chloride, 0.08 M Strontium chloride hexahydrate, 0.04 M Sodium cacodylate trihydrate pH 7.0, 30% v/v (+/-)-2-Methyl-2,4-pentanediol, 0.012 M Spermine tetrahydrochloride
 - well: '34'
-  condition_text: 0.04 M Lithium chloride, 0.08 M Strontium chloride hexahydrate, 0.02 M Magnesium chloride hexahydrate, 0.04 M Sodium cacodylate trihydrate pH 7.0,
+  condition_text: 0.04 M Lithium chloride, 0.08 M Strontium chloride hexahydrate, 0.02 M Magnesium chloride hexahydrate, 0.04 M Sodium cacodylate trihydrate pH 7.0, 30% v/v (+/-)-2-Methyl-2,4-pentanediol,
+    0.012 M Spermine tetrahydrochloride
 - well: '35'
   condition_text: 0.08 M Sodium chloride, 0.012 M Potassium chloride, 0.02 M Magnesium chloride hexahydrate, 0.04 M Sodium cacodylate trihydrate pH 7.0, 35% v/v (+/-)-2-Methyl-2,4-pentanediol, 0.012 M Spermine
     tetrahydrochloride

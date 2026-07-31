@@ -88,9 +88,9 @@ wells:
 - well: '41'
   condition_text: (0.02 M Citric acid, 0.08 M BIS-TRIS propane / pH 8.8), 16% w/v Polyethylene glycol 3,350
 - well: '42'
-  condition_text: 0.02 M Calcium chloride dihydrate, 0.02 M Cadmium chloride hydrate,
+  condition_text: 0.02 M Calcium chloride dihydrate, 0.02 M Cadmium chloride hydrate, 0.02 M Cobalt(II) chloride hexahydrate, 20% w/v Polyethylene glycol 3,350
 - well: '43'
-  condition_text: 0.01 M Magnesium chloride hexahydrate, 0.005 M Nickel(II) chloride hexahydrate
+  condition_text: 0.01 M Magnesium chloride hexahydrate, 0.005 M Nickel(II) chloride hexahydrate, 0.1 M HEPES sodium pH 7.0, 15% w/v Polyethylene glycol 3,350
 - well: '44'
   condition_text: 0.02 M Zinc chloride, 20% w/v Polyethylene glycol 3,350
 - well: '45'

@@ -62,7 +62,7 @@ wells:
 - well: '28'
   condition_text: 0.3 M Lithium sulfate monohydrate, 0.1 M ADA pH 6.5, 4% v/v Polyethylene glycol 400
 - well: '29'
-  condition_text: 0.1 M Ammonium sulfate, 0.1 M HEPES sodium pH 7.5, 0.5 M Sodium phosphate dibasic dihydrate,
+  condition_text: 0.1 M Ammonium sulfate, 0.1 M HEPES sodium pH 7.5, 0.5 M Sodium phosphate dibasic dihydrate, 0.5 M Potassium phosphate dibasic
 - well: '30'
   condition_text: 0.1 M Sodium chloride, 0.1 M HEPES sodium pH 7.5, 10% w/v Polyethylene glycol 4,000
 - well: '31'
@@ -86,7 +86,7 @@ wells:
 - well: '40'
   condition_text: 0.1 M Lithium sulfate monohydrate, 0.1 M Tris hydrochloride pH 8.5, 12% v/v (+/-)-2-Methyl-2,4-pentanediol
 - well: '41'
-  condition_text: 0.1 M Ammonium phosphate dibasic, 0.1 M Tris hydrochloride pH 8.5, 0.5 M Sodium phosphate dibasic dihydrate,
+  condition_text: 0.1 M Ammonium phosphate dibasic, 0.1 M Tris hydrochloride pH 8.5, 0.5 M Sodium phosphate dibasic dihydrate, 0.5 M Potassium phosphate dibasic
 - well: '42'
   condition_text: 0.1 M Tris hydrochloride pH 8.5, 0.1 M Sodium acetate trihydrate
 - well: '43'
