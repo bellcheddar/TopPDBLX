@@ -50,7 +50,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     lexicon = load_lexicon()
 
     kept = conditions.filter(pl.col("discard_reason").is_null())
-    resolved = components.filter(pl.col("name_canonical").is_not_null())
+    identified = components.filter(pl.col("name_canonical").is_not_null())
     discards = (conditions.filter(pl.col("discard_reason").is_not_null())
                 .group_by("discard_reason").agg(pl.len().alias("n"))
                 .sort("n", descending=True))
@@ -67,7 +67,7 @@ def main(argv: Optional[list[str]] = None) -> int:
 
         class_rows = "\n".join(
             f"| {r['chem_class']} | {r['n']:,} |"
-            for r in (resolved.group_by("chem_class").agg(pl.len().alias("n"))
+            for r in (identified.group_by("chem_class").agg(pl.len().alias("n"))
                       .sort("n", descending=True).iter_rows(named=True)))
 
         n_screen = note("assign.screen_match", "n_component_set_matches", 0)
@@ -149,7 +149,7 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 | Usable records | {kept.height:,} ({kept.height / conditions.height:.1%}) |
 | Discarded, with a reason code | {conditions.height - kept.height:,} |
 | Components | {components.height:,} |
-| Components resolved to a canonical reagent | {resolved.height:,} ({resolved.height / components.height:.1%}) |
+| Components identified as a canonical reagent | {identified.height:,} ({identified.height / components.height:.1%}) |
 | Records with a linked protein sequence | {note('release.assemble', 'n_with_sequence', 0):,} |
 | Distinct 30% identity sequence clusters | {note('release.assemble', 'n_distinct_cluster_30', 0):,} |
 | Classified into a precipitant class | {note('release.assemble', 'n_classified', 0):,} |
@@ -165,7 +165,7 @@ distribution is itself a result.
 |--------|---------|-------|
 {rows}
 
-### Resolved components by chemical class
+### Identified components by chemical class
 
 | Class | Components |
 |-------|-----------|
@@ -208,7 +208,7 @@ value and refuses to guess its meaning.
   ever used that screen.
 - **`curated_group` carries a precipitant class, and Unclassified is a real answer.** Every
   condition is sorted into one of the seven JCSG Top96 classes, or left Unclassified with the
-  reason recorded: an unresolved reagent, no stated amount for a precipitant, no precipitant at
+  reason recorded: an unidentified reagent, no stated amount for a precipitant, no precipitant at
   all, or a premixed system that does not fit a seven-class taxonomy. Unclassified is the single
   largest outcome and should be filtered on rather than assumed away.
 - **Cryoprotectant labels are mostly inferred.** Only about 2.2% of entries name a

@@ -131,12 +131,12 @@ def extract(clause: str) -> Quantity:
 
 def infer_unit(unit: Optional[Unit], chem_class: Optional[str], peg_mw: Optional[int],
                default_unit: Optional[str]) -> tuple[Optional[Unit], bool]:
-    """Resolve a missing or ambiguous unit from the reagent's chemistry.
+    """Identify a missing or ambiguous unit from the reagent's chemistry.
 
     Returns (unit, inferred). The rules, in order:
 
       * An explicit w/v or v/v marker always wins.
-      * A bare "%" is resolved by chemistry. PEGs of 600 and below behave as organic
+      * A bare "%" is identified by chemistry. PEGs of 600 and below behave as organic
         precipitants and are reported v/v; PEGs of 1000 and above are polymers reported
         w/v (spec 6.3). Organics and polyols are v/v. Everything else is w/v.
       * No unit at all falls back to the reagent's curated default, which is molar for

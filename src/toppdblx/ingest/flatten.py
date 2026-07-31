@@ -76,8 +76,8 @@ ENTITIES_SCHEMA = {
 XRAY = "X-RAY DIFFRACTION"
 
 
-def _first_resolution(entry_info: Optional[dict[str, Any]]) -> Optional[float]:
-    values = (entry_info or {}).get("resolution_combined") or []
+def _first_identification(entry_info: Optional[dict[str, Any]]) -> Optional[float]:
+    values = (entry_info or {}).get("identification_combined") or []
     return float(values[0]) if values else None
 
 
@@ -106,7 +106,7 @@ def entry_rows(entry: dict[str, Any]) -> Iterator[dict[str, Any]]:
         "is_xray": is_xray,
         "experimental_method": info.get("experimental_method"),
         "exptl_methods": methods,
-        "resolution_a": _first_resolution(info),
+        "resolution_a": _first_identification(info),
         "polymer_entity_count": info.get("polymer_entity_count"),
         "deposit_date": acc.get("deposit_date"),
         "initial_release_date": acc.get("initial_release_date"),

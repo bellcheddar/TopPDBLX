@@ -1,6 +1,6 @@
 """Stage `models.build_slm_dataset`: training data for the text-to-JSON parser.
 
-R1. 125,970 components (20.9%) resolve to no canonical reagent and 29.0% of records reach no L3
+R1. 125,970 components (20.9%) identify to no canonical reagent and 29.0% of records reach no L3
 group, so this is the highest-value remaining data work: everything downstream is thinned by it.
 
 **The labelling shortcut, and why it is tried first.** The brief and the roadmap both assume
@@ -54,8 +54,8 @@ SYSTEM = (
 # A record is a usable training example only if the rules accounted for every component and
 # covered nearly all of the text. Anything less would teach the model the rule parser's mistakes.
 #
-# **Not 1.0, and the reason matters.** Record confidence is `0.7 * resolution + 0.3 *
-# char_coverage`. The `accounted_for` check below already guarantees resolution is 1.0 among
+# **Not 1.0, and the reason matters.** Record confidence is `0.7 * identification + 0.3 *
+# char_coverage`. The `accounted_for` check below already guarantees identification is 1.0 among
 # clauses that contain chemistry, so confidence here is purely a measure of text coverage, and a
 # real deposition almost never covers every character: stray punctuation and connective words
 # leave a fraction behind. Requiring exactly 1.0 therefore excluded records the rules understood
@@ -63,21 +63,26 @@ SYSTEM = (
 # kept out of training (their confidence peaked at 0.998). The model then saw zero examples of
 # that verdict and could not learn it at all.
 #
-# 0.95 with resolution pinned at 1.0 implies char_coverage >= 0.833, which is the actual intent:
+# 0.95 with identification pinned at 1.0 implies char_coverage >= 0.833, which is the actual intent:
 # most of the text is explained.
 CONFIDENT = 0.95
+
+# Discard reasons whose correct answer is "this text names no chemistry". Used as training
+# examples with an empty or all-non-component target, because a model that has only ever seen
+# text containing reagents will produce a reagent for text that contains none.
+EMPTY_ANSWER_DISCARDS = {"TOO_SHORT", "METHOD_ONLY", "NON_CRYSTALLISATION_TEXT"}
 
 
 def accounted_for(component: dict[str, Any]) -> bool:
     """Whether the rules reached a definite verdict on this component.
 
-    A resolved reagent counts, and so does a confident `not_a_component`: both are correct
+    A identified reagent counts, and so does a confident `not_a_component`: both are correct
     parses. Only `unknown` (a reagent the lexicon does not recognise) leaves the record unusable
     as a training example.
 
     Including the non-reagent verdicts matters more than it looks. Requiring a canonical name for
     every component would drop every record containing a method note, which is 13.4% of the
-    unresolved mass, and the model would then never see a single example of the one output it
+    unidentified mass, and the model would then never see a single example of the one output it
     needs for that text. It would learn to invent a reagent instead, which is the failure mode
     that makes structured output worse than none.
     """
@@ -134,7 +139,8 @@ def main(argv: Optional[list[str]] = None) -> int:
 
         bootstrap: dict[str, list[dict[str, Any]]] = {"train": [], "valid": []}
         residual: list[dict[str, Any]] = []
-        skipped_unresolved = 0
+        skipped_unidentified = 0
+        n_empty_answers = 0
 
         for row in tqdm(framed.iter_rows(named=True), total=framed.height,
                         desc="records", unit="rec"):
@@ -144,6 +150,22 @@ def main(argv: Optional[list[str]] = None) -> int:
             key = (row["pdb_id"], row["crystal_id"])
             parts = grouped.get(key, [])
             fold = row["fold_30"] or "train"
+
+            # **Records whose correct answer is "no chemistry".** Every other training example
+            # contains a reagent, so the model had never been shown that an empty answer is
+            # allowed, and it duly invented one: given the text "pH 3.3" it emitted TRIS. These
+            # come from discards the rules judged confidently (TOO_SHORT, METHOD_ONLY,
+            # NON_CRYSTALLISATION_TEXT), so the label costs nothing and is not a guess.
+            if row["discard_reason"] in EMPTY_ANSWER_DISCARDS:
+                empty_example = {"messages": [
+                    {"role": "system", "content": SYSTEM},
+                    {"role": "user", "content": text},
+                    {"role": "assistant", "content": target_json(
+                        [c for c in parts if c["role"] == "not_a_component"])},
+                ]}
+                bootstrap["valid" if fold == "val" else "train"].append(empty_example)
+                n_empty_answers += 1
+                continue
 
             confident = (row["discard_reason"] is None
                          and row["parse_confidence"] >= CONFIDENT
@@ -158,29 +180,61 @@ def main(argv: Optional[list[str]] = None) -> int:
                     {"role": "user", "content": text},
                     {"role": "assistant", "content": target_json(parts)},
                 ]}
-                split = "valid" if fold == "val" else "train"
-                bootstrap[split].append(example)
-                # The `not_a_component` verdict appears on only about 1.2% of records, because
-                # most depositions that mention their own method also name a reagent the lexicon
-                # does not know, which disqualifies the record entirely. A class that rare is
-                # barely learnable, and it is one we deliberately added. Repeated in training
-                # only: the validation and residual sets must keep the corpus's real proportions
-                # or the metrics stop describing the corpus.
-                if split == "train" and any(c["role"] == "not_a_component" for c in parts):
-                    for _ in range(max(0, args.oversample_non_component - 1)):
-                        bootstrap["train"].append(example)
+                # The `not_a_component` verdict is rare, and it is a class we deliberately
+                # added, so it is oversampled below. That happens after deduplication, and only
+                # for training: the validation and residual sets keep the corpus's real
+                # proportions or the metrics stop describing the corpus.
+                bootstrap["valid" if fold == "val" else "train"].append(example)
             else:
                 if parts and not all(accounted_for(c) for c in parts):
-                    skipped_unresolved += 1
+                    skipped_unidentified += 1
                 residual.append({
                     "pdb_id": row["pdb_id"], "crystal_id": row["crystal_id"],
                     "text": text,
                     "rules_confidence": row["parse_confidence"],
                     "rules_discard": row["discard_reason"],
                     "n_components": len(parts),
-                    "n_unresolved": sum(1 for c in parts if not accounted_for(c)),
+                    "n_unidentified": sum(1 for c in parts if not accounted_for(c)),
                     "fold": fold,
                 })
+
+        # **Deduplicate before training.** The corpus repeats itself heavily: 45.7% of rows
+        # shared an input with another row, and one condition ("protein in 25mM Tris/HCl pH 7.5
+        # 100mM NaCl, see also PMID 27658368") appeared 1,784 times, taking 1.3% of the whole
+        # training set on its own. This is a deterministic text-to-JSON mapping, so a condition
+        # seen twice teaches nothing the first sighting did not, and the repeats simply spend
+        # gradient steps re-learning the popular depositions.
+        #
+        # Done before oversampling, not after: the `not_a_component` records were themselves
+        # duplicated, so multiplying first turned 1,339 distinct examples into 15,616 rows, an
+        # effective 11.7x where 8x was intended.
+        seen_train: set[str] = set()
+        deduplicated = []
+        for example in bootstrap["train"]:
+            key = example["messages"][1]["content"]
+            if key in seen_train:
+                continue
+            seen_train.add(key)
+            deduplicated.append(example)
+        n_duplicates = len(bootstrap["train"]) - len(deduplicated)
+        bootstrap["train"] = deduplicated
+
+        # Oversampling applied here instead, on distinct examples, so the multiplier means what
+        # it says.
+        if args.oversample_non_component > 1:
+            extra = []
+            for example in bootstrap["train"]:
+                content = example["messages"][2]["content"]
+                if '"not_a_component"' in content:
+                    extra.extend([example] * (args.oversample_non_component - 1))
+            bootstrap["train"].extend(extra)
+
+        # Validation is deduplicated too, or the loss is dominated by whichever conditions
+        # happen to be popular rather than by how well the model reads.
+        seen_valid: set[str] = set()
+        bootstrap["valid"] = [e for e in bootstrap["valid"]
+                              if not (e["messages"][1]["content"] in seen_valid
+                                      or seen_valid.add(e["messages"][1]["content"]))]
 
         if args.max_train:
             bootstrap["train"] = bootstrap["train"][:args.max_train]
@@ -207,9 +261,11 @@ def main(argv: Optional[list[str]] = None) -> int:
 
         stats = {
             "n_train": len(bootstrap["train"]),
+            "n_duplicate_inputs_removed": n_duplicates,
+            "n_empty_answer_examples": n_empty_answers,
             "n_valid": len(bootstrap["valid"]),
             "n_residual": len(residual),
-            "n_residual_with_unresolved": skipped_unresolved,
+            "n_residual_with_unidentified": skipped_unidentified,
             "chars_p50": lengths[len(lengths) // 2] if lengths else 0,
             "chars_p99": p99,
             "chars_max": lengths[-1] if lengths else 0,
@@ -219,7 +275,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         for key, value in stats.items():
             print(f"  {key:<28} {value:>10,}")
         print(f"\n  bootstrap labels cost no human time: they are the rule parser's own output")
-        print(f"  on records where it was fully confident and resolved every component.")
+        print(f"  on records where it was fully confident and identified every component.")
         print(f"  the {len(residual):,} residual records are the target, and the model never")
         print(f"  sees them in training, so the measurement is honest.")
     return 0

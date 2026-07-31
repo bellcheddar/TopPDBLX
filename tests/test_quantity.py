@@ -69,7 +69,7 @@ def test_explicit_marker_always_wins():
     (200, "percent_v_v"), (400, "percent_v_v"), (600, "percent_v_v"),
     (1000, "percent_w_v"), (3350, "percent_w_v"), (8000, "percent_w_v"),
 ])
-def test_bare_percent_on_a_peg_is_resolved_by_molecular_weight(peg_mw, expected):
+def test_bare_percent_on_a_peg_is_identified_by_molecular_weight(peg_mw, expected):
     """Spec 6.3: below ~600 a PEG behaves as an organic, above it as a polymer."""
     unit, inferred = infer_unit("percent_unspecified", "peg", peg_mw, None)
     assert unit == expected
@@ -83,7 +83,7 @@ def test_bare_percent_on_a_peg_is_resolved_by_molecular_weight(peg_mw, expected)
     ("buffer", "percent_w_v"),
     ("detergent", "percent_w_v"),
 ])
-def test_bare_percent_is_resolved_by_chemical_class(chem_class, expected):
+def test_bare_percent_is_identified_by_chemical_class(chem_class, expected):
     unit, inferred = infer_unit("percent_unspecified", chem_class, None, None)
     assert unit == expected
     assert inferred is True

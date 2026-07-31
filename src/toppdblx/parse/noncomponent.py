@@ -1,13 +1,13 @@
 """Recognise clauses that are not reagents at all.
 
-Measured on the 125,970 unresolved components: **17.5% are not chemistry**. They are method
+Measured on the 125,970 unidentified components: **17.5% are not chemistry**. They are method
 text ("crystal obtained by streak-seeding", 367; "batch", 358; "small tubes", 255), unnamed
 proteins and ligands ("protein", 799; "inhibitor", 382), screen references ("buffer system 3"),
 and bare splitter fragments ("na", "k").
 
 Why this matters beyond tidiness: these were counted in the denominator of the reagent
-resolution rate, so the parser was being scored as having *failed to resolve* text that contains
-no reagent to resolve. Excluding them moves measured resolution from 79.1% to 82.1% without
+identification rate, so the parser was being scored as having *failed to identify* text that contains
+no reagent to identify. Excluding them moves measured identification from 79.1% to 82.1% without
 changing a single parse. R1's 85% gate is set against that denominator, so getting it right is
 the difference between measuring the parser and measuring an artefact.
 
@@ -16,7 +16,7 @@ teaches it to invent chemistry, which is the one failure mode that makes structu
 worse than no output.
 
 **Deliberately conservative.** A false positive here silently deletes a real reagent, which is
-far worse than leaving an unresolved component in place: the unresolved case is visible in the
+far worse than leaving an unidentified component in place: the unidentified case is visible in the
 coverage report, the deleted case is not. So every pattern must be anchored or specific, and
 anything that carries a concentration is treated as a reagent regardless of what it looks like,
 because a quantity is strong evidence that a depositor was naming a substance.
@@ -27,7 +27,7 @@ from __future__ import annotations
 import re
 from typing import Optional
 
-# Method, protocol and apparatus text. The largest slice at 13.4% of unresolved. Anchored on
+# Method, protocol and apparatus text. The largest slice at 13.4% of unidentified. Anchored on
 # verbs and apparatus nouns that cannot appear in a reagent name.
 _METHOD = re.compile(
     r"\b(?:streak[- ]?seed\w*|micro[- ]?seed\w*|macro[- ]?seed\w*|seeded|seeding|"

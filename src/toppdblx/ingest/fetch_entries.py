@@ -46,7 +46,7 @@ query($ids:[String!]!){
     exptl { method }
     exptl_crystal_grow { crystal_id method temp temp_details pH pdbx_pH_range pdbx_details details }
     rcsb_accession_info { initial_release_date revision_date deposit_date major_revision minor_revision }
-    rcsb_entry_info { resolution_combined polymer_entity_count experimental_method }
+    rcsb_entry_info { identification_combined polymer_entity_count experimental_method }
     polymer_entities {
       rcsb_id
       entity_poly { type pdbx_seq_one_letter_code pdbx_seq_one_letter_code_can rcsb_sample_sequence_length pdbx_strand_id }

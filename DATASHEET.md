@@ -47,7 +47,7 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 | Usable records | 186,162 (93.5%) |
 | Discarded, with a reason code | 13,023 |
 | Components | 603,459 |
-| Components resolved to a canonical reagent | 514,084 (85.2%) |
+| Components identified as a canonical reagent | 514,084 (85.2%) |
 | Records with a linked protein sequence | 195,985 |
 | Distinct 30% identity sequence clusters | 23,868 |
 | Classified into a precipitant class | 109,683 |
@@ -69,7 +69,7 @@ distribution is itself a result.
 | `EMPTY` | 91 | 0.05% |
 | `NON_CRYSTALLISATION_TEXT` | 87 | 0.04% |
 
-### Resolved components by chemical class
+### Identified components by chemical class
 
 | Class | Components |
 |-------|-----------|
@@ -122,7 +122,7 @@ value and refuses to guess its meaning.
   ever used that screen.
 - **`curated_group` carries a precipitant class, and Unclassified is a real answer.** Every
   condition is sorted into one of the seven JCSG Top96 classes, or left Unclassified with the
-  reason recorded: an unresolved reagent, no stated amount for a precipitant, no precipitant at
+  reason recorded: an unidentified reagent, no stated amount for a precipitant, no precipitant at
   all, or a premixed system that does not fit a seven-class taxonomy. Unclassified is the single
   largest outcome and should be filtered on rather than assumed away.
 - **Cryoprotectant labels are mostly inferred.** Only about 2.2% of entries name a

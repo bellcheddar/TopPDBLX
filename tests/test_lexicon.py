@@ -27,7 +27,7 @@ def make(**overrides):
 # --- schema ---------------------------------------------------------------
 
 def test_alias_claimed_by_two_reagents_is_a_hard_error():
-    """Silent resolution to whichever loaded first would be far worse than a crash."""
+    """Silent identification to whichever loaded first would be far worse than a crash."""
     with pytest.raises(ValidationError, match="claimed by more than one"):
         lex.Lexicon.model_validate({"version": "0.0.1", "reagents": [
             make(canonical_id="SALT_A", display_name="Salt A", aliases=["shared"]),
@@ -92,7 +92,7 @@ def test_shipped_lexicon_validates(shipped):
     assert len(shipped.reagents) > 100
 
 
-def test_shipped_lexicon_resolves_real_corpus_spellings(shipped):
+def test_shipped_lexicon_identifies_real_corpus_spellings(shipped):
     index = shipped.index()
     cases = {
         "ammonium sulphate": "AMMONIUM_SULFATE",
@@ -113,7 +113,7 @@ def test_shipped_lexicon_resolves_real_corpus_spellings(shipped):
         assert index[spelling].canonical_id == expected, spelling
 
 
-def test_bare_anions_resolved_by_the_audit(shipped):
+def test_bare_anions_identified_by_the_audit(shipped):
     """Settled in the 2026-07-29 audit: where a counter-ion is conventional, map it."""
     index = shipped.index()
     assert index["citrate"].canonical_id == "SODIUM_CITRATE"

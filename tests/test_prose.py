@@ -1,8 +1,8 @@
 """Tests for stripping narrative prose off a reagent clause.
 
-The stripper runs only as a retry after a clause has already failed to resolve, so its risk
-profile is one-sided: it can turn an unresolved component into a resolved one, and cannot turn a
-resolved one into anything else. These tests hold that line, because a pattern that trims too
+The stripper runs only as a retry after a clause has already failed to identify, so its risk
+profile is one-sided: it can turn an unidentified component into a identified one, and cannot turn a
+identified one into anything else. These tests hold that line, because a pattern that trims too
 much would be invisible in the coverage number.
 """
 

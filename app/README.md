@@ -31,7 +31,7 @@ payload with the same shape, so a new audit is a new generator stage rather than
 |---|---|---|---|
 | Parse audit | `eval.audit_questions` | 35 | Unit inference and reagent naming across the corpus |
 | Condition groups | `assign.group_questions` | 26 | The 163-group ontology |
-| Lexicon gaps | `parse.lexicon_questions` | 40 | 7,018 unresolved components |
+| Lexicon gaps | `parse.lexicon_questions` | 40 | 7,018 unidentified components |
 
 ## ⚠️ A recommendation is an answer, not a suggestion
 
@@ -44,7 +44,7 @@ isomer.
 Guards decide what is **recommended**, never what is **available**: a rejected candidate stays in
 the list labelled `NOT recommended: numbers differ ...`, because hiding it would put the correct
 answer out of reach. Where a name is genuinely ambiguous (bare `peg`, bare `phosphate`) the
-recommendation is to leave it unresolved rather than invent a member the depositor never named.
+recommendation is to leave it unidentified rather than invent a member the depositor never named.
 
 ## 🚀 Usage
 

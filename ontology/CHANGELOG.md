@@ -41,7 +41,7 @@ organic, salt below 0.2 M ignored, and any PEG or organic below 4% ignored.
 | Organic | 2,403 | 1.3% |
 
 **Unclassified is an answer, not a failure**, and at 47.7% it is the largest one. The reason is
-always recorded: unresolved reagent (29.9%), no amount stated for a precipitant (12.5%), no
+always recorded: unidentified reagent (29.9%), no amount stated for a precipitant (12.5%), no
 precipitant at all (3.0%), premixed system (2.3%).
 
 **This settles spec 6.4**, open since Phase 0 deferred it as "the taxonomy is Phase 1 and can
@@ -110,7 +110,7 @@ Known gaps recorded rather than hidden:
 ### 0.2.0 (2026-07-30)
 
 165 reagents, 570 names, from the R1 lexicon-gap audit: 40 questions ranked by corpus frequency,
-each standing for every occurrence of that string, covering 7,018 unresolved components. Built by
+each standing for every occurrence of that string, covering 7,018 unidentified components. Built by
 `parse.lexicon_questions` and applied by `parse.apply_lexicon_answers`, so this version is
 reproducible from corpus plus answers rather than hand-patched.
 
@@ -138,15 +138,15 @@ guards, and on these it was wrong:
   captured as one clause, a splitter defect rather than a reagent. Recorded in
   `data/interim/splitter_defects.json`.
 
-**Six strings were deliberately left unresolved** (1,694 components): `peg` (720), `phosphate`
+**Six strings were deliberately left unidentified** (1,694 components): `peg` (720), `phosphate`
 (358), `propanediol`, `citrate buffer`, `polyethylene glycol`, `butanediol`. Each names a family
-without naming a member, so any specific entry would be invented rather than resolved.
+without naming a member, so any specific entry would be invented rather than identified.
 
 **PCTP and PDTP were held back** (341 components). Both are mixed buffer systems, and the lexicon
 requires a premix to list its constituents and a buffer to carry a pKa. Neither formulation was
 confirmed during the audit, and a mixed system spanning a pH range has no single pKa. Inventing
 constituents to satisfy the schema would defeat the purpose of the invariant, so they remain
-unresolved pending a verified formulation.
+unidentified pending a verified formulation.
 
 ### 0.1.0 (2026-07-29)
 

@@ -2,7 +2,7 @@
 
 Each well is parsed with the **same parser used on the PDB text**, so matching is schema to
 schema rather than string to string. That has a useful side effect: the vendor strings are
-clean, well-formed prose, so the fraction of wells the parser fully resolves is a direct
+clean, well-formed prose, so the fraction of wells the parser fully identifies is a direct
 check on the parser against text that ought to be easy. A parser that stumbles on
 `0.2 M Magnesium chloride hexahydrate, 0.1 M TRIS hydrochloride pH 8.5, 30% w/v
 Polyethylene glycol 4,000` has no business on the messy corpus.
@@ -44,7 +44,7 @@ class Well:
     components: tuple[Component, ...]
     ph: Optional[float]
     fingerprint: frozenset[str]
-    resolved: bool
+    identified: bool
 
 
 @dataclass
@@ -54,13 +54,13 @@ class ScreenLibrary:
     def by_fingerprint(self) -> dict[frozenset[str], list[Well]]:
         index: dict[frozenset[str], list[Well]] = {}
         for well in self.wells:
-            if well.resolved:
+            if well.identified:
                 index.setdefault(well.fingerprint, []).append(well)
         return index
 
     @property
-    def n_resolved(self) -> int:
-        return sum(1 for w in self.wells if w.resolved)
+    def n_identified(self) -> int:
+        return sum(1 for w in self.wells if w.identified)
 
 
 def fingerprint(components: Iterable[Component]) -> frozenset[str]:
@@ -70,7 +70,7 @@ def fingerprint(components: Iterable[Component]) -> frozenset[str]:
     and are not part of the crystallisation condition. Components whose cryo role was only
     *inferred* stay in, because a third of glycerol values in this corpus sit above 15%,
     which is precipitant scale, and dropping those would corrupt otherwise correct matches.
-    Unresolved components are kept as a sentinel so a record containing them cannot match
+    Unidentified components are kept as a sentinel so a record containing them cannot match
     a well exactly.
     """
     names = set()
@@ -136,6 +136,6 @@ def load(parser: RuleParser, screens_dir: Path = SCREENS_DIR) -> ScreenLibrary:
                 components=components,
                 ph=record.ph,
                 fingerprint=fingerprint(components),
-                resolved=bool(components) and all(c.name_canonical for c in components),
+                identified=bool(components) and all(c.name_canonical for c in components),
             ))
     return library

@@ -8,15 +8,15 @@ arrive with a whole sentence wrapped around its chemistry:
     "then transferred to 100 mm tris-hcl"
     "protein buffer: 20 mm tris"
 
-Each of those became one unresolvable "reagent name". Measured across the corpus: **11,174
-unresolved components (13.7%) are longer than 40 characters and 5,799 (7.1%) contain a verb or
+Each of those became one unidentifiable "reagent name". Measured across the corpus: **11,174
+unidentified components (13.7%) are longer than 40 characters and 5,799 (7.1%) contain a verb or
 other prose marker.** No amount of lexicon curation reaches them, because the string is not a
 reagent name and never will be.
 
 **Used only as a retry, never as a first pass.** `rules.parse_component` calls this when the
-clause has already failed to resolve, and keeps the stripped version only if it then resolves.
+clause has already failed to identify a reagent, and keeps the stripped version only if it then identifies one.
 So a parse that already works cannot be changed, and the worst case of a bad pattern here is
-that a component stays unresolved, which it already was. That asymmetry is deliberate: the
+that a component stays unidentified, which it already was. That asymmetry is deliberate: the
 alternative, stripping first and parsing second, would put every existing correct parse at risk
 of a regex that trims too much.
 """

@@ -66,12 +66,12 @@ def test_a_mixture_is_unclassified():
     assert label == UNCLASSIFIED and reason == "mixture"
 
 
-def test_an_unresolved_reagent_makes_the_whole_condition_unclassified():
+def test_an_unidentified_reagent_makes_the_whole_condition_unclassified():
     """A name the lexicon does not recognise could be anything, so nothing about the condition
     can be asserted on the evidence."""
     label, reason = classify_condition([comp("PEG_3350", "peg", 20, "percent_w_v"),
                                         comp(None, None, 1, "molar")])
-    assert label == UNCLASSIFIED and reason == "unresolved_reagent"
+    assert label == UNCLASSIFIED and reason == "unidentified_reagent"
 
 
 def test_a_precipitant_with_no_amount_is_unclassified():

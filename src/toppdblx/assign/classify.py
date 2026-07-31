@@ -26,7 +26,7 @@ is left alone rather than forced into a class:
                          alcohol mix and a buffer system at once and do not fit a seven-class
                          taxonomy. This settles spec 6.4, which asked for the decision to be made
                          before assignment and never got one.
-  *unresolved reagents*  a component whose name the lexicon does not recognise could be anything,
+  *unidentified reagents*  a component whose name the lexicon does not recognise could be anything,
                          so the condition it belongs to cannot be classified on the evidence.
   *no amount stated*     a precipitant with no concentration or no unit is not a measured
                          condition. About 22,000 components name a precipitant and never say how
@@ -74,7 +74,7 @@ FAMILY_OF_CHEM_CLASS = {
 
 # Reasons a condition cannot be classified, reported so the unclassified share is explicable
 # rather than a single opaque bucket.
-REASONS = ("mixture", "unresolved_reagent", "no_amount", "no_precipitant")
+REASONS = ("mixture", "unidentified_reagent", "no_amount", "no_precipitant")
 
 
 def classify_condition(components: list[dict[str, Any]]) -> tuple[str, Optional[str]]:
@@ -92,7 +92,7 @@ def classify_condition(components: list[dict[str, Any]]) -> tuple[str, Optional[
 
         name = component.get("name_canonical")
         if not name:
-            return UNCLASSIFIED, "unresolved_reagent"
+            return UNCLASSIFIED, "unidentified_reagent"
 
         family = FAMILY_OF_CHEM_CLASS.get(component.get("chem_class") or "")
         if family is None:
@@ -120,6 +120,9 @@ def main(argv: Optional[list[str]] = None) -> int:
                         default=config.INTERIM_DIR / "parsed_conditions.parquet")
     parser.add_argument("--out", type=Path,
                         default=config.INTERIM_DIR / "condition_classes.parquet")
+    parser.add_argument("--slm-components", type=Path, default=None,
+                        help="components read by the fine-tuned model, for records the rules "
+                             "could not read")
     args = parser.parse_args(argv)
 
     config.ensure_dirs()
@@ -133,9 +136,30 @@ def main(argv: Optional[list[str]] = None) -> int:
         if key in keys:
             grouped.setdefault(key, []).append(row)
 
+    # **The rules are authoritative.** Model output is used only for records where the rules left
+    # something unidentified, and it replaces that record's components wholesale rather than being
+    # interleaved: mixing two parsers' readings of one string would produce a component list that
+    # neither of them actually asserted. A record the rules read cleanly is never touched.
+    n_from_model = 0
+    if args.slm_components and args.slm_components.exists():
+        from_model: dict[tuple, list[dict[str, Any]]] = {}
+        for row in pl.read_parquet(args.slm_components).iter_rows(named=True):
+            key = (row["pdb_id"], row["crystal_id"])
+            if key in keys:
+                from_model.setdefault(key, []).append(row)
+        for key, model_parts in from_model.items():
+            existing = grouped.get(key, [])
+            rules_left_a_gap = any(
+                not c["name_canonical"] and c["role"] != "not_a_component" for c in existing)
+            if rules_left_a_gap or not existing:
+                grouped[key] = model_parts
+                n_from_model += 1
+
     with Manifest(STAGE, params={"classes": sorted(CLASSES.values())}) as m:
         m.add_input(args.components).add_input(args.conditions)
 
+        if args.slm_components:
+            print(f"  {n_from_model:,} records re-read by the model where the rules left a gap")
         rows, class_counts, reason_counts = [], Counter(), Counter()
         for key in keys:
             label, reason = classify_condition(grouped.get(key, []))
@@ -153,6 +177,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         total = frame.height
         classified = total - class_counts[UNCLASSIFIED]
         stats = {"n_conditions": total, "n_classified": classified,
+                 "n_records_from_model": n_from_model,
                  "n_unclassified": class_counts[UNCLASSIFIED],
                  **{f"n_{k.lower().replace('/', '_')}": v for k, v in class_counts.items()},
                  **{f"n_unclassified_{k}": v for k, v in reason_counts.items()}}

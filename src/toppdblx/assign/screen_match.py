@@ -85,7 +85,7 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     with Manifest(STAGE, params={"n_screens": len({w.catalogue for w in library.wells}),
                                  "n_wells": len(library.wells),
-                                 "n_wells_resolved": library.n_resolved}) as m:
+                                 "n_wells_identified": library.n_identified}) as m:
         m.add_input(args.components).add_input(args.conditions)
         m.add_input(config.ONTOLOGY_DIR / "screens")
 
@@ -146,13 +146,13 @@ def main(argv: Optional[list[str]] = None) -> int:
             "n_exact_including_ph": exact,
             "n_optimised_not_screen": n_fingerprint - conc_ok,
             "n_wells": len(library.wells),
-            "n_wells_resolved": library.n_resolved,
+            "n_wells_identified": library.n_identified,
         }
         m.add_output(args.out).note(**stats)
 
         print(f"\nscreen library: {len(library.wells)} wells across "
               f"{len({w.catalogue for w in library.wells})} screens, "
-              f"{library.n_resolved} fully resolved ({library.n_resolved/len(library.wells):.1%})")
+              f"{library.n_identified} fully identified ({library.n_identified/len(library.wells):.1%})")
         print(f"\n{n_records:,} kept records")
         print(f"  component set matches a known well: {n_fingerprint:>7,} "
               f"({stats['component_set_match_rate']:.2%})")

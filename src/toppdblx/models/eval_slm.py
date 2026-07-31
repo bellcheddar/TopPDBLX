@@ -1,6 +1,6 @@
 """Stage `models.eval_slm`: does the fine-tuned parser actually beat the rules?
 
-R1's failure condition, set in `ROADMAP.md` before any training: **component resolution must
+R1's failure condition, set in `ROADMAP.md` before any training: **component identification must
 exceed 85% and schema validity must stay at or above 99%**, or `rules_v3` is kept and the attempt
 recorded.
 
@@ -13,7 +13,7 @@ conflated:
   the model never saw, on proteins in different sequence clusters. High fidelity means the model
   learned the mapping rather than memorising strings. It is a ceiling, not a win.
 
-  *resolution*, on the residual. These are the records the rules could **not** read, so there is
+  *identification*, on the residual. These are the records the rules could **not** read, so there is
   no label to be circular about. The question is simply whether the emitted reagent name is one
   the curated lexicon recognises. That is a real gain over `rules_v3`, which returned nothing
   for these by definition.
@@ -35,6 +35,7 @@ import json
 import math
 import os
 import random
+import re
 import shutil
 import tempfile
 from pathlib import Path
@@ -54,7 +55,7 @@ STAGE = "models.eval_slm"
 MAX_TOKENS = 512
 BATCH = 32
 
-RESOLUTION_TARGET = 85.0
+IDENTIFICATION_TARGET = 85.0
 VALIDITY_TARGET = 99.0
 
 VALID_ROLES = {"precipitant", "salt", "buffer", "additive", "cryo", "not_a_component",
@@ -97,9 +98,9 @@ def wilson(successes: int, n: int, z: float = 1.96) -> tuple[float, float]:
     """Wilson score interval, as percentages.
 
     Reported because the point estimates alone invited a wrong conclusion. Checkpoints 600 and
-    900 scored 87.01% and 85.17% resolution, which reads as a peak followed by decline; their
+    900 scored 87.01% and 85.17% identification, which reads as a peak followed by decline; their
     intervals overlap ([85.58, 88.32] against [83.67, 86.55]), so the difference is sampling
-    noise on 800 records and the truthful statement is that resolution plateaus. Wilson rather
+    noise on 800 records and the truthful statement is that identification plateaus. Wilson rather
     than the normal approximation because these proportions sit near 1, where the normal interval
     runs past 100%.
     """
@@ -113,11 +114,60 @@ def wilson(successes: int, n: int, z: float = 1.96) -> tuple[float, float]:
 
 
 def load_lexicon() -> set[str]:
-    """Canonical reagent names, which is what "resolved" means for a generated name."""
+    """Canonical reagent names, which is what "identified" means for a generated name."""
     data = yaml.safe_load((config.ONTOLOGY_DIR / "synonyms.yaml").read_text())
     # `canonical_id` (PEG_200, MAGNESIUM_SULFATE) is what the components table stores in
     # `name_canonical`, so it is also what the model is trained to emit.
     return {r["canonical_id"] for r in data["reagents"]}
+
+
+
+def load_aliases() -> dict[str, list[str]]:
+    """Canonical id -> every spelling the lexicon knows for it, normalised for substring search."""
+    data = yaml.safe_load((config.ONTOLOGY_DIR / "synonyms.yaml").read_text())
+    out: dict[str, list[str]] = {}
+    for reagent in data["reagents"]:
+        forms = [reagent["canonical_id"].replace("_", " "), reagent.get("display_name", "")]
+        forms += list(reagent.get("aliases") or [])
+        seen = []
+        for form in forms:
+            key = _flatten(str(form))
+            if key and key not in seen:
+                seen.append(key)
+        out[reagent["canonical_id"]] = seen
+    return out
+
+
+def _flatten(text: str) -> str:
+    """Lower case, strip everything that is not a letter or digit.
+
+    Punctuation and spacing are exactly what varies between "PEG 3350", "peg-3350" and
+    "peg3350", so removing them entirely is what lets one alias match all three.
+    """
+    return re.sub(r"[^a-z0-9]", "", (text or "").lower())
+
+
+def grounded_in_text(name: Optional[str], text: str,
+                     aliases: dict[str, list[str]]) -> bool:
+    """Whether the source text actually mentions the reagent the model named.
+
+    **This is the check that matters, and the one the identification metric lacks.** Identification asks
+    only whether an emitted name exists in the lexicon, so a model reading "20% PEG 3350" and
+    emitting SODIUM_CHLORIDE scores as identified: the name is real, it is simply not the reagent
+    in front of it. Curation exists to make names mean something, and a metric that cannot tell
+    a right name from a real one measures nothing worth having.
+
+    Grounding needs no labels: if the model names a reagent, some spelling of that reagent should
+    appear in the text it was given. A failure is either a hallucination or a spelling the lexicon
+    has never seen, and both are things to know about.
+    """
+    if not name:
+        return False
+    flat = _flatten(text)
+    for form in aliases.get(name, []):
+        if form and form in flat:
+            return True
+    return False
 
 
 def check(text: str, lexicon: set[str]) -> dict[str, Any]:
@@ -126,21 +176,21 @@ def check(text: str, lexicon: set[str]) -> dict[str, Any]:
     try:
         parsed = json.loads(text)
     except (json.JSONDecodeError, ValueError):
-        return {"valid": False, "reason": "unparseable", "n": 0, "n_resolved": 0}
+        return {"valid": False, "reason": "unparseable", "n": 0, "n_identified": 0}
     if not isinstance(parsed, list):
-        return {"valid": False, "reason": "not_a_list", "n": 0, "n_resolved": 0}
+        return {"valid": False, "reason": "not_a_list", "n": 0, "n_identified": 0}
 
-    names, resolved, non_components = [], 0, 0
+    names, identified, non_components = [], 0, 0
     for item in parsed:
         if not isinstance(item, dict):
-            return {"valid": False, "reason": "element_not_object", "n": 0, "n_resolved": 0}
+            return {"valid": False, "reason": "element_not_object", "n": 0, "n_identified": 0}
         if item.get("role") not in VALID_ROLES:
-            return {"valid": False, "reason": "bad_role", "n": 0, "n_resolved": 0}
+            return {"valid": False, "reason": "bad_role", "n": 0, "n_identified": 0}
         unit = normalise_unit(item.get("unit"))
         if unit not in VALID_UNITS:
-            return {"valid": False, "reason": "bad_unit", "n": 0, "n_resolved": 0}
+            return {"valid": False, "reason": "bad_unit", "n": 0, "n_identified": 0}
         item["unit"] = unit  # so the repaired value is what downstream and the sample file see
-        # Excluded from the resolution denominator, not counted as a miss. The model saying "this
+        # Excluded from the identification denominator, not counted as a miss. The model saying "this
         # text names no reagent" is a correct answer, and there is no lexicon entry it could have
         # matched, so scoring it as a failure would measure an artefact. This mirrors the same
         # exclusion applied to the rule parser in parse/noncomponent.py.
@@ -150,9 +200,9 @@ def check(text: str, lexicon: set[str]) -> dict[str, Any]:
         name = item.get("name")
         names.append(name)
         if name in lexicon:
-            resolved += 1
+            identified += 1
     return {"valid": True, "reason": None, "n": len(parsed) - non_components,
-            "n_resolved": resolved, "n_non_components": non_components,
+            "n_identified": identified, "n_non_components": non_components,
             "names": names, "parsed": parsed}
 
 
@@ -178,6 +228,9 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument("--sample-out", type=Path,
                         default=config.INTERIM_DIR / "slm" / "residual_sample.jsonl")
     parser.add_argument("--seed", type=int, default=17)
+    parser.add_argument("--frozen", action="store_true",
+                        help="score against the frozen benchmark instead of the live residual, "
+                             "so rounds can be compared to each other")
     parser.add_argument("--checkpoint", type=int, default=None,
                         help="evaluate the intermediate checkpoint at this iteration")
     args = parser.parse_args(argv)
@@ -216,16 +269,30 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     os.environ.pop("HF_TOKEN", None)  # stale token 401s even on public repos
     lexicon = load_lexicon()
+    aliases = load_aliases()
     rng = random.Random(args.seed)
 
     valid_rows = [json.loads(l) for l in
                   (args.data_dir / "valid.jsonl").read_text().splitlines() if l.strip()]
-    residual_rows = [json.loads(l) for l in
-                     (args.data_dir / "residual.jsonl").read_text().splitlines() if l.strip()]
+    # The live residual shrinks from the easy end whenever curation or the parser improves, so
+    # a score on it is not comparable between rounds. The frozen set fixes the population.
+    frozen_meta = None
+    if args.frozen:
+        frozen_path = args.data_dir / "frozen_evalset.jsonl"
+        if not frozen_path.exists():
+            raise SystemExit(f"{frozen_path} missing. Run: ./run.sh models.freeze_evalset")
+        loaded = [json.loads(l) for l in frozen_path.read_text().splitlines() if l.strip()]
+        frozen_meta = loaded[0].get("_meta") if loaded and "_meta" in loaded[0] else None
+        residual_rows = [r for r in loaded if "_meta" not in r]
+    else:
+        residual_rows = [json.loads(l) for l in
+                         (args.data_dir / "residual.jsonl").read_text().splitlines() if l.strip()]
     rng.shuffle(valid_rows)
-    rng.shuffle(residual_rows)
+    if not args.frozen:
+        rng.shuffle(residual_rows)
     valid_rows = valid_rows[:args.limit]
-    residual_rows = residual_rows[:args.limit]
+    if not args.frozen:
+        residual_rows = residual_rows[:args.limit]
 
     with Manifest(STAGE, params={"model": args.model, "adapter": str(args.adapter_dir),
                                  "limit": args.limit, "max_tokens": MAX_TOKENS,
@@ -282,13 +349,15 @@ def main(argv: Optional[list[str]] = None) -> int:
         precision = 100 * tp / (tp + fp) if tp + fp else 0.0
         recall = 100 * tp / (tp + fn) if tp + fn else 0.0
 
-        # --- Resolution: the residual, where the rules returned nothing ------------------
+        # --- Identification: the residual, where the rules returned nothing ------------------
         res_generated = run([r["text"] for r in residual_rows], "residual")
 
-        res_valid = res_components = res_resolved = 0
-        fully_resolved = 0
+        res_valid = res_components = res_identified = 0
+        res_grounded = 0
+        ungrounded_examples: list[dict[str, Any]] = []
+        fully_identified = 0
         reasons: dict[str, int] = {}
-        unresolved_names: dict[str, int] = {}
+        unidentified_names: dict[str, int] = {}
         samples = []
         for row, gen in zip(residual_rows, res_generated):
             scored = check(gen.strip(), lexicon)
@@ -297,16 +366,28 @@ def main(argv: Optional[list[str]] = None) -> int:
                 continue
             res_valid += 1
             res_components += scored["n"]
-            res_resolved += scored["n_resolved"]
-            if scored["n"] and scored["n_resolved"] == scored["n"]:
-                fully_resolved += 1
+            res_identified += scored["n_identified"]
+            # Grounding: is each named reagent actually mentioned in the text it was given?
+            for item in scored["parsed"]:
+                if item.get("role") == "not_a_component":
+                    continue
+                name = item.get("name")
+                if name not in lexicon:
+                    continue
+                if grounded_in_text(name, row["text"], aliases):
+                    res_grounded += 1
+                elif len(ungrounded_examples) < 40:
+                    ungrounded_examples.append(
+                        {"pdb_id": row["pdb_id"], "named": name, "text": row["text"][:160]})
+            if scored["n"] and scored["n_identified"] == scored["n"]:
+                fully_identified += 1
             for name in scored.get("names", []):
                 if name not in lexicon:
-                    unresolved_names[str(name)] = unresolved_names.get(str(name), 0) + 1
+                    unidentified_names[str(name)] = unidentified_names.get(str(name), 0) + 1
             if len(samples) < 60:
                 samples.append({"pdb_id": row["pdb_id"], "text": row["text"],
-                                "rules_confidence": row["rules_confidence"],
-                                "rules_unresolved": row["n_unresolved"],
+                                "rules_confidence": row.get("rules_confidence"),
+                                "rules_unidentified": row.get("n_unidentified", row.get("n_unresolved")),
                                 "model": scored["parsed"]})
 
         with open(args.sample_out, "w") as handle:
@@ -314,9 +395,11 @@ def main(argv: Optional[list[str]] = None) -> int:
                 handle.write(json.dumps(s) + "\n")
         m.add_output(args.sample_out)
 
-        resolution = 100 * res_resolved / res_components if res_components else 0.0
+        identification = 100 * res_identified / res_components if res_components else 0.0
         validity = 100 * res_valid / len(residual_rows) if residual_rows else 0.0
-        res_lo, res_hi = wilson(res_resolved, res_components)
+        res_lo, res_hi = wilson(res_identified, res_components)
+        grounded_pct = 100 * res_grounded / res_identified if res_identified else 0.0
+        gr_lo, gr_hi = wilson(res_grounded, res_identified)
         val_lo, val_hi = wilson(res_valid, len(residual_rows))
 
         results = {
@@ -326,24 +409,33 @@ def main(argv: Optional[list[str]] = None) -> int:
             "fidelity_component_precision_pct": round(precision, 2),
             "fidelity_component_recall_pct": round(recall, 2),
             "n_residual": len(residual_rows),
+            "evaluated_on": "frozen_benchmark" if args.frozen else "live_residual",
+            "frozen_meta": frozen_meta,
             "residual_schema_valid_pct": round(validity, 2),
-            "residual_component_resolution_pct": round(resolution, 2),
-            "residual_fully_resolved_records_pct": round(
-                100 * fully_resolved / len(residual_rows), 2) if residual_rows else 0.0,
+            "residual_component_identification_pct": round(identification, 2),
+            "residual_fully_identified_records_pct": round(
+                100 * fully_identified / len(residual_rows), 2) if residual_rows else 0.0,
             "residual_components_seen": res_components,
+            # Of the components whose name the lexicon recognises, how many are names the source
+            # text actually mentions. This is the check that separates a *real* name from the
+            # *right* name, and identification alone cannot see the difference.
+            "residual_grounded_pct": round(grounded_pct, 2),
+            "residual_grounded_ci95": [round(gr_lo, 2), round(gr_hi, 2)],
+            "residual_grounded_n": res_grounded,
+            "ungrounded_examples": ungrounded_examples[:15],
             "invalid_reasons": reasons,
-            "top_unresolved_names": dict(sorted(unresolved_names.items(),
+            "top_unidentified_names": dict(sorted(unidentified_names.items(),
                                                 key=lambda kv: -kv[1])[:25]),
-            "n_distinct_unresolved_names": len(unresolved_names),
+            "n_distinct_unidentified_names": len(unidentified_names),
             # Judged on the lower confidence bound, not the point estimate. A gate applied to the
             # point estimate is passed by a lucky sample: checkpoint 900 reads 85.17% against an
             # 85% target while its interval reaches down to 83.67%, so it has not actually been
             # shown to clear the bar.
-            "resolution_ci95": [round(res_lo, 2), round(res_hi, 2)],
+            "identification_ci95": [round(res_lo, 2), round(res_hi, 2)],
             "validity_ci95": [round(val_lo, 2), round(val_hi, 2)],
-            "meets_resolution_target": res_lo > RESOLUTION_TARGET,
+            "meets_identification_target": res_lo > IDENTIFICATION_TARGET,
             "meets_validity_target": val_lo >= VALIDITY_TARGET,
-            "meets_resolution_target_point_estimate": resolution > RESOLUTION_TARGET,
+            "meets_identification_target_point_estimate": identification > IDENTIFICATION_TARGET,
             "meets_validity_target_point_estimate": validity >= VALIDITY_TARGET,
         }
         # The complete counter, not just the top 25 kept in the results summary. These are names
@@ -351,9 +443,9 @@ def main(argv: Optional[list[str]] = None) -> int:
         # queue in their own right: the model has already normalised them, so one decision on
         # `ARGININE` covers every surface form that maps to it, where the raw corpus queue would
         # ask about "l-arginine", "arginine hcl" and "l-arginine hydrochloride" separately.
-        names_path = args.out.with_name(args.out.stem + "_model_unresolved_names.json")
+        names_path = args.out.with_name(args.out.stem + "_model_unidentified_names.json")
         names_path.write_text(json.dumps(
-            dict(sorted(unresolved_names.items(), key=lambda kv: -kv[1])), indent=2) + "\n")
+            dict(sorted(unidentified_names.items(), key=lambda kv: -kv[1])), indent=2) + "\n")
         m.add_output(names_path)
 
         args.out.write_text(json.dumps(results, indent=2) + "\n")
@@ -366,20 +458,28 @@ def main(argv: Optional[list[str]] = None) -> int:
         print(f"    component precision       {precision:>7.2f}%")
         print(f"    component recall          {recall:>7.2f}%")
         print(f"    (imitation of rules_v3, not a win over it)")
-        print(f"\n  resolution, on {len(residual_rows):,} residual records the rules could not read")
+        population = ("the frozen benchmark" if args.frozen
+                      else "live residual records the rules could not read")
+        print(f"\n  identification, on {len(residual_rows):,} {population}")
+        if frozen_meta:
+            print(f"    frozen at lexicon {frozen_meta.get('lexicon_version')}, "
+                  f"{frozen_meta.get('n_reagents')} reagents, git "
+                  f"{frozen_meta.get('git_commit')}: comparable across rounds")
         print(f"    schema valid              {validity:>7.2f}%  "
               f"[{val_lo:5.2f}, {val_hi:5.2f}]  target >= {VALIDITY_TARGET}  "
               f"{'PASS' if results['meets_validity_target'] else 'FAIL'}")
-        print(f"    component resolution      {resolution:>7.2f}%  "
-              f"[{res_lo:5.2f}, {res_hi:5.2f}]  target >  {RESOLUTION_TARGET}  "
-              f"{'PASS' if results['meets_resolution_target'] else 'FAIL'}")
+        print(f"    component identification      {identification:>7.2f}%  "
+              f"[{res_lo:5.2f}, {res_hi:5.2f}]  target >  {IDENTIFICATION_TARGET}  "
+              f"{'PASS' if results['meets_identification_target'] else 'FAIL'}")
         print(f"    (gates judged on the lower 95% bound, so a lucky sample cannot pass them)")
-        print(f"    records fully resolved    "
-              f"{results['residual_fully_resolved_records_pct']:>7.2f}%")
+        print(f"    grounded in the text      {grounded_pct:>7.2f}%  "
+              f"[{gr_lo:5.2f}, {gr_hi:5.2f}]   the named reagent is actually mentioned")
+        print(f"    records fully identified    "
+              f"{results['residual_fully_identified_records_pct']:>7.2f}%")
         if reasons:
             print(f"    invalid: {reasons}")
-        if results["top_unresolved_names"]:
-            top = list(results["top_unresolved_names"].items())[:8]
+        if results["top_unidentified_names"]:
+            top = list(results["top_unidentified_names"].items())[:8]
             print(f"\n  names the model emitted that the lexicon does not know:")
             for name, count in top:
                 print(f"    {count:>5}  {name}")

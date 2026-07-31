@@ -13,7 +13,7 @@ produces a wrongly-named file rather than silently mislabelled chemistry.
 Each vendor binder carries the formulation twice: once column-wise (salt / buffer /
 precipitant) and once as complete one-line conditions on the scoring sheet. The scoring
 sheet is used, and the column-wise table is counted as an independent check on the number of
-wells. A disagreement is reported rather than resolved silently.
+wells. A disagreement is reported rather than identified silently.
 
     ./run.sh assign.build_screens
     ./run.sh assign.build_screens --catalogue HR2-110

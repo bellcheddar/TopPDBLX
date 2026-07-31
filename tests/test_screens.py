@@ -36,7 +36,7 @@ def test_inferred_cryo_stays_in_the_fingerprint():
     assert screens.fingerprint(parts) == frozenset({"PEG_3350", "GLYCEROL"})
 
 
-def test_unresolved_components_block_an_exact_match():
+def test_unidentified_components_block_an_exact_match():
     """A record with an unknown reagent must not match a well as though it were absent."""
     parts = [component("PEG_3350", 20, "percent_w_v"),
              Component(name_raw="frobnicase", name_canonical=None)]
@@ -105,9 +105,9 @@ def library():
 def test_every_shipped_well_parses_completely(library):
     """The vendor strings are clean prose. A parser that stumbles here has no business on
     the messy corpus, so this is a direct check on the parser, not just on the library."""
-    unresolved = [(w.catalogue, w.well, c.name_raw)
+    unidentified = [(w.catalogue, w.well, c.name_raw)
                   for w in library.wells for c in w.components if not c.name_canonical]
-    assert not unresolved, f"unresolved reagents in screen wells: {unresolved[:10]}"
+    assert not unidentified, f"unidentified reagents in screen wells: {unidentified[:10]}"
 
 
 def test_library_covers_the_expected_screens(library):
@@ -128,6 +128,6 @@ def test_a_known_well_round_trips_to_its_components(library):
 
 
 def test_wells_have_stable_fingerprints(library):
-    """Every resolved well must produce a non-empty fingerprint, or it can never match."""
+    """Every identified well must produce a non-empty fingerprint, or it can never match."""
     empty = [(w.catalogue, w.well) for w in library.wells if not w.fingerprint]
     assert not empty

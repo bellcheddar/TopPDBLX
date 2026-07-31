@@ -182,19 +182,19 @@ def main(argv: Optional[list[str]] = None) -> int:
         q("strategy::next_work", "Where the remaining effort goes",
           "What is the single most valuable next piece of work?",
           "Curation has measurably outperformed modelling on this project: 40 lexicon decisions "
-          "moved component resolution about a point, while tripling training exposure moved "
-          "residual resolution by zero. But the assignment audit would tell us whether the "
+          "moved component identification about a point, while tripling training exposure moved "
+          "residual identification by zero. But the assignment audit would tell us whether the "
           "ontology is even working, which nothing currently does.",
           total,
           [("assignment_audit", "The stratified assignment audit: it is the only thing that "
             "would tell us whether any of this is correct", True),
            ("more_lexicon", "More lexicon curation: 120 decisions are queued and worth about "
-            "1.6 points of component resolution", False),
+            "1.6 points of component identification", False),
            ("rebuild_ontology", "Rebuild the ontology hand-first from screen wells", False),
            ("publish", "Stop refining and publish 0.1.0 for a citable DOI", False),
            ("front_end", "Build the browser front end and let real use expose the problems",
             False)],
-          ["Measured: lexicon curation about +1 point of resolution per 40 decisions",
+          ["Measured: lexicon curation about +1 point of identification per 40 decisions",
            "Measured: more training epochs, no detectable gain on the residual",
            "Unmeasured: whether a condition assigned to a group actually belongs there"]),
     ]

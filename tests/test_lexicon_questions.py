@@ -67,7 +67,7 @@ def test_the_guard_stays_silent_when_only_one_side_names_an_ion():
 @pytest.mark.parametrize("name", [
     "peg", "polyethylene glycol", "phosphate", "citrate buffer", "propanediol", "butanediol",
 ])
-def test_family_names_are_flagged_ambiguous_rather_than_resolved(name):
+def test_family_names_are_flagged_ambiguous_rather_than_identified(name):
     """"phosphate" names no counter-ion and "peg" no molecular weight. Recommending a specific
     entry would invent data the depositor never supplied: 720 components say only "peg"."""
     assert is_ambiguous(name) is True

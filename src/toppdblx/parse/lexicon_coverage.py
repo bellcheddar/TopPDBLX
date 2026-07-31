@@ -1,9 +1,9 @@
-"""Stage `parse.lexicon_coverage`: how much of the corpus does the lexicon resolve?
+"""Stage `parse.lexicon_coverage`: how much of the corpus does the lexicon identify?
 
 WP2's curation is only measurable if coverage is measurable. This stage answers two
 questions and writes the second one to a file the curator works through:
 
-  1. What share of reagent clause mass does `ontology/synonyms.yaml` currently resolve?
+  1. What share of reagent clause mass does `ontology/synonyms.yaml` currently identify?
   2. Which unmapped candidates are worth adding next, ranked by how much they would add?
 
 Coverage is reported by clause mass rather than by distinct candidate, because the tail is
@@ -52,15 +52,15 @@ def main(argv: Optional[list[str]] = None) -> int:
                                  "n_reagents": len(lexicon.reagents)}) as m:
         m.add_input(args.lexicon).add_input(args.candidates)
 
-        resolved = candidates.with_columns(
+        identified = candidates.with_columns(
             pl.col("candidate")
               .map_elements(lambda c: index[normalise(c)].canonical_id if normalise(c) in index
                             else None, return_dtype=pl.Utf8)
               .alias("canonical_id")
         )
-        total_clauses = int(resolved["n_clauses"].sum())
-        matched = resolved.filter(pl.col("canonical_id").is_not_null())
-        unmatched = resolved.filter(pl.col("canonical_id").is_null())
+        total_clauses = int(identified["n_clauses"].sum())
+        matched = identified.filter(pl.col("canonical_id").is_not_null())
+        unmatched = identified.filter(pl.col("canonical_id").is_null())
 
         matched_clauses = int(matched["n_clauses"].sum())
         coverage = matched_clauses / total_clauses
@@ -106,7 +106,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         print(f"  candidates matched:   {matched.height:,}")
         print(f"  candidates unmatched: {unmatched.height:,}")
 
-        print("\nresolved clause mass by class:")
+        print("\nidentified clause mass by class:")
         for row in by_class.iter_rows(named=True):
             print(f"  {row['chem_class']:<10} {row['clauses']:>8,} clauses "
                   f"({row['clauses'] / total_clauses:>5.1%})  "

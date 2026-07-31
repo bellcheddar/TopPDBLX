@@ -1,6 +1,6 @@
 """Stage `parse.lexicon_questions`: the lexicon gaps worth an expert's time.
 
-R1 found that the unresolved residual is a long tail (45,573 distinct strings, top 1,000 covering
+R1 found that the unidentified residual is a long tail (45,573 distinct strings, top 1,000 covering
 only 38.5%), so most of it can only be closed by generalisation. But the *head* of that tail is
 different in kind: it is reagents the lexicon simply lacks a name for, and no model can invent
 curated chemistry it has never seen. `methyl-2,4-pentanediol` appears 216 times and is just MPD
@@ -9,7 +9,7 @@ under a fuller name; `ca(oac)2` appears 200 times and is calcium acetate as a fo
 Built to the pattern that worked for the two previous audits: **rank distinct decisions by corpus
 frequency, pre-select a recommendation, and keep the whole thing to tens of questions.** Never a
 row-per-instance review. Each question here is one string standing for every occurrence of it, so
-answering 40 questions resolves thousands of components.
+answering 40 questions identifies thousands of components.
 
 The recommendation does the work. Three sources, in order of confidence:
 
@@ -135,7 +135,7 @@ _ANION_WORDS = {"chloride", "bromide", "iodide", "fluoride", "sulfate", "sulphat
                 "borate", "glutamate", "aspartate", "benzoate", "lactate", "propionate"}
 
 # Names that state a chemical family without saying which member. The depositor genuinely did not
-# specify, so picking a member is invention, not resolution.
+# specify, so picking a member is invention, not identification.
 _AMBIGUOUS = {
     "peg", "polyethylene glycol", "polyethyleneglycol", "poly ethylene glycol",
     "phosphate", "citrate", "acetate", "sulfate", "sulphate", "tartrate", "formate",
@@ -191,7 +191,7 @@ def build_index(reagents: list[dict[str, Any]]) -> dict[str, str]:
 
 
 def propose(name: str, index: dict[str, str], keys: list[str]) -> tuple[list[dict], str]:
-    """Options for one unresolved string, with exactly one marked recommended."""
+    """Options for one unidentified string, with exactly one marked recommended."""
     options: list[dict[str, Any]] = []
     seen: set[str] = set()
 
@@ -210,7 +210,7 @@ def propose(name: str, index: dict[str, str], keys: list[str]) -> tuple[list[dic
         # "peg", "phosphate", "propanediol": a family with no member named. Any specific entry
         # would be invented, so nothing is recommended and the honest option leads.
         options.append({"value": "__LEAVE__",
-                        "label": "Ambiguous as written, leave unresolved",
+                        "label": "Ambiguous as written, leave unidentified",
                         "recommended": True})
         basis = "ambiguous"
     elif direct:
@@ -261,7 +261,7 @@ def propose(name: str, index: dict[str, str], keys: list[str]) -> tuple[list[dic
     options.append({"value": "__NOT_A_REAGENT__",
                     "label": "Not a reagent (method text, screen name, unnamed ligand)",
                     "recommended": False})
-    options.append({"value": "__LEAVE__", "label": "Leave unresolved rather than guess",
+    options.append({"value": "__LEAVE__", "label": "Leave unidentified rather than guess",
                     "recommended": False})
     return options, basis
 
@@ -284,12 +284,12 @@ def main(argv: Optional[list[str]] = None) -> int:
     keys = list(index)
 
     comp = pl.read_parquet(args.components)
-    unresolved = comp.filter(pl.col("name_canonical").is_null()
+    unidentified = comp.filter(pl.col("name_canonical").is_null()
                              & (pl.col("role") != "not_a_component"))
 
     counts: Counter[str] = Counter()
     examples: dict[str, list[str]] = {}
-    for name, pdb_id, conc, unit in unresolved.select(
+    for name, pdb_id, conc, unit in unidentified.select(
             "name_raw", "pdb_id", "concentration", "unit").iter_rows():
         key = (name or "").strip().lower()
         if not key or len(key) < 2:
@@ -319,9 +319,9 @@ def main(argv: Optional[list[str]] = None) -> int:
                 "group": {"normalised_match": "Names that already exist, spelled differently",
                           "formula": "Chemical formulae the lexicon reads as names",
                           "fuzzy": "Close to an existing entry, needs your call",
-                          "ambiguous": "Too vague to resolve, unless you disagree",
+                          "ambiguous": "Too vague to identify, unless you disagree",
                           "new": "Not in the lexicon at all"}[basis],
-                "question": f"“{name}” is unresolved in {count:,} components. "
+                "question": f"“{name}” is unidentified in {count:,} components. "
                             f"What is it?",
                 "why": f"Recommendation from {basis.replace('_', ' ')}: "
                        f"{recommended['label']}.",
@@ -338,16 +338,16 @@ def main(argv: Optional[list[str]] = None) -> int:
             "schema_version": config.SCHEMA_VERSION,
             "lexicon_version": data.get("version", "unknown"),
             "title": "Lexicon gaps",
-            "intro": (f"{len(questions)} questions covering {covered:,} unresolved components. "
+            "intro": (f"{len(questions)} questions covering {covered:,} unidentified components. "
                       f"Each one stands for every occurrence of that name, so these are the "
                       f"decisions with the most reach. Every dropdown is pre-set to a "
                       f"recommendation; change the ones that are wrong."),
             "n_questions": len(questions),
             "totals": {
-                "n_unresolved_components": unresolved.height,
+                "n_unidentified_components": unidentified.height,
                 "n_distinct_strings": len(counts),
                 "n_components_covered": covered,
-                "pct_of_unresolved_covered": round(100 * covered / max(1, unresolved.height), 2),
+                "pct_of_unidentified_covered": round(100 * covered / max(1, unidentified.height), 2),
                 "recommendation_basis": dict(basis_counts),
             },
             "questions": questions,
@@ -356,7 +356,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         m.add_output(args.out).note(**payload["totals"], n_questions=len(questions))
 
         print(f"\n  {len(questions)} questions covering {covered:,} components "
-              f"({payload['totals']['pct_of_unresolved_covered']}% of the unresolved mass)")
+              f"({payload['totals']['pct_of_unidentified_covered']}% of the unidentified mass)")
         print(f"  recommendation basis: {dict(basis_counts)}")
         print(f"\n  {args.out}")
         print(f"  open app/condition_courtroom_v5.html and drop the file on it")

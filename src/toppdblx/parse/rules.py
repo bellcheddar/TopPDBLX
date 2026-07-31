@@ -6,7 +6,7 @@ remains the parser of record for everything it is confident about.
 
 The three judgement calls it makes, all of them recorded in the output rather than hidden:
 
-  unit inference    ~80% of percentage concentrations carry no w/v or v/v marker. Resolved
+  unit inference    ~80% of percentage concentrations carry no w/v or v/v marker. Identified
                     from the reagent's chemistry and flagged with `unit_inferred`.
   pH attribution    a pH attached to a buffer clause is the buffer's; a standalone "pH x"
                     is the final pH only when the text says so. Anything else is `unstated`
@@ -108,10 +108,10 @@ class RuleParser:
         if component.name_canonical is not None or component.role == "not_a_component":
             return component, buffer_ph
 
-        # The clause did not resolve. Depositors write sentences, so it may be chemistry wrapped
+        # The clause did not identify. Depositors write sentences, so it may be chemistry wrapped
         # in narrative: "crystal conditions were 100 mm bis-tris propane". Retried with the prose
-        # removed, and the retry is kept only if it actually resolves, so a working parse can
-        # never be made worse. Measured: 13.7% of unresolved components are longer than 40
+        # removed, and the retry is kept only if it actually identifies, so a working parse can
+        # never be made worse. Measured: 13.7% of unidentified components are longer than 40
         # characters and 7.1% contain a verb.
         stripped = strip_prose(clause)
         if stripped:
@@ -128,7 +128,7 @@ class RuleParser:
         reagent = self.index.get(normalise(name)) if name else None
 
         # "hepes 7.5", "mes 6.5": a buffer named with a bare pH and no "pH" token. Retrying
-        # without the trailing number resolves it, and the number is kept as the buffer pH.
+        # without the trailing number identifies it, and the number is kept as the buffer pH.
         # Doing this in the lexicon would need one alias per buffer per pH value.
         if reagent is None and name:
             trimmed = _TRAILING_BARE_PH.sub("", name).strip()
@@ -152,7 +152,7 @@ class RuleParser:
         if evidence is not None:
             role = "cryo"
 
-        # Only asked when the lexicon found nothing. A clause that resolved to a reagent is a
+        # Only asked when the lexicon found nothing. A clause that identified to a reagent is a
         # reagent, whatever else its wording looks like, so the classifier never gets to
         # second-guess a positive match.
         non_component_reason = None
@@ -234,7 +234,7 @@ class RuleParser:
         temp_from_text: Optional[float] = None
         protein_conc: Optional[float] = None
         drop_ratio: Optional[str] = None
-        unresolved: list[str] = []
+        unidentified: list[str] = []
         n_reagent_clauses = 0
         kinds: list[str] = []
         # "0.1 M cacodylate, pH 6.95": a standalone pH clause directly after a buffer is
@@ -270,7 +270,7 @@ class RuleParser:
                 if buffer_ph:
                     buffer_phs.append(buffer_ph)
                 if component.name_canonical is None:
-                    unresolved.append(component.name_raw)
+                    unidentified.append(component.name_raw)
                 previous_was_buffer = component.role == "buffer"
 
             elif kind == "ph":
@@ -342,20 +342,20 @@ class RuleParser:
             flags.append("temperature_conflicts_with_reported")
 
         # -- confidence and discard ------------------------------------------
-        resolved = sum(1 for c in components if c.name_canonical)
+        identified = sum(1 for c in components if c.name_canonical)
         # Clauses confidently identified as containing no chemistry are removed from the
-        # denominator, exactly as they are from the corpus-level resolution rate. Leaving them in
+        # denominator, exactly as they are from the corpus-level identification rate. Leaving them in
         # capped record confidence below 1.0 for any record mentioning its own method: 2,539
-        # records with every reagent resolved still scored a median 0.735 and a maximum 0.925,
+        # records with every reagent identified still scored a median 0.735 and a maximum 0.925,
         # purely for containing a phrase like "streak seeded". That silently excluded every one
         # of them from the fine-tuning set, so the model saw no example of the non-reagent verdict
         # and had no way to learn it.
         n_non_component = sum(1 for c in components if c.role == "not_a_component")
         n_chemistry_clauses = max(0, n_reagent_clauses - n_non_component)
-        resolution = resolved / n_chemistry_clauses if n_chemistry_clauses else 0.0
-        unresolved_chars = sum(len(u) for u in unresolved)
-        char_coverage = max(0.0, 1.0 - unresolved_chars / max(1, len(text)))
-        confidence = round(0.7 * resolution + 0.3 * char_coverage, 3)
+        identification = identified / n_chemistry_clauses if n_chemistry_clauses else 0.0
+        unidentified_chars = sum(len(u) for u in unidentified)
+        char_coverage = max(0.0, 1.0 - unidentified_chars / max(1, len(text)))
+        confidence = round(0.7 * identification + 0.3 * char_coverage, 3)
 
         if any(c.concentration_is_range for c in components):
             flags.append("concentration_range")
@@ -375,7 +375,7 @@ class RuleParser:
             # unnamed macromolecule. That is method-only, not a failure to match a reagent: there
             # was no reagent named to match.
             discard = "METHOD_ONLY"
-        elif resolved == 0:
+        elif identified == 0:
             discard = "NO_REAGENT_MATCH"
         elif confidence < 0.25:
             discard = "UNPARSEABLE_RESIDUAL"
@@ -390,8 +390,8 @@ class RuleParser:
             protein_concentration_mg_ml=protein_conc, drop_ratio=drop_ratio,
             provenance=Provenance(
                 parser=PARSER_VERSION, parse_confidence=confidence, flags=sorted(set(flags)),
-                n_clauses=len(kinds), n_clauses_resolved=resolved,
-                unresolved_clauses=unresolved[:10],
+                n_clauses=len(kinds), n_clauses_identified=identified,
+                unidentified_clauses=unidentified[:10],
             ),
             discard_reason=discard,
         )

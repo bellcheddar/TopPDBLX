@@ -3,7 +3,7 @@
 `ontology/synonyms.yaml` is the load-bearing curation artefact of Phase 0. Every downstream
 stage keys off the canonical ids defined there, so the file is validated strictly on load
 and an alias collision is a hard error rather than a warning: two reagents claiming the
-same alias would silently resolve to whichever happened to load first.
+same alias would silently identify to whichever happened to load first.
 
 Three fields encode the chemistry the spec calls out in section 6.3, and they exist here
 rather than in the assignment code so they can be curated as data:

@@ -44,6 +44,8 @@ DATASET_NAME = "toppdblx-conditions"
 
 def build_records(conditions: pl.DataFrame, components: pl.DataFrame,
                   sequences: pl.DataFrame, matches: pl.DataFrame,
+                  entry_meta: Optional[pl.DataFrame] = None,
+                  entity_meta: Optional[pl.DataFrame] = None,
                   assignments: Optional[pl.DataFrame] = None,
                   ontology_version: str = config.ONTOLOGY_VERSION) -> list[dict[str, Any]]:
     by_record: dict[tuple, list[dict[str, Any]]] = {}
@@ -75,6 +77,21 @@ def build_records(conditions: pl.DataFrame, components: pl.DataFrame,
             group_by_key[(row["pdb_id"], row["crystal_id"])] = row
 
     seq_by_entry = {r["pdb_id"]: r for r in sequences.iter_rows(named=True)}
+    # Entry-level metadata, carried so the common analysis questions need no extra join:
+    # identification against condition class, organism against precipitant preference, and whether
+    # screen popularity shifted over time. All three were previously answerable only by fetching
+    # the archive again, which defeats the point of a released database.
+    entry_by_id = {r["pdb_id"]: r for r in entry_meta.iter_rows(named=True)} if \
+        entry_meta is not None else {}
+    organism_by_id: dict[str, list[str]] = {}
+    if entity_meta is not None:
+        for r in entity_meta.iter_rows(named=True):
+            names = r.get("source_organisms")
+            if names:
+                organism_by_id.setdefault(r["pdb_id"], [])
+                for name in (names if isinstance(names, (list, tuple)) else [names]):
+                    if name and name not in organism_by_id[r["pdb_id"]]:
+                        organism_by_id[r["pdb_id"]].append(name)
     match_by_key = {(r["pdb_id"], r["crystal_id"]): r for r in matches.iter_rows(named=True)}
 
     records = []
@@ -112,6 +129,17 @@ def build_records(conditions: pl.DataFrame, components: pl.DataFrame,
                 "cluster_50": sequence.get("cluster_50"),
                 "cluster_90": sequence.get("cluster_90"),
             },
+            "entry": {
+                "resolution_a": (entry_by_id.get(row["pdb_id"]) or {}).get("resolution_a"),
+                "deposit_date": str((entry_by_id.get(row["pdb_id"]) or {}).get("deposit_date")
+                                    or "") or None,
+                "initial_release_date": str(
+                    (entry_by_id.get(row["pdb_id"]) or {}).get("initial_release_date") or "")
+                    or None,
+                "experimental_method": (entry_by_id.get(row["pdb_id"]) or {}).get(
+                    "experimental_method"),
+                "source_organisms": organism_by_id.get(row["pdb_id"]) or None,
+            },
             "commercial_screen_match": None if not match else {
                 "screen": match["screen"], "catalogue": match["catalogue"],
                 "well": match["well"], "match_type": match["match_type"],
@@ -144,7 +172,7 @@ def _curated_group(row: Optional[dict[str, Any]],
     class proved readable.
 
     `Unclassified` is a first-class answer here rather than a null, and it is the largest single
-    outcome at 47.7%. The reason is always recorded, so the share is explicable: an unresolved
+    outcome at 47.7%. The reason is always recorded, so the share is explicable: an unidentified
     reagent, a precipitant with no stated amount, no precipitant at all, or a premixed system
     that does not fit a seven-class taxonomy.
     """
@@ -175,6 +203,11 @@ def main(argv: Optional[list[str]] = None) -> int:
                  .join(pl.read_parquet(interim / "sequence_clusters.parquet"),
                        on="seq_id", how="left"))
     matches = pl.read_parquet(interim / "screen_matches.parquet")
+    entry_meta = pl.read_parquet(interim / "entries.parquet").select(
+        "pdb_id", "resolution_a", "deposit_date", "initial_release_date",
+        "experimental_method").unique(subset=["pdb_id"])
+    entity_meta = pl.read_parquet(interim / "entities.parquet").select(
+        "pdb_id", "source_organisms")
     # The seven-class classification, which replaced the three-level centroid ontology.
     assignment_path = interim / "condition_classes.parquet"
     assignments = pl.read_parquet(assignment_path) if assignment_path.exists() else None
@@ -197,7 +230,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             m.add_input(interim / f"{name}.parquet")
 
         records = build_records(conditions, components, sequences, matches,
-                                assignments, ontology_version)
+                                entry_meta, entity_meta, assignments, ontology_version)
 
         # Canonical JSONL, gzipped. One record per line so it streams.
         with gzip.open(jsonl_path, "wt", encoding="utf-8") as handle:
@@ -211,6 +244,7 @@ def main(argv: Optional[list[str]] = None) -> int:
                 assignments.select("pdb_id", "crystal_id", "condition_class",
                                    "unclassified_reason"),
                 on=["pdb_id", "crystal_id"], how="left")
+        conditions = conditions.join(entry_meta, on="pdb_id", how="left")
 
         flat = (conditions
                 .join(sequences.select(

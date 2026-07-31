@@ -48,7 +48,7 @@ def test_in_separates_components_before_a_concentration(parser):
 
 
 def test_leading_conjunction_does_not_block_lookup(parser):
-    """", and 172 mM ammonium nitrate" must still resolve the reagent."""
+    """", and 172 mM ammonium nitrate" must still identify the reagent."""
     record = parse(parser, "5 mM MnCl2 in 20 % PEG 3350, and 172 mM ammonium nitrate")
     assert canonical(record) == ["MANGANESE_CHLORIDE", "PEG_3350", "AMMONIUM_NITRATE"]
 

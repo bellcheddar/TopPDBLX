@@ -88,8 +88,8 @@ def build_questions(components: pl.DataFrame, conditions: pl.DataFrame,
                  .group_by("name_canonical").agg(pl.len().alias("n"))
                  .iter_rows())
 
-    resolved = components.filter(pl.col("name_canonical").is_not_null())
-    unresolved = components.filter(pl.col("name_canonical").is_null())
+    identified = components.filter(pl.col("name_canonical").is_not_null())
+    unidentified = components.filter(pl.col("name_canonical").is_null())
 
     # ---------------------------------------------------------- ambiguous names
     # Deliberately unmapped in the lexicon because the counter-ion genuinely varies.
@@ -103,7 +103,7 @@ def build_questions(components: pl.DataFrame, conditions: pl.DataFrame,
         "polyethylene glycol": ["PEG_3350", "PEG_4000", "PEG_8000"],
         "peg mme":   ["PEG_MME_2000", "PEG_MME_550", "PEG_MME_5000"],
     }
-    counts = dict(unresolved.group_by("name_raw").agg(pl.len().alias("n")).iter_rows())
+    counts = dict(unidentified.group_by("name_raw").agg(pl.len().alias("n")).iter_rows())
     for name, candidates in sorted(AMBIGUOUS.items(), key=lambda kv: -counts.get(kv[0], 0)):
         n = counts.get(name, 0)
         if not n:
@@ -120,12 +120,12 @@ def build_questions(components: pl.DataFrame, conditions: pl.DataFrame,
             "id": f"ambiguous::{name}",
             "group": "Ambiguous reagent names",
             "question": f"A bare “{name}” appears {_fmt(n)} times with no counter-ion stated. "
-                        f"What should it resolve to?",
-            "why": "The lexicon refuses to guess these, so they currently resolve to nothing "
+                        f"What should it identify to?",
+            "why": "The lexicon refuses to guess these, so they currently identify to nothing "
                    "and drag their records into NO_REAGENT_MATCH.",
             "weight": n, "weight_label": f"{_fmt(n)} components",
             "type": "choice", "options": options, "allow_text": True,
-            "context": _examples(unresolved, conditions, pl.col("name_raw") == name),
+            "context": _examples(unidentified, conditions, pl.col("name_raw") == name),
         })
 
     # ---------------------------------------------------- guessed / odd unit rules
@@ -143,7 +143,7 @@ def build_questions(components: pl.DataFrame, conditions: pl.DataFrame,
     unit_options = [
         {"value": "percent_w_v", "label": "% w/v (weight per volume)", "recommended": False},
         {"value": "percent_v_v", "label": "% v/v (volume per volume)", "recommended": False},
-        {"value": "__UNRESOLVED__", "label": "Leave the unit unresolved rather than guess",
+        {"value": "__UNIDENTIFIED__", "label": "Leave the unit unidentified rather than guess",
          "recommended": False},
     ]
 
@@ -174,7 +174,7 @@ def build_questions(components: pl.DataFrame, conditions: pl.DataFrame,
         questions.append({
             "id": f"unit::{rule}::{unit}",
             "group": "Unit inference rules",
-            # A percent rule resolves an ambiguous "%"; a molar or millimolar rule fires
+            # A percent rule identifies an ambiguous "%"; a molar or millimolar rule fires
             # when the text states no unit at all and the reagent's curated default is used.
             # Saying "bare %" for the latter describes the wrong situation entirely.
             "question": (
@@ -197,7 +197,7 @@ def build_questions(components: pl.DataFrame, conditions: pl.DataFrame,
         })
 
     # -------------------------------------------------- one reagent, two units
-    split = (resolved.group_by(["name_canonical", "unit"]).agg(pl.len().alias("n")))
+    split = (identified.group_by(["name_canonical", "unit"]).agg(pl.len().alias("n")))
     totals = dict(split.group_by("name_canonical").agg(pl.col("n").sum()).iter_rows())
     seen: set[str] = set()
     for row in split.sort("n", descending=True).iter_rows(named=True):
@@ -232,14 +232,14 @@ def build_questions(components: pl.DataFrame, conditions: pl.DataFrame,
                  "recommended": False},
             ],
             "allow_text": False,
-            "context": _examples(resolved, conditions,
+            "context": _examples(identified, conditions,
                                  (pl.col("name_canonical") == canonical) & (pl.col("unit") == unit)),
         })
         if sum(1 for q in questions if q["group"] == "One reagent, two units") >= max_per_group:
             break
 
     # ------------------------------------------------------- surprising mappings
-    mapping = (resolved.group_by(["name_raw", "name_canonical"]).agg(pl.len().alias("n"))
+    mapping = (identified.group_by(["name_raw", "name_canonical"]).agg(pl.len().alias("n"))
                .sort("n", descending=True).head(1200))
     surprising = []
     for row in mapping.iter_rows(named=True):
@@ -268,7 +268,7 @@ def build_questions(components: pl.DataFrame, conditions: pl.DataFrame,
                  "recommended": False},
             ],
             "allow_text": True,
-            "context": _examples(resolved, conditions,
+            "context": _examples(identified, conditions,
                                  (pl.col("name_raw") == row["name_raw"])
                                  & (pl.col("name_canonical") == row["name_canonical"])),
         })
@@ -276,7 +276,7 @@ def build_questions(components: pl.DataFrame, conditions: pl.DataFrame,
     # ------------------------------------------------- missing real reagents
     lexicon_names = [n for r in lexicon.reagents for n in r.all_names]
     name_to_id = {n.lower(): r.canonical_id for r in lexicon.reagents for n in r.all_names}
-    candidates = (unresolved.group_by("name_raw").agg(pl.len().alias("n"))
+    candidates = (unidentified.group_by("name_raw").agg(pl.len().alias("n"))
                   .sort("n", descending=True).head(400))
     picked = 0
     for row in candidates.iter_rows(named=True):
@@ -296,12 +296,12 @@ def build_questions(components: pl.DataFrame, conditions: pl.DataFrame,
         questions.append({
             "id": f"missing::{name}",
             "group": "Reagents missing from the lexicon",
-            "question": f"“{name}” resolves to nothing, {_fmt(n)} times. What is it?",
+            "question": f"“{name}” identifies to nothing, {_fmt(n)} times. What is it?",
             "why": "It looks like real chemistry rather than deposition boilerplate, so it is "
                    "probably a genuine gap in the lexicon.",
             "weight": n, "weight_label": f"{_fmt(n)} components",
             "type": "choice", "options": options, "allow_text": True,
-            "context": _examples(unresolved, conditions, pl.col("name_raw") == name),
+            "context": _examples(unidentified, conditions, pl.col("name_raw") == name),
         })
         picked += 1
         if picked >= max_per_group:
@@ -356,7 +356,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             "n_questions": len(questions),
             "totals": {
                 "n_components": components.height,
-                "n_unresolved": components.filter(pl.col("name_canonical").is_null()).height,
+                "n_unidentified": components.filter(pl.col("name_canonical").is_null()).height,
                 "n_inferred_units": components.filter(pl.col("unit_inferred")).height,
                 "components_under_question": covered,
             },

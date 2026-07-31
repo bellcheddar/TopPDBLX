@@ -53,7 +53,7 @@ _SPLIT = re.compile(r"""
       | (?<=\bph\s{0,2}\d{1,2}(?:\.\d+)?)\s+(?=\d)
                          # "25mM Tris/HCl pH 7.5 100mM NaCl": a pH declaration followed by a
                          # further concentration ends the clause. Without this the whole tail
-                         # becomes one unresolvable reagent name and the NaCl is lost
+                         # becomes one unidentifiable reagent name and the NaCl is lost
       | \ \ +(?=\d)      # "glycol 6,000  100 mM citrate": depositors separate components
                          # with extra spaces. Requiring a following digit keeps it safe,
                          # since a new component almost always opens with a concentration
@@ -121,7 +121,7 @@ _POLYMER_PREFIX = re.compile(r"^(m?peg|peg-?mme|mme|pei|ppg)\s*-?\s*(\d{3,6})\b"
 
 
 # Conjunctions and prepositions left at the head of a clause by splitting. "and 172 mM
-# ammonium nitrate" must become "172 mM ammonium nitrate" or the reagent never resolves.
+# ammonium nitrate" must become "172 mM ammonium nitrate" or the reagent never identifies.
 _LEADING_CONJUNCTION = re.compile(
     r"^(?:and|plus|with|in|of|containing|at"
     # Descriptive labels depositors put in front of the reagent itself:
@@ -154,7 +154,7 @@ def drop_unclosed_tail(text: str) -> str:
 
     "22.5% (v/v) PEG Smear Broad (PEG 400" keeps its balanced "(v/v)" but the dangling
     "(PEG 400" is the head of a constituent list the splitter cut mid-way. Left in place it
-    becomes part of the reagent name and nothing resolves.
+    becomes part of the reagent name and nothing identifies.
     """
     if text.count("(") <= text.count(")"):
         return text
@@ -227,7 +227,7 @@ def split_trailing_ph(clause: str) -> tuple[str, str | None]:
     value in the candidate ranking and the tail looks far worse than it is.
     """
     # Applied repeatedly: "0.1 M HEPES pH 7.5 (final pH 7.4)" carries two, and stripping only
-    # the outer one leaves "hepes ph 7.5" as the reagent name, which resolves to nothing.
+    # the outer one leaves "hepes ph 7.5" as the reagent name, which identifies to nothing.
     found = None
     while True:
         match = _TRAILING_PH.search(clause)

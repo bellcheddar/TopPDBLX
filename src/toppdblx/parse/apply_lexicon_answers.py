@@ -105,7 +105,7 @@ NEW_REAGENTS: dict[str, dict[str, Any]] = {
     # a buffer must carry a pKa. I could not confirm either formulation during the audit, and a
     # mixed system spanning a pH range has no single pKa. The options were to invent constituents,
     # to weaken an invariant that exists precisely to keep unverified chemistry out, or to leave
-    # them unresolved. Leaving them unresolved costs 341 components out of 603,459 and asserts
+    # them unidentified. Leaving them unidentified costs 341 components out of 603,459 and asserts
     # nothing false, so they are recorded in `needs_verification` for a formulation to be
     # supplied later.
     "glycerol ethoxylate": {
@@ -251,7 +251,7 @@ def main(argv: Optional[list[str]] = None) -> int:
                 if not spec:
                     # An earlier answer may already cover this string. "nad" and "nad+" were
                     # asked separately, but they are one cofactor, so the NAD entry created from
-                    # "nad+" carries "nad" among its aliases and this string is already resolved.
+                    # "nad+" carries "nad" among its aliases and this string is already identified.
                     # Reporting it as skipped would understate the coverage achieved.
                     covering = next((r["canonical_id"] for r in by_id.values()
                                      if name in (r.get("aliases") or [])), None)
@@ -267,7 +267,7 @@ def main(argv: Optional[list[str]] = None) -> int:
                     continue
                 spec = dict(spec)
                 # Premix constituents that do not exist are dropped rather than invented: a
-                # dangling id would break the premix role resolution in rules._role_for.
+                # dangling id would break the premix role identification in rules._role_for.
                 if spec.get("premix_components"):
                     present = [c for c in spec["premix_components"] if c in known_ids]
                     if len(present) != len(spec["premix_components"]):

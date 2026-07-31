@@ -14,7 +14,7 @@ way, because two of the brief's premises have now been contradicted by measureme
 | | |
 |---|---|
 | Records | 199,185, of which **183,623 usable (92.2%)** |
-| Components | 603,459, **79.1% resolved** to a canonical reagent |
+| Components | 603,459, **79.1% identified** to a canonical reagent |
 | Reagent lexicon | 147 reagents, 501 names, two rounds of expert audit applied |
 | Condition ontology | 163 groups (41 L2, 122 L3), all L3 anchored to an orderable well |
 | Group assignment | 44.4% at L3, 26.6% at L2, 29.0% unassigned |
@@ -72,7 +72,7 @@ can be stopped rather than nursed.
 ### R1. Parse residual: fine-tune SmolLM2 on what the rules cannot read
 **5 days. No dependencies. Highest-value remaining data work.**
 
-125,970 components (20.9%) resolve to no canonical reagent, and 29.0% of records reach no L3
+125,970 components (20.9%) identify to no canonical reagent, and 29.0% of records reach no L3
 group. Both thin every downstream metric, so this precedes any modelling.
 
 - Target only the residual: records where `rules_v3` leaves uncovered text or disagrees with a
@@ -84,7 +84,7 @@ group. Both thin every downstream metric, so this precedes any modelling.
 - **The circularity trap:** labels bootstrapped from the rule parser cannot prove the model
   beats the rule parser. The held-out audit set is hand-labelled from raw text and must never
   be used for training or threshold tuning.
-- **Failure condition:** component resolution does not exceed 85%, or schema validity falls
+- **Failure condition:** component identification does not exceed 85%, or schema validity falls
   below 99%. Then keep `rules_v3` and record the attempt.
 
 #### R1 progress, 2026-07-30
@@ -95,12 +95,12 @@ high-confidence output: 102,417 training pairs and 14,874 validation pairs at **
 cost**, split by the existing leak-free sequence clusters, with the 81,803 records the rules
 could not read held back as the target. Hand-labelling is now an escalation, not a prerequisite.
 
-**Finding 1: the resolution denominator was wrong.** Of the 125,970 unresolved components,
+**Finding 1: the identification denominator was wrong.** Of the 125,970 unidentified components,
 **8.1% contain no chemistry at all**: method text (4,499), screen references (3,201), unnamed
 proteins and ligands (1,691), bare splitter fragments (727), publication references (88). These
-sat in the denominator, so the parser was scored as having failed to resolve text with no reagent
+sat in the denominator, so the parser was scored as having failed to identify text with no reagent
 in it. A `not_a_component` role now records the verdict with an auditable reason, moving measured
-resolution from **79.13% to 80.49% without changing a single parse**. The 85% gate was previously
+identification from **79.13% to 80.49% without changing a single parse**. The 85% gate was previously
 set against a partly unreachable target.
 
 The classifier is deliberately conservative and asymmetric: a false positive silently deletes
@@ -109,7 +109,7 @@ vetoes the substring rule (a depositor writing an amount was naming a substance)
 anchored whole-clause rules, because "1 mM inhibitor" still names nothing.
 
 **Finding 2: the residual is a long tail, so a model is the right tool.** 45,573 distinct
-unresolved strings, of which the top 1,000 cover only 38.5%. Curation cannot close that; only
+unidentified strings, of which the top 1,000 cover only 38.5%. Curation cannot close that; only
 generalisation can. There is still a seam of cheap lexicon wins that no model can supply
 (`methyl-2,4-pentanediol` = MPD, 216; `ca(oac)2`, 200; the SPG/PCTP/PDTP buffer systems, 585
 combined), which is a curation round worth running alongside.
@@ -117,9 +117,9 @@ combined), which is a curation round worth running alongside.
 **Finding 3: validation loss is the wrong stopping signal, and the useful training is far shorter
 than expected.** Val loss flattened at 0.004 by iteration 1,200, but it measures *fidelity to the
 rule parser*, because the labels are its output. The metric that decides R1 is residual
-resolution, and it behaves differently:
+identification, and it behaves differently:
 
-| checkpoint | residual resolution (95% CI) | schema valid | records fully resolved | fidelity exact |
+| checkpoint | residual identification (95% CI) | schema valid | records fully identified | fidelity exact |
 |---|---|---|---|---|
 | 100 | 72.78% [71.04, 74.44] | 97.62% | 39.00% | 67.75% |
 | 300 | 80.61% [79.00, 82.12] | 98.50% | 49.75% | 78.12% |
@@ -127,7 +127,7 @@ resolution, and it behaves differently:
 | 900 | 85.17% [83.67, 86.55] | 99.00% | 62.12% | 87.38% |
 | 1300 | 86.80% [85.36, 88.11] | 98.50% | 64.25% | 91.00% |
 
-Resolution climbs steeply to iteration 600 (the first three intervals are disjoint) and then
+Identification climbs steeply to iteration 600 (the first three intervals are disjoint) and then
 **plateaus at about 86%**, while fidelity keeps rising to 91%. So the model goes on getting better
 at imitating the rule parser long after it has stopped getting better at the residual: the
 transferable signal is exhausted by **iteration 600, which is 0.09 of an epoch**. A full epoch is
@@ -135,11 +135,11 @@ not worth running.
 
 Two process rules follow, both learned the hard way here:
 
-- **Sweep residual resolution across checkpoints; never stop on validation loss.** Stopping on
+- **Sweep residual identification across checkpoints; never stop on validation loss.** Stopping on
   val loss was wrong, and so was extrapolating the climb from three points, which suggested
   extending to a full epoch. The fourth and fifth points showed a plateau.
 - **Judge the gates on the lower 95% bound, not the point estimate.** On point estimates 900
-  passes the 85% resolution gate at 85.17%; its interval reaches 83.67%, so it has not been shown
+  passes the 85% identification gate at 85.17%; its interval reaches 83.67%, so it has not been shown
   to. Wilson intervals are now computed in `models.eval_slm` and the pass/fail flags use the lower
   bound. An 800-record sample cannot separate 85% from 87%, and reading those point estimates as
   a peak followed by a decline was exactly the error the intervals prevent.
@@ -148,20 +148,20 @@ Two process rules follow, both learned the hard way here:
 was wired in, the rebuilt training set contained **zero** instances of it, so the model could
 never learn the verdict. Two nested causes, both the same denominator mistake as Finding 1:
 
-1. Record confidence was `resolved / n_reagent_clauses`, which counted a method-text clause as a
+1. Record confidence was `identified / n_reagent_clauses`, which counted a method-text clause as a
    reagent clause the parser had failed on. Any record mentioning its own method was capped below
    1.0 (median 0.735, maximum 0.925).
 2. Corrected, confidence still peaked at **0.998** rather than 1.0, because stray punctuation
    leaves character coverage fractionally short. The `CONFIDENT = 1.0` gate was an exact-equality
    test on a float that real deposition text never reaches.
 
-The gate is now 0.95, which with resolution pinned at 1.0 by the `accounted_for` check means at
+The gate is now 0.95, which with identification pinned at 1.0 by the `accounted_for` check means at
 least 83% character coverage. Result: 1,286 training labels for the class, training set 102,417 to
 103,655, kept records 183,623 to 183,714, and 351 records moved from `NO_REAGENT_MATCH` to
 `METHOD_ONLY`, which is what they always were.
 
 **Finding 5: the head of the tail is curation, not modelling, and the recommender needed
-chemistry guards.** `parse.lexicon_questions` ranks the unresolved strings by corpus frequency
+chemistry guards.** `parse.lexicon_questions` ranks the unidentified strings by corpus frequency
 and asks 40 questions covering 7,018 components, each standing for every occurrence of that name.
 Output feeds the existing payload-driven `condition_courtroom_v5.html`.
 
@@ -176,7 +176,7 @@ and `malonate` → MALIC_ACID. Three guards now apply:
   substitution position, never decoration;
 - **element and acid words must agree**, so strontium does not match sodium and maleate does not
   match malate;
-- **family names resolve to nothing.** `peg` (720 components), `phosphate` (358), `propanediol`,
+- **family names identify to nothing.** `peg` (720 components), `phosphate` (358), `propanediol`,
   `butanediol`, `citrate buffer` state a family without a member. Recommending a specific entry
   would invent data the depositor never gave, so these are marked ambiguous.
 

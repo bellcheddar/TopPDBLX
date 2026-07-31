@@ -26,11 +26,11 @@ from pydantic import BaseModel, Field
 from .. import config
 
 # `not_a_component` is distinct from `unknown`. `unknown` means "a reagent the lexicon does not
-# recognise", and belongs in the resolution denominator as a genuine miss. `not_a_component`
+# recognise", and belongs in the identification denominator as a genuine miss. `not_a_component`
 # means "there is no reagent in this text at all" (method notes, screen references, an unnamed
 # inhibitor), and must be excluded from that denominator: no lexicon entry could ever match it,
-# so scoring it as a failure to resolve measures an artefact rather than the parser. Measured at
-# 10,206 components, worth 1.36 points of apparent resolution.
+# so scoring it as a failure to identify measures an artefact rather than the parser. Measured at
+# 10,206 components, worth 1.36 points of apparent identification.
 Role = Literal["precipitant", "salt", "buffer", "additive", "cryo", "protein",
                "not_a_component", "unknown"]
 
@@ -59,7 +59,7 @@ DiscardReason = Literal[
     "TOO_SHORT",                # too little text to contain a condition
     "REFERENCE_ONLY",           # defers to the literature
     "METHOD_ONLY",              # method, temperature or pH but no reagents
-    "NO_REAGENT_MATCH",         # reagent clauses present, none resolved
+    "NO_REAGENT_MATCH",         # reagent clauses present, none identified
     "UNPARSEABLE_RESIDUAL",     # most of the text left uncovered
     "NON_CRYSTALLISATION_TEXT",
 ]
@@ -96,8 +96,8 @@ class Provenance(BaseModel, extra="forbid"):
     parse_confidence: float
     flags: list[str] = Field(default_factory=list)
     n_clauses: int = 0
-    n_clauses_resolved: int = 0
-    unresolved_clauses: list[str] = Field(default_factory=list)
+    n_clauses_identified: int = 0
+    unidentified_clauses: list[str] = Field(default_factory=list)
 
 
 class ConditionRecord(BaseModel, extra="forbid"):

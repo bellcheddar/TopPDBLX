@@ -130,7 +130,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument("--lora-rank", type=int, default=8)
     parser.add_argument("--lora-dropout", type=float, default=0.05,
                         help="0.05 by default: fidelity to the rules kept climbing while "
-                             "residual resolution plateaued, which is overfitting to the "
+                             "residual identification plateaued, which is overfitting to the "
                              "teacher, and mild dropout targets exactly that")
     parser.add_argument("--warmup", type=int, default=50)
     parser.add_argument("--end-learning-rate", type=float, default=1e-5)

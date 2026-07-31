@@ -27,7 +27,7 @@ def make_entry(**overrides):
             "major_revision": 1, "minor_revision": 4,
         },
         "rcsb_entry_info": {
-            "resolution_combined": [2.5], "polymer_entity_count": 1,
+            "identification_combined": [2.5], "polymer_entity_count": 1,
             "experimental_method": "X-ray",
         },
         "polymer_entities": [],
@@ -96,8 +96,8 @@ def test_non_xray_entry_is_flagged():
     assert row["exptl_methods"] == ["ELECTRON MICROSCOPY"]
 
 
-def test_missing_resolution_is_none_not_error():
-    entry = make_entry(rcsb_entry_info={"resolution_combined": None,
+def test_missing_identification_is_none_not_error():
+    entry = make_entry(rcsb_entry_info={"identification_combined": None,
                                         "polymer_entity_count": 1,
                                         "experimental_method": "NMR"})
     assert next(iter(entry_rows(entry)))["resolution_a"] is None

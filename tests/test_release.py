@@ -49,7 +49,7 @@ def frames():
         "temperature_k": 293.0, "temperature_source": "reported", "ph": 7.5,
         "ph_source": "buffer", "ph_is_range": False, "ph_reported": 7.5,
         "protein_concentration_mg_ml": None, "drop_ratio": None,
-        "n_components": 1, "n_components_resolved": 1, "parse_confidence": 1.0,
+        "n_components": 1, "n_components_identified": 1, "parse_confidence": 1.0,
         "discard_reason": None, "flags": ["unit_inferred"], "parser": "rules_v3",
     }])
     components = pl.DataFrame([{

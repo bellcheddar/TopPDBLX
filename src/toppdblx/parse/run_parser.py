@@ -43,7 +43,7 @@ CONDITION_SCHEMA = {
     "method": pl.Utf8, "temperature_k": pl.Float64, "temperature_source": pl.Utf8,
     "ph": pl.Float64, "ph_source": pl.Utf8, "ph_is_range": pl.Boolean,
     "ph_reported": pl.Float64, "protein_concentration_mg_ml": pl.Float64,
-    "drop_ratio": pl.Utf8, "n_components": pl.UInt16, "n_components_resolved": pl.UInt16,
+    "drop_ratio": pl.Utf8, "n_components": pl.UInt16, "n_components_identified": pl.UInt16,
     "parse_confidence": pl.Float64, "discard_reason": pl.Utf8, "flags": pl.List(pl.Utf8),
     "parser": pl.Utf8, "entry_version": pl.Utf8, "raw_details": pl.Utf8,
 }
@@ -110,7 +110,7 @@ def main(argv: Optional[list[str]] = None) -> int:
                 "protein_concentration_mg_ml": record.protein_concentration_mg_ml,
                 "drop_ratio": record.drop_ratio,
                 "n_components": len(record.components),
-                "n_components_resolved": sum(1 for c in record.components if c.name_canonical),
+                "n_components_identified": sum(1 for c in record.components if c.name_canonical),
                 "parse_confidence": record.provenance.parse_confidence,
                 "discard_reason": record.discard_reason,
                 "flags": record.provenance.flags,
@@ -150,9 +150,9 @@ def main(argv: Optional[list[str]] = None) -> int:
             "n_kept": kept.height,
             "keep_rate": round(kept.height / max(1, cond_df.height), 4),
             "n_components": comp_df.height,
-            "n_components_resolved": comp_df.filter(
+            "n_components_identified": comp_df.filter(
                 pl.col("name_canonical").is_not_null()).height,
-            "component_resolution_rate": round(
+            "component_identification_rate": round(
                 comp_df.filter(pl.col("name_canonical").is_not_null()).height
                 / max(1, comp_df.height), 4),
             # Both denominators are reported, because they answer different questions and
@@ -163,7 +163,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             # is judged on the chemistry rate.
             "n_components_not_a_component": comp_df.filter(
                 pl.col("role") == "not_a_component").height,
-            "component_resolution_rate_chemistry_only": round(
+            "component_identification_rate_chemistry_only": round(
                 comp_df.filter(pl.col("name_canonical").is_not_null()).height
                 / max(1, comp_df.filter(pl.col("role") != "not_a_component").height), 4),
             "median_confidence": float(kept["parse_confidence"].median() or 0),
@@ -187,9 +187,9 @@ def main(argv: Optional[list[str]] = None) -> int:
                   f"({row['n'] / cond_df.height:>5.1%})")
 
         print(f"\ncomponents: {comp_df.height:,}, "
-              f"{stats['component_resolution_rate']:.1%} resolved to a canonical reagent")
+              f"{stats['component_identification_rate']:.1%} identified as a canonical reagent")
         print(f"  excluding {stats['n_components_not_a_component']:,} that contain no chemistry: "
-              f"{stats['component_resolution_rate_chemistry_only']:.1%} "
+              f"{stats['component_identification_rate_chemistry_only']:.1%} "
               f"(the rate that measures the parser)")
         print(f"  unit inferred:  {stats['n_unit_inferred']:>7,} "
               f"({stats['n_unit_inferred'] / max(1, comp_df.height):.1%} of components)")

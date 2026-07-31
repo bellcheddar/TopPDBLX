@@ -10,7 +10,7 @@ tried to emit and the lexicon does not contain.** The model has already normalis
 hands over a deduplicated request list for the chemistry it can see but cannot name.
 
 The two sources are merged rather than concatenated. A model-proposed name and the raw strings
-that would resolve to it become **one** question carrying the combined corpus weight, so the
+that would identify to it become **one** question carrying the combined corpus weight, so the
 ranking reflects true reach and the same decision is never asked twice.
 
 Sizing comes from the measured marginal return, not from a round number. Components gained per
@@ -22,8 +22,8 @@ decision, over the corpus as it stands:
     decisions 321-640   28 per decision
 
 So the value holds to roughly decision 160 and then halves. The default of 120 takes the queue to
-that point in one sitting, and is worth about 1.6 points of component resolution: for comparison,
-tripling the training exposure moved resolution by zero.
+that point in one sitting, and is worth about 1.6 points of component identification: for comparison,
+tripling the training exposure moved identification by zero.
 
     ./run.sh parse.curation_queue
     ./run.sh parse.curation_queue --limit 200
@@ -54,7 +54,7 @@ STAGE = "parse.curation_queue"
 BUCKET_GROUPS = {
     "map": "Names the lexicon already has, spelled differently",
     "new": "Reagents the lexicon is missing",
-    "leave": "Too vague to resolve",
+    "leave": "Too vague to identify",
     "not_a_reagent": "Probably not chemistry",
 }
 
@@ -154,8 +154,8 @@ def main(argv: Optional[list[str]] = None) -> int:
                         default=config.INTERIM_DIR / "parsed_components.parquet")
     parser.add_argument("--model-names", type=Path,
                         default=config.INTERIM_DIR / "slm"
-                                / "eval_final_model_unresolved_names.json",
-                        help="full unresolved-name counter written by models.eval_slm")
+                                / "eval_final_model_unidentified_names.json",
+                        help="full unidentified-name counter written by models.eval_slm")
     parser.add_argument("--model-sample-size", type=int, default=6000,
                         help="residual records the model names were counted over, for scaling")
     parser.add_argument("--residual-size", type=int, default=76923)
@@ -187,11 +187,11 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     # --- source 1: raw corpus strings ------------------------------------------------------
     comp = pl.read_parquet(args.components)
-    unresolved = comp.filter(pl.col("name_canonical").is_null()
+    unidentified = comp.filter(pl.col("name_canonical").is_null()
                              & (pl.col("role") != "not_a_component"))
     raw_counts: Counter[str] = Counter()
     examples: dict[str, list[str]] = {}
-    for name, pdb_id, conc, unit in unresolved.select(
+    for name, pdb_id, conc, unit in unidentified.select(
             "name_raw", "pdb_id", "concentration", "unit").iter_rows():
         key = (name or "").strip().lower()
         if len(key) < 2 or key in already_asked:
@@ -216,7 +216,7 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     # --- merge: one decision per reagent, not per spelling ---------------------------------
     # A model-proposed name absorbs the raw strings that normalise onto it, so the question is
-    # asked once and its weight reflects everything it would resolve.
+    # asked once and its weight reflects everything it would identify.
     merged: dict[str, dict[str, Any]] = {}
     claimed: set[str] = set()
     for name, model_weight in model_counts.items():
@@ -272,7 +272,7 @@ def main(argv: Optional[list[str]] = None) -> int:
                             f"{len(entry['surface_forms'])} spelling(s).")
             else:
                 why = (f"{entry['corpus_exact']:,} components use this exact string and the "
-                       f"lexicon does not resolve it.")
+                       f"lexicon does not identify it.")
 
             # Bucketed rather than asked one at a time. 120 individual questions is more
             # attention than this is worth: the decisions repeat, and a bucket of 30 chemical
@@ -302,34 +302,34 @@ def main(argv: Optional[list[str]] = None) -> int:
                 options = [
                     ("__ACCEPT__", f"Yes: add all {len(members)} as aliases {target_note}", True),
                     ("__NEW__", f"No: add all {len(members)} as new reagents instead", False),
-                    ("__LEAVE__", "No: leave all unresolved", False),
+                    ("__LEAVE__", "No: leave all unidentified", False),
                 ]
-                question = (f"{len(members)} unresolved names look like spellings of reagents "
+                question = (f"{len(members)} unidentified names look like spellings of reagents "
                             f"the lexicon already has. Add them as aliases?")
             elif action == "new":
                 label = f", class {chem_class}" if chem_class else ""
                 options = [
                     ("__ACCEPT__", f"Yes: add all {len(members)} as new reagents{label}", True),
-                    ("__LEAVE__", "No: leave all unresolved", False),
+                    ("__LEAVE__", "No: leave all unidentified", False),
                     ("__NOT_A_REAGENT__", "No: none of these are reagents", False),
                 ]
-                question = (f"{len(members)} unresolved names are not in the lexicon at all"
+                question = (f"{len(members)} unidentified names are not in the lexicon at all"
                             f"{label}. Add them?")
             elif action == "not_a_reagent":
                 options = [
-                    ("__LEAVE__", f"Leave all {len(members)} unresolved (safe default)", True),
+                    ("__LEAVE__", f"Leave all {len(members)} unidentified (safe default)", True),
                     ("__NOT_A_REAGENT__",
                      f"Mark all {len(members)} as not chemistry", False),
                 ]
-                question = (f"{len(members)} unresolved names could not be recognised as "
+                question = (f"{len(members)} unidentified names could not be recognised as "
                             f"chemistry. Leave them alone?")
             else:
                 options = [
-                    ("__LEAVE__", f"Yes: leave all {len(members)} unresolved", True),
+                    ("__LEAVE__", f"Yes: leave all {len(members)} unidentified", True),
                     ("__NEW__", f"No: add all {len(members)} as new reagents", False),
                 ]
-                question = (f"{len(members)} unresolved names state a chemical family without "
-                            f"saying which member. Leave them unresolved?")
+                question = (f"{len(members)} unidentified names state a chemical family without "
+                            f"saying which member. Leave them unidentified?")
 
             questions.append({
                 "id": f"curation::bucket::{bucket_key}",
@@ -355,17 +355,17 @@ def main(argv: Optional[list[str]] = None) -> int:
             "schema_version": config.SCHEMA_VERSION,
             "lexicon_version": data.get("version", "unknown"),
             "title": "Curation round 2",
-            "intro": (f"{len(questions)} questions covering about {covered:,} unresolved "
+            "intro": (f"{len(questions)} questions covering about {covered:,} unidentified "
                       f"components. {kinds['model']} come from names the parser model tried to "
                       f"emit and the lexicon lacks, already normalised, so one answer settles "
-                      f"every spelling. The rest are the most frequent unresolved strings. "
+                      f"every spelling. The rest are the most frequent unidentified strings. "
                       f"Every dropdown is pre-set: change the ones that are wrong."),
             "n_questions": len(questions),
             "totals": {
                 "n_from_model": kinds["model"], "n_from_corpus": kinds["corpus"],
                 "n_components_covered": covered,
-                "n_unresolved_components": unresolved.height,
-                "pct_of_unresolved_covered": round(100 * covered / max(1, unresolved.height), 2),
+                "n_unidentified_components": unidentified.height,
+                "pct_of_unidentified_covered": round(100 * covered / max(1, unidentified.height), 2),
                 "n_already_asked_skipped": len(already_asked),
             },
             "questions": questions,
@@ -374,8 +374,8 @@ def main(argv: Optional[list[str]] = None) -> int:
         m.add_output(args.out).note(**payload["totals"], n_questions=len(questions))
 
         print(f"\n  {len(questions)} questions covering about {covered:,} components "
-              f"({payload['totals']['pct_of_unresolved_covered']}% of the unresolved mass)")
-        print(f"    {kinds['model']:>3} from the model's own unresolved emissions "
+              f"({payload['totals']['pct_of_unidentified_covered']}% of the unidentified mass)")
+        print(f"    {kinds['model']:>3} from the model's own unidentified emissions "
               f"(pre-normalised, one answer covers every spelling)")
         print(f"    {kinds['corpus']:>3} from raw corpus frequency")
         print(f"    {len(already_asked)} already settled in round 1, not re-asked")

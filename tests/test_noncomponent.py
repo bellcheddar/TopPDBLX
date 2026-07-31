@@ -1,6 +1,6 @@
 """Tests for recognising clauses that contain no reagent.
 
-The asymmetry that shapes every test here: leaving a real reagent unresolved is **visible** in
+The asymmetry that shapes every test here: leaving a real reagent unidentified is **visible** in
 the coverage report, but classifying a real reagent as "not a component" **silently deletes
 chemistry**. So the tests weight false positives far more heavily than false negatives, and the
 recall tests below are deliberately the shorter half.

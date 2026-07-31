@@ -59,7 +59,7 @@ _PEG_MW_RANGE = (200, 40000)
 # listed: a pKa is a measured constant, and guessing one would put a false number into a field
 # the ontology uses to collapse buffer identity to pH.
 #
-# Everything not in this table stays unresolved and is reported, which is the same treatment
+# Everything not in this table stays unidentified and is reported, which is the same treatment
 # PCTP and PDTP received when their formulations could not be confirmed.
 BUFFER_PKA = {
     "taps": 8.4,
@@ -73,7 +73,7 @@ BUFFER_PKA = {
 
 # Decoration that says how a buffer was supplied or titrated, not which buffer it is. Stripped
 # before matching a name against the lexicon, so "hepes ph 7.5", "mes/sodium hydroxide" and
-# "tris base/hydrochloric acid" resolve to the buffers already present instead of demanding a
+# "tris base/hydrochloric acid" identify to the buffers already present instead of demanding a
 # pKa each.
 _BUFFER_DECORATION = re.compile(
     r"\b(ph\s*=?\s*\d+(\.\d+)?(\s*(to|-)\s*\d+(\.\d+)?)?|buffer|buffered|solution|"
@@ -292,7 +292,7 @@ def main(argv: Optional[list[str]] = None) -> int:
               f"{sum(r['weight'] for r in applied['new']):>7,} components")
         print(f"  aliases added    {len(applied['alias']):>5}  "
               f"{sum(r['weight'] for r in applied['alias']):>7,} components")
-        print(f"  left unresolved  {len(applied['left']):>5}  "
+        print(f"  left unidentified  {len(applied['left']):>5}  "
               f"{sum(r['weight'] for r in applied['left']):>7,} components")
         print(f"  skipped          {len(applied['skipped']):>5}  "
               f"{sum(r['weight'] for r in applied['skipped']):>7,} components")

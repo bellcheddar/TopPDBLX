@@ -85,7 +85,7 @@ def family_of(component: dict[str, Any], peg_max_mw: int,
               salt_min_molar: float) -> Optional[str]:
     """Which precipitant family this component contributes to, if any.
 
-    Returns None for buffers, additives, detergents, explicit cryoprotectants, unresolved
+    Returns None for buffers, additives, detergents, explicit cryoprotectants, unidentified
     reagents, and for anything present at a concentration too low to precipitate.
     """
     if component.get("cryo_evidence") == "explicit":

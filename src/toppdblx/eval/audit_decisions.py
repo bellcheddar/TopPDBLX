@@ -17,7 +17,7 @@ Three kinds of decision are emitted, each carrying its corpus weight:
 
   unit_rule   "a PEG of 1000 or more, written as a bare %, means w/v". 19 of these.
   mapping     "this raw string becomes this canonical reagent". Ranked by frequency.
-  unmapped    "this raw string resolved to nothing". The same worklist as the lexicon
+  unmapped    "this raw string identified to nothing". The same worklist as the lexicon
               curation, so one pass through the interface does both jobs.
 
 Structural errors (clause splitting, a missed component, pH attribution) are invisible at
@@ -120,8 +120,8 @@ def main(argv: Optional[list[str]] = None) -> int:
             })
 
         # --- reagent mappings -------------------------------------------
-        resolved = components.filter(pl.col("name_canonical").is_not_null())
-        mapping_table = (resolved.group_by(["name_raw", "name_canonical", "chem_class"])
+        identified = components.filter(pl.col("name_canonical").is_not_null())
+        mapping_table = (identified.group_by(["name_raw", "name_canonical", "chem_class"])
                          .agg(pl.len().alias("n")).sort("n", descending=True))
         mapping_total = int(mapping_table["n"].sum())
         mapping_table = mapping_table.with_columns(
@@ -130,7 +130,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         for row in mapping_table.head(args.mappings).iter_rows(named=True):
             predicate = ((pl.col("name_raw") == row["name_raw"])
                          & (pl.col("name_canonical") == row["name_canonical"]))
-            units = (resolved.filter(predicate).group_by("unit").agg(pl.len().alias("n"))
+            units = (identified.filter(predicate).group_by("unit").agg(pl.len().alias("n"))
                      .sort("n", descending=True).head(3))
             mappings.append({
                 "id": f"map::{row['name_raw']}::{row['name_canonical']}",
@@ -141,22 +141,22 @@ def main(argv: Optional[list[str]] = None) -> int:
                 "share_of_components": round(row["n"] / max(1, total_components), 5),
                 "cumulative_coverage": round(row["cum"], 4),
                 "units": [{"unit": u["unit"], "n": u["n"]} for u in units.iter_rows(named=True)],
-                "examples": examples_for(resolved, conditions, predicate, EXAMPLES_PER_DECISION),
+                "examples": examples_for(identified, conditions, predicate, EXAMPLES_PER_DECISION),
             })
 
         # --- unmapped strings (the lexicon worklist, same interface) -----
-        unresolved = components.filter(pl.col("name_canonical").is_null())
-        unmapped_table = (unresolved.group_by("name_raw").agg(pl.len().alias("n"))
+        unidentified = components.filter(pl.col("name_canonical").is_null())
+        unmapped_table = (unidentified.group_by("name_raw").agg(pl.len().alias("n"))
                           .sort("n", descending=True))
-        unresolved_total = int(unmapped_table["n"].sum())
+        unidentified_total = int(unmapped_table["n"].sum())
         unmapped = []
         for row in unmapped_table.head(args.unmapped).iter_rows(named=True):
             unmapped.append({
                 "id": f"unmapped::{row['name_raw']}",
                 "name_raw": row["name_raw"],
                 "n_components": row["n"],
-                "share_of_unresolved": round(row["n"] / max(1, unresolved_total), 5),
-                "examples": examples_for(unresolved, conditions,
+                "share_of_unidentified": round(row["n"] / max(1, unidentified_total), 5),
+                "examples": examples_for(unidentified, conditions,
                                          pl.col("name_raw") == row["name_raw"],
                                          EXAMPLES_PER_DECISION),
             })
@@ -200,7 +200,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             "totals": {
                 "n_components": total_components,
                 "n_inferred_units": n_inferred,
-                "n_unresolved_components": unresolved.height,
+                "n_unidentified_components": unidentified.height,
             },
             "unit_rules": unit_rules,
             "mappings": mappings,
@@ -228,7 +228,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         print(f"  {len(mappings)} mappings cover {stats['mapping_component_coverage']:.1%} "
               f"of all {total_components:,} components")
         print(f"  {len(unmapped)} unmapped strings cover "
-              f"{sum(d['share_of_unresolved'] for d in unmapped):.1%} of the unresolved mass")
+              f"{sum(d['share_of_unidentified'] for d in unmapped):.1%} of the unidentified mass")
         print(f"  {len(records)} multi-component records for structural errors only")
     return 0
 

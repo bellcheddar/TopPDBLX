@@ -115,7 +115,7 @@ def test_inferred_cryo_still_counts_as_a_precipitant():
                   concentration=20, unit="percent_v_v") == "organic"
 
 
-def test_unresolved_component_contributes_nothing():
+def test_unidentified_component_contributes_nothing():
     assert family(chem_class=None, concentration=20, unit="percent_w_v") is None
 
 

@@ -9,7 +9,7 @@ resource is archived and unmaintained, final release 1 July 2017, and losing it 
 the propensity work with no recovery. An hour of bandwidth today removes that risk.
 
 Source: Zenodo DOI 10.5281/zenodo.821654, "Protein Structure Initiative - TargetTrack
-2000-2017 - all data files". The download URL is resolved through the Zenodo API at run
+2000-2017 - all data files". The download URL is identified through the Zenodo API at run
 time rather than hardcoded, and the published MD5 is verified, so a truncated or
 substituted file fails loudly instead of sitting on disk pretending to be data.
 
@@ -36,7 +36,7 @@ ZENODO_API = "https://zenodo.org/api/records/{record}"
 EXPECTED_FILENAME = "TargetTrack-1Jul2017.tar.gz"
 
 
-def resolve_file(record: int = ZENODO_RECORD) -> dict[str, Any]:
+def identify_file(record: int = ZENODO_RECORD) -> dict[str, Any]:
     """Return the Zenodo file entry for the TargetTrack tarball."""
     body = http.get_json(ZENODO_API.format(record=record))
     if not body:
@@ -76,7 +76,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
     with Manifest(STAGE, params={"zenodo_record": args.record}) as m:
-        meta = resolve_file(args.record)
+        meta = identify_file(args.record)
         dest = args.out_dir / meta["filename"]
         print(f"{meta['title']}\n  doi {meta['doi']}\n  {meta['size'] / 1e6:.1f} MB -> {dest}")
 
