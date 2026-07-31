@@ -45,14 +45,14 @@ because the well count matched.
 | Vendor | State |
 |---|---|
 | Hampton Research | done, exhaustive |
-| Molecular Dimensions | Morpheus only. Also publish Morpheus II, Morpheus Fusion, PACT, JCSG-plus, Structure Screen, MIDAS |
+| Molecular Dimensions | Morpheus and PACT premier done. Still to do: Morpheus II, Morpheus Fusion, Structure Screen, MIDAS. `MD1-37` JCSG-plus rejected, its brochure has no plate table in the text layer; the NeXtal formulation covers the same screen |
 | Rigaku Reagents | reachable, not started |
 | Jena Bioscience | reachable, not started |
 | MiTeGen | reachable, not started |
-| Qiagen / NeXtal | reachable, not started |
+| Qiagen / NeXtal | JCSG+, JCSG Core I, JCSG Core IV done (288 wells) |
 | Emerald Bio | reachable, not started |
 
-**Do JCSG-plus and PACT first.** They are the screens the corpus actually names: `pact`, `jcsg`
+~~Do JCSG-plus and PACT first.~~ Done. They are the screens the corpus actually names: `pact`, `jcsg`
 and `proplex` appear in deposition text and are currently caught only as screen *references*,
 never matched to a formulation.
 
@@ -70,6 +70,10 @@ complete plate by counting alone. Check that every well states a concentration.
   chloride hexahydrate; 0.3M Calcium chloride dihydrate`), so `NPS`, `precipitant mix` and
   `precipitant mix 4` in the unidentified head could be resolved from the vendor's own stock
   table. That is a second extraction pass over the same document.
+- **Add the 26 ionic-liquid reagents.** They are the whole reason shipped wells parse at 84.3%
+  rather than above 90%: PEG/Ionic Liquid 1 and 2 contribute 96 wells the lexicon cannot read.
+  Vendor-published names, so unambiguously real, and all quaternary ammonium or imidazolium
+  salts, so `chem_class: salt` is not a guess.
 - **59 buffers still have no pKa**, so they cannot be lexicon entries. Many are mixed systems
   with no single pKa; the rest are clause-splitter failures and are better fixed in the parser.
 - **24,327 conditions (13.1%) stay Unclassified for want of a stated amount.** Classifying them
