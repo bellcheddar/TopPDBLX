@@ -4,8 +4,8 @@ Generated 2026-07-31 by `./run.sh release.datasheet`. Every figure is read
 from the data at generation time, so this file cannot drift from what it describes.
 
 **Schema version** `0.1.0-draft` · **Ontology version** `0.2.0`
-· **Lexicon version** `0.3.0` (502 reagents,
-1265 names)
+· **Lexicon version** `0.4.0` (526 reagents,
+1289 names)
 
 ---
 

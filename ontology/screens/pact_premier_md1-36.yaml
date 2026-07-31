@@ -1,0 +1,206 @@
+screen: PACT premier
+catalogue: MD1-36
+vendor: Molecular Dimensions
+source_url: https://cdn.moleculardimensions.com/public/546/PACT-premier-HT_FX-96-(MD1-36_36-FX)-brochure.pdf
+extracted_on: '2026-07-31'
+n_conditions: 96
+compositional: true
+note: 'Conditions name vendor stocks (Buffer System, Precipitant Mix, Divalents, Halogens, NPS, SPG) rather
+  than individual reagents. Stored verbatim: expanding them would assert constituents this document does
+  not state well by well.'
+wells:
+- well: A1
+  condition_text: 0.1 M SPG 4.0 25 % w/v PEG 1500
+- well: A2
+  condition_text: 0.1 M SPG 5.0 25 % w/v PEG 1500
+- well: A3
+  condition_text: 0.1 M SPG 6.0 25 % w/v PEG 1500
+- well: A4
+  condition_text: 0.1 M SPG 7.0 25 % w/v PEG 1500
+- well: A5
+  condition_text: 0.1 M SPG 8.0 25 % w/v PEG 1500
+- well: A6
+  condition_text: 0.1 M SPG 9.0 25 % w/v PEG 1500
+- well: A7
+  condition_text: 0.2 M Sodium chloride, 0.1 M Sodium acetate 5.0 20 % w/v PEG 6000
+- well: A8
+  condition_text: 0.2 M Ammonium chloride, 0.1 M Sodium acetate 5.0 20 % w/v PEG 6000
+- well: A9
+  condition_text: 0.2 M Lithium chloride, 0.1 M Sodium acetate 5.0 20 % w/v PEG 6000
+- well: A10
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M Sodium acetate 5.0 20 % w/v PEG 6000
+- well: A11
+  condition_text: 0.2 M Calcium chloride dihydrate, 0.1 M Sodium acetate 5.0 20 % w/v PEG 6000
+- well: A12
+  condition_text: 0.01 M Zinc chloride, 0.1 M Sodium acetate 5.0 20 % w/v PEG 6000
+- well: B1
+  condition_text: 0.1 M MIB 4.0 25 % w/v PEG 1500
+- well: B2
+  condition_text: 0.1 M MIB 5.0 25 % w/v PEG 1500
+- well: B3
+  condition_text: 0.1 M MIB 6.0 25 % w/v PEG 1500
+- well: B4
+  condition_text: 0.1 M MIB 7.0 25 % w/v PEG 1500
+- well: B5
+  condition_text: 0.1 M MIB 8.0 25 % w/v PEG 1500
+- well: B6
+  condition_text: 0.1 M MIB 9.0 25 % w/v PEG 1500
+- well: B7
+  condition_text: 0.2 M Sodium chloride, 0.1 M MES 6.0 20 % w/v PEG 6000
+- well: B8
+  condition_text: 0.2 M Ammonium chloride, 0.1 M MES 6.0 20 % w/v PEG 6000
+- well: B9
+  condition_text: 0.2 M Lithium chloride, 0.1 M MES 6.0 20 % w/v PEG 6000
+- well: B10
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M MES 6.0 20 % w/v PEG 6000
+- well: B11
+  condition_text: 0.2 M Calcium chloride dihydrate, 0.1 M MES 6.0 20 % w/v PEG 6000
+- well: B12
+  condition_text: 0.01 M Zinc chloride, 0.1 M MES 6.0 20 % w/v PEG 6000
+- well: C1
+  condition_text: 0.1 M PCTP 4.0 25 % w/v PEG 1500
+- well: C2
+  condition_text: 0.1 M PCTP 5.0 25 % w/v PEG 1500
+- well: C3
+  condition_text: 0.1 M PCTP 6.0 25 % w/v PEG 1500
+- well: C4
+  condition_text: 0.1 M PCTP 7.0 25 % w/v PEG 1500
+- well: C5
+  condition_text: 0.1 M PCTP 8.0 25 % w/v PEG 1500
+- well: C6
+  condition_text: 0.1 M PCTP 9.0 25 % w/v PEG 1500
+- well: C7
+  condition_text: 0.2 M Sodium chloride, 0.1 M HEPES 7.0 20 % w/v PEG 6000
+- well: C8
+  condition_text: 0.2 M Ammonium chloride, 0.1 M HEPES 7.0 20 % w/v PEG 6000
+- well: C9
+  condition_text: 0.2 M Lithium chloride, 0.1 M HEPES 7.0 20 % w/v PEG 6000
+- well: C10
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M HEPES 7.0 20 % w/v PEG 6000
+- well: C11
+  condition_text: 0.2 M Calcium chloride dihydrate, 0.1 M HEPES 7.0 20 % w/v PEG 6000
+- well: C12
+  condition_text: 0.01 M Zinc chloride, 0.1 M HEPES 7.0 20 % w/v PEG 6000
+- well: D1
+  condition_text: 0.1 M MMT 4.0 25 % w/v PEG 1500
+- well: D2
+  condition_text: 0.1 M MMT 5.0 25 % w/v PEG 1500
+- well: D3
+  condition_text: 0.1 M MMT 6.0 25 % w/v PEG 1500
+- well: D4
+  condition_text: 0.1 M MMT 7.0 25 % w/v PEG 1500
+- well: D5
+  condition_text: 0.1 M MMT 8.0 25 % w/v PEG 1500
+- well: D6
+  condition_text: 0.1 M MMT 9.0 25 % w/v PEG 1500
+- well: D7
+  condition_text: 0.2 M Sodium chloride, 0.1 M Tris 8.0 20 % w/v PEG 6000
+- well: D8
+  condition_text: 0.2 M Ammonium chloride, 0.1 M Tris 8.0 20 % w/v PEG 6000
+- well: D9
+  condition_text: 0.2 M Lithium chloride, 0.1 M Tris 8.0 20 % w/v PEG 6000
+- well: D10
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M Tris 8.0 20 % w/v PEG 6000
+- well: D11
+  condition_text: 0.2 M Calcium chloride dihydrate, 0.1 M Tris 8.0 20 % w/v PEG 6000
+- well: D12
+  condition_text: 0.002 M Zinc chloride, 0.1 M Tris 8.0 20 % w/v PEG 6000
+- well: E1
+  condition_text: 0.2 M Sodium fluoride, 20 % w/v PEG 3350
+- well: E2
+  condition_text: 0.2 M Sodium bromide, 20 % w/v PEG 3350
+- well: E3
+  condition_text: 0.2 M Sodium iodide, 20 % w/v PEG 3350
+- well: E4
+  condition_text: 0.2 M Potassium thiocyanate, 20 % w/v PEG 3350
+- well: E5
+  condition_text: 0.2 M Sodium nitrate, 20 % w/v PEG 3350
+- well: E6
+  condition_text: 0.2 M Sodium formate, 20 % w/v PEG 3350
+- well: E7
+  condition_text: 0.2 M Sodium acetate trihydrate, 20 % w/v PEG 3350
+- well: E8
+  condition_text: 0.2 M Sodium sulfate, 20 % w/v PEG 3350
+- well: E9
+  condition_text: 0.2 M Potassium sodium tartrate tetrahydrate, 20 % w/v PEG 3350
+- well: E10
+  condition_text: 0.02 M Sodium/potassium phosphate, 20 % w/v PEG 3350
+- well: E11
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate, 20 % w/v PEG 3350
+- well: E12
+  condition_text: 0.2 M Sodium malonate dibasic monohydrate, 20 % w/v PEG 3350
+- well: F1
+  condition_text: 0.2 M Sodium fluoride, 0.1 M Bis-Tris propane 6.5 20 % w/v PEG 3350
+- well: F2
+  condition_text: 0.2 M Sodium bromide, 0.1 M Bis-Tris propane 6.5 20 % w/v PEG 3350
+- well: F3
+  condition_text: 0.2 M Sodium iodide, 0.1 M Bis-Tris propane 6.5 20 % w/v PEG 3350
+- well: F4
+  condition_text: 0.2 M Potassium thiocyanate, 0.1 M Bis-Tris propane 6.5 20 % w/v PEG 3350
+- well: F5
+  condition_text: 0.2 M Sodium nitrate, 0.1 M Bis-Tris propane 6.5 20 % w/v PEG 3350
+- well: F6
+  condition_text: 0.2 M Sodium formate, 0.1 M Bis-Tris propane 6.5 20 % w/v PEG 3350
+- well: F7
+  condition_text: 0.2 M Sodium acetate trihydrate, 0.1 M Bis-Tris propane 6.5 20 % w/v PEG 3350
+- well: F8
+  condition_text: 0.2 M Sodium sulfate, 0.1 M Bis-Tris propane 6.5 20 % w/v PEG 3350
+- well: F9
+  condition_text: 0.2 M Potassium sodium tartrate tetrahydrate, 0.1 M Bis-Tris propane 6.5 20 % w/v PEG
+    3350
+- well: F10
+  condition_text: 0.02 M Sodium/potassium phosphate, 0.1 M Bis-Tris propane 6.5 20 % w/v PEG 3350
+- well: F11
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate, 0.1 M Bis-Tris propane 6.5 20 % w/v PEG 3350
+- well: F12
+  condition_text: 0.2 M Sodium malonate dibasic monohydrate, 0.1 M Bis-Tris propane 6.5 20 % w/v PEG 3350
+- well: G1
+  condition_text: 0.2 M Sodium fluoride, 0.1 M Bis-Tris propane 7.5 20 % w/v PEG 3350
+- well: G2
+  condition_text: 0.2 M Sodium bromide, 0.1 M Bis-Tris propane 7.5 20 % w/v PEG 3350
+- well: G3
+  condition_text: 0.2 M Sodium iodide, 0.1 M Bis-Tris propane 7.5 20 % w/v PEG 3350
+- well: G4
+  condition_text: 0.2 M Potassium thiocyanate, 0.1 M Bis-Tris propane 7.5 20 % w/v PEG 3350
+- well: G5
+  condition_text: 0.2 M Sodium nitrate, 0.1 M Bis-Tris propane 7.5 20 % w/v PEG 3350
+- well: G6
+  condition_text: 0.2 M Sodium formate, 0.1 M Bis-Tris propane 7.5 20 % w/v PEG 3350
+- well: G7
+  condition_text: 0.2 M Sodium acetate trihydrate, 0.1 M Bis-Tris propane 7.5 20 % w/v PEG 3350
+- well: G8
+  condition_text: 0.2 M Sodium sulfate, 0.1 M Bis-Tris propane 7.5 20 % w/v PEG 3350
+- well: G9
+  condition_text: 0.2 M Potassium sodium tartrate tetrahydrate, 0.1 M Bis-Tris propane 7.5 20 % w/v PEG
+    3350
+- well: G10
+  condition_text: 0.02 M Sodium/potassium phosphate, 0.1 M Bis-Tris propane 7.5 20 % w/v PEG 3350
+- well: G11
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate, 0.1 M Bis-Tris propane 7.5 20 % w/v PEG 3350
+- well: G12
+  condition_text: 0.2 M Sodium malonate dibasic monohydrate, 0.1 M Bis-Tris propane 7.5 20 % w/v PEG 3350
+- well: H1
+  condition_text: 0.2 M Sodium fluoride, 0.1 M Bis-Tris propane 8.5 20 % w/v PEG 3350
+- well: H2
+  condition_text: 0.2 M Sodium bromide, 0.1 M Bis-Tris propane 8.5 20 % w/v PEG 3350
+- well: H3
+  condition_text: 0.2 M Sodium iodide, 0.1 M Bis-Tris propane 8.5 20 % w/v PEG 3350
+- well: H4
+  condition_text: 0.2 M Potassium thiocyanate, 0.1 M Bis-Tris propane 8.5 20 % w/v PEG 3350
+- well: H5
+  condition_text: 0.2 M Sodium nitrate, 0.1 M Bis-Tris propane 8.5 20 % w/v PEG 3350
+- well: H6
+  condition_text: 0.2 M Sodium formate, 0.1 M Bis-Tris propane 8.5 20 % w/v PEG 3350
+- well: H7
+  condition_text: 0.2 M Sodium acetate trihydrate, 0.1 M Bis-Tris propane 8.5 20 % w/v PEG 3350
+- well: H8
+  condition_text: 0.2 M Sodium sulfate, 0.1 M Bis-Tris propane 8.5 20 % w/v PEG 3350
+- well: H9
+  condition_text: 0.2 M Potassium sodium tartrate tetrahydrate, 0.1 M Bis-Tris propane 8.5 20 % w/v PEG
+    3350
+- well: H10
+  condition_text: 0.02 M Sodium/potassium phosphate, 0.1 M Bis-Tris propane 8.5 20 % w/v PEG 3350
+- well: H11
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate, 0.1 M Bis-Tris propane 8.5 20 % w/v PEG 3350
+- well: H12
+  condition_text: 0.2 M Sodium malonate dibasic monohydrate, 0.1 M Bis-Tris propane 8.5 20 % w/v PEG 3350

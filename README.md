@@ -100,7 +100,7 @@ for deposition in archive:
 | RCSB Data GraphQL API | Fetches every deposition, batched and resumable |
 | gemmi | Reads the archive mmCIF for the byte-level fidelity gate |
 | `regex` | Clause splitting, which turned out to be the hard part rather than the chemistry |
-| `ontology/synonyms.yaml` | The reagent dictionary: 502 reagents, 1,265 spellings |
+| `ontology/synonyms.yaml` | The reagent dictionary: 526 reagents, 1,289 spellings |
 | pydantic | Enforces the schema and the chemical invariants on load |
 | polars, pyarrow, duckdb | Tables, joins and the queryable release |
 | MMseqs2 | Sequence clustering at 30%, 50% and 90% identity, to control redundancy |
@@ -117,7 +117,7 @@ for deposition in archive:
 | Records | 199,185 |
 | Usable | **186,180 (93.5%)** |
 | Components | 603,459, **85.2% identified** as a canonical reagent (87.5% excluding text that names no chemistry) |
-| Reagent lexicon | 502 reagents, 1,265 names (v0.3.0) |
+| Reagent lexicon | 526 reagents, 1,289 names (v0.4.0) |
 | Linked sequences | 184,229 across **23,159** distinct 30% identity clusters |
 | Screen-well matches | 45,547 component-set matches, 20,339 agreeing on every concentration |
 | Archive fidelity | **100.0000%** over 205,943 entries against the 90 GB mmCIF snapshot |
@@ -193,7 +193,8 @@ An earlier three-level ontology of 163 binned groups was withdrawn at v0.3.0. It
 | Round 1: 40 frequency-ranked decisions | 165 | 570 | 80.1% |
 | Round 2: 10 grouped decisions, 1,004 names | 502 | 1,265 | 84.5% |
 | Prose stripping (a parser fix, not curation) | 502 | 1,265 | 85.2% |
-| Separating apparatus notes and bare units from reagents | 502 | 1,265 | **85.2%** (87.5% on chemistry alone) |
+| Separating apparatus notes and bare units from reagents | 502 | 1,265 | 85.2% (87.5% on chemistry alone) |
+| The 26 ionic liquids from PEG/Ionic Liquid 1 and 2 | 526 | 1,289 | **85.2%** (87.5% on chemistry alone) |
 
 **For the crystallographer:** every reagent carries the chemistry the ontology needs, and each field is enforced on load rather than being optional documentation. A `peg` entry must state its molecular weight, a `buffer` must state its pKa, and a `premix` must list its constituents. Those invariants caught three separate attempts to bulk-add entries that could not satisfy them.
 
@@ -433,7 +434,7 @@ These determine what conclusions the data can support, and are stated in full in
 - [x] Assemble the release in five formats, with a generated datasheet
 - [x] Settle licensing: CC-BY-4.0 data, MIT code
 - [x] Complete the 90 GB archive snapshot and run the full-scale fidelity check
-- [x] Reagent lexicon: two curation rounds, 147 to 502 reagents
+- [x] Reagent lexicon: two curation rounds plus the ionic liquids, 147 to 526 reagents
 - [x] Seven-class condition ontology, replacing the withdrawn three-level version
 - [x] Fine-tune SmolLM2 on the parse residual, and strip narrative prose in the parser
 - [ ] Classification accuracy audit: 200 judgements outstanding (spec 6.6)

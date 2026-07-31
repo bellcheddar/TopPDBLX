@@ -1,0 +1,103 @@
+screen: PEG/pH
+catalogue: HR2-080
+vendor: Hampton Research
+source_url: https://hamptonresearch.com/uploads/support_materials/HR2-080_Binder.pdf
+retrieved: '2026-07-31'
+n_wells: 48
+wells:
+- well: '1'
+  condition_text: 0.2 M Citric acid pH 3.5, 20% w/v Polyethylene glycol 4,000
+- well: '2'
+  condition_text: 0.2 M Citric acid pH 3.8, 20% w/v Polyethylene glycol 4,000
+- well: '3'
+  condition_text: 0.2 M Citric acid pH 4.1, 20% w/v Polyethylene glycol 4,000
+- well: '4'
+  condition_text: 0.2 M Citric acid pH 4.4, 20% w/v Polyethylene glycol 4,000
+- well: '5'
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate pH 3.6, 20% w/v Polyethylene glycol 4,000
+- well: '6'
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate pH 3.9, 20% w/v Polyethylene glycol 4,000
+- well: '7'
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate pH 4.2, 20% w/v Polyethylene glycol 4,000
+- well: '8'
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate pH 4.5, 20% w/v Polyethylene glycol 4,000
+- well: '9'
+  condition_text: 0.2 M Sodium acetate trihydrate pH 3.7, 20% w/v Polyethylene glycol 4,000
+- well: '10'
+  condition_text: 0.2 M Sodium acetate trihydrate pH 4.0, 20% w/v Polyethylene glycol 4,000
+- well: '11'
+  condition_text: 0.2 M Sodium acetate trihydrate pH 4.3, 20% w/v Polyethylene glycol 4,000
+- well: '12'
+  condition_text: 0.2 M Sodium acetate trihydrate pH 4.6, 20% w/v Polyethylene glycol 4,000
+- well: '13'
+  condition_text: 0.2 M Sodium acetate trihydrate pH 4.9, 20% w/v Polyethylene glycol 4,000
+- well: '14'
+  condition_text: 0.2 M DL-Malic acid pH 4.7, 20% w/v Polyethylene glycol 4,000
+- well: '15'
+  condition_text: 0.2 M DL-Malic acid pH 5.0, 20% w/v Polyethylene glycol 4,000
+- well: '16'
+  condition_text: 0.2 M DL-Malic acid pH 5.3, 20% w/v Polyethylene glycol 4,000
+- well: '17'
+  condition_text: 0.2 M DL-Malic acid pH 5.6, 20% w/v Polyethylene glycol 4,000
+- well: '18'
+  condition_text: 0.2 M DL-Malic acid pH 5.9, 20% w/v Polyethylene glycol 4,000
+- well: '19'
+  condition_text: 0.2 M Succinic acid pH 4.8, 20% w/v Polyethylene glycol 4,000
+- well: '20'
+  condition_text: 0.2 M Succinic acid pH 5.1, 20% w/v Polyethylene glycol 4,000
+- well: '21'
+  condition_text: 0.2 M Succinic acid pH 5.4, 20% w/v Polyethylene glycol 4,000
+- well: '22'
+  condition_text: 0.2 M Succinic acid pH 5.7, 20% w/v Polyethylene glycol 4,000
+- well: '23'
+  condition_text: 0.2 M Succinic acid pH 6.0, 20% w/v Polyethylene glycol 4,000
+- well: '24'
+  condition_text: 0.2 M Sodium cacodylate trihydrate pH 5.2, 20% w/v Polyethylene glycol 4,000
+- well: '25'
+  condition_text: 0.2 M Sodium cacodylate trihydrate pH 5.5, 20% w/v Polyethylene glycol 4,000
+- well: '26'
+  condition_text: 0.2 M Sodium cacodylate trihydrate pH 5.8, 20% w/v Polyethylene glycol 4,000
+- well: '27'
+  condition_text: 0.2 M Sodium cacodylate trihydrate pH 6.1, 20% w/v Polyethylene glycol 4,000
+- well: '28'
+  condition_text: 0.2 M Sodium cacodylate trihydrate pH 6.4, 20% w/v Polyethylene glycol 4,000
+- well: '29'
+  condition_text: 0.2 M MES monohydrate pH 5.3, 20% w/v Polyethylene glycol 4,000
+- well: '30'
+  condition_text: 0.2 M MES monohydrate pH 5.6, 20% w/v Polyethylene glycol 4,000
+- well: '31'
+  condition_text: 0.2 M MES monohydrate pH 5.9, 20% w/v Polyethylene glycol 4,000
+- well: '32'
+  condition_text: 0.2 M MES monohydrate pH 6.2, 20% w/v Polyethylene glycol 4,000
+- well: '33'
+  condition_text: 0.2 M MES monohydrate pH 6.5, 20% w/v Polyethylene glycol 4,000
+- well: '34'
+  condition_text: 0.2 M BIS-TRIS pH 5.7, 20% w/v Polyethylene glycol 4,000
+- well: '35'
+  condition_text: 0.2 M BIS-TRIS pH 6.0, 20% w/v Polyethylene glycol 4,000
+- well: '36'
+  condition_text: 0.2 M BIS-TRIS pH 6.3, 20% w/v Polyethylene glycol 4,000
+- well: '37'
+  condition_text: 0.2 M BIS-TRIS pH 6.6, 20% w/v Polyethylene glycol 4,000
+- well: '38'
+  condition_text: 0.2 M BIS-TRIS pH 6.9, 20% w/v Polyethylene glycol 4,000
+- well: '39'
+  condition_text: 0.2 M ADA pH 5.8, 20% w/v Polyethylene glycol 4,000
+- well: '40'
+  condition_text: 0.2 M ADA pH 6.1, 20% w/v Polyethylene glycol 4,000
+- well: '41'
+  condition_text: 0.2 M ADA pH 6.4, 20% w/v Polyethylene glycol 4,000
+- well: '42'
+  condition_text: 0.2 M ADA pH 6.7, 20% w/v Polyethylene glycol 4,000
+- well: '43'
+  condition_text: 0.2 M ADA pH 7.0, 20% w/v Polyethylene glycol 4,000
+- well: '44'
+  condition_text: 0.2 M Imidazole pH 6.2, 20% w/v Polyethylene glycol 4,000
+- well: '45'
+  condition_text: 0.2 M Imidazole pH 6.5, 20% w/v Polyethylene glycol 4,000
+- well: '46'
+  condition_text: 0.2 M Imidazole pH 6.8, 20% w/v Polyethylene glycol 4,000
+- well: '47'
+  condition_text: 0.2 M Imidazole pH 7.1, 20% w/v Polyethylene glycol 4,000
+- well: '48'
+  condition_text: 0.2 M Imidazole pH 7.4, 20% w/v Polyethylene glycol 4,000

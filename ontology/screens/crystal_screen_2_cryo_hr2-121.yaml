@@ -1,0 +1,103 @@
+screen: Crystal Screen 2 Cryo
+catalogue: HR2-121
+vendor: Hampton Research
+source_url: https://hamptonresearch.com/uploads/support_materials/HR2-121_Binder.pdf
+retrieved: '2026-07-31'
+n_wells: 48
+wells:
+- well: '1'
+  condition_text: 1.6 M Sodium chloride, 8% w/v Polyethylene glycol 6,000, 20% v/v Glycerol
+- well: '2'
+  condition_text: 0.3 M Sodium chloride, 0.006 M Magnesium chloride hexahydrate, 0.006 M Hexadecyltrimethylammonium bromide, 40% v/v Glycerol
+- well: '3'
+  condition_text: 21.25% v/v Ethylene glycol, 15% v/v Glycerol
+- well: '4'
+  condition_text: 26.25% v/v 1,4-Dioxane, 25% v/v Glycerol
+- well: '5'
+  condition_text: 1.5 M Ammonium sulfate, 3.75% v/v 2-Propanol, 25% v/v Glycerol
+- well: '6'
+  condition_text: 0.65 M Imidazole pH 7.0, 35% v/v Glycerol
+- well: '7'
+  condition_text: 8% w/v Polyethylene glycol 1,000, 8% w/v Polyethylene glycol 8,000, 20% v/v Glycerol
+- well: '8'
+  condition_text: 1.05 M Sodium chloride, 7% v/v Ethanol, 30% v/v Glycerol
+- well: '9'
+  condition_text: 0.075 M Sodium acetate trihydrate pH 4.6, 1.5 M Sodium chloride, 25% v/v Glycerol
+- well: '10'
+  condition_text: 0.2 M Sodium chloride, 0.1 M Sodium acetate trihydrate pH 4.6, 30% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '11'
+  condition_text: 0.008 M Cobalt(II) chloride hexahydrate, 0.08 M Sodium acetate trihydrate pH 4.6, 0.8 M 1,6-Hexanediol, 20% v/v Glycerol
+- well: '12'
+  condition_text: 0.095 M Cadmium chloride hydrate, 0.095 M Sodium acetate trihydrate pH 4.6, 28.5% v/v Polyethylene glycol 400, 5% v/v Glycerol
+- well: '13'
+  condition_text: 0.18 M Ammonium sulfate, 0.09 M Sodium acetate trihydrate pH 4.6, 27% w/v Polyethylene glycol monomethyl ether 2,000, 10% v/v Glycerol
+- well: '14'
+  condition_text: 0.15 M Potassium sodium tartrate tetrahydrate, 0.075 M Sodium citrate tribasic dihydrate pH 5.6, 1.5 M Ammonium sulfate, 25% v/v Glycerol
+- well: '15'
+  condition_text: 0.375 M Ammonium sulfate, 0.075 M Sodium citrate tribasic dihydrate pH 5.6, 0.75 M Lithium sulfate monohydrate, 25% v/v Glycerol
+- well: '16'
+  condition_text: 0.3 M Sodium chloride, 0.06 M Sodium citrate tribasic dihydrate pH 5.6, 1.2% v/v Ethylene imine polymer, 40% v/v Glycerol
+- well: '17'
+  condition_text: 0.08 M Sodium citrate tribasic dihydrate pH 5.6, 28% v/v tert-Butanol, 20% v/v Glycerol
+- well: '18'
+  condition_text: 0.007 M Iron(III) chloride hexahydrate, 0.07 M Sodium citrate tribasic dihydrate pH 5.6, 7% v/v Jeffamine M-600, 30% v/v Glycerol
+- well: '19'
+  condition_text: 0.095 M Sodium citrate tribasic dihydrate pH 5.6, 2.375 M 1,6-Hexanediol, 5% v/v Glycerol
+- well: '20'
+  condition_text: 0.08 M MES monohydrate pH 6.5, 1.28 M Magnesium sulfate heptahydrate, 20% v/v Glycerol
+- well: '21'
+  condition_text: 0.075 M Sodium phosphate monobasic monohydrate, 0.075 M Potassium phosphate monobasic, 0.075 M MES monohydrate pH 6.5,
+- well: '22'
+  condition_text: 0.065 M MES monohydrate pH 6.5, 7.8% w/v Polyethylene glycol 20,000, 35% v/v Glycerol
+- well: '23'
+  condition_text: 1.2 M Ammonium sulfate, 0.075 M MES monohydrate pH 6.5, 7.5% v/v 1,4-Dioxane, 25% v/v Glycerol
+- well: '24'
+  condition_text: 0.05 M Cesium chloride, 0.1 M MES monohydrate pH 6.5, 30% v/v Jeffamine M-600
+- well: '25'
+  condition_text: 0.0075 M Cobalt(II) chloride hexahydrate, 0.075 M MES monohydrate pH 6.5, 1.35 M Ammonium sulfate, 25% v/v Glycerol
+- well: '26'
+  condition_text: 0.18 M Ammonium sulfate, 0.09 M MES monohydrate pH 6.5, 27% w/v Polyethylene glycol monomethyl ether 5,000, 10% v/v Glycerol
+- well: '27'
+  condition_text: 0.009 M Zinc sulfate heptahydrate, 0.09 M MES monohydrate pH 6.5, 22.5% v/v Polyethylene glycol monomethyl ether 550, 10% v/v Glycerol
+- well: '28'
+  condition_text: 1.6 M Sodium citrate tribasic dihydrate pH 6.5
+- well: '29'
+  condition_text: 0.5 M Ammonium sulfate, 0.1 M HEPES pH 7.5, 30% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '30'
+  condition_text: 0.08 M HEPES pH 7.5, 8% w/v Polyethylene glycol 6,000, 4% v/v (+/-)-2-Methyl-2,4-pentanediol, 20% v/v Glycerol
+- well: '31'
+  condition_text: 0.085 M HEPES pH 7.5, 17% v/v Jeffamine M-600, 15% v/v Glycerol
+- well: '32'
+  condition_text: 0.075 M Sodium chloride, 0.075 M HEPES pH 7.5, 1.2 M Ammonium sulfate, 25% v/v Glycerol
+- well: '33'
+  condition_text: 0.07 M HEPES pH 7.5, 1.4 M Ammonium formate, 30% v/v Glycerol
+- well: '34'
+  condition_text: 0.0375 M Cadmium sulfate hydrate, 0.075 M HEPES pH 7.5, 0.75 M Sodium acetate trihydrate, 25% v/v Glycerol
+- well: '35'
+  condition_text: 0.1 M HEPES pH 7.5, 70% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '36'
+  condition_text: 0.085 M HEPES pH 7.5, 3.655 M Sodium chloride, 15% v/v Glycerol
+- well: '37'
+  condition_text: 0.075 M HEPES pH 7.5, 7.5% w/v Polyethylene glycol 8,000, 6% v/v Ethylene glycol, 25% v/v Glycerol
+- well: '38'
+  condition_text: 0.075 M HEPES pH 7.5, 15% w/v Polyethylene glycol 10,000, 25% v/v Glycerol
+- well: '39'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M Tris pH 8.5, 3.4 M 1,6-Hexanediol
+- well: '40'
+  condition_text: 0.075 M Tris pH 8.5, 18.75% v/v tert-Butanol, 25% v/v Glycerol
+- well: '41'
+  condition_text: 0.0075 M Nickel(II) chloride hexahydrate, 0.075 M Tris pH 8.5, 0.75 M Lithium sulfate monohydrate, 25% v/v Glycerol
+- well: '42'
+  condition_text: 1.275 M Ammonium sulfate, 0.085 M Tris pH 8.5, 25.2% v/v Glycerol
+- well: '43'
+  condition_text: 0.2 M Ammonium phosphate monobasic, 0.1 M Tris pH 8.5, 50% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '44'
+  condition_text: 0.075 M Tris pH 8.5, 15% v/v Ethanol, 25% v/v Glycerol
+- well: '45'
+  condition_text: 0.008 M Nickel(II) chloride hexahydrate, 0.08 M Tris pH 8.5, 16% w/v Polyethylene glycol monomethyl ether 2,000, 20% v/v Glycerol
+- well: '46'
+  condition_text: 0.085 M Sodium chloride, 0.085 M BICINE pH 9.0, 17% v/v Polyethylene glycol monomethyl ether 550, 15% v/v Glycerol
+- well: '47'
+  condition_text: 0.095 M BICINE pH 9.0, 1.9 M Magnesium chloride hexahydrate, 5% v/v Glycerol
+- well: '48'
+  condition_text: 0.07 M BICINE pH 9.0, 1.4% v/v 1,4-Dioxane, 7% w/v Polyethylene glycol 20,000, 30% v/v Glycerol

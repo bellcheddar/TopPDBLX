@@ -1,0 +1,201 @@
+screen: NeXtal JCSG Core I Suite
+catalogue: NEXTAL-JCSG-CORE-I
+vendor: Qiagen NeXtal
+source_url: https://cdn.moleculardimensions.com/public/1008/NeXtal-JCSG-Core-I-Suite-Formulations.pdf
+extracted_on: '2026-07-31'
+n_conditions: 96
+compositional: false
+note: Conditions name individual reagents and parse against the lexicon.
+wells:
+- well: A1
+  condition_text: 0.1 M CHES pH 9.5 20% (w/v) PEG 8000
+- well: A2
+  condition_text: 0.1 M Bicine pH 8.5 20% (w/v) PEG 6000 9.0
+- well: A3
+  condition_text: 0.05 M Lithium sulfate; 0.05 M
+- well: A4
+  condition_text: 0.2 M Ammonium dihydrogen
+- well: A5
+  condition_text: 0.2 M Magnesium chloride, 0.1 M Tris pH 8.5 3.4 M 1,6 Hexanediol
+- well: A6
+  condition_text: 0.05 M Magnesium chloride, 0.1M Tris pH 8.5 40% (v/v) Ethanol
+- well: A7
+  condition_text: 0.2 M tri-Potassium citrate, 20% (w/v) PEG 3350
+- well: A8
+  condition_text: 0.2 M tri-Sodium citrate, 20% (w/v) PEG 3350
+- well: A9
+  condition_text: 0.2 M tri-Lithium citrate, 20% (w/v) PEG 3350
+- well: A10
+  condition_text: 0.2 M Calcium acetate, 0.1 M Imidazole pH 8.0 20% PEG 1000
+- well: A11
+  condition_text: 0.2 M Potassium acetate, 20% (w/v) PEG 3350
+- well: A12
+  condition_text: 0.2 M Magnesium acetate, 20% (w/v) PEG 3350
+- well: B1
+  condition_text: 0.2 M Sodium chloride, 0.1 M HEPES pH 7.5 20% (w/v) PEG 3000
+- well: B2
+  condition_text: 0.1 M HEPES pH 7.5 20% (w/v) PEG 8000
+- well: B3
+  condition_text: 0.1 M HEPES pH 7.5 10% (w/v) PEG 8000
+- well: B4
+  condition_text: 0.19 M Calcium chloride, 0.095 M HEPES pH 7.5 26.6% (v/v) PEG 400; 5%(v/v) Glycerol
+- well: B5
+  condition_text: 0.1 M HEPES pH 7.5 20% (w/v) PEG 4000; 10%(v/v)
+- well: B6
+  condition_text: 0.8 M di-Sodium hydrogen
+- well: B7
+  condition_text: 0.2 M di-Sodium tartrate, 20% (w/v) PEG 3350
+- well: B8
+  condition_text: 0.2 M Calcium acetate hydrate, 20% (w/v) PEG 3350
+- well: B9
+  condition_text: 0.2 M Potassium formate, 20% (w/v) PEG 3350
+- well: B10
+  condition_text: 0.2 M Potassium Sodium tartrate, 20% (w/v) PEG 3350
+- well: B11
+  condition_text: 0.2 M Sodium formate, 20% (w/v) PEG 3350
+- well: B12
+  condition_text: 0.2 M Potassium fluoride, 20% (w/v) PEG 3350
+- well: C1
+  condition_text: 0.2 M Ammonium acetate, 20% (w/v) PEG 3350
+- well: C2
+  condition_text: 0.2 M Lithium nitrate, 20% (w/v) PEG 3350
+- well: C3
+  condition_text: 0.1M Sodium cacodylate pH 6.5 5% (w/v) PEG 8000; 40%(v/v) MPD
+- well: C4
+  condition_text: 0.2 M Magnesium chloride, 0.1 M Tris pH 7.0 10% (w/v) PEG 8000
+- well: C5
+  condition_text: 0.2 M Calcium acetate, 0.1 M Tris pH 7.0 20% (w/v) PEG 3000
+- well: C6
+  condition_text: 0.2 M Magnesium chloride, 0.1 M Tris pH 7.0 2.5 M Sodium chloride
+- well: C7
+  condition_text: 0.1 M Tris pH 7.0 20% (w/v) PEG 2000 MME
+- well: C8
+  condition_text: 0.2 M Sodium acetate, 20% (w/v) PEG 3350
+- well: C9
+  condition_text: 0.2 M Potassium thiocyanate, 20% (w/v) PEG 3350
+- well: C10
+  condition_text: 0.1 M HEPES pH 6.5 20% (w/v) PEG 6000 7.0
+- well: C11
+  condition_text: 0.2 M Potassium nitrate, 20% (w/v) PEG 3350
+- well: C12
+  condition_text: 0.2 M Sodium thiocyanate, 20% (w/v) PEG 3350
+- well: D1
+  condition_text: 0.2 M Sodium iodide, 20% (w/v) PEG 3350
+- well: D2
+  condition_text: 0.2 M Potassium chloride, 20% (w/v) PEG 3350
+- well: D3
+  condition_text: 0.2 M Sodium chloride, 20% (w/v) PEG 3350
+- well: D4
+  condition_text: 0.2 M Potassium iodide, 20% (w/v) PEG 3350
+- well: D5
+  condition_text: 0.2 M Lithium chloride, 20% (w/v) PEG 3350
+- well: D6
+  condition_text: 0.2 M Magnesium chloride, 0.1M Sodium cacodylate pH 6.5 50% (v/v) PEG 200
+- well: D7
+  condition_text: 0.2 M di-Ammonium tartrate, 20% (w/v) PEG 3350
+- well: D8
+  condition_text: 0.2 M Sodium sulfate, 20% (w/v) PEG 3350
+- well: D9
+  condition_text: 0.2 M Ammonium formate, 20% (w/v) PEG 3350
+- well: D10
+  condition_text: 0.1 M HEPES pH 7.5 10% (w/v) PEG 6000; 5% (v/v) MPD
+- well: D11
+  condition_text: 1.6 M Sodium citrate pH 6.5
+- well: D12
+  condition_text: 0.2 M Magnesium acetate, 0.1 M Sodium cacodylate pH 6.5 20% (w/v) PEG 8000
+- well: E1
+  condition_text: 0.2 M Ammonium nitrate, 20% (w/v) PEG 3350
+- well: E2
+  condition_text: 0.2 M Ammonium chloride, 20% (w/v) PEG 3350
+- well: E3
+  condition_text: 0.2 M Sodium chloride, 0.1 M Na/K phosphate pH 6.2 10% (w/v) PEG 8000
+- well: E4
+  condition_text: 0.2 M Ammonium iodide, 20% (w/v) PEG 3350
+- well: E5
+  condition_text: 0.2 M Ammonium fluoride, 20% (w/v) PEG 3350
+- well: E6
+  condition_text: 0.1M MES pH 6.0 5% (w/v) PEG 3000; 5% (v/v) MPD
+- well: E7
+  condition_text: 0.2 M Calcium acetate, 0.1 M MES pH 6.0 20% (w/v) PEG 8000
+- well: E8
+  condition_text: 0.2 M Lithium sulfate, 0.1 M MES pH 6.0 35% (v/v) MPD
+- well: E9
+  condition_text: 0.2 M Ammonium sulfate, 20% (w/v) PEG 3350
+- well: E10
+  condition_text: 0.1 M MES pH 5.0 40% (v/v) MPD 6.0
+- well: E11
+  condition_text: 0.1 M MES pH 5.0 20% (v/v) MPD 6.0
+- well: E12
+  condition_text: 0.1 M MES pH 5.0 20% (w/v) PEG 6000 6.0
+- well: F1
+  condition_text: 0.1 M MES pH 5.0 10% (w/v) PEG 6000 6.0
+- well: F2
+  condition_text: 0.2 M Magnesium sulfate, 20% (w/v) PEG 3350
+- well: F3
+  condition_text: 0.2 M Magnesium formate, 20% (w/v) PEG 3350
+- well: F4
+  condition_text: 0.2 M Magnesium nitrate, 20% (w/v) PEG 3350
+- well: F5
+  condition_text: 0.2 M Magnesium chloride, 20% (w/v) PEG 3350
+- well: F6
+  condition_text: 0.095 M Sodium citrate pH 5.6 19% (v/v) Isopropanol; 19% (w/v) PEG
+- well: F7
+  condition_text: 0.1 M Sodium citrate pH 5.6 20% (v/v) Isopropanol; 20% (w/v) PEG
+- well: F8
+  condition_text: 0.1 M Sodium citrate pH 5.5 20% (w/v) PEG 3000
+- well: F9
+  condition_text: 0.2 M Sodium chloride, 0.1M Phosphate-citrate pH 4.2 50% (v/v) PEG 200
+- well: F10
+  condition_text: 0.1M Phosphate-citrate pH 4.2 5% (w/v) PEG 1000; 40% Ethanol
+- well: F11
+  condition_text: 0.2 M Lithium sulfate, 0.1M Sodium acetate pH 4.5 50% (v/v) PEG 400
+- well: F12
+  condition_text: 0.1M Phosphate-citrate pH 4.2 40% (v/v) MPD
+- well: G1
+  condition_text: 0.18 M tri-Ammonium citrate, 20% (w/v) PEG 3350
+- well: G2
+  condition_text: 0.1 M Sodium acetate pH 5.0 20% (v/v) MPD
+- well: G3
+  condition_text: 1.0 M Lithium chloride, 0.1 M Citric Acid pH 5.0 10% (w/v) PEG 6000 5.0
+- well: G4
+  condition_text: 0.1 M Citric Acid pH 4.0 20% (w/v) PEG 6000 5.0
+- well: G5
+  condition_text: 0.1 M Citric Acid, 10% (w/v) PEG 6000 5.0
+- well: G6
+  condition_text: 0.1 M Citric Acid pH 4.0 5% (w/v) PEG 6000 5.0
+- well: G7
+  condition_text: 0.2 M Potassium dihydrogen
+- well: G8
+  condition_text: 0.2 M Ammonium dihydrogen
+- well: G9
+  condition_text: 0.2 M Ammonium sulfate, 0.1 M Sodium acetate pH 4.6 30% (w/v) PEG 2000 MME
+- well: G10
+  condition_text: 0.1 M Sodium acetate pH 4.6 8% (w/v) PEG 4000
+- well: G11
+  condition_text: 0.2 M Ammonium sulfate, 0.1 M Sodium acetate pH 4.6 25% (w/v) PEG 4000
+- well: G12
+  condition_text: 0.02 M Calcium chloride, 0.1 M Sodium acetate pH 4.6 30% (v/v) MPD
+- well: H1
+  condition_text: 0.1 M Sodium acetate pH 4.5 35% (v/v) MPD
+- well: H2
+  condition_text: 0.1 M Sodium acetate pH 4.5 20% (w/v) PEG 3000
+- well: H3
+  condition_text: 0.2 M Sodium dihydrogen phosphate, 20% (w/v) PEG 3350
+- well: H4
+  condition_text: 0.05 M Potassium dihydrogen
+- well: H5
+  condition_text: 0.2 M Sodium chloride, 0.1 M Phosphate-citrate pH 4.2 10% (w/v) PEG 3000
+- well: H6
+  condition_text: 0.1 M Phosphate/citrate pH 4.2 2.0 M Ammonium sulfate
+- well: H7
+  condition_text: 0.2 M Lithium sulfate, 0.1 M Phosphate-citrate pH 4.2 20% (w/v) PEG 1000
+- well: H8
+  condition_text: 0.1 M Citric Acid pH 2.5 20% (v/v) MPD 4.0
+- well: H9
+  condition_text: 0.1 M Citric Acid pH 3.5 0.8 M Ammonium sulfate 4.0
+- well: H10
+  condition_text: 1.0 M Lithium chloride, 0.1 M Citric Acid pH 4.0 20% (w/v) PEG 6000 4.0
+- well: H11
+  condition_text: 1.0 M Lithium chloride, 0.1 M Citric Acid pH 4.0 10% (w/v) PEG 6000 4.0
+- well: H12
+  condition_text: 0.1 M Citric Acid pH 4.0 5% (w/v) PEG 6000 4.0

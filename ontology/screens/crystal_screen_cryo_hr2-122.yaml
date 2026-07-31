@@ -1,0 +1,107 @@
+screen: Crystal Screen Cryo
+catalogue: HR2-122
+vendor: Hampton Research
+source_url: https://hamptonresearch.com/uploads/support_materials/HR2-122_Binder.pdf
+retrieved: '2026-07-31'
+n_wells: 50
+wells:
+- well: '1'
+  condition_text: 0.02 M Calcium chloride dihydrate, 0.1 M Sodium acetate trihydrate pH 4.6, 30% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '2'
+  condition_text: 0.26 M Potassium sodium tartrate tetrahydrate, 35% v/v Glycerol
+- well: '3'
+  condition_text: 0.26 M Ammonium phosphate monobasic, 35% v/v Glycerol
+- well: '4'
+  condition_text: 0.075 M TRIS hydrochloride pH 8.5, 1.5 M Ammonium sulfate, 25% v/v Glycerol
+- well: '5'
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate, 0.1 M HEPES sodium pH 7.5, 30% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '6'
+  condition_text: 0.16 M Magnesium chloride hexahydrate, 0.08 M TRIS hydrochloride pH 8.5, 24% w/v Polyethylene glycol 4,000, 20% v/v Glycerol
+- well: '7'
+  condition_text: 0.07 M Sodium cacodylate trihydrate pH 6.5, 0.98 M Sodium acetate trihydrate, 30% v/v Glycerol
+- well: '8'
+  condition_text: 0.14 M Sodium citrate tribasic dihydrate, 0.07 M Sodium cacodylate trihydrate pH 6.5, 21% v/v 2-Propanol, 30% v/v Glycerol
+- well: '9'
+  condition_text: 0.17 M Ammonium acetate, 0.085 M Sodium citrate tribasic dihydrate pH 5.6, 25.5% w/v Polyethylene glycol 4,000, 15% v/v Glycerol
+- well: '10'
+  condition_text: 0.17 M Ammonium acetate, 0.085 M Sodium acetate trihydrate pH 4.6, 25.5% w/v Polyethylene glycol 4,000, 15% v/v Glycerol
+- well: '11'
+  condition_text: 0.07 M Sodium citrate tribasic dihydrate pH 5.6, 0.7 M Ammonium phosphate monobasic, 30% v/v Glycerol
+- well: '12'
+  condition_text: 0.18 M Magnesium chloride hexahydrate, 0.09 M HEPES sodium pH 7.5, 27% v/v 2-Propanol, 10% v/v Glycerol
+- well: '13'
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate, 0.1 M TRIS hydrochloride pH 8.5, 30% v/v Polyethylene glycol 400
+- well: '14'
+  condition_text: 0.19 M Calcium chloride dihydrate, 0.095 M HEPES sodium pH 7.5, 26.6% v/v Polyethylene glycol 400, 5% v/v Glycerol
+- well: '15'
+  condition_text: 0.17 M Ammonium sulfate, 0.085 M Sodium cacodylate trihydrate pH 6.5, 25.5% w/v Polyethylene glycol 8,000, 15% v/v Glycerol
+- well: '16'
+  condition_text: 0.075 M HEPES sodium pH 7.5, 1.125 M Lithium sulfate monohydrate, 25% v/v Glycerol
+- well: '17'
+  condition_text: 0.17 M Lithium sulfate monohydrate, 0.085 M TRIS hydrochloride pH 8.5, 25.5% w/v Polyethylene glycol 4,000, 15% v/v Glycerol
+- well: '18'
+  condition_text: 0.16 M Magnesium acetate tetrahydrate, 0.08 M Sodium cacodylate trihydrate pH 6.5, 16% w/v Polyethylene glycol 8,000, 20% v/v Glycerol
+- well: '19'
+  condition_text: 0.16 M Ammonium acetate, 0.08 M TRIS hydrochloride pH 8.5, 24% v/v 2-Propanol, 20% v/v Glycerol
+- well: '20'
+  condition_text: 0.16 M Ammonium sulfate, 0.08 M Sodium acetate trihydrate pH 4.6, 20% w/v Polyethylene glycol 4,000, 20% v/v Glycerol
+- well: '21'
+  condition_text: 0.2 M Magnesium acetate tetrahydrate, 0.1 M Sodium cacodylate trihydrate pH 6.5, 30% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '22'
+  condition_text: 0.17 M Sodium acetate trihydrate, 0.085 M TRIS hydrochloride pH 8.5, 25.5% w/v Polyethylene glycol 4,000, 15% v/v Glycerol
+- well: '23'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M HEPES sodium pH 7.5, 30% v/v Polyethylene glycol 400
+- well: '24'
+  condition_text: 0.14 M Calcium chloride dihydrate, 0.07 M Sodium acetate trihydrate pH 4.6, 14% v/v 2-Propanol, 30% v/v Glycerol
+- well: '25'
+  condition_text: 0.07 M Imidazole pH 6.5, 0.7 M Sodium acetate trihydrate, 30% v/v Glycerol
+- well: '26'
+  condition_text: 0.2 M Ammonium acetate, 0.1 M Sodium citrate tribasic dihydrate pH 5.6, 30% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '27'
+  condition_text: 0.14 M Sodium citrate tribasic dihydrate, 0.07 M HEPES sodium pH 7.5, 14% v/v 2-Propanol, 30% v/v Glycerol
+- well: '28'
+  condition_text: 0.17 M Sodium acetate trihydrate, 0.085 M Sodium cacodylate trihydrate pH 6.5, 25.5% w/v Polyethylene glycol 8,000, 15% v/v Glycerol
+- well: '29'
+  condition_text: 0.065 M HEPES sodium pH 7.5, 0.52 M Potassium sodium tartrate tetrahydrate, 35% v/v Glycerol
+- well: '30'
+  condition_text: 0.17 M Ammonium sulfate, 25.5% w/v Polyethylene glycol 8,000, 15% v/v Glycerol
+- well: '31'
+  condition_text: 0.17 M Ammonium sulfate, 25.5% w/v Polyethylene glycol 4,000, 15% v/v Glycerol
+- well: '32'
+  condition_text: 1.5 M Ammonium sulfate, 25% v/v Glycerol
+- well: '33'
+  condition_text: 3.6 M Sodium formate, 10% v/v Glycerol
+- well: '34'
+  condition_text: 0.07 M Sodium acetate trihydrate pH 4.6, 1.4 M Sodium formate, 30% v/v Glycerol
+- well: '35'
+  condition_text: 0.075 M HEPES sodium pH 7.5, 0.6 M Sodium phosphate monobasic monohydrate, 0.6 M Potassium phosphate monobasic, 25% v/v Glycerol
+- well: '36'
+  condition_text: 0.065 M TRIS hydrochloride pH 8.5, 5.2% w/v Polyethylene glycol 8,000, 35% v/v Glycerol
+- well: '37'
+  condition_text: 0.07 M Sodium acetate trihydrate pH 4.6, 5.6% w/v Polyethylene glycol 4,000, 30% v/v Glycerol
+- well: '38'
+  condition_text: 0.09 M HEPES sodium pH 7.5, 1.26 M Sodium citrate tribasic dihydrate, 10% v/v Glycerol
+- well: '39'
+  condition_text: 0.085 M HEPES sodium pH 7.5, 1.7% v/v Polyethylene glycol 400, 1.7 M Ammonium sulfate, 15% v/v Glycerol
+- well: '40'
+  condition_text: 0.095 M Sodium citrate tribasic dihydrate pH 5.6, 19% v/v 2-Propanol, 19% w/v Polyethylene glycol 4,000, 5% v/v Glycerol
+- well: '41'
+  condition_text: 0.085 M HEPES sodium pH 7.5, 8.5% v/v 2-Propanol, 17% w/v Polyethylene glycol 4,000, 15% v/v Glycerol
+- well: '42'
+  condition_text: 0.04 M Potassium phosphate monobasic, 16% w/v Polyethylene glycol 8,000, 20% v/v Glycerol
+- well: '43'
+  condition_text: 24% w/v Polyethylene glycol 1,500, 20% v/v Glycerol
+- well: '44'
+  condition_text: 0.1 M Magnesium formate dihydrate, 50% v/v Glycerol
+- well: '45'
+  condition_text: 0.16 M Zinc acetate dihydrate, 0.08 M Sodium cacodylate trihydrate pH 6.5, 14.4% w/v Polyethylene glycol 8,000, 20% v/v Glycerol
+- well: '46'
+  condition_text: 0.16 M Calcium acetate hydrate, 0.08 M Sodium cacodylate trihydrate pH 6.5 , 14.4% w/v Polyethylene glycol 8,000, 20% v/v Glycerol
+- well: '47'
+  condition_text: 0.08 M Sodium acetate trihydrate pH 4.6, 1.6 M Ammonium sulfate, 20% v/v Glycerol
+- well: '48'
+  condition_text: 0.08 M TRIS hydrochloride pH 8.5, 1.6 M Ammonium phosphate monobasic, 20% v/v Glycerol
+- well: '49'
+  condition_text: 0.8 M Lithium sulfate monohydrate, 1.6% w/v Polyethylene glycol 8,000, 20% v/v Glycerol
+- well: '50'
+  condition_text: 0.4 M Lithium sulfate monohydrate, 12% w/v Polyethylene glycol 8,000, 20% v/v Glycerol

@@ -15,13 +15,20 @@ rather than by withdrawing the dataset.
 
 | Measure | Value |
 |---|---|
-| Screens | 9 |
-| Wells | 434, all of which identify to typed components |
-| Component-set matches against the corpus | 45,547 |
-| Matches agreeing on every concentration | 20,339 |
+| Screens | 24 (22 reagent-named, 2 compositional) |
+| Wells | 1,374 |
+| Components identified in the 22 reagent-named screens | 96.8% (2,772 of 2,863) |
+| Component-set matches against the corpus | 60,225 |
+| Matches agreeing on every concentration | 28,257 |
 
-Every L3 group in the condition ontology is anchored to one of these wells, so a group can name
-something orderable rather than a set of numbers.
+The 91 unidentified components are all in the three NeXtal suites, whose PDF text layer runs the
+salt, buffer and precipitant columns together and splits numbers at kerning pairs. They are
+extraction damage rather than unknown chemistry: every other screen reads at 100%.
+
+**Two screens are stored compositionally.** Morpheus and PACT premier name vendor stocks (Buffer
+System, Precipitant Mix, Divalents, SPG) rather than reagents, so they are held verbatim and
+excluded from the identification figure above. Expanding them would mean asserting constituents
+the plate table does not state.
 
 **A match is not a validation of reagent naming.** Both the screen library and the parsed
 conditions are identified through the same lexicon, so a systematic naming error moves both sides

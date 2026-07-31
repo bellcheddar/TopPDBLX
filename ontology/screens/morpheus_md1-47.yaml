@@ -1,0 +1,203 @@
+screen: Morpheus
+catalogue: MD1-47
+vendor: Molecular Dimensions
+source_url: https://cdn.moleculardimensions.com/public/9196/Morpheus-10-mL-HT-96-and-FX-96-(MD1-46_47_47-FX)-Brochure.pdf
+extracted_on: '2026-07-31'
+n_conditions: 96
+compositional: true
+note: 'Conditions name vendor stocks (Buffer System, Precipitant Mix, Divalents, Halogens, NPS, SPG) rather
+  than individual reagents. Stored verbatim: expanding them would assert constituents this document does
+  not state well by well.'
+wells:
+- well: A1
+  condition_text: 0.06 M Divalents, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 1
+- well: A2
+  condition_text: 0.06 M Divalents, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 2
+- well: A3
+  condition_text: 0.06 M Divalents, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 3
+- well: A4
+  condition_text: 0.06 M Divalents, 0.1 M Buffer System 1 6.5 37.5 % v/v Precipitant Mix 4
+- well: A5
+  condition_text: 0.06 M Divalents, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 1
+- well: A6
+  condition_text: 0.06 M Divalents, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 2
+- well: A7
+  condition_text: 0.06 M Divalents, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 3
+- well: A8
+  condition_text: 0.06 M Divalents, 0.1 M Buffer System 2 7.5 37.5 % v/v Precipitant Mix 4
+- well: A9
+  condition_text: 0.06 M Divalents, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 1
+- well: A10
+  condition_text: 0.06 M Divalents, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 2
+- well: A11
+  condition_text: 0.06 M Divalents, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 3
+- well: A12
+  condition_text: 0.06 M Divalents, 0.1 M Buffer System 3 8.5 37.5 % v/v Precipitant Mix 4
+- well: B1
+  condition_text: 0.09 M Halogens, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 1
+- well: B2
+  condition_text: 0.09 M Halogens, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 2
+- well: B3
+  condition_text: 0.09 M Halogens, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 3
+- well: B4
+  condition_text: 0.09 M Halogens, 0.1 M Buffer System 1 6.5 37.5 % v/v Precipitant Mix 4
+- well: B5
+  condition_text: 0.09 M Halogens, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 1
+- well: B6
+  condition_text: 0.09 M Halogens, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 2
+- well: B7
+  condition_text: 0.09 M Halogens, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 3
+- well: B8
+  condition_text: 0.09 M Halogens, 0.1 M Buffer System 2 7.5 37.5 % v/v Precipitant Mix 4
+- well: B9
+  condition_text: 0.09 M Halogens, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 1
+- well: B10
+  condition_text: 0.09 M Halogens, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 2
+- well: B11
+  condition_text: 0.09 M Halogens, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 3
+- well: B12
+  condition_text: 0.09 M Halogens, 0.1 M Buffer System 3 8.5 37.5 % v/v Precipitant Mix 4
+- well: C1
+  condition_text: 0.09 M NPS, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 1
+- well: C2
+  condition_text: 0.09 M NPS, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 2
+- well: C3
+  condition_text: 0.09 M NPS, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 3
+- well: C4
+  condition_text: 0.09 M NPS, 0.1 M Buffer System 1 6.5 37.5 % v/v Precipitant Mix 4
+- well: C5
+  condition_text: 0.09 M NPS, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 1
+- well: C6
+  condition_text: 0.09 M NPS, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 2
+- well: C7
+  condition_text: 0.09 M NPS, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 3
+- well: C8
+  condition_text: 0.09 M NPS, 0.1 M Buffer System 2 7.5 37.5 % v/v Precipitant Mix 4
+- well: C9
+  condition_text: 0.09 M NPS, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 1
+- well: C10
+  condition_text: 0.09 M NPS, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 2
+- well: C11
+  condition_text: 0.09 M NPS, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 3
+- well: C12
+  condition_text: 0.09 M NPS, 0.1 M Buffer System 3 8.5 37.5 % v/v Precipitant Mix 4
+- well: D1
+  condition_text: 0.12 M Alcohols, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 1
+- well: D2
+  condition_text: 0.12 M Alcohols, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 2
+- well: D3
+  condition_text: 0.12 M Alcohols, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 3
+- well: D4
+  condition_text: 0.12 M Alcohols, 0.1 M Buffer System 1 6.5 37.5 % v/v Precipitant Mix 4
+- well: D5
+  condition_text: 0.12 M Alcohols, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 1
+- well: D6
+  condition_text: 0.12 M Alcohols, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 2
+- well: D7
+  condition_text: 0.12 M Alcohols, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 3
+- well: D8
+  condition_text: 0.12 M Alcohols, 0.1 M Buffer System 2 7.5 37.5 % v/v Precipitant Mix 4
+- well: D9
+  condition_text: 0.12 M Alcohols, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 1
+- well: D10
+  condition_text: 0.12 M Alcohols, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 2
+- well: D11
+  condition_text: 0.12 M Alcohols, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 3
+- well: D12
+  condition_text: 0.12 M Alcohols, 0.1 M Buffer System 3 8.5 37.5 % v/v Precipitant Mix 4
+- well: E1
+  condition_text: 0.12 M Ethylene glycols, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 1
+- well: E2
+  condition_text: 0.12 M Ethylene glycols, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 2
+- well: E3
+  condition_text: 0.12 M Ethylene glycols, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 3
+- well: E4
+  condition_text: 0.12 M Ethylene glycols, 0.1 M Buffer System 1 6.5 37.5 % v/v Precipitant Mix 4
+- well: E5
+  condition_text: 0.12 M Ethylene glycols, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 1
+- well: E6
+  condition_text: 0.12 M Ethylene glycols, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 2
+- well: E7
+  condition_text: 0.12 M Ethylene glycols, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 3
+- well: E8
+  condition_text: 0.12 M Ethylene glycols, 0.1 M Buffer System 2 7.5 37.5 % v/v Precipitant Mix 4
+- well: E9
+  condition_text: 0.12 M Ethylene glycols, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 1
+- well: E10
+  condition_text: 0.12 M Ethylene glycols, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 2
+- well: E11
+  condition_text: 0.12 M Ethylene glycols, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 3
+- well: E12
+  condition_text: 0.12 M Ethylene glycols, 0.1 M Buffer System 3 8.5 37.5 % v/v Precipitant Mix 4
+- well: F1
+  condition_text: 0.12 M Monosaccharides, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 1
+- well: F2
+  condition_text: 0.12 M Monosaccharides, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 2
+- well: F3
+  condition_text: 0.12 M Monosaccharides, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 3
+- well: F4
+  condition_text: 0.12 M Monosaccharides, 0.1 M Buffer System 1 6.5 37.5 % v/v Precipitant Mix 4
+- well: F5
+  condition_text: 0.12 M Monosaccharides, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 1
+- well: F6
+  condition_text: 0.12 M Monosaccharides, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 2
+- well: F7
+  condition_text: 0.12 M Monosaccharides, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 3
+- well: F8
+  condition_text: 0.12 M Monosaccharides, 0.1 M Buffer System 2 7.5 37.5 % v/v Precipitant Mix 4
+- well: F9
+  condition_text: 0.12 M Monosaccharides, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 1
+- well: F10
+  condition_text: 0.12 M Monosaccharides, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 2
+- well: F11
+  condition_text: 0.12 M Monosaccharides, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 3
+- well: F12
+  condition_text: 0.12 M Monosaccharides, 0.1 M Buffer System 3 8.5 37.5 % v/v Precipitant Mix 4
+- well: G1
+  condition_text: 0.1 M Carboxylic acids, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 1
+- well: G2
+  condition_text: 0.1 M Carboxylic acids, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 2
+- well: G3
+  condition_text: 0.1 M Carboxylic acids, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 3
+- well: G4
+  condition_text: 0.1 M Carboxylic acids, 0.1 M Buffer System 1 6.5 37.5 % v/v Precipitant Mix 4
+- well: G5
+  condition_text: 0.1 M Carboxylic acids, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 1
+- well: G6
+  condition_text: 0.1 M Carboxylic acids, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 2
+- well: G7
+  condition_text: 0.1 M Carboxylic acids, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 3
+- well: G8
+  condition_text: 0.1 M Carboxylic acids, 0.1 M Buffer System 2 7.5 37.5 % v/v Precipitant Mix 4
+- well: G9
+  condition_text: 0.1 M Carboxylic acids, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 1
+- well: G10
+  condition_text: 0.1 M Carboxylic acids, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 2
+- well: G11
+  condition_text: 0.1 M Carboxylic acids, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 3
+- well: G12
+  condition_text: 0.1 M Carboxylic acids, 0.1 M Buffer System 3 8.5 37.5 % v/v Precipitant Mix 4
+- well: H1
+  condition_text: 0.1 M Amino acids, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 1
+- well: H2
+  condition_text: 0.1 M Amino acids, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 2
+- well: H3
+  condition_text: 0.1 M Amino acids, 0.1 M Buffer System 1 6.5 30 % v/v Precipitant Mix 3
+- well: H4
+  condition_text: 0.1 M Amino acids, 0.1 M Buffer System 1 6.5 37.5 % v/v Precipitant Mix 4
+- well: H5
+  condition_text: 0.1 M Amino acids, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 1
+- well: H6
+  condition_text: 0.1 M Amino acids, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 2
+- well: H7
+  condition_text: 0.1 M Amino acids, 0.1 M Buffer System 2 7.5 30 % v/v Precipitant Mix 3
+- well: H8
+  condition_text: 0.1 M Amino acids, 0.1 M Buffer System 2 7.5 37.5 % v/v Precipitant Mix 4
+- well: H9
+  condition_text: 0.1 M Amino acids, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 1
+- well: H10
+  condition_text: 0.1 M Amino acids, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 2
+- well: H11
+  condition_text: 0.1 M Amino acids, 0.1 M Buffer System 3 8.5 30 % v/v Precipitant Mix 3
+- well: H12
+  condition_text: 0.1 M Amino acids, 0.1 M Buffer System 3 8.5 37.5 % v/v Precipitant Mix 4

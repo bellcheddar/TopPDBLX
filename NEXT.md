@@ -63,17 +63,17 @@ complete plate by counting alone. Check that every well states a concentration.
 
 ## Known gaps, each a deliberate choice
 
-- **26 reagents named by a vendor that the lexicon lacks**, chiefly the ionic liquids from
-  PEG/Ionic Liquid 1 and 2. A vendor naming a reagent is the strongest evidence it is real, so
-  this is the highest-quality curation queue available.
 - **Morpheus stocks are unexpanded.** The brochure defines them (`Divalents 0.3M Magnesium
   chloride hexahydrate; 0.3M Calcium chloride dihydrate`), so `NPS`, `precipitant mix` and
   `precipitant mix 4` in the unidentified head could be resolved from the vendor's own stock
   table. That is a second extraction pass over the same document.
-- **Add the 26 ionic-liquid reagents.** They are the whole reason shipped wells parse at 84.3%
-  rather than above 90%: PEG/Ionic Liquid 1 and 2 contribute 96 wells the lexicon cannot read.
-  Vendor-published names, so unambiguously real, and all quaternary ammonium or imidazolium
-  salts, so `chem_class: salt` is not a guess.
+- **The three NeXtal suites read at 84 to 90%, every other screen at 100%.** Their PDF text layer
+  runs the salt, buffer and precipitant columns together and splits numbers at kerning pairs, so
+  `hepes ph 7 .5 10% peg 8000`, `peg 6000 4.0` and `ammonium sulfate 25,5% peg 4000` arrive as
+  single unreadable clauses. `_SPLIT_NUMBER` and `_NEW_AMOUNT` in `assign.build_vendor_screens`
+  repair some of it; the remainder needs a comma-decimal rule and a split on a pH value followed
+  by a percentage. These are extraction artefacts and must never be added to the lexicon as
+  reagents, which is what makes them look like a curation queue when they are not.
 - **59 buffers still have no pKa**, so they cannot be lexicon entries. Many are mixed systems
   with no single pKa; the rest are clause-splitter failures and are better fixed in the parser.
 - **24,327 conditions (13.1%) stay Unclassified for want of a stated amount.** Classifying them

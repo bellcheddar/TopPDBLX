@@ -1,0 +1,103 @@
+screen: PEG/pH ™ 2
+catalogue: HR2-081
+vendor: Hampton Research
+source_url: https://hamptonresearch.com/uploads/support_materials/HR2-081_Binder.pdf
+retrieved: '2026-07-31'
+n_wells: 48
+wells:
+- well: '1'
+  condition_text: 0.2 M BIS-TRIS propane pH 6.4, 20% w/v Polyethylene glycol 4,000
+- well: '2'
+  condition_text: 0.2 M BIS-TRIS propane pH 6.7, 20% w/v Polyethylene glycol 4,000
+- well: '3'
+  condition_text: 0.2 M BIS-TRIS propane pH 7.0, 20% w/v Polyethylene glycol 4,000
+- well: '4'
+  condition_text: 0.2 M BIS-TRIS propane pH 7.3, 20% w/v Polyethylene glycol 4,000
+- well: '5'
+  condition_text: 0.2 M MOPS pH 6.5, 20% w/v Polyethylene glycol 4,000
+- well: '6'
+  condition_text: 0.2 M MOPS pH 6.8, 20% w/v Polyethylene glycol 4,000
+- well: '7'
+  condition_text: 0.2 M MOPS pH 7.1, 20% w/v Polyethylene glycol 4,000
+- well: '8'
+  condition_text: 0.2 M MOPS pH 7.4, 20% w/v Polyethylene glycol 4,000
+- well: '9'
+  condition_text: 0.2 M MOPS pH 7.7, 20% w/v Polyethylene glycol 4,000
+- well: '10'
+  condition_text: 0.2 M HEPES sodium pH 6.6, 20% w/v Polyethylene glycol 4,000
+- well: '11'
+  condition_text: 0.2 M HEPES sodium pH 6.9, 20% w/v Polyethylene glycol 4,000
+- well: '12'
+  condition_text: 0.2 M HEPES sodium pH 7.2, 20% w/v Polyethylene glycol 4,000
+- well: '13'
+  condition_text: 0.2 M HEPES sodium pH 7.5, 20% w/v Polyethylene glycol 4,000
+- well: '14'
+  condition_text: 0.2 M HEPES pH 6.8, 20% w/v Polyethylene glycol 4,000
+- well: '15'
+  condition_text: 0.2 M HEPES pH 7.1, 20% w/v Polyethylene glycol 4,000
+- well: '16'
+  condition_text: 0.2 M HEPES pH 7.4, 20% w/v Polyethylene glycol 4,000
+- well: '17'
+  condition_text: 0.2 M HEPES pH 7.7, 20% w/v Polyethylene glycol 4,000
+- well: '18'
+  condition_text: 0.2 M TRIS hydrochloride pH 7.2, 20% w/v Polyethylene glycol 4,000
+- well: '19'
+  condition_text: 0.2 M TRIS hydrochloride pH 7.5, 20% w/v Polyethylene glycol 4,000
+- well: '20'
+  condition_text: 0.2 M TRIS hydrochloride pH 7.8, 20% w/v Polyethylene glycol 4,000
+- well: '21'
+  condition_text: 0.2 M TRIS hydrochloride pH 8.1, 20% w/v Polyethylene glycol 4,000
+- well: '22'
+  condition_text: 0.2 M Tris pH 7.3, 20% w/v Polyethylene glycol 4,000
+- well: '23'
+  condition_text: 0.2 M Tris pH 7.6, 20% w/v Polyethylene glycol 4,000
+- well: '24'
+  condition_text: 0.2 M Tris pH 7.9, 20% w/v Polyethylene glycol 4,000
+- well: '25'
+  condition_text: 0.2 M Tris pH 8.2, 20% w/v Polyethylene glycol 4,000
+- well: '26'
+  condition_text: 0.2 M Tris pH 8.5, 20% w/v Polyethylene glycol 4,000
+- well: '27'
+  condition_text: 0.2 M Tricine pH 7.4, 20% w/v Polyethylene glycol 4,000
+- well: '28'
+  condition_text: 0.2 M Tricine pH 7.7, 20% w/v Polyethylene glycol 4,000
+- well: '29'
+  condition_text: 0.2 M Tricine pH 8.0, 20% w/v Polyethylene glycol 4,000
+- well: '30'
+  condition_text: 0.2 M Tricine pH 8.3, 20% w/v Polyethylene glycol 4,000
+- well: '31'
+  condition_text: 0.2 M Tricine pH 8.6, 20% w/v Polyethylene glycol 4,000
+- well: '32'
+  condition_text: 0.2 M BICINE pH 7.5, 20% w/v Polyethylene glycol 4,000
+- well: '33'
+  condition_text: 0.2 M BICINE pH 7.8, 20% w/v Polyethylene glycol 4,000
+- well: '34'
+  condition_text: 0.2 M BICINE pH 8.1, 20% w/v Polyethylene glycol 4,000
+- well: '35'
+  condition_text: 0.2 M BICINE pH 8.4, 20% w/v Polyethylene glycol 4,000
+- well: '36'
+  condition_text: 0.2 M BICINE pH 8.7, 20% w/v Polyethylene glycol 4,000
+- well: '37'
+  condition_text: 0.2 M BIS-TRIS propane pH 8.5, 20% w/v Polyethylene glycol 4,000
+- well: '38'
+  condition_text: 0.2 M BIS-TRIS propane pH 8.8, 20% w/v Polyethylene glycol 4,000
+- well: '39'
+  condition_text: 0.2 M BIS-TRIS propane pH 9.1, 20% w/v Polyethylene glycol 4,000
+- well: '40'
+  condition_text: 0.2 M BIS-TRIS propane pH 9.4, 20% w/v Polyethylene glycol 4,000
+- well: '41'
+  condition_text: 0.2 M Glycine pH 8.6, 20% w/v Polyethylene glycol 4,000
+- well: '42'
+  condition_text: 0.2 M Glycine pH 8.9, 20% w/v Polyethylene glycol 4,000
+- well: '43'
+  condition_text: 0.2 M Glycine pH 9.2, 20% w/v Polyethylene glycol 4,000
+- well: '44'
+  condition_text: 0.2 M Glycine pH 9.5, 20% w/v Polyethylene glycol 4,000
+- well: '45'
+  condition_text: 0.2 M AMPD pH 8.7, 20% w/v Polyethylene glycol 4,000
+- well: '46'
+  condition_text: 0.2 M AMPD pH 9.0, 20% w/v Polyethylene glycol 4,000
+- well: '47'
+  condition_text: 0.2 M AMPD pH 9.3, 20% w/v Polyethylene glycol 4,000
+- well: '48'
+  condition_text: 0.2 M AMPD pH 9.6, 20% w/v Polyethylene glycol 4,000

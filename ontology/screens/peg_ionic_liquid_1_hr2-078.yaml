@@ -1,0 +1,103 @@
+screen: PEG/Ionic Liquid ™ 1
+catalogue: HR2-078
+vendor: Hampton Research
+source_url: https://hamptonresearch.com/uploads/support_materials/HR2-078_Binder.pdf
+retrieved: '2026-07-31'
+n_wells: 48
+wells:
+- well: '1'
+  condition_text: 5% w/v Tetraethylammonium bromide, 30% v/v Polyethylene glycol 400
+- well: '2'
+  condition_text: 5% w/v Tetraethylammonium bromide, 25% w/v Polyethylene glycol 1,000
+- well: '3'
+  condition_text: 5% w/v Tetraethylammonium bromide, 20% w/v Polyethylene glycol 4,000
+- well: '4'
+  condition_text: 5% w/v Tetraethylammonium bromide, 15% w/v Polyethylene glycol 20,000
+- well: '5'
+  condition_text: 5% w/v Benzyltriethylammonium chloride, 30% v/v Polyethylene glycol 400
+- well: '6'
+  condition_text: 5% w/v Benzyltriethylammonium chloride, 25% w/v Polyethylene glycol 1,000
+- well: '7'
+  condition_text: 5% w/v Benzyltriethylammonium chloride, 20% w/v Polyethylene glycol 4,000
+- well: '8'
+  condition_text: 5% w/v Benzyltriethylammonium chloride, 15% w/v Polyethylene glycol 20,000
+- well: '9'
+  condition_text: 5% w/v 2-Hydroxyethylammonium formate, 30% v/v Polyethylene glycol 400
+- well: '10'
+  condition_text: 5% w/v 2-Hydroxyethylammonium formate, 25% w/v Polyethylene glycol 1,000
+- well: '11'
+  condition_text: 5% w/v 2-Hydroxyethylammonium formate, 20% w/v Polyethylene glycol 4,000
+- well: '12'
+  condition_text: 5% w/v 2-Hydroxyethylammonium formate, 15% w/v Polyethylene glycol 20,000
+- well: '13'
+  condition_text: 5% w/v Ethylammonium nitrate, 30% v/v Polyethylene glycol 400
+- well: '14'
+  condition_text: 5% w/v Ethylammonium nitrate, 25% w/v Polyethylene glycol 1,000
+- well: '15'
+  condition_text: 5% w/v Ethylammonium nitrate, 20% w/v Polyethylene glycol 4,000
+- well: '16'
+  condition_text: 5% w/v Ethylammonium nitrate, 15% w/v Polyethylene glycol 20,000
+- well: '17'
+  condition_text: 5% w/v Cholin acetate, 30% v/v Polyethylene glycol 400
+- well: '18'
+  condition_text: 5% w/v Cholin acetate, 25% w/v Polyethylene glycol 1,000
+- well: '19'
+  condition_text: 5% w/v Cholin acetate, 20% w/v Polyethylene glycol 4,000
+- well: '20'
+  condition_text: 5% w/v Cholin acetate, 15% w/v Polyethylene glycol 20,000
+- well: '21'
+  condition_text: 5% w/v Choline dihydrogen phosphate, 30% v/v Polyethylene glycol 400
+- well: '22'
+  condition_text: 5% w/v Choline dihydrogen phosphate, 25% w/v Polyethylene glycol 1,000
+- well: '23'
+  condition_text: 5% w/v Choline dihydrogen phosphate, 20% w/v Polyethylene glycol 4,000
+- well: '24'
+  condition_text: 5% w/v Choline dihydrogen phosphate, 15% w/v Polyethylene glycol 20,000
+- well: '25'
+  condition_text: 5% w/v 1-Ethyl-3-methylimidazolium acetate, 30% v/v Polyethylene glycol 400
+- well: '26'
+  condition_text: 5% w/v 1-Ethyl-3-methylimidazolium acetate, 25% w/v Polyethylene glycol 1,000
+- well: '27'
+  condition_text: 5% w/v 1-Ethyl-3-methylimidazolium acetate, 20% w/v Polyethylene glycol 4,000
+- well: '28'
+  condition_text: 5% w/v 1-Ethyl-3-methylimidazolium acetate, 15% w/v Polyethylene glycol 20,000
+- well: '29'
+  condition_text: 5% w/v 1-Butyl-3-methylimidazolium chloride, 30% v/v Polyethylene glycol 400
+- well: '30'
+  condition_text: 5% w/v 1-Butyl-3-methylimidazolium chloride, 25% w/v Polyethylene glycol 1,000
+- well: '31'
+  condition_text: 5% w/v 1-Butyl-3-methylimidazolium chloride, 20% w/v Polyethylene glycol 4,000
+- well: '32'
+  condition_text: 5% w/v 1-Butyl-3-methylimidazolium chloride, 15% w/v Polyethylene glycol 20,000
+- well: '33'
+  condition_text: 5% w/v 1-Ethyl-3-methylimidazolium chloride, 30% v/v Polyethylene glycol 400
+- well: '34'
+  condition_text: 5% w/v 1-Ethyl-3-methylimidazolium chloride, 25% w/v Polyethylene glycol 1,000
+- well: '35'
+  condition_text: 5% w/v 1-Ethyl-3-methylimidazolium chloride, 20% w/v Polyethylene glycol 4,000
+- well: '36'
+  condition_text: 5% w/v 1-Ethyl-3-methylimidazolium chloride, 15% w/v Polyethylene glycol 20,000
+- well: '37'
+  condition_text: 5% w/v 1-Hexyl-3-methylimidazolium chloride, 30% v/v Polyethylene glycol 400
+- well: '38'
+  condition_text: 5% w/v 1-Hexyl-3-methylimidazolium chloride, 25% w/v Polyethylene glycol 1,000
+- well: '39'
+  condition_text: 5% w/v 1-Hexyl-3-methylimidazolium chloride, 20% w/v Polyethylene glycol 4,000
+- well: '40'
+  condition_text: 5% w/v 1-Hexyl-3-methylimidazolium chloride, 15% w/v Polyethylene glycol 20,000
+- well: '41'
+  condition_text: 5% w/v 1-Butyl-3-methylimidazolium dicyanamide, 30% v/v Polyethylene glycol 400
+- well: '42'
+  condition_text: 5% w/v 1-Butyl-3-methylimidazolium dicyanamide, 25% w/v Polyethylene glycol 1,000
+- well: '43'
+  condition_text: 5% w/v 1-Butyl-3-methylimidazolium dicyanamide, 20% w/v Polyethylene glycol 4,000
+- well: '44'
+  condition_text: 5% w/v 1-Butyl-3-methylimidazolium dicyanamide, 15% w/v Polyethylene glycol 20,000
+- well: '45'
+  condition_text: 5% w/v 1,3-Dimethylimidazolium dimethyl phosphate, 30% v/v Polyethylene glycol 400
+- well: '46'
+  condition_text: 5% w/v 1,3-Dimethylimidazolium dimethyl phosphate, 25% w/v Polyethylene glycol 1,000
+- well: '47'
+  condition_text: 5% w/v 1,3-Dimethylimidazolium dimethyl phosphate, 20% w/v Polyethylene glycol 4,000
+- well: '48'
+  condition_text: 5% w/v 1,3-Dimethylimidazolium dimethyl phosphate, 15% w/v Polyethylene glycol 20,000

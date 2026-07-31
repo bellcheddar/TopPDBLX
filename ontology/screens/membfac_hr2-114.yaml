@@ -1,0 +1,103 @@
+screen: MembFac
+catalogue: HR2-114
+vendor: Hampton Research
+source_url: https://hamptonresearch.com/uploads/support_materials/HR2-114_Binder.pdf
+retrieved: '2026-07-31'
+n_wells: 48
+wells:
+- well: '1'
+  condition_text: 0.1 M Sodium chloride, 0.1 M Sodium acetate trihydrate pH 4.6, 12% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '2'
+  condition_text: 0.1 M Zinc acetate dihydrate, 0.1 M Sodium acetate trihydrate pH 4.6, 12% w/v Polyethylene glycol 4,000
+- well: '3'
+  condition_text: 0.2 M Ammonium sulfate, 0.1 M Sodium acetate trihydrate pH 4.6, 10% w/v Polyethylene glycol 4,000
+- well: '4'
+  condition_text: 0.1 M Sodium chloride, 0.1 M Sodium acetate trihydrate pH 4.6, 12% v/v 2-Propanol
+- well: '5'
+  condition_text: 0.1 M Sodium acetate trihydrate pH 4.6, 12% w/v Polyethylene glycol 4,000
+- well: '6'
+  condition_text: 0.1 M Sodium acetate trihydrate pH 4.6, 1.0 M Ammonium sulfate
+- well: '7'
+  condition_text: 0.1 M Sodium acetate trihydrate pH 4.6, 1.0 M Magnesium sulfate heptahydrate
+- well: '8'
+  condition_text: 0.1 M Magnesium chloride hexahydrate, 0.1 M Sodium acetate trihydrate pH 4.6, 18% v/v Polyethylene glycol 400
+- well: '9'
+  condition_text: 0.1 M Lithium sulfate monohydrate, 0.1 M Sodium acetate trihydrate pH 4.6, 1.0 M Ammonium phosphate monobasic
+- well: '10'
+  condition_text: 0.1 M Sodium chloride, 0.1 M Sodium acetate trihydrate pH 4.6, 12% w/v Polyethylene glycol 6,000
+- well: '11'
+  condition_text: 0.1 M Magnesium chloride hexahydrate, 0.1 M Sodium acetate trihydrate pH 4.6, 12% w/v Polyethylene glycol 6,000
+- well: '12'
+  condition_text: 0.1 M Sodium chloride, 0.1 M Sodium citrate tribasic dihydrate pH 5.6, 18% v/v Polyethylene glycol 400
+- well: '13'
+  condition_text: 0.1 M Lithium sulfate monohydrate, 0.1 M Sodium citrate tribasic dihydrate pH 5.6, 12 % w/v Polyethylene glycol 4,000
+- well: '14'
+  condition_text: 0.1 M Sodium citrate tribasic dihydrate, 0.1 M Sodium citrate tribasic dihydrate pH 5.6, 10% v/v 2-Propanol
+- well: '15'
+  condition_text: 0.1 M Sodium chloride, 0.1 M Sodium citrate tribasic dihydrate pH 5.6, 12% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '16'
+  condition_text: 0.1 M Sodium citrate tribasic dihydrate pH 5.6, 1.0 M Magnesium sulfate heptahydrate
+- well: '17'
+  condition_text: 0.1 M Sodium chloride, 0.1 M Sodium citrate tribasic dihydrate pH 5.6, 12% w/v Polyethylene glycol 4,000
+- well: '18'
+  condition_text: 0.1 M Lithium sulfate monohydrate, 0.1 M Sodium citrate tribasic dihydrate pH 5.6, 12% w/v Polyethylene glycol 6,000
+- well: '19'
+  condition_text: 0.1 M Magnesium chloride hexahydrate, 0.1 M Sodium citrate tribasic dihydrate pH 5.6, 4% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '20'
+  condition_text: 0.1 M Sodium citrate trihydrate dihydrate pH 5.6, 0.1 M Sodium chloride
+- well: '21'
+  condition_text: 0.1 M Lithium sulfate monohydrate, 0.1 M Sodium citrate tribasic dihydrate pH 5.6, 4% v/v Polyethylene glycol 400
+- well: '22'
+  condition_text: 0.1 M ADA pH 6.5, 1.0 M Ammonium sulfate
+- well: '23'
+  condition_text: 0.1 M Lithium sulfate monohydrate, 0.1 M ADA pH 6.5, 12% w/v Polyethylene glycol 4,000, 2% v/v 2-Propanol
+- well: '24'
+  condition_text: 0.1 M ADA pH 6.5, 1.0 M Ammonium phosphate dibasic
+- well: '25'
+  condition_text: 0.1 M Magnesium chloride hexahydrate, 0.1 M ADA pH 6.5, 12% w/v Polyethylene glycol 6,000
+- well: '26'
+  condition_text: 0.1 M ADA pH 6.5, 12% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '27'
+  condition_text: 0.1 M Lithium sulfate monohydrate, 0.1 M ADA pH 6.5, 1.0 M Magnesium sulfate hydrate
+- well: '28'
+  condition_text: 0.3 M Lithium sulfate monohydrate, 0.1 M ADA pH 6.5, 4% v/v Polyethylene glycol 400
+- well: '29'
+  condition_text: 0.1 M Ammonium sulfate, 0.1 M HEPES sodium pH 7.5, 0.5 M Sodium phosphate dibasic dihydrate,
+- well: '30'
+  condition_text: 0.1 M Sodium chloride, 0.1 M HEPES sodium pH 7.5, 10% w/v Polyethylene glycol 4,000
+- well: '31'
+  condition_text: 0.1 M Magnesium chloride hexahydrate, 0.1 M HEPES sodium pH 7.5, 18% v/v Polyethylene glycol 400
+- well: '32'
+  condition_text: 0.1 M HEPES sodium pH 7.5, 1.0 M Potassium sodium tartrate tetrahydrate
+- well: '33'
+  condition_text: 0.1 M Ammonium sulfate, 0.1 M HEPES sodium pH 7.5, 18% v/v Polyethylene glycol 400
+- well: '34'
+  condition_text: 0.1 M Ammonium sulfate, 0.1 M HEPES sodium pH 7.5, 10% w/v Polyethylene glycol 4,000
+- well: '35'
+  condition_text: 0.1 M Sodium citrate tribasic dihydrate, 0.1 M HEPES sodium pH 7.5, 12% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '36'
+  condition_text: 0.1 M HEPES sodium pH 7.5, 1.0 M Sodium citrate tribasic dihydrate
+- well: '37'
+  condition_text: 0.6 M Magnesium sulfate hydrate, 0.1 M HEPES sodium pH 7.5, 4% v/v Polyethylene glycol 400
+- well: '38'
+  condition_text: 0.6 M Magnesium sulfate hydrate, 0.1 M HEPES sodium pH 7.5, 4% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '39'
+  condition_text: 0.1 M Lithium sulfate monohydrate, 0.1 M HEPES sodium pH 7.5, 0.1 M Potassium sodium tartrate tetrahydrate
+- well: '40'
+  condition_text: 0.1 M Lithium sulfate monohydrate, 0.1 M Tris hydrochloride pH 8.5, 12% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '41'
+  condition_text: 0.1 M Ammonium phosphate dibasic, 0.1 M Tris hydrochloride pH 8.5, 0.5 M Sodium phosphate dibasic dihydrate,
+- well: '42'
+  condition_text: 0.1 M Tris hydrochloride pH 8.5, 0.1 M Sodium acetate trihydrate
+- well: '43'
+  condition_text: 0.1 M Tris hydrochloride pH 8.5, 0.1 M Sodium chloride
+- well: '44'
+  condition_text: 0.1 M Ammonium phosphate dibasic, 0.1 M Tris hydrochloride pH 8.5, 12% w/v Polyethylene glycol 6,000
+- well: '45'
+  condition_text: 0.1 M Potassium sodium tartrate tetrahydrate, 0.1 M Tris hydrochloride pH 8.5, 0.4 M Magnesium sulfate hydrate
+- well: '46'
+  condition_text: 0.1 M Tris hydrochloride pH 8.5, 0.2 M Lithium sulfate monohydrate
+- well: '47'
+  condition_text: 0.1 M Tris hydrochloride pH 8.5, 0.5 M Ammonium sulfate
+- well: '48'
+  condition_text: 0.1 M Sodium citrate tribasic dihydrate, 0.1 M Tris hydrochloride pH 8.5, 5% v/v Polyethylene glycol 400

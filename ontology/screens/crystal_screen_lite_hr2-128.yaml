@@ -1,0 +1,107 @@
+screen: Crystal Screen Lite
+catalogue: HR2-128
+vendor: Hampton Research
+source_url: https://hamptonresearch.com/uploads/support_materials/HR2-128_Binder.pdf
+retrieved: '2026-07-31'
+n_wells: 50
+wells:
+- well: '1'
+  condition_text: 0.02 M Calcium chloride dihydrate, 0.1 M Sodium acetate trihydrate pH 4.6, 15% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '2'
+  condition_text: 0.2 M Potassium sodium tartrate tetrahydrate
+- well: '3'
+  condition_text: 0.2 M Ammonium phosphate monobasic
+- well: '4'
+  condition_text: 0.1 M TRIS hydrochloride pH 8.5, 1.0 M Ammonium sulfate
+- well: '5'
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate, 0.1 M HEPES sodium pH 7.5, 15% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '6'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M TRIS hydrochloride pH 8.5, 15% w/v Polyethylene glycol 4,000
+- well: '7'
+  condition_text: 0.1 M Sodium cacodylate trihydrate pH 6.5, 0.7 M Sodium acetate trihydrate
+- well: '8'
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate, 0.1 M Sodium cacodylate trihydrate pH 6.5, 15% v/v 2-Propanol
+- well: '9'
+  condition_text: 0.2 M Ammonium acetate, 0.1 M Sodium citrate tribasic dihydrate pH 5.6, 15% w/v Polyethylene glycol 4,000
+- well: '10'
+  condition_text: 0.2 M Ammonium acetate, 0.1 M Sodium acetate trihydrate pH 4.6, 15% w/v Polyethylene glycol 4,000
+- well: '11'
+  condition_text: 0.1 M Sodium citrate tribasic dihydrate pH 5.6, 0.5 M Ammonium phosphate monobasic
+- well: '12'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M HEPES sodium pH 7.5, 15% v/v 2-Propanol
+- well: '13'
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate, 0.1 M TRIS hydrochloride pH 8.5, 15% v/v Polyethylene glycol 400
+- well: '14'
+  condition_text: 0.2 M Calcium chloride dihydrate, 0.1 M HEPES sodium pH 7.5, 14% v/v Polyethylene glycol 400
+- well: '15'
+  condition_text: 0.2 M Ammonium sulfate, 0.1 M Sodium cacodylate trihydrate pH 6.5, 15% w/v Polyethylene glycol 8,000
+- well: '16'
+  condition_text: 0.1 M HEPES sodium pH 7.5, 0.75 M Lithium sulfate monohydrate
+- well: '17'
+  condition_text: 0.2 M Lithium sulfate monohydrate, 0.1 M TRIS hydrochloride pH 8.5, 15% w/v Polyethylene glycol 4,000
+- well: '18'
+  condition_text: 0.2 M Magnesium acetate tetrahydrate, 0.1 M Sodium cacodylate trihydrate pH 6.5, 10% w/v Polyethylene glycol 8,000
+- well: '19'
+  condition_text: 0.2 M Ammonium acetate, 0.1 M TRIS hydrochloride pH 8.5, 15% v/v 2-Propanol
+- well: '20'
+  condition_text: 0.2 M Ammonium sulfate, 0.1 M Sodium acetate trihydrate pH 4.6, 12.5% w/v Polyethylene glycol 4,000
+- well: '21'
+  condition_text: 0.2 M Magnesium acetate tetrahydrate, 0.1 M Sodium cacodylate trihydrate pH 6.5, 15% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '22'
+  condition_text: 0.2 M Sodium acetate trihydrate, 0.1 M TRIS hydrochloride pH 8.5, 15% w/v Polyethylene glycol 4,000
+- well: '23'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M HEPES sodium pH 7.5, 15% v/v Polyethylene glycol 400
+- well: '24'
+  condition_text: 0.2 M Calcium chloride dihydrate, 0.1 M Sodium acetate trihydrate pH 4.6, 10% v/v 2-Propanol
+- well: '25'
+  condition_text: 0.1 M Imidazole pH 6.5, 0.5 M Sodium acetate trihydrate
+- well: '26'
+  condition_text: 0.2 M Ammonium acetate, 0.1 M Sodium citrate tribasic dihydrate pH 5.6, 15% v/v (+/-)-2-Methyl-2,4-pentanediol
+- well: '27'
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate, 0.1 M HEPES sodium pH 7.5, 10% v/v 2-Propanol
+- well: '28'
+  condition_text: 0.2 M Sodium acetate trihydrate, 0.1 M Sodium cacodylate trihydrate pH 6.5, 15% w/v Polyethylene glycol 8,000
+- well: '29'
+  condition_text: 0.1 M HEPES sodium pH 7.5, 0.4 M Potassium sodium tartrate tetrahydrate
+- well: '30'
+  condition_text: 0.2 M Ammonium sulfate, 15% w/v Polyethylene glycol 8,000
+- well: '31'
+  condition_text: 0.2 M Ammonium sulfate, 15% w/v Polyethylene glycol 4,000
+- well: '32'
+  condition_text: 1.0 M Ammonium sulfate
+- well: '33'
+  condition_text: 2.0 M Sodium formate
+- well: '34'
+  condition_text: 0.1 M Sodium acetate trihydrate pH 4.6, 1.0 M Sodium formate
+- well: '35'
+  condition_text: 0.1 M HEPES sodium pH 7.5, 0.4 M Sodium phosphate monobasic monohydrate, 0.4 M Potassium phosphate monobasic
+- well: '36'
+  condition_text: 0.1 M TRIS hydrochloride pH 8.5, 4% w/v Polyethylene glycol 8,000
+- well: '37'
+  condition_text: 0.1 M Sodium acetate trihydrate pH 4.6, 4% w/v Polyethylene glycol 4,000
+- well: '38'
+  condition_text: 0.1 M HEPES sodium pH 7.5, 0.7 M Sodium citrate tribasic dihydrate
+- well: '39'
+  condition_text: 0.1 M HEPES sodium pH 7.5, 2% v/v Polyethylene glycol 400, 1.0 M Ammonium sulfate
+- well: '40'
+  condition_text: 0.1 M Sodium citrate tribasic dihydrate pH 5.6, 10% v/v 2-Propanol, 10% w/v Polyethylene glycol 4,000
+- well: '41'
+  condition_text: 0.1 M HEPES sodium pH 7.5, 5% v/v 2-Propanol, 10% w/v Polyethylene glycol 4,000
+- well: '42'
+  condition_text: 0.05 M Potassium phosphate monobasic, 10% w/v Polyethylene glycol 8,000
+- well: '43'
+  condition_text: 15% w/v Polyethylene glycol 1,500
+- well: '44'
+  condition_text: 0.1 M Magnesium formate dihydrate
+- well: '45'
+  condition_text: 0.2 M Zinc acetate dihydrate, 0.1 M Sodium cacodylate trihydrate pH 6.5, 9% w/v Polyethylene glycol 8,000
+- well: '46'
+  condition_text: 0.2 M Calcium acetate hydrate, 0.1 M Sodium cacodylate trihydrate pH 6.5, 9% w/v Polyethylene glycol 8,000
+- well: '47'
+  condition_text: 0.1 M Sodium acetate trihydrate pH 4.6, 1.0 M Ammonium sulfate
+- well: '48'
+  condition_text: 0.1 M TRIS hydrochloride pH 8.5, 1.0 M Ammonium phosphate monobasic
+- well: '49'
+  condition_text: 0.5 M Lithium sulfate monohydrate, 2% w/v Polyethylene glycol 8,000
+- well: '50'
+  condition_text: 0.5 M Lithium sulfate monohydrate, 7.5% w/v Polyethylene glycol 8,000
