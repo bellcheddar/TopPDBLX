@@ -1,0 +1,199 @@
+screen: PACT
+catalogue: HR2-147
+vendor: Hampton Research
+source_url: https://hamptonresearch.com/uploads/support_materials/HR2-147_Binder.pdf
+retrieved: '2026-07-31'
+n_wells: 96
+wells:
+- well: '1'
+  condition_text: 0.1 M SPG1 pH 4.0, 25% w/v Polyethylene glycol 1,500
+- well: '2'
+  condition_text: 0.1 M SPG1 pH 5.0, 25% w/v Polyethylene glycol 1,500
+- well: '3'
+  condition_text: 0.1 M SPG1 pH 6.0, 25% w/v Polyethylene glycol 1,500
+- well: '4'
+  condition_text: 0.1 M SPG1 pH 7.0, 25% w/v Polyethylene glycol 1,500
+- well: '5'
+  condition_text: 0.1 M SPG1 pH 8.0, 25% w/v Polyethylene glycol 1,500
+- well: '6'
+  condition_text: 0.1 M SPG1 pH 9.0, 25% w/v Polyethylene glycol 1,500
+- well: '7'
+  condition_text: 0.2 M Sodium chloride, 0.1 M Sodium acetate trihydrate pH 5.0, 20% w/v Polyethylene glycol 6,000
+- well: '8'
+  condition_text: 0.2 M Ammonium chloride, 0.1 M Sodium acetate trihydrate pH 5.0, 20% w/v Polyethylene glycol 6,000
+- well: '9'
+  condition_text: 0.2 M Lithium chloride, 0.1 M Sodium acetate trihydrate pH 5.0, 20% w/v Polyethylene glycol 6,000
+- well: '10'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M Sodium acetate trihydrate pH 5.0, 20% w/v Polyethylene glycol 6,000
+- well: '11'
+  condition_text: 0.2 M Calcium chloride dihydrate, 0.1 M Sodium acetate trihydrate pH 5.0, 20% w/v Polyethylene glycol 6,000
+- well: '12'
+  condition_text: 0.01 M Zinc chloride, 0.1 M Sodium acetate trihydrate pH 5.0, 20% w/v Polyethylene glycol 6,000
+- well: '13'
+  condition_text: 0.1 M MIB2 pH 4.0, 25% w/v Polyethylene glycol 1,500
+- well: '14'
+  condition_text: 0.1 M MIB2 pH 5.0, 25% w/v Polyethylene glycol 1,500
+- well: '15'
+  condition_text: 0.1 M MIB2 pH 6.0, 25% w/v Polyethylene glycol 1,500
+- well: '16'
+  condition_text: 0.1 M MIB2 pH 7.0, 25% w/v Polyethylene glycol 1,500
+- well: '17'
+  condition_text: 0.1 M MIB2 pH 8.0, 25% w/v Polyethylene glycol 1,500
+- well: '18'
+  condition_text: 0.1 M MIB2 pH 9.0, 25% w/v Polyethylene glycol 1,500
+- well: '19'
+  condition_text: 0.2 M Sodium chloride, 0.1 M MES monohydrate pH 6.0, 20% w/v Polyethylene glycol 6,000
+- well: '20'
+  condition_text: 0.2 M Ammonium chloride, 0.1 M MES monohydrate pH 6.0, 20% w/v Polyethylene glycol 6,000
+- well: '21'
+  condition_text: 0.2 M Lithium chloride, 0.1 M MES monohydrate pH 6.0, 20% w/v Polyethylene glycol 6,000
+- well: '22'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M MES monohydrate pH 6.0, 20% w/v Polyethylene glycol 6,000
+- well: '23'
+  condition_text: 0.2 M Calcium chloride dihydrate, 0.1 M MES monohydrate pH 6.0, 20% w/v Polyethylene glycol 6,000
+- well: '24'
+  condition_text: 0.01 M Zinc chloride, 0.1 M MES monohydrate pH 6.0, 20% w/v Polyethylene glycol 6,000
+- well: '25'
+  condition_text: 0.1 M PCB3 pH 4.0, 25% w/v Polyethylene glycol 1,500
+- well: '26'
+  condition_text: 0.1 M PCB3 pH 5.0, 25% w/v Polyethylene glycol 1,500
+- well: '27'
+  condition_text: 0.1 M PCB3 pH 6.0, 25% w/v Polyethylene glycol 1,500
+- well: '28'
+  condition_text: 0.1 M PCB3 pH 7.0, 25% w/v Polyethylene glycol 1,500
+- well: '29'
+  condition_text: 0.1 M PCB3 pH 8.0, 25% w/v Polyethylene glycol 1,500
+- well: '30'
+  condition_text: 0.1 M PCB3 pH 9.0, 25% w/v Polyethylene glycol 1,500
+- well: '31'
+  condition_text: 0.2 M Sodium chloride, 0.1 M HEPES pH 7.0, 20% w/v Polyethylene glycol 6,000
+- well: '32'
+  condition_text: 0.2 M Ammonium chloride, 0.1 M HEPES pH 7.0, 20% w/v Polyethylene glycol 6,000
+- well: '33'
+  condition_text: 0.2 M Lithium chloride, 0.1 M HEPES pH 7.0, 20% w/v Polyethylene glycol 6,000
+- well: '34'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M HEPES pH 7.0, 20% w/v Polyethylene glycol 6,000
+- well: '35'
+  condition_text: 0.2 M Calcium chloride dihydrate, 0.1 M HEPES pH 7.0, 20% w/v Polyethylene glycol 6,000
+- well: '36'
+  condition_text: 0.01 M Zinc chloride, 0.1 M HEPES pH 7.0, 20% w/v Polyethylene glycol 6,000
+- well: '37'
+  condition_text: 0.1 M MMT4 pH 4.0, 25% w/v Polyethylene glycol 1,500
+- well: '38'
+  condition_text: 0.1 M MMT4 pH 5.0, 25% w/v Polyethylene glycol 1,500
+- well: '39'
+  condition_text: 0.1 M MMT4 pH 6.0, 25% w/v Polyethylene glycol 1,500
+- well: '40'
+  condition_text: 0.1 M MMT4 pH 7.0, 25% w/v Polyethylene glycol 1,500
+- well: '41'
+  condition_text: 0.1 M MMT4 pH 8.0, 25% w/v Polyethylene glycol 1,500
+- well: '42'
+  condition_text: 0.1 M MMT4 pH 9.0, 25% w/v Polyethylene glycol 1,500
+- well: '43'
+  condition_text: 0.2 M Sodium chloride, 0.1 M TRIS pH 8.0, 20% w/v Polyethylene glycol 6,000
+- well: '44'
+  condition_text: 0.2 M Ammonium chloride, 0.1 M TRIS pH 8.0, 20% w/v Polyethylene glycol 6,000
+- well: '45'
+  condition_text: 0.2 M Lithium chloride, 0.1 M TRIS pH 8.0, 20% w/v Polyethylene glycol 6,000
+- well: '46'
+  condition_text: 0.2 M Magnesium chloride hexahydrate, 0.1 M TRIS pH 8.0, 20% w/v Polyethylene glycol 6,000
+- well: '47'
+  condition_text: 0.2 M Calcium chloride dihydrate, 0.1 M TRIS pH 8.0, 20% w/v Polyethylene glycol 6,000
+- well: '48'
+  condition_text: 0.002 M Zinc chloride, 0.1 M TRIS pH 8.0, 20% w/v Polyethylene glycol 6,000
+- well: '49'
+  condition_text: 0.2 M Sodium fluoride, 20% w/v Polyethylene glycol 3,350
+- well: '50'
+  condition_text: 0.2 M Sodium bromide, 20% w/v Polyethylene glycol 3,350
+- well: '51'
+  condition_text: 0.2 M Sodium iodide, 20% w/v Polyethylene glycol 3,350
+- well: '52'
+  condition_text: 0.2 M Potassium thiocyanate, 20% w/v Polyethylene glycol 3,350
+- well: '53'
+  condition_text: 0.2 M Sodium nitrate, 20% w/v Polyethylene glycol 3,350
+- well: '54'
+  condition_text: 0.2 M Sodium formate, 20% w/v Polyethylene glycol 3,350
+- well: '55'
+  condition_text: 0.2 M Sodium acetate trihydrate, 20% w/v Polyethylene glycol 3,350
+- well: '56'
+  condition_text: 0.2 M Sodium sulfate decahydrate, 20% w/v Polyethylene glycol 3,350
+- well: '57'
+  condition_text: 0.2 M Potassium sodium tartrate tetrahydrate, 20% w/v Polyethylene glycol 3,350
+- well: '58'
+  condition_text: 0.1 M Sodium phosphate monobasic monohydrate, 0.1 M Potassium phosphate dibasic, 20% w/v Polyethylene glycol 3,350
+- well: '59'
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate, 20% w/v Polyethylene glycol 3,350
+- well: '60'
+  condition_text: 0.2 M Sodium malonate pH 7.0, 20% w/v Polyethylene glycol 3,350
+- well: '61'
+  condition_text: 0.2 M Sodium fluoride, 0.1 M BIS-TRIS propane pH 6.5, 20% w/v Polyethylene glycol 3,350
+- well: '62'
+  condition_text: 0.2 M Sodium bromide, 0.1 M BIS-TRIS propane pH 6.5, 20% w/v Polyethylene glycol 3,350
+- well: '63'
+  condition_text: 0.2 M Sodium iodide, 0.1 M BIS-TRIS propane pH 6.5, 20% w/v Polyethylene glycol 3,350
+- well: '64'
+  condition_text: 0.2 M Potassium thiocyanate, 0.1 M BIS-TRIS propane pH 6.5, 20% w/v Polyethylene glycol 3,350
+- well: '65'
+  condition_text: 0.2 M Sodium nitrate, 0.1 M BIS-TRIS propane pH 6.5, 20% w/v Polyethylene glycol 3,350
+- well: '66'
+  condition_text: 0.2 M Sodium formate, 0.1 M BIS-TRIS propane pH 6.5, 20% w/v Polyethylene glycol 3,350
+- well: '67'
+  condition_text: 0.2 M Sodium acetate trihydrate, 0.1 M BIS-TRIS propane pH 6.5, 20% w/v Polyethylene glycol 3,350
+- well: '68'
+  condition_text: 0.2 M Sodium sulfate decahydrate, 0.1 M BIS-TRIS propane pH 6.5, 20% w/v Polyethylene glycol 3,350
+- well: '69'
+  condition_text: 0.2 M Potassium sodium tartrate tetrahydrate, 0.1 M BIS-TRIS propane pH 6.5, 20% w/v Polyethylene glycol 3,350
+- well: '70'
+  condition_text: 0.1 M Sodium phosphate monobasic monohydrate, 0.1 M Potassium phosphate dibasic, 0.1 M BIS-TRIS propane pH 6.5, 20% w/v Polyethylene glycol 3,350
+- well: '71'
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate, 0.1 M BIS-TRIS propane pH 6.5, 20% w/v Polyethylene glycol 3,350
+- well: '72'
+  condition_text: 0.2 M Sodium malonate pH 7.0, 0.1 M BIS-TRIS propane pH 6.5, 20% w/v Polyethylene glycol 3,350
+- well: '73'
+  condition_text: 0.2 M Sodium fluoride, 0.1 M BIS-TRIS propane pH 7.5, 20% w/v Polyethylene glycol 3,350
+- well: '74'
+  condition_text: 0.2 M Sodium bromide, 0.1 M BIS-TRIS propane pH 7.5, 20% w/v Polyethylene glycol 3,350
+- well: '75'
+  condition_text: 0.2 M Sodium iodide, 0.1 M BIS-TRIS propane pH 7.5, 20% w/v Polyethylene glycol 3,350
+- well: '76'
+  condition_text: 0.2 M Potassium thiocyanate, 0.1 M BIS-TRIS propane pH 7.5, 20% w/v Polyethylene glycol 3,350
+- well: '77'
+  condition_text: 0.2 M Sodium nitrate, 0.1 M BIS-TRIS propane pH 7.5, 20% w/v Polyethylene glycol 3,350
+- well: '78'
+  condition_text: 0.2 M Sodium formate, 0.1 M BIS-TRIS propane pH 7.5, 20% w/v Polyethylene glycol 3,350
+- well: '79'
+  condition_text: 0.2 M Sodium acetate trihydrate, 0.1 M BIS-TRIS propane pH 7.5, 20% w/v Polyethylene glycol 3,350
+- well: '80'
+  condition_text: 0.2 M Sodium sulfate decahydrate, 0.1 M BIS-TRIS propane pH 7.5, 20% w/v Polyethylene glycol 3,350
+- well: '81'
+  condition_text: 0.2 M Potassium sodium tartrate tetrahydrate, 0.1 M BIS-TRIS propane pH 7.5, 20% w/v Polyethylene glycol 3,350
+- well: '82'
+  condition_text: 0.1 M Sodium phosphate monobasic monohydrate, 0.1 M Potassium phosphate dibasic, 0.1 M BIS-TRIS propane pH 7.5, 20% w/v Polyethylene glycol 3,350
+- well: '83'
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate, 0.1 M BIS-TRIS propane pH 7.5, 20% w/v Polyethylene glycol 3,350
+- well: '84'
+  condition_text: 0.2 M Sodium malonate pH 7.0, 0.1 M BIS-TRIS propane pH 7.5, 20% w/v Polyethylene glycol 3,350
+- well: '85'
+  condition_text: 0.2 M Sodium fluoride, 0.1 M BIS-TRIS propane pH 8.5, 20% w/v Polyethylene glycol 3,350
+- well: '86'
+  condition_text: 0.2 M Sodium bromide, 0.1 M BIS-TRIS propane pH 8.5, 20% w/v Polyethylene glycol 3,350
+- well: '87'
+  condition_text: 0.2 M Sodium iodide, 0.1 M BIS-TRIS propane pH 8.5, 20% w/v Polyethylene glycol 3,350
+- well: '88'
+  condition_text: 0.2 M Potassium thiocyanate, 0.1 M BIS-TRIS propane pH 8.5, 20% w/v Polyethylene glycol 3,350
+- well: '89'
+  condition_text: 0.2 M Sodium nitrate, 0.1 M BIS-TRIS propane pH 8.5, 20% w/v Polyethylene glycol 3,350
+- well: '90'
+  condition_text: 0.2 M Sodium formate, 0.1 M BIS-TRIS propane pH 8.5, 20% w/v Polyethylene glycol 3,350
+- well: '91'
+  condition_text: 0.2 M Sodium acetate trihydrate, 0.1 M BIS-TRIS propane pH 8.5, 20% w/v Polyethylene glycol 3,350
+- well: '92'
+  condition_text: 0.2 M Sodium sulfate decahydrate, 0.1 M BIS-TRIS propane pH 8.5, 20% w/v Polyethylene glycol 3,350
+- well: '93'
+  condition_text: 0.2 M Potassium sodium tartrate tetrahydrate, 0.1 M BIS-TRIS propane pH 8.5, 20% w/v Polyethylene glycol 3,350
+- well: '94'
+  condition_text: 0.1 M Sodium phosphate monobasic monohydrate, 0.1 M Potassium phosphate dibasic, 0.1 M BIS-TRIS propane pH 8.5, 20% w/v Polyethylene glycol 3,350
+- well: '95'
+  condition_text: 0.2 M Sodium citrate tribasic dihydrate, 0.1 M BIS-TRIS propane pH 8.5, 20% w/v Polyethylene glycol 3,350
+- well: '96'
+  condition_text: 0.2 M Sodium malonate pH 7.0, 0.1 M BIS-TRIS propane pH 8.5, 20% w/v Polyethylene glycol 3,350

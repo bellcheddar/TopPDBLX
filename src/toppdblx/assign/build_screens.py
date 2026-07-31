@@ -54,6 +54,12 @@ CATALOGUES = [
     "HR2-215", "HR2-217", "HR2-219", "HR2-221", "HR2-231", "HR2-233",
     "HR2-235", "HR2-237", "HR2-239", "HR2-240", "HR2-241", "HR2-243",
     "HR2-245", "HR2-247", "HR2-248", "HR2-249", "HR2-250",
+    # Found by probing the full HR2-078 to HR2-259 range rather than by extending the list a
+    # few numbers at a time. Three of these (145, 147, 150) publish under a lower-case
+    # "_binder" suffix, so they were unreachable at any point in the probe until the download
+    # learned to try both spellings.
+    "HR2-145", "HR2-147", "HR2-150", "HR2-251", "HR2-252", "HR2-253",
+    "HR2-254", "HR2-255", "HR2-256", "HR2-257",
 ]
 
 _CONDITION = re.compile(r"^\s*(\d{1,3})\.\s{2,}(\S.*)$", re.M)
@@ -271,7 +277,11 @@ def extract_screen(pdf_path: Path) -> dict[str, Any]:
     best.sort(key=lambda item: int(item[0]))
 
     # Independent check: the column-wise table lists every tube number on its own line.
-    declared = max((len(set(_TUBE_COUNT.findall(text))) for text in pages), default=0)
+    # Counted across the whole binder rather than per page. A screen printed 48 tubes to a page
+    # declares 48 under a per-page maximum however many pages it runs to, which understated
+    # every 96-condition screen: Index reported "tube column lists 48" against its own 96, and
+    # PACT (HR2-147) was refused outright for disagreeing with a number that was wrong.
+    declared = len({int(number) for text in pages for number in _TUBE_COUNT.findall(text)})
 
     # The HT binders print no numbered condition lines at all, so the line extractor returns a
     # handful of spurious matches and the screen is rejected. Fall back to the column layout.
@@ -315,11 +325,18 @@ def main(argv: Optional[list[str]] = None) -> int:
         mismatches: list[dict[str, Any]] = []
 
         for catalogue in catalogues:
-            url = BINDER_URL.format(catalogue=catalogue)
+            # Hampton spells the suffix both ways, "_Binder" and "_binder", and the server is
+            # case-sensitive. Trying only one silently loses whole screens, JCSG+ HT among them.
             pdf_path = args.pdf_dir / f"{catalogue}.pdf"
-            if http.download(url, pdf_path, skip_if_exists=True) is None:
-                print(f"  {catalogue}: not available at {url}")
-                continue
+            url = BINDER_URL.format(catalogue=catalogue)
+            if not pdf_path.exists():
+                for candidate in (url, url.replace("_Binder", "_binder")):
+                    if http.download(candidate, pdf_path, skip_if_exists=True) is not None:
+                        url = candidate
+                        break
+                else:
+                    print(f"  {catalogue}: not available at {url}")
+                    continue
 
             info = extract_screen(pdf_path)
 

@@ -67,6 +67,13 @@ complete plate by counting alone. Check that every well states a concentration.
   chloride hexahydrate; 0.3M Calcium chloride dihydrate`), so `NPS`, `precipitant mix` and
   `precipitant mix 4` in the unidentified head could be resolved from the vendor's own stock
   table. That is a second extraction pass over the same document.
+- **JCSG+ (HR2-145) and JCSG+ HT (HR2-150) still fail.** Both are real screens whose binders
+  declare 48 tubes, and both yield only 7 or 8 conditions from the line extractor with the
+  column extractor finding nothing. They are the most-used screens in the PDB after Crystal
+  Screen, so they are the highest-value extraction target left in the Hampton set.
+- **StockOptions kits will never ship and should not.** HR2-095, 100 to 106 and 251 to 257 are
+  single-buffer pH series, stock solutions rather than crystallisation screens. They are
+  reported as rejections only because they sit in the same catalogue range.
 - **Eight partner screens are extracted but refused**, each for a stated reason: Wizard
   Precipitant Synergy is two 96-condition screens printed as one numbered run of 192 and only
   191 read; JBScreen LCP came out 95 of 96; JCSG++ 1 to 4, Basic 2 and Membrane 3 fail the
