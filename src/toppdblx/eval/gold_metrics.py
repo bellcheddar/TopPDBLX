@@ -58,6 +58,10 @@ def main(argv: Optional[list[str]] = None) -> int:
                         default=config.INTERIM_DIR / "parsed_components.parquet")
     parser.add_argument("--slm-components", type=Path,
                         default=config.INTERIM_DIR / "slm_components.parquet")
+    parser.add_argument("--teacher-components", type=Path, default=None,
+                        help="a third source. Adds the union and the agreement rows, which is "
+                             "where the interesting result lives: two parsers can score the same "
+                             "and still be wrong about different reagents")
     parser.add_argument("--out", type=Path,
                         default=config.INTERIM_DIR / "gold_metrics.json")
     args = parser.parse_args(argv)
@@ -131,6 +135,24 @@ def main(argv: Optional[list[str]] = None) -> int:
     rules_only = score(lambda k: from_rules.get(k, set()), "rules only")
     shipped = score(lambda k: from_rules.get(k, set()) | from_model.get(k, set()),
                     "rules + model (shipped)")
+    reported = [rules_only, shipped]
+
+    # **Two sources scoring alike can still be wrong about different reagents, and that is worth
+    # more than either score.** The union row is the recall available if nothing is thrown away;
+    # the agreement row is the precision available if only what both assert is kept. On the first
+    # gold set the SLM and a 32B teacher scored within noise of each other on recall (p = 0.33)
+    # while the union missed 7 reagents against the SLM's 25 -- so the teacher was not a weaker
+    # parser, it was a differently wrong one, which is exactly what makes it useful as a labeller.
+    if args.teacher_components:
+        from_teacher = predicted(args.teacher_components)
+        reported.append(score(
+            lambda k: from_rules.get(k, set()) | from_teacher.get(k, set()), "rules + teacher"))
+        reported.append(score(
+            lambda k: from_rules.get(k, set()) | from_model.get(k, set()) | from_teacher.get(k, set()),
+            "union of all three"))
+        reported.append(score(
+            lambda k: from_rules.get(k, set()) | (from_model.get(k, set()) & from_teacher.get(k, set())),
+            "rules + where both agree"))
 
     with Manifest(STAGE, params={"gold": str(args.gold)}) as m:
         m.add_input(args.gold).add_input(args.components)
@@ -138,7 +160,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             "gold_generated_at": gold_doc.get("generated_at"),
             "n_records": len(records),
             "n_gold_reagents": sum(len(v) for v in truth.values()),
-            "rows": [rules_only, shipped],
+            "rows": reported,
             "unresolved_gold_names": dict(sorted(unresolved.items(),
                                                  key=lambda kv: -kv[1])),
         }
@@ -150,7 +172,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         print(f"\n  {len(records)} labelled records, {payload['n_gold_reagents']} gold reagents "
               f"({payload['n_gold_reagents']/len(records):.2f} per record)\n")
         print(f"  {'source':<26}{'precision':>22}{'recall':>22}{'F1':>8}")
-        for row in (rules_only, shipped):
+        for row in reported:
             p, r = row["precision_ci95"], row["recall_ci95"]
             print(f"  {row['label']:<26}{row['precision']:>9.1f}% [{p[0]:.0f},{p[1]:.0f}]"
                   f"{row['recall']:>10.1f}% [{r[0]:.0f},{r[1]:.0f}]{row['f1']:>8.1f}")
