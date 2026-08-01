@@ -131,10 +131,41 @@ lexicon itself, being the module the lexicon is built on, so `clauses_detailed` 
 `is_reagent` predicate and `rules.py` supplies one from its index. Without a predicate nothing is
 cut, so every other caller keeps its old behaviour.
 
+### Done 2026-08-01: the plausibility floor
+
+An amount that cannot be true is dropped, and the reagent kept: above **8 M equivalent** or above
+**100%**. `quantity.is_implausible` is the predicate; both the rule parser and `apply_slm` apply
+it, because the model reads the same depositions and reproduces the same impossible numbers.
+238 records flagged `implausible_concentration`, 340 model-read amounts dropped. Nothing above
+the floor remains in the corpus. Coverage 77.2% → **77.1%**, the 216 conditions moving to
+`no_amount`, which is the honest description of a condition whose only stated number is wrong.
+
+**8 M comes from the corpus, not from a solubility table.** Below it the reagents named at those
+strengths are the very soluble ones and the readings are real — sodium formate, sodium chloride
+and ammonium nitrate fill the 3–8 M bands, 3,188 components. From 8 M up the names are reagents
+that cannot reach it: ammonium sulfate at 8–10 M against a saturation of 4.1 M, Tris and DTT at
+10–12 M, zinc chloride at 10 M.
+
+**It is a floor on absurdity, not a solubility check**, and must not be sold as one: `6 M ammonium
+sulfate` is equally impossible and passes. Refusing it needs a per-reagent limit and the lexicon
+carries no solubilities. A test pins this so the guard is not mistaken for something stronger.
+
+### Bugs the plausibility work surfaced, none of them fixed
+
+The guard now masks these in the output, which makes writing them down matter more, not less.
+
+- **A name-number and a percentage are being read as a range.** `PEG3350-26%` (9LHF) parses to
+  1688, which is the midpoint of 3350 and 26; `PEG 3350 - 23% w/v` (5KT1) gives 1686.5. The
+  hyphen between a reagent's molecular weight and its concentration is being treated as a range
+  separator. These also fail to identify, so the cost is a lost component as well as a wrong
+  number.
+- **PEG molecular weights in smear enumerations become concentrations.** `PEG Smear Medium (PEG
+  2000, 3350, 4000, and 5000 MME)` (6TCE) yields `MME` at 5000 mM.
+- **Amounts are being joined across line breaks.** `0.1M Sodium\n659 Acetate Trihydrate` (6B5L)
+  attaches the 659 from the next line to sodium acetate; same shape in 6G8A, 5TSU and 3BIM.
+
 ### Still open from the audit
 
-- **No plausibility guard on concentrations.** 4IBR's `10 M ZnCl2` was parsed faithfully from a
-  deposition that is physically impossible. Nothing rejects it.
 - **The inferred-cryo question.** 17,708 components are `role=cryo` by inference against 2,112
   explicit. Deciding how far to trust that inference is worth 14,825 conditions.
 - **The audit cannot separate "wrong class" from "right class, wrong parse".** 3P03 was flagged

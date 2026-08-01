@@ -18,6 +18,7 @@ The three judgement calls it makes, all of them recorded in the output rather th
 
 from __future__ import annotations
 
+from dataclasses import replace
 from typing import Optional
 
 import regex as re
@@ -113,11 +114,17 @@ class RuleParser:
 
     # -- components --------------------------------------------------------
 
-    def parse_component(self, clause: str, explicit_cryo: bool) -> tuple[Component, Optional[str]]:
-        """Parse one reagent clause. Returns the component and any buffer pH found on it."""
-        component, buffer_ph = self._parse_component(clause, explicit_cryo)
+    def parse_component(self, clause: str,
+                        explicit_cryo: bool) -> tuple[Component, Optional[str], bool]:
+        """Parse one reagent clause.
+
+        Returns the component, any buffer pH found on it, and whether an impossible
+        concentration was dropped, which the caller records as a flag on the record: a rule that
+        deletes a stated amount must never do so silently.
+        """
+        component, buffer_ph, implausible = self._parse_component(clause, explicit_cryo)
         if component.name_canonical is not None or component.role == "not_a_component":
-            return component, buffer_ph
+            return component, buffer_ph, implausible
 
         # The clause did not identify. Depositors write sentences, so it may be chemistry wrapped
         # in narrative: "crystal conditions were 100 mm bis-tris propane". Retried with the prose
@@ -126,13 +133,14 @@ class RuleParser:
         # characters and 7.1% contain a verb.
         stripped = strip_prose(clause)
         if stripped:
-            retried, retried_ph = self._parse_component(stripped, explicit_cryo)
+            retried, retried_ph, retried_implausible = self._parse_component(
+                stripped, explicit_cryo)
             if retried.name_canonical is not None:
-                return retried, retried_ph
-        return component, buffer_ph
+                return retried, retried_ph, retried_implausible
+        return component, buffer_ph, implausible
 
     def _parse_component(self, clause: str,
-                         explicit_cryo: bool) -> tuple[Component, Optional[str]]:
+                         explicit_cryo: bool) -> tuple[Component, Optional[str], bool]:
         body, attached_ph = split_trailing_ph(clause)
         qty = quantity.extract(body)
         name = strip_quantity(body)
@@ -157,6 +165,16 @@ class RuleParser:
             reagent.peg_mw if reagent else None,
             reagent.default_unit if reagent else None,
         )
+
+        # **An impossible amount is dropped, the reagent is kept.** "10 M ZnCl2" (4IBR) and
+        # "3000 M Sodium malonate dibasic" (7DXZ) are what the depositions say, and reading them
+        # faithfully is right; asserting them downstream is not. Nulling the amount routes the
+        # condition to the same `no_amount` outcome as a reagent that never stated one, which is
+        # the honest description: we know what is in the drop, not how much.
+        implausible = quantity.is_implausible(qty.value, unit)
+        if implausible:
+            qty = replace(qty, value=None, low=None, high=None, is_range=False)
+            unit, inferred = None, False
 
         role = _role_for(reagent, self.lexicon)
         evidence = _cryo_evidence(reagent, qty, unit, explicit_cryo)
@@ -196,7 +214,7 @@ class RuleParser:
             non_component_reason=non_component_reason,
         )
         buffer_ph = attached_ph if (reagent and reagent.chem_class == "buffer") else None
-        return component, buffer_ph
+        return component, buffer_ph, implausible
 
     # -- record ------------------------------------------------------------
 
@@ -276,7 +294,10 @@ class RuleParser:
                 explicit_here = bool(_EXPLICIT_CRYO.search(clause)) or (
                     explicit_cryo_anywhere and _EXPLICIT_CRYO.search(clause) is not None
                 )
-                component, buffer_ph = self.parse_component(clause, explicit_here)
+                component, buffer_ph, implausible = self.parse_component(
+                    clause, explicit_here)
+                if implausible:
+                    flags.append("implausible_concentration")
                 components.append(component)
                 if buffer_ph:
                     buffer_phs.append(buffer_ph)

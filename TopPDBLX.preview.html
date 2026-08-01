@@ -978,7 +978,7 @@ LIMIT 10;
 </tr>
 <tr>
 <td data-label="Limitation">Depositor errors are reproduced, not corrected</td>
-<td data-label="Consequence">A handful of records state nanomolar concentrations of bulk reagents</td>
+<td data-label="Consequence">A handful of records state nanomolar concentrations of bulk reagents. The exception is an amount that cannot be true at all (above 8 M equivalent, or above 100%): the reagent is kept, the amount dropped, and the record flagged <code>implausible_concentration</code></td>
 </tr>
 <tr>
 <td data-label="Limitation">Screen matching cannot validate reagent naming</td>

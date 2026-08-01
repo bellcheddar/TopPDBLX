@@ -65,6 +65,42 @@ _UNIT_MAP: dict[str, Unit] = {
 # Percent units that the reagent's chemistry must disambiguate.
 _AMBIGUOUS_PERCENT = "percent_unspecified"
 
+# Molar equivalents, for testing a stated amount against physical possibility on one scale.
+_MOLAR_FACTOR: dict[str, float] = {
+    "molar": 1.0, "millimolar": 1e-3, "micromolar": 1e-6, "nanomolar": 1e-9,
+}
+
+# **8 M, chosen from the corpus rather than from a solubility table.** Below it the reagents
+# actually named at those strengths are the very soluble ones and the readings are real: sodium
+# formate, sodium chloride and ammonium nitrate fill the 3-8 M bands, 3,188 components in all.
+# From 8 M up the names are reagents that cannot reach it -- ammonium sulfate at 8-10 M against a
+# saturation of 4.1 M, Tris and DTT at 10-12 M, zinc chloride at 10 M. That is the break.
+#
+# It is a floor on absurdity, not a solubility check. "6 M ammonium sulfate" is also impossible
+# and passes, because refusing it needs a per-reagent limit and the lexicon carries no
+# solubilities. Catching the unarguable cases is worth more than arguing about the marginal ones.
+IMPLAUSIBLE_MOLAR = 8.0
+
+# A percentage above 100 is not a concentration. Nothing legitimate sits near it: the 99.9th
+# percentile is 80% w/v and 100% v/v.
+IMPLAUSIBLE_PERCENT = 100.0
+
+
+def is_implausible(value: Optional[float], unit: Optional[str]) -> bool:
+    """Is this stated amount physically impossible?
+
+    Depositions do contain outright errors -- "3000 M Sodium malonate dibasic", "335015% ethylene
+    glycol", "10 M ZnCl2" -- and the parser reads them faithfully because that is its job. Nothing
+    downstream should treat the number as measured, so the caller drops the amount and keeps the
+    reagent.
+    """
+    if value is None or unit is None or value <= 0:
+        return False
+    if unit.startswith("percent"):
+        return value > IMPLAUSIBLE_PERCENT
+    factor = _MOLAR_FACTOR.get(unit)
+    return factor is not None and value * factor > IMPLAUSIBLE_MOLAR
+
 
 @dataclass
 class Quantity:

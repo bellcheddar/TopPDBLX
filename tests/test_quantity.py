@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import pytest
 
-from toppdblx.parse.quantity import extract, infer_unit
+from toppdblx.parse.quantity import extract, infer_unit, is_implausible
 
 
 # --- extraction -----------------------------------------------------------
@@ -105,3 +105,37 @@ def test_absent_unit_with_no_default_stays_absent():
     unit, inferred = infer_unit(None, None, None, None)
     assert unit is None
     assert inferred is False
+
+
+# The plausibility floor, added 2026-08-01 after the accuracy audit found 4IBR shipping
+# "10 M ZnCl2" -- which is exactly what the deposition says, and impossible.
+
+@pytest.mark.parametrize("value,unit,expected", [
+    (10, "molar", True),            # 4IBR, zinc chloride
+    (3000, "molar", True),          # 7DXZ, "3000 M Sodium malonate dibasic"
+    (8.1, "molar", True),
+    (8.0, "molar", False),          # the boundary is inclusive: 8 M is allowed
+    (4.1, "molar", False),          # saturated ammonium sulfate
+    (3.4, "molar", False),          # the 99th percentile of the corpus
+    (5200, "millimolar", False),    # 5.2 M: impossible for its reagent, but not unarguably so
+    (9000, "millimolar", True),     # 9 M, past the floor on any reagent
+    (335015, "percent_v_v", True),  # 5K79
+    (101, "percent_w_v", True),
+    (100, "percent_w_v", False),
+    (80, "percent_w_v", False),     # the 99.9th percentile
+    (875, "nanomolar", False),
+    (None, "molar", False),
+    (5, None, False),
+    (0, "molar", False),
+])
+def test_implausible_concentrations(value, unit, expected):
+    assert is_implausible(value, unit) is expected
+
+
+def test_the_floor_is_not_a_solubility_check():
+    """Documented limitation: 6 M ammonium sulfate is impossible and passes.
+
+    Refusing it needs a per-reagent limit and the lexicon carries no solubilities. Pinned so
+    the guard is not mistaken for something stronger than it is.
+    """
+    assert is_implausible(6, "molar") is False

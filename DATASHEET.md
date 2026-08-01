@@ -28,11 +28,20 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 5. **Unit inference is doing real work.** About 80% of percentage concentrations in the source
    text carry no w/v or v/v marker. Where the parser inferred one it is flagged
    `unit_inferred`; filter on that field before treating a unit as reported fact.
-6. **Depositor errors are reproduced, not corrected.** The parser reads what the text says.
-   A handful of records state nanomolar concentrations of bulk reagents (`20nM spermidine`,
-   `50 Nm Hepes`, `1nM TCEP`), which are almost certainly millimolar typos at source. Silently
-   correcting them would be a worse failure than passing them through, so they are passed
-   through: filter on implausible values for your own chemistry if it matters.
+6. **Depositor errors are reproduced, not corrected, with one exception.** The parser reads what
+   the text says. A handful of records state nanomolar concentrations of bulk reagents
+   (`20nM spermidine`, `50 Nm Hepes`, `1nM TCEP`), which are almost certainly millimolar typos
+   at source. Silently correcting them would be a worse failure than passing them through, so
+   they are passed through: filter on implausible values for your own chemistry if it matters.
+
+   The exception is an amount that **cannot be true at all**: above 8 M equivalent, or above
+   100%. `10 M ZnCl2` (4IBR), `3000 M Sodium malonate dibasic` (7DXZ) and `335015% ethylene
+   glycol` (5K79) are what those depositions say. The reagent is kept and the **amount is
+   dropped**, so the condition reads as one that never stated a concentration, and the record
+   carries the flag `implausible_concentration`. 238 records and 340 model-read components are
+   affected. The floor is a floor on absurdity, not a solubility check: `6 M ammonium sulfate`
+   is also impossible and passes, because refusing it needs a per-reagent limit and the lexicon
+   carries no solubilities.
 7. **Any recommendation built on this is a prior over screening space**, not a prediction of a
    specific hit.
 

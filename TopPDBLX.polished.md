@@ -420,7 +420,7 @@ These determine what conclusions the data can support, and are stated in full in
 | Frequency reflects screen popularity | A common condition is evidence about what was tried, not about what works best |
 | About 80% of percentage concentrations carry no w/v or v/v marker | Where a unit was inferred it is flagged `unit_inferred`: filter on it before treating a unit as reported fact |
 | Only 2.2% of entries name a cryoprotectant explicitly | `cryo_evidence` separates `explicit` from `inferred`, and four in five are inferences |
-| Depositor errors are reproduced, not corrected | A handful of records state nanomolar concentrations of bulk reagents |
+| Depositor errors are reproduced, not corrected | A handful of records state nanomolar concentrations of bulk reagents. The exception is an amount that cannot be true at all (above 8 M equivalent, or above 100%): the reagent is kept, the amount dropped, and the record flagged `implausible_concentration` |
 | Screen matching cannot validate reagent naming | Both sides use the same lexicon, so a systematic naming error moves both identically |
 | R1 labels come from the rule parser | Fidelity to `rules_v3` is a ceiling, not evidence of beating it: only residual identification, where no label exists, measures a real gain |
 | The residual parser cannot discover new chemistry | It emits only names it has seen, so a genuinely absent reagent looks the same as a model error. Closing that gap is curation, not modelling |

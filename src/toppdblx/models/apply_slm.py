@@ -40,6 +40,7 @@ import polars as pl
 from tqdm import tqdm
 
 from .. import config
+from ..parse import quantity
 from ..manifest import Manifest
 from .build_slm_dataset import SYSTEM
 from .eval_slm import (BATCH, MAX_TOKENS, _flatten, check, grounded_in_text,
@@ -172,6 +173,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         # --- turn generations into components ----------------------------------------------
         rows: list[dict[str, Any]] = []
         kept = dropped_invalid = dropped_unknown = dropped_ungrounded = 0
+        dropped_implausible = 0
         rescued_typos = 0
         text_by_key = {(r["pdb_id"], r["crystal_id"]): r["text"] for r in residual}
         for line in args.progress.read_text().splitlines():
@@ -187,6 +189,9 @@ def main(argv: Optional[list[str]] = None) -> int:
             for item in scored["parsed"]:
                 role = item.get("role")
                 name = item.get("name")
+                implausible = quantity.is_implausible(item.get("amount"), item.get("unit"))
+                if implausible:
+                    dropped_implausible += 1
                 if role != "not_a_component" and name not in lexicon:
                     # A name the lexicon does not know is a hallucination, not a discovery.
                     dropped_unknown += 1
@@ -216,8 +221,11 @@ def main(argv: Optional[list[str]] = None) -> int:
                     "is_mme": bool((reagent or {}).get("is_mme", False)),
                     "hofmeister_rank": (reagent or {}).get("hofmeister_rank"),
                     "buffer_pka": (reagent or {}).get("buffer_pka"),
-                    "concentration": item.get("amount"),
-                    "unit": item.get("unit"),
+                    # Same plausibility floor the rule parser applies. The model reads the same
+                    # depositions and reproduces the same impossible numbers, and an amount it
+                    # cannot be right about is worth less than no amount at all.
+                    "concentration": None if implausible else item.get("amount"),
+                    "unit": None if implausible else item.get("unit"),
                     "unit_inferred": False,
                     "concentration_is_range": False,
                     "cryo_evidence": None,
@@ -242,6 +250,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             "n_dropped_unknown_name": dropped_unknown,
             "n_dropped_ungrounded": dropped_ungrounded,
             "n_kept_as_typo_correction": rescued_typos,
+            "n_amounts_dropped_implausible": dropped_implausible,
         }
         m.add_output(args.out).note(**stats)
         print(f"\n  records the model read      {kept:,}")
