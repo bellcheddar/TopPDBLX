@@ -1,4 +1,4 @@
-version: 0.4.1
+version: 0.5.0
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -422,6 +422,16 @@ reagents:
   display_name: 1,3-butanediol
   aliases:
   - 1,3-butanediol
+- canonical_id: BUTANEDIOL_12
+  display_name: 1,2-Butanediol
+  chem_class: organic
+  default_unit: percent_v_v
+  aliases:
+  - 1,2-butanediol
+  - 1,2 butanediol
+  - 1,2-butane diol
+  note: 'A third isomer alongside BUTANEDIOL_14 and BUTANEDIOL_23. It was an alias of
+    ETHYLENE_GLYCOL until 2026-08-01, which is a different molecule. 19 records.'
 - canonical_id: BUTANEDIOL_14
   display_name: 1,4-Butanediol
   chem_class: organic
@@ -997,19 +1007,17 @@ reagents:
   - 1,2-ethanediol
   - ethane-1,2-diol
   - meg
-  - pentaethylene glycol
-  - diethylene glycol
   - ethylene glycols
-  - tetraethyleneglycol
   - ethylene-glycol
-  - pentaethyleneglycol
   - ethylen glycol
   - ethylene glycerol
   - ethylenglycol
-  - hexylene glycol
   - ethylene glycole
-  - 1,2-butanediol
   - each ethylene glycol
+  note: 'The di-, tetra- and pentaethylene glycols were aliases here until 2026-08-01. They are
+    distinct oligomers, not spellings of the monomer: 129, 119 and 133 records name them.
+    "hexylene glycol" (30 records) moved to MPD at the same time, being another name for
+    2-methyl-2,4-pentanediol, and "1,2-butanediol" (19) to its own entry.'
 - chem_class: salt
   default_unit: molar
   canonical_id: ETHYL_ACETATE
@@ -1867,6 +1875,9 @@ reagents:
   chem_class: organic
   default_unit: percent_v_v
   aliases:
+  # Hexylene glycol *is* 2-methyl-2,4-pentanediol, so it belongs here. It was an alias of
+  # ETHYLENE_GLYCOL until 2026-08-01, which is a different molecule entirely. 30 records.
+  - hexylene glycol
   - 2-methyl-2,4-pentanediol
   - (+/-)-2-methyl-2,4-pentanediol
   - 2-methyl-2,4 pentanediol
@@ -1955,9 +1966,23 @@ reagents:
   - nad+
   - beta-nad
   - nicotinamide adenine dinucleotide
+  note: 'NADP, NADP+ and NADH were aliases here until 2026-08-01. They are different molecules
+    (a phosphate, and a redox state), NADPH already had its own entry, and 462 records name
+    NADP against 159 naming NADH. Found by the second classification accuracy audit, on 6FKU.'
+- canonical_id: NADP
+  display_name: NADP
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
   - nadp
-  - nadh
   - nadp+
+  - nicotinamide adenine dinucleotide phosphate
+- canonical_id: NADH
+  display_name: NADH
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - nadh
   note: Cofactor carried into the drop with the protein. Merged with the separate 'nad' string from the
     same audit, 346 components combined.
 - chem_class: additive
@@ -2262,7 +2287,6 @@ reagents:
   - peg2000
   - peg 2k
   - mpeg 2k
-  - polyethylene glycol 2000 mme
   - peg2k
 - canonical_id: PEG_20000
   display_name: PEG 20000
@@ -2445,9 +2469,8 @@ reagents:
   - polyethylene glycol 400
   - peg400
   - peg-400
-  - ppg 400
-  - polypropylene glycol p400
-  - polypropylene glycol 400
+  note: 'The polypropylene glycol spellings were aliases here until 2026-08-01. PPG is a
+    different polymer from PEG, not a spelling of it, and 163 records name it.'
   note: Below about 600 a PEG behaves as an organic precipitant rather than a polymer, and is usually
     reported v/v. Spec 6.3 requires this distinction be preserved.
 - canonical_id: PEG_4000
@@ -2593,6 +2616,8 @@ reagents:
   - peg 2000 mme
   - peg mme 2000
   - peg2000mme
+  # Sat on PEG_2000 until 2026-08-01, where it made a monomethyl ether into a plain PEG.
+  - polyethylene glycol 2000 mme
   - mpeg 2000
   - polyethylene glycol monomethyl ether 2000
   - peg 2k mme
@@ -2930,13 +2955,21 @@ reagents:
   display_name: Polyethylene glycol 8k
   aliases:
   - polyethylene glycol 8k
-- chem_class: peg
-  peg_mw: 400
+- chem_class: organic
   default_unit: percent_v_v
   canonical_id: POLYPROPYLENE_GLYCOL_P_400
-  display_name: Polypropylene glycol p 400
+  display_name: Polypropylene glycol P 400
   aliases:
   - polypropylene glycol p 400
+  - polypropylene glycol p400
+  - polypropylene glycol 400
+  - ppg 400
+  - ppg p400
+  note: 'Was chem_class peg with peg_mw 400 until 2026-08-01, and PEG_400 separately claimed
+    "polypropylene glycol 400" and "polypropylene glycol p400" as its own aliases, so the same
+    reagent resolved two ways depending on spelling. PPG is a different polymer from PEG: the
+    peg_mw is dropped and the class is organic, which does move these conditions out of the PEG
+    family.'
 - chem_class: additive
   default_unit: millimolar
   canonical_id: POLYVINYLPYRROLIDONE
@@ -3147,7 +3180,20 @@ reagents:
   - propylene glycol
   - 1,2-propane diol
   - (rs)-1,2-propanediol
+  note: '"Polypropylene glycol" was an alias here until 2026-08-01: PPG is the polymer, this is
+    the monomer, and they are not interchangeable.'
+- canonical_id: POLYPROPYLENE_GLYCOL
+  display_name: Polypropylene glycol
+  chem_class: organic
+  default_unit: percent_v_v
+  aliases:
   - polypropylene glycol
+  - polypropyleneglycol
+  - ppg
+  note: 'Deliberately chem_class organic rather than peg. It is a precipitant polymer and behaves
+    like one, but it is not polyethylene glycol, and the whole point of splitting it out is to
+    stop the two being counted as one. This does move its conditions from the PEG family to the
+    Organic family.'
 - canonical_id: PROPANEDIOL_13
   display_name: 1,3-Propanediol
   chem_class: organic
@@ -3157,10 +3203,38 @@ reagents:
   - 1,3-propanediol
   - 1,3-propane diol
   - trimethylene glycol
+  note: 'Distinct from PROPANEDIOL_12: a different isomer, not a synonym. Triethylene and
+    tetraethylene glycol were aliases here until 2026-08-01: they are ethylene glycol oligomers
+    and have nothing to do with propanediol. Found by the second accuracy audit; it is also what
+    made 3UTW read "triethylene glycerol" as propanediol 13 in the first.'
+- canonical_id: DIETHYLENE_GLYCOL
+  display_name: Diethylene glycol
+  chem_class: polyol
+  default_unit: percent_v_v
+  aliases:
+  - diethylene glycol
+  - diethyleneglycol
+- canonical_id: TRIETHYLENE_GLYCOL
+  display_name: Triethylene glycol
+  chem_class: polyol
+  default_unit: percent_v_v
+  aliases:
   - triethylene glycol
-  - tetraethylene glycol
   - triethyleneglycol
-  note: 'Distinct from PROPANEDIOL_12: a different isomer, not a synonym.'
+- canonical_id: TETRAETHYLENE_GLYCOL
+  display_name: Tetraethylene glycol
+  chem_class: polyol
+  default_unit: percent_v_v
+  aliases:
+  - tetraethylene glycol
+  - tetraethyleneglycol
+- canonical_id: PENTAETHYLENE_GLYCOL
+  display_name: Pentaethylene glycol
+  chem_class: polyol
+  default_unit: percent_v_v
+  aliases:
+  - pentaethylene glycol
+  - pentaethyleneglycol
 - canonical_id: PROPANOL_1
   display_name: 1-Propanol
   chem_class: organic

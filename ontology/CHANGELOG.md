@@ -7,7 +7,7 @@ Two artefacts are versioned here, independently:
 
 | File | Version | What it is |
 |------|---------|------------|
-| `synonyms.yaml` | 0.4.1 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
+| `synonyms.yaml` | 0.5.0 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
 | `groups.yaml` | 0.3.0 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
 
 ## groups.yaml
@@ -106,6 +106,36 @@ Known gaps recorded rather than hidden:
   could ever have been assigned to it.
 
 ## synonyms.yaml
+
+### 0.5.0 (2026-08-01)
+
+**535 reagents, 1,300 names.** Minor rather than patch, because this splits entries apart:
+a name that resolved to one canonical id yesterday may resolve to a different one today.
+
+Found by the second classification accuracy audit, from two notes — "NADP not NAD" (6FKU) and
+"Propane is incorrect its a gas, missed propanediol" (1FDW). Chasing those turned up a family of
+the same fault: **an alias naming a genuinely different molecule**, which silently merges two
+reagents and makes both counts wrong.
+
+| Entry | Aliases removed | Now resolve to | Records |
+|---|---|---|---|
+| `NAD` | `nadp`, `nadp+`, `nadh` | new `NADP`, new `NADH` | 462, 159 |
+| `ETHYLENE_GLYCOL` | `diethylene glycol`, `tetraethyleneglycol`, `pentaethylene glycol`, `pentaethyleneglycol` | new `DIETHYLENE_GLYCOL`, `TETRAETHYLENE_GLYCOL`, `PENTAETHYLENE_GLYCOL` | 129, 119, 133 |
+| `ETHYLENE_GLYCOL` | `hexylene glycol` | `MPD`, which it is another name for | 30 |
+| `ETHYLENE_GLYCOL` | `1,2-butanediol` | new `BUTANEDIOL_12` | 19 |
+| `PROPANEDIOL_13` | `triethylene glycol`, `tetraethylene glycol`, `triethyleneglycol` | new `TRIETHYLENE_GLYCOL`, `TETRAETHYLENE_GLYCOL` | 82, 77, 47 |
+| `PROPANEDIOL_12` | `polypropylene glycol` | new `POLYPROPYLENE_GLYCOL` | 163 |
+| `PEG_400` | `polypropylene glycol 400`, `polypropylene glycol p400` | `POLYPROPYLENE_GLYCOL_P_400` | 163 |
+| `PEG_2000` | `polyethylene glycol 2000 mme` | `PEG_MME_2000`, which already existed | 1,298 |
+
+**`POLYPROPYLENE_GLYCOL_P_400` already existed** as `chem_class: peg` with `peg_mw: 400`, while
+`PEG_400` separately claimed two of its spellings — so the same reagent resolved two ways
+depending on how the depositor wrote it. Both PPG entries are now `chem_class: organic` with no
+`peg_mw`: PPG is a different polymer from PEG, and this **moves those conditions out of the PEG
+family into Organic**, which is the correction, not a side effect.
+
+Identification 516,241 → 516,301, rate 0.8526 → 0.8527. The gain is small because these names
+mostly resolved before — to the wrong reagent.
 
 ### 0.4.1 (2026-08-01)
 
