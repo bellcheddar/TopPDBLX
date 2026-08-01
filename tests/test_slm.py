@@ -318,6 +318,7 @@ ALIASES = {"PEG_3350": ["peg3350", "polyethyleneglycol3350"],
 
 def test_a_reagent_the_text_mentions_is_grounded():
     from toppdblx.models.eval_slm import grounded_in_text
+    from toppdblx.models.eval_slm import grounded_in_text
     assert grounded_in_text("PEG_3350", "20% w/v PEG 3350, 0.1 M HEPES", ALIASES) is True
 
 
@@ -382,3 +383,30 @@ def test_similarity_slides_along_the_text():
     from toppdblx.models.eval_slm import load_aliases
     long_text = "0.1 M Tris pH 8.5, 20% PEG 3350, 0.2 M lithium sulfate, 3% DMSO, 5 mM TCEP"
     assert _best_similarity("PEG_3350", long_text, load_aliases()) > 0.9
+
+
+# The grounding guard let a shorter reagent name ground against a longer one it sits inside,
+# because flattening removes the separators that would otherwise keep them apart. Found
+# 2026-08-01 chasing 6FKU, where NAD grounded against a text naming NADP.
+
+def test_a_shorter_name_does_not_ground_against_a_longer_one():
+    from toppdblx.models.eval_slm import grounded_in_text, load_aliases
+    aliases = load_aliases()   # the real lexicon: these cases are about real chemistry
+    assert grounded_in_text("NADP", "1 mM NADP disodium salt", aliases) is True
+    assert grounded_in_text("NAD", "1 mM NADP disodium salt", aliases) is False
+
+
+def test_flattening_still_matches_across_separators():
+    """The whole reason grounding flattens: three spellings of one reagent must all match."""
+    from toppdblx.models.eval_slm import grounded_in_text, load_aliases
+    aliases = load_aliases()   # the real lexicon: these cases are about real chemistry
+    for text in ("20% PEG3350", "20% peg-3350", "20% PEG 3350"):
+        assert grounded_in_text("PEG_3350", text, aliases) is True
+
+
+def test_a_genuine_short_name_still_grounds():
+    """The guard must not refuse a reagent simply for being short."""
+    from toppdblx.models.eval_slm import grounded_in_text, load_aliases
+    aliases = load_aliases()   # the real lexicon: these cases are about real chemistry
+    assert grounded_in_text("PROPANE", "flash cooled in liquid propane", aliases) is True
+    assert grounded_in_text("TRIS", "25mM Tris-HCl pH 7.5", aliases) is True

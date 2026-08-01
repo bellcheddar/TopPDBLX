@@ -86,3 +86,4 @@ def test_wilson_interval_narrows_as_the_sample_grows():
 
 def test_wilson_interval_on_an_empty_sample():
     assert wilson_interval(0, 0) == (0.0, 0.0)
+

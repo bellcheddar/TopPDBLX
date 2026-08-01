@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from functools import lru_cache
 import math
 import os
 import random
@@ -147,6 +148,22 @@ def _flatten(text: str) -> str:
     return re.sub(r"[^a-z0-9]", "", (text or "").lower())
 
 
+@lru_cache(maxsize=4)
+def _longer_forms_cached(flat_forms: tuple[str, ...]) -> dict[str, tuple[str, ...]]:
+    """For each alias, the other aliases that extend it. Built once, not per component."""
+    out: dict[str, tuple[str, ...]] = {}
+    for form in flat_forms:
+        extensions = tuple(other for other in flat_forms
+                           if len(other) > len(form) and other.startswith(form))
+        if extensions:
+            out[form] = extensions
+    return out
+
+
+def _longer_forms(aliases: dict[str, list[str]]) -> dict[str, tuple[str, ...]]:
+    return _longer_forms_cached(tuple(sorted({f for forms in aliases.values() for f in forms})))
+
+
 def grounded_in_text(name: Optional[str], text: str,
                      aliases: dict[str, list[str]]) -> bool:
     """Whether the source text actually mentions the reagent the model named.
@@ -164,9 +181,25 @@ def grounded_in_text(name: Optional[str], text: str,
     if not name:
         return False
     flat = _flatten(text)
+    longer = _longer_forms(aliases)
     for form in aliases.get(name, []):
-        if form and form in flat:
-            return True
+        if not form:
+            continue
+        start = flat.find(form)
+        while start != -1:
+            # **A shorter reagent name hides inside a longer one.** Flattening strips separators
+            # on purpose, so "1 mM NADP" becomes "1mmnadp" and the alias "nad" is a substring of
+            # it. If a *longer* known reagent name also starts at this position, the match is that
+            # name's prefix and grounds nothing.
+            #
+            # **It only fires when the longer name is in the lexicon**, which is the limit of what
+            # this check can know. 1FDW's "PROPANE DIOL" still grounds PROPANE, because bare
+            # "propanediol" is not a lexicon form: naming which isomer the depositor meant is a
+            # curation decision, not something grounding can infer.
+            tail = flat[start:]
+            if not any(tail.startswith(other) for other in longer.get(form, ())):
+                return True
+            start = flat.find(form, start + 1)
     return False
 
 
