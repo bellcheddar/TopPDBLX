@@ -154,11 +154,26 @@ carries no solubilities. A test pins this so the guard is not mistaken for somet
 
 The guard now masks these in the output, which makes writing them down matter more, not less.
 
-- **A name-number and a percentage are being read as a range.** `PEG3350-26%` (9LHF) parses to
-  1688, which is the midpoint of 3350 and 26; `PEG 3350 - 23% w/v` (5KT1) gives 1686.5. The
-  hyphen between a reagent's molecular weight and its concentration is being treated as a range
-  separator. These also fail to identify, so the cost is a lost component as well as a wrong
-  number.
+- ~~**A name-number and a percentage are being read as a range.**~~ **Fixed 2026-08-01.** In
+  *trailing* position a descending pair is a name and an amount, not a range: `peg3350-26%` is
+  PEG 3350 at 26%, and stripping the whole match had left a bare `peg` that identified to
+  nothing, so the amount was absurd *and* the reagent was lost. The rule is confined to the
+  trailing form because a **leading** descending pair is a genuine backwards range —
+  `2.0-1.8 M ammonium sulfate` means what it says. Measured: 22,459 ascending ranges, 96
+  descending, of which only 12 sit in trailing position and every one was this bug. It was never
+  only PEG: `mgso4 - 0.15m` took the 4 from the formula and `nano3 - 0.1m` the 3.
+
+  Fixed in `quantity.extract` **and** `text.strip_quantity` together, because one reads the
+  amount and the other the name, and reading them off different splits of one string is the
+  disagreement that once put 17,256 molecular weights in the concentration column.
+
+  **One case survives, knowingly.** `cacl2-400mm` (8PHI) pairs the 2 of CaCl₂ with 400
+  *ascending*, so the rule does not reach it, and calcium chloride still reads 201 mM. The
+  general form would be "the first number is glued to a letter", but that is 10 occurrences of
+  which 5 are `saturated ammonium sulphat25-50%` — a typo gluing a **real** range to the name,
+  where 37.5% is currently correct. Separating the two needs the lexicon (`peg3350`, `cacl2`,
+  `mgso4` resolve; `ammonium sulphat25` does not), which `quantity` cannot reach. Not worth a
+  lexicon gate for one record.
 - **PEG molecular weights in smear enumerations become concentrations.** `PEG Smear Medium (PEG
   2000, 3350, 4000, and 5000 MME)` (6TCE) yields `MME` at 5000 mM.
 - **Amounts are being joined across line breaks.** `0.1M Sodium\n659 Acetate Trihydrate` (6B5L)

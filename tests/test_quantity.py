@@ -139,3 +139,34 @@ def test_the_floor_is_not_a_solubility_check():
     the guard is not mistaken for something stronger than it is.
     """
     assert is_implausible(6, "molar") is False
+
+
+# The name-number bug, found 2026-08-01 while setting the plausibility floor: "PEG3350-26%"
+# parsed to 1688, the midpoint of 3350 and 26, and stripping the whole match left a bare "peg"
+# that identified to nothing. So the amount was absurd and the reagent was lost with it.
+
+@pytest.mark.parametrize("clause,value,unit", [
+    ("peg3350-26%", 26.0, "percent_unspecified"),
+    ("peg 3350 - 23% w/v", 23.0, "percent_w_v"),
+    ("peg 6000-20%", 20.0, "percent_unspecified"),
+    # Not only PEG: the trailing digit of a formula is caught the same way.
+    ("mgso4 - 0.15m", 0.15, "molar"),
+    ("nano3 - 0.1m", 0.1, "molar"),
+])
+def test_a_trailing_descending_pair_is_a_name_and_an_amount(clause, value, unit):
+    found = extract(clause)
+    assert (found.value, found.unit) == (value, unit)
+    assert found.is_range is False
+
+
+@pytest.mark.parametrize("clause,value", [
+    ("2.0-1.8 m ammonium sulfate", 1.9),
+    ("8-6% peg3350", 7.0),
+    ("0.2-0.18m ammonium sulfate", 0.19),
+])
+def test_a_leading_descending_pair_is_still_a_backwards_range(clause, value):
+    """Confined to the trailing form on purpose. A depositor writing "2.0-1.8 M" means a real
+    range and its midpoint is correct; 96 of these are in the corpus against 12 of the bug."""
+    found = extract(clause)
+    assert found.is_range is True
+    assert found.value == pytest.approx(value)

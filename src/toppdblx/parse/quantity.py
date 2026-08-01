@@ -139,12 +139,14 @@ def extract(clause: str) -> Quantity:
     Only the first match is taken. A clause containing two quantities is a splitting
     failure upstream, not something to silently average.
     """
+    is_trailing = False
     match = _LEADING_QUANTITY.match(clause)
     if not match:
         trailing = _TRAILING_QUANTITY.search(clause)
         # A trailing number without a unit is part of the name, not a concentration.
         match = trailing if (trailing and (trailing.group("unit")
                                            or trailing.group("unit_low"))) else None
+        is_trailing = match is not None
     if not match:
         return Quantity()
 
@@ -152,6 +154,17 @@ def extract(clause: str) -> Quantity:
     high = _to_float(match.group("high")) if match.group("high") else None
     # "28% to 32%": the unit may sit on the first endpoint, the second, or both.
     unit = _canonical_unit(match.group("unit")) or _canonical_unit(match.group("unit_low"))
+
+    # **A descending pair in trailing position is a name and an amount, not a range.** Mirrors
+    # `text.strip_quantity`, which returns the first number to the reagent name; the two must
+    # agree or the amount and the name are read off different splits of the same string, which
+    # is the disagreement that once put 17,256 molecular weights in the concentration column.
+    # "peg3350-26%" is PEG 3350 at 26%, not a range from 3350 to 26. Confined to the trailing
+    # form because a leading descending pair is a genuine backwards range: "2.0-1.8 m ammonium
+    # sulfate" means what it says and its midpoint is right.
+    if is_trailing and high is not None and low is not None and high < low:
+        return Quantity(value=high, unit=unit, unit_explicit=unit is not None,
+                        span=(match.start("high"), match.end()))
 
     if low is None:
         return Quantity()

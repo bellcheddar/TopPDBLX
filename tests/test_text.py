@@ -224,3 +224,23 @@ def test_setup_prose_alone_is_not_split_into_a_component():
     """The head must carry both a number and a name, or prose splits into more prose."""
     assert clauses("mother liquor mixed with protein at 1:1", known) == [
         "mixed with protein at 1:1"]
+
+
+@pytest.mark.parametrize("clause,name", [
+    ("peg3350-26%", "peg 3350"),
+    ("peg 3350 - 23% w/v", "peg 3350"),
+    ("peg 6000-20%", "peg 6000"),
+    ("mgso4 - 0.15m", "mgso4"),
+    ("nano3 - 0.1m", "nano3"),
+])
+def test_a_trailing_descending_pair_returns_its_first_number_to_the_name(clause, name):
+    """The other half of the same fix. `quantity.extract` reads the amount and this reads the
+    name, and they must agree: reading them off different splits of one string is what once put
+    17,256 molecular weights into the concentration column."""
+    assert strip_quantity(clause) == name
+
+
+def test_a_name_ending_in_digits_still_keeps_them():
+    """The regression the anchoring comment exists for: "peg 8000" is a name, not an amount."""
+    assert strip_quantity("peg 8000") == "peg 8000"
+    assert strip_quantity("15-20% peg 3350") == "peg 3350"
