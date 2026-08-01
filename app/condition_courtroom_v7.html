@@ -240,8 +240,12 @@ function ingest(payload){
   DATA = payload;
   // Namespaced by title, lexicon version and size, so one round's verdicts can never attach
   // themselves to a different question set.
+  // `generated_at` is what separates one round from the next. Without it a fresh payload of
+  // the same size and lexicon version reuses the previous round's key, and the page resumes at
+  // the end of a round whose verdicts belong to different conditions.
   storageKey = STORAGE_PREFIX + (payload.title || 'audit').replace(/\W+/g,'_')
-             + '.' + (payload.lexicon_version || 'v') + '.' + payload.questions.length;
+             + '.' + (payload.lexicon_version || 'v') + '.' + payload.questions.length
+             + '.' + (payload.generated_at || '');
   restore();
   if(payload.title) $('pageTitle').innerHTML = 'Condition Courtroom v7 &middot; ' + esc(payload.title);
   $('loader').hidden = true;
@@ -506,7 +510,9 @@ function exportVerdicts(){
   const blob = new Blob([JSON.stringify(out, null, 1)], {type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'class_audit_verdicts.json';
+  // Stamped with the round, so exporting a second round cannot overwrite the first.
+  const round = (DATA.generated_at || '').replace(/[^0-9]/g, '').slice(0, 8);
+  a.download = round ? `class_audit_verdicts_${round}.json` : 'class_audit_verdicts.json';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(a.href);
 }

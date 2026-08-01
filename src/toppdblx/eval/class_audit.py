@@ -49,6 +49,7 @@ from __future__ import annotations
 import argparse
 import json
 import random
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
@@ -203,6 +204,10 @@ def main(argv: Optional[list[str]] = None) -> int:
             "schema_version": config.SCHEMA_VERSION,
             "lexicon_version": config.ONTOLOGY_VERSION,
             "title": "Classification accuracy audit",
+            # Distinguishes one round from the next. The courtroom keys its saved verdicts on
+            # this, so a fresh payload of the same size does not resume into the previous
+            # round's position with the previous round's answers still in the browser.
+            "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
             # Shipped so the page never hardcodes the taxonomy: the seven classes are the
             # non-empty subsets of {Organic, PEG, Salt}, and adding an eighth would otherwise
             # leave the audit UI quietly offering the old list.
@@ -224,6 +229,13 @@ def main(argv: Optional[list[str]] = None) -> int:
                 {"value": "should_be_classified",
                  "label": "It should have a class, but was left Unclassified",
                  "fixes": "classifier gating"},
+                # Added after the first round, where 3P03 was flagged wrong and then given back
+                # the class it already had: the tick was the only way to report a parse error,
+                # so a correct classification was counted against classification accuracy.
+                # Choosing this keeps the parse report and takes the record out of the numerator.
+                {"value": "class_is_right_parse_is_wrong",
+                 "label": "The class is right — I am reporting a bad reagent, not a bad class",
+                 "fixes": "the parser, and this verdict is excluded from class accuracy"},
             ],
             "intro": (f"{len(questions)} conditions, one at a time. Each shows the deposition "
                       f"text, the reagents the parser found and the class it was given. Tick only "
