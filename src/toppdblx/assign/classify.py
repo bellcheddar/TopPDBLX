@@ -35,6 +35,11 @@ is left alone rather than forced into a class:
 Buffers are excluded from the classification entirely, per spec 6.3: at 0.1 M a buffer sets the
 pH rather than precipitating anything, and the pH is carried separately.
 
+**Explicitly stated cryoprotectants are excluded too**, on the same reasoning and for the same
+reason the audit found: something added after the crystal grew did not precipitate the protein,
+so it must not name the class. Only `cryo_evidence == "explicit"` is dropped, never the inferred
+majority; see `classify_condition`.
+
     ./run.sh assign.classify
 """
 
@@ -85,6 +90,21 @@ def classify_condition(components: list[dict[str, Any]]) -> tuple[str, Optional[
         if role == "not_a_component":
             # Method text and screen references were never chemistry; they say nothing about
             # the condition either way.
+            continue
+
+        # **A cryoprotectant is not part of the condition the crystal grew in.** Found by the
+        # 2026-08-01 accuracy audit, on 1V6H: "10% w/w of glycerol was added for cryoprotection"
+        # was read correctly, then counted as an organic, turning a PEG condition into
+        # Organic/PEG. Glycerol is a polyol and polyols map to the organic family, so every
+        # explicit glycerol cryo does this. Same reasoning as spec 6.3's exclusion of buffers:
+        # something that is not precipitating the protein should not name the class.
+        #
+        # **Explicit evidence only, deliberately.** 17,708 components are role=cryo by inference
+        # against 2,112 by the depositor's own words. This exclusion moves 176 conditions;
+        # extending it to the inferred ones would move 14,825, but on a guess: a glycerol that
+        # the pipeline merely suspects is a cryoprotectant may be a genuine precipitant, and
+        # silently dropping it would invent an Unclassified where there was a real reading.
+        if role == "cryo" and component.get("cryo_evidence") == "explicit":
             continue
 
         if component.get("premix_id"):

@@ -1,4 +1,4 @@
-version: 0.4.0
+version: 0.4.1
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -1303,6 +1303,12 @@ reagents:
   - 1,6-hexane diol
   - 1,6-hexandiol
   - 1,6-haxanediol
+  # 2ATB, found by the 2026-08-01 accuracy audit, which writes it "1,6 Hexnediol". The entry
+  # already carries two other depositor misspellings, so this is the established pattern rather
+  # than a new one. Both separators are listed because nothing normalises a hyphen to a space:
+  # `tidy_name` does not, and the hyphenated forms that resolve today do so via `display_name`.
+  - 1,6-hexnediol
+  - 1,6 hexnediol
 - chem_class: polyol
   default_unit: percent_v_v
   canonical_id: HEXANEDIOL_25
@@ -2110,6 +2116,8 @@ reagents:
   display_name: 2-oxoglutarate
   aliases:
   - 2-oxoglutarate
+  # Depositor spelling, oxy for oxo. 3THP, found by the 2026-08-01 accuracy audit.
+  - 2-oxyglutarate
 - chem_class: additive
   default_unit: millimolar
   canonical_id: OXONATE
@@ -4144,6 +4152,15 @@ reagents:
   aliases:
   - choline dihydrogen phosphate
   note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: CHOLINE
+  display_name: Choline
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - choline
+  note: The free cation, deposited bare and at additive concentrations ("5 mM Choline",
+    3P03). Deliberately its own entry rather than an alias of the two choline ionic
+    liquids, which are specific salts; found by the 2026-08-01 accuracy audit.
 - canonical_id: ETHYLAMMONIUM_NITRATE
   display_name: Ethylammonium nitrate
   chem_class: salt

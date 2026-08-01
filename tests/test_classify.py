@@ -96,3 +96,37 @@ def test_method_text_is_ignored_rather_than_disqualifying():
 
 def test_an_empty_condition_is_unclassified():
     assert classify_condition([])[0] == UNCLASSIFIED
+
+
+# Found by the first classification accuracy audit, 2026-08-01, on 1V6H: "10% w/w of glycerol
+# was added for cryoprotection" was read correctly and then counted as an organic, turning a PEG
+# condition into Organic/PEG. Glycerol is a polyol and polyols map to the organic family, so
+# every explicitly stated glycerol cryo did this: 176 conditions across the corpus.
+
+def cryo(name="GLYCEROL", chem_class="polyol", concentration=10, unit="percent_w_v",
+         evidence="explicit"):
+    return {"name_canonical": name, "chem_class": chem_class, "concentration": concentration,
+            "unit": unit, "role": "cryo", "premix_id": None, "cryo_evidence": evidence}
+
+
+def test_an_explicit_cryoprotectant_does_not_name_the_class():
+    """1V6H. A cryoprotectant was added after the crystal grew; it precipitated nothing."""
+    condition = [comp("PEG_20000", "peg", 16.5, "percent_w_v"), cryo()]
+    assert classify_condition(condition)[0] == "PEG"
+
+
+def test_an_inferred_cryoprotectant_still_counts():
+    """17,708 components are role=cryo by inference against 2,112 by the depositor's own words.
+
+    Excluding the inferred ones would move 14,825 conditions rather than 176, on a guess: a
+    glycerol the pipeline merely suspects is a cryoprotectant may be a real precipitant, and
+    dropping it would invent an Unclassified where there was a genuine reading.
+    """
+    condition = [comp("PEG_20000", "peg", 16.5, "percent_w_v"), cryo(evidence="inferred")]
+    assert classify_condition(condition)[0] == "Organic/PEG"
+
+
+def test_a_condition_that_is_only_an_explicit_cryo_is_unclassified():
+    """Excluding it must leave no precipitant rather than silently leaving the class behind."""
+    label, reason = classify_condition([cryo()])
+    assert (label, reason) == (UNCLASSIFIED, "no_precipitant")

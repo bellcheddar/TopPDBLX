@@ -7,7 +7,7 @@ Two artefacts are versioned here, independently:
 
 | File | Version | What it is |
 |------|---------|------------|
-| `synonyms.yaml` | 0.2.0 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
+| `synonyms.yaml` | 0.4.1 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
 | `groups.yaml` | 0.3.0 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
 
 ## groups.yaml
@@ -106,6 +106,25 @@ Known gaps recorded rather than hidden:
   could ever have been assigned to it.
 
 ## synonyms.yaml
+
+### 0.4.1 (2026-08-01)
+
+**527 reagents, 1,293 names.** Three additions, every one of them found by the first
+classification accuracy audit rather than by inspecting the lexicon, which is the point: these
+are misses the corpus actually produced.
+
+| Added | Where | Why |
+|---|---|---|
+| `CHOLINE`, a new entry, `additive` | 3P03, "5 mM Choline" | The free cation, deposited bare and at additive concentrations. Deliberately its own entry rather than an alias of `CHOLINE_ACETATE` or `CHOLINE_DIHYDROGEN_PHOSPHATE`, which are specific ionic liquids from Hampton HR2-078/079 |
+| `2-oxyglutarate` → `OXOGLUTARATE_2` | 3THP | Depositor spelling, oxy for oxo |
+| `1,6-hexnediol` and `1,6 hexnediol` → `HEXANEDIOL_16` | 2ATB, "1M of 1,6 Hexnediol" | Depositor typo. The entry already carried `1,6-hexandiol` and `1,6-haxanediol`, so this is the established pattern |
+
+Both separators are listed for the hexanediol typo because **nothing normalises a hyphen to a
+space**: `tidy_name` does not, and the hyphenated forms that resolve today do so through
+`display_name`, not through any alias rule. A single-separator alias covers one spelling only.
+
+Note that the version table above read 0.2.0 while the file itself had reached 0.4.0: releases
+0.3.0 and 0.4.0 were never logged here. That gap is not reconstructed, only stopped.
 
 ### 0.2.0 (2026-07-30)
 

@@ -78,6 +78,47 @@ Model-derived means the model contributed a reagent the rules missed, not merely
 that record — reagents it merely reproduced are attributed to the rules and tagged accordingly.
 Reagents marked `[model]` in the listings are the model's own.
 
+## Done 2026-08-01: the first accuracy audit, and the three fixes it bought
+
+96 conditions judged. **Overall 82.3%** [73.5, 88.6]; rules-derived **85.4%** [72.8, 92.8],
+model-derived **79.2%** [65.7, 88.3]. The 6.2-point gap is **not significant** (z = 0.80,
+p = 0.42), so there is no evidence the model's conditions are worse than the rules' — and equally
+none that they are equivalent, since 48 a side cannot resolve a gap smaller than about 15 points.
+Verdicts in `data/interim/class_audit_verdicts.json`.
+
+The failure modes differ, which is the more useful result: 7 of the model's 10 errors were missed
+reagents, against 2 of the rules' 7. The model under-reads; the rules mis-gate.
+
+Three fixes, each traced to a specific flagged record:
+
+1. **Explicitly stated cryoprotectants no longer name the class** (`assign.classify`). 1V6H's
+   "10% w/w of glycerol was added for cryoprotection" was read correctly and then counted as an
+   organic, turning a PEG condition into Organic/PEG. **176 conditions changed class.** Only
+   `cryo_evidence == "explicit"` is excluded; extending it to the inferred majority would move
+   14,825 but acts on a guess.
+2. **Three lexicon entries**, lexicon 0.4.0 → **0.4.1**, 527 reagents and 1,293 names: `CHOLINE`
+   as its own entry (3P03), `2-oxyglutarate` (3THP), `1,6-hexnediol` and `1,6 hexnediol` (2ATB).
+   Both separators are needed because **nothing normalises a hyphen to a space** — the
+   hyphenated forms that resolve today do so via `display_name`, not any alias rule.
+3. **Two clause-splitter fixes** (`parse/text.py`). A reagent followed by setup prose keeps its
+   reagent, so 7O5Q and 7NRJ stop losing `10% 1-BUTANOL` to "mixed with the protein stock"; and a
+   section label written mid-string with no comma no longer glues two components together, so
+   3ZY1 keeps both its NaCl and its PEG 8000.
+
+**Fixes 2 and 3 are not in the data yet.** They change parsing, so they need a re-parse and then
+`apply_slm` and `classify` again; only fix 1 is live. Coverage currently 77.2%.
+
+### Still open from the audit
+
+- **No plausibility guard on concentrations.** 4IBR's `10 M ZnCl2` was parsed faithfully from a
+  deposition that is physically impossible. Nothing rejects it.
+- **The inferred-cryo question.** 17,708 components are `role=cryo` by inference against 2,112
+  explicit. Deciding how far to trust that inference is worth 14,825 conditions.
+- **The audit cannot separate "wrong class" from "right class, wrong parse".** 3P03 was flagged
+  wrong but corrected to the class it already had, because the only way to record a parse error
+  was the wrong-class checkbox. Excluding it the model reads 80.9%. Courtroom v7 needs a fourth
+  option.
+
 ## Commercial screens: one vendor of six done
 
 `assign.build_screens` handles Hampton's numbered-line binders, exhaustively: all 59 published

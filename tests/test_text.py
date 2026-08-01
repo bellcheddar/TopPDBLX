@@ -151,3 +151,53 @@ def test_noise_words_are_recognised():
     for word in ("solution", "the", "buffer", "crystals", "well"):
         assert is_noise(word)
     assert not is_noise("peg 3350")
+
+
+# Found by the first classification accuracy audit, 2026-08-01. Each of these lost a real
+# component to a splitting failure, and each was invisible until a human read the deposition
+# beside the parse.
+
+def test_reagent_survives_trailing_setup_prose():
+    """7O5Q and 7NRJ: "10% 1-BUTANOL mixed with the 10 mg/mL protein stock at 1:1 ratio".
+
+    `_PROTEIN` matches "mixed ... with", so the whole clause was called protein_or_setup and the
+    butanol went with it. The prose is cut off instead and the component kept.
+    """
+    found = clauses(
+        "0.1M HEPES pH 8.0, 10% PEG 8000, 10% 1-BUTANOL mixed with the 10 mg/mL protein "
+        "stock at 1:1 ratio.")
+    assert "10% 1-butanol" in found
+    assert classify("10% 1-butanol") == "reagent"
+
+
+def test_section_label_does_not_glue_two_components_together():
+    """3ZY1: "50 MM NACL CRYSTALLIZATION BUFFER: 10% PEG 8000", with no comma before the label.
+
+    The label glued the NaCl to the PEG, producing one clause that identified as neither.
+    """
+    found = clauses(
+        "50 MM NACL CRYSTALLIZATION BUFFER: 10% PEG 8000, 0.1 M HEPES PH 7.5")
+    assert "50 mm nacl" in found
+    assert "10% peg 8000" in found
+
+
+def test_protein_section_label_is_kept_so_the_clause_is_still_rejected():
+    """The break is made in front of "PROTEIN SOLUTION:" but the label is left attached.
+
+    What follows it is the protein's own buffer, not the crystallisation condition, so the
+    clause must stay rejectable. Stripping the label as if it introduced components turned
+    "12-15 mg/ml" into a bare "12-15" that classified as a reagent.
+    """
+    found = clauses("20% PEG 3350, protein solution: 15 mg/ml in 10 mM tris")
+    assert "20% peg 3350" in found
+    assert any(c.startswith("protein solution:") for c in found)
+    assert "12-15" not in found
+    for clause in found:
+        if clause.startswith("protein solution:"):
+            assert classify(clause) == "protein_or_setup"
+
+
+def test_setup_prose_alone_is_not_split_into_a_component():
+    """The head must carry both a number and a name, or prose splits into more prose."""
+    assert clauses("mother liquor mixed with protein at 1:1") == [
+        "mixed with protein at 1:1"]

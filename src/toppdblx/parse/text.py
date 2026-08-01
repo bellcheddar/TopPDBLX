@@ -57,6 +57,12 @@ _SPLIT = re.compile(r"""
       | \ \ +(?=\d)      # "glycol 6,000  100 mM citrate": depositors separate components
                          # with extra spaces. Requiring a following digit keeps it safe,
                          # since a new component almost always opens with a concentration
+      | \s+(?=(?:crystalli[sz]ation|reservoir|well|mother|protein|precipitant|drop|screen
+                |condition)
+             \s*(?:solution|liquor|buffer|mix|conditions?)?\s*:)
+                         # "50 MM NACL CRYSTALLIZATION BUFFER: 10% PEG 8000": a section label
+                         # written mid-string with no comma before it. Break in front of the
+                         # label so neither the component before nor the one after is swallowed
     )\s*
 """, re.VERBOSE)
 
@@ -127,6 +133,20 @@ _LEADING_CONJUNCTION = re.compile(
     # Descriptive labels depositors put in front of the reagent itself:
     # "precipitant 0.7M NaCl", "reservoir 20% PEG 3350".
     r"|precipitants?|crystallant|reservoir|mother\s+liquor|well\s+solution)\s+")
+
+# The same labels again, but as a *headed section* ending in a colon: "CRYSTALLIZATION BUFFER:
+# 10% PEG 8000, 0.1 M HEPES". Depositors write these mid-string with no comma in front, so the
+# label glues the preceding component to the following one and both are lost inside a name that
+# identifies to nothing. 3ZY1 lost its PEG 8000 exactly this way, found by the 2026-08-01 audit.
+# **"protein" is absent on purpose.** A break is made in front of "PROTEIN SOLUTION:" so it
+# cannot glue itself to the preceding component, but the label is then left in place: what
+# follows it is the protein's own buffer, not the crystallisation condition, and keeping the
+# label is what lets `classify` reject the clause.
+_SECTION_LABEL = r"""
+    (?:crystalli[sz]ation|reservoir|well|mother|precipitant|drop|screen|condition)
+    \s* (?:solution|liquor|buffer|mix|conditions?)? \s* :
+"""
+_LEADING_SECTION = re.compile(rf"^\s*{_SECTION_LABEL}\s*", re.VERBOSE)
 
 
 def normalise(text: str) -> str:
@@ -209,10 +229,39 @@ def clauses_detailed(text: str) -> list[tuple[str, int]]:
         depth += collapsed.count("(") - collapsed.count(")")
         depth = max(0, depth)
         cleaned = trim_unmatched_parens(
-            drop_unclosed_tail(_LEADING_CONJUNCTION.sub("", collapsed)))
-        if cleaned:
-            out.append((cleaned, entry_depth))
+            drop_unclosed_tail(
+                _LEADING_CONJUNCTION.sub("", _LEADING_SECTION.sub("", collapsed))))
+        if not cleaned:
+            continue
+        # **A reagent followed by setup prose keeps its reagent.** "10% 1-BUTANOL mixed with the
+        # 10 mg/mL protein stock at 1:1 ratio" matches _PROTEIN, so `classify` calls the whole
+        # clause protein_or_setup and the butanol is discarded with it. Cut the prose off instead
+        # and emit the head, which is a real component. 7O5Q and 7NRJ both lost their butanol
+        # this way, found by the 2026-08-01 audit.
+        head, tail = _split_off_setup_prose(cleaned)
+        out.append((head, entry_depth))
+        if tail:
+            out.append((tail, entry_depth))
     return out
+
+
+def _split_off_setup_prose(clause: str) -> tuple[str, str | None]:
+    """Cut trailing protein/setup prose off a clause that starts with a real component.
+
+    Only splits when the prose begins *after* something quantified, so a clause that is setup
+    text throughout is left whole for `classify` to reject as it always did.
+    """
+    match = _PROTEIN.search(clause)
+    if not match or match.start() == 0:
+        return clause, None
+    head = clause[:match.start()].strip(" ,;:")
+    # The head has to look like a component in its own right: an amount *and* a name. Without
+    # the digit check "mother liquor mixed with protein" would split into two pieces of prose;
+    # without the letter check "12-15 mg/ml" would split into a bare "12-15" that classifies as
+    # a reagent, which is how a protein concentration turns into a component.
+    if not head or not re.search(r"\d", head) or not re.search(r"[a-z]", head) or is_noise(head):
+        return clause, None
+    return head, clause[match.start():].strip()
 
 
 def clauses(text: str) -> list[str]:
