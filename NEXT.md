@@ -174,10 +174,34 @@ The guard now masks these in the output, which makes writing them down matter mo
   where 37.5% is currently correct. Separating the two needs the lexicon (`peg3350`, `cacl2`,
   `mgso4` resolve; `ammonium sulphat25` does not), which `quantity` cannot reach. Not worth a
   lexicon gate for one record.
-- **PEG molecular weights in smear enumerations become concentrations.** `PEG Smear Medium (PEG
-  2000, 3350, 4000, and 5000 MME)` (6TCE) yields `MME` at 5000 mM.
-- **Amounts are being joined across line breaks.** `0.1M Sodium\n659 Acetate Trihydrate` (6B5L)
-  attaches the 659 from the next line to sodium acetate; same shape in 6G8A, 5TSU and 3BIM.
+- ~~**PEG molecular weights in smear enumerations become concentrations.**~~ **Fixed 2026-08-01.**
+  A smear is written as one enumeration — `PEG Smear Medium (PEG 2000, 3350, 4000, and 5000 MME)`
+  — and the split leaves the last member without its `PEG`. Read as a leading quantity it became
+  `MME`, an additive defaulting to millimolar, at 5000 mM: five molar of a reagent that is really
+  PEG MME 5000. The prefix is now restored before anything reads the number, in
+  `text.strip_quantity` and `quantity.extract` together. Bare `MME` components 32 → 23, and the
+  members that sit inside the smear's brackets are now correctly skipped as enumeration members
+  rather than becoming components: the bracket guard keeps a clause only when it carries a
+  quantity, and with the molecular weight no longer read as one, they fall out as intended.
+
+- **Amounts joined across line breaks: not fixed, and should not be.** `0.1M Sodium\n659 Acetate
+  Trihydrate` (6B5L), `25%\n480 ethylene glycol` (6G8A), `\n305 Isopropanol` (5TSU). The stray
+  number opens a clause and is read as a unitless amount — but **that shape is indistinguishable
+  from a legitimate deposition**. Of 114 clauses opening with a unitless 3+ digit integer, most
+  are real: `150 nacl`, `100 malonate`, `100 tris ph 8.5`. Separating them needs to know that 659
+  is absurd *for sodium acetate*, which is per-reagent solubility again. The plausibility floor
+  already gives the right outcome — reagent kept, stray amount dropped, record flagged — so this
+  is closed rather than open.
+
+### Found while measuring the above, not yet fixed
+
+**Spelled-out and variant unit words are not recognised**, so a stated unit is discarded and
+`infer_unit` guesses in its place. `100 millimolar nacl`, `500 mmol/l nacl`, `200 milli-m nacl`,
+`100 microm zncl2` all reach the parser with no unit. This is a bigger prize than either bug
+above: the unit is *in the text* and being thrown away, and unit inference is described in the
+parser's own docstring as its highest-consequence rule. `_UNIT_BODY` in `parse/text.py` and
+`_QUANTITY_BODY` in `parse/quantity.py` both need the word forms, and they must gain them
+together.
 
 ### Still open from the audit
 

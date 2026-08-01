@@ -18,6 +18,7 @@ from typing import Optional
 import regex as re
 
 from .schema import Unit
+from .text import PEG_MME_MOLECULAR_WEIGHT
 
 _NUMBER = r"\d+(?:[.,]\d+)?"
 
@@ -139,6 +140,12 @@ def extract(clause: str) -> Quantity:
     Only the first match is taken. A clause containing two quantities is a splitting
     failure upstream, not something to silently average.
     """
+    # "5000 MME" is a molecular weight, not an amount: see `text.PEG_MME_MOLECULAR_WEIGHT`.
+    # Mirrored there, where the same clause has its "PEG" prefix restored, so the name and the
+    # amount are read off the same understanding of the string.
+    if PEG_MME_MOLECULAR_WEIGHT.match(clause):
+        return Quantity()
+
     is_trailing = False
     match = _LEADING_QUANTITY.match(clause)
     if not match:

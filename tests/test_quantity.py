@@ -170,3 +170,14 @@ def test_a_leading_descending_pair_is_still_a_backwards_range(clause, value):
     found = extract(clause)
     assert found.is_range is True
     assert found.value == pytest.approx(value)
+
+
+def test_a_bare_molecular_weight_before_mme_is_not_an_amount():
+    """Mirrors text.strip_quantity, which restores the PEG prefix on the same clause."""
+    assert extract("5000 mme").value is None
+    assert extract("2000 mme").value is None
+
+
+def test_an_explicit_peg_mme_keeps_its_amount():
+    found = extract("5% peg mme 5000")
+    assert (found.value, found.unit) == (5.0, "percent_unspecified")

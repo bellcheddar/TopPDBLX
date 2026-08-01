@@ -128,6 +128,14 @@ _NOISE = re.compile(r"""
 # would wreck chemical formulae, turning "mgcl2" into "mgcl 2" and "k2hpo4" into nonsense.
 _POLYMER_PREFIX = re.compile(r"^(m?peg|peg-?mme|mme|pei|ppg)\s*-?\s*(\d{3,6})\b")
 
+# "5000 MME": a molecular weight wearing the position of an amount. Depositors write PEG smears
+# as one enumeration -- "PEG Smear Medium (PEG 2000, 3350, 4000, and 5000 MME)" -- and the split
+# leaves the last member without its "PEG". Read as a leading quantity it becomes MME, an
+# additive whose default unit is millimolar, at 5000 mM: five molar of a reagent that is really
+# PEG MME 5000. Found by the 2026-08-01 plausibility work. The lexicon already knows
+# "peg mme 5000", so restoring the prefix is all that is needed.
+PEG_MME_MOLECULAR_WEIGHT = re.compile(r"^\s*(\d{3,6})\s*mme\b")
+
 
 # Conjunctions and prepositions left at the head of a clause by splitting. "and 172 mM
 # ammonium nitrate" must become "172 mM ammonium nitrate" or the reagent never identifies.
@@ -369,6 +377,12 @@ def strip_quantity(clause: str) -> str:
     Trailing digits inside the name survive on purpose: in "peg 3350" the number is the
     reagent's identity, not its amount.
     """
+    # Restore the "PEG" the enumeration dropped, before anything can read the molecular weight
+    # as an amount. Mirrored by `quantity.extract`, which declines to find a quantity here.
+    mme = PEG_MME_MOLECULAR_WEIGHT.match(clause)
+    if mme:
+        return tidy_name(f"peg mme {mme.group(1)}" + clause[mme.end():])
+
     stripped = _LEADING_QTY.sub("", clause, count=1)
     if stripped == clause:
         match = _TRAILING_QTY.search(clause)

@@ -244,3 +244,19 @@ def test_a_name_ending_in_digits_still_keeps_them():
     """The regression the anchoring comment exists for: "peg 8000" is a name, not an amount."""
     assert strip_quantity("peg 8000") == "peg 8000"
     assert strip_quantity("15-20% peg 3350") == "peg 3350"
+
+
+@pytest.mark.parametrize("clause,name", [
+    ("5000 mme", "peg mme 5000"),
+    ("2000 mme", "peg mme 2000"),
+    ("5000 mme, 0.1 m hepes", "peg mme 5000, 0.1 m hepes"),
+])
+def test_a_bare_molecular_weight_before_mme_regains_its_peg(clause, name):
+    """"PEG Smear Medium (PEG 2000, 3350, 4000, and 5000 MME)" splits so the last member loses
+    its PEG. Read as a leading quantity it became MME -- an additive defaulting to millimolar --
+    at 5000 mM, five molar of a reagent that is really PEG MME 5000."""
+    assert strip_quantity(clause) == name
+
+
+def test_an_explicit_peg_mme_is_unaffected():
+    assert strip_quantity("5% peg mme 5000") == "peg mme 5000"
