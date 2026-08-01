@@ -55,6 +55,7 @@ from typing import Any, Optional
 import polars as pl
 
 from .. import config
+from ..assign.classify import CLASSES, UNCLASSIFIED
 from ..manifest import Manifest
 
 STAGE = "eval.class_audit"
@@ -202,6 +203,28 @@ def main(argv: Optional[list[str]] = None) -> int:
             "schema_version": config.SCHEMA_VERSION,
             "lexicon_version": config.ONTOLOGY_VERSION,
             "title": "Classification accuracy audit",
+            # Shipped so the page never hardcodes the taxonomy: the seven classes are the
+            # non-empty subsets of {Organic, PEG, Salt}, and adding an eighth would otherwise
+            # leave the audit UI quietly offering the old list.
+            "classes": sorted(CLASSES.values()) + [UNCLASSIFIED],
+            # What a wrong class can actually mean. Classification is a pure function of the
+            # components, so a wrong class with correct components is impossible: every error is
+            # a parse error, a lexicon chem_class error, or a gating error. Asking which routes
+            # the fix, and the parse ones are the hand-labelled examples the next round needs.
+            "causes": [
+                {"value": "reagent_missed",
+                 "label": "A reagent was missed, misread or given the wrong amount",
+                 "fixes": "parser"},
+                {"value": "class_does_not_follow",
+                 "label": "The reagents are right, but the class does not follow from them",
+                 "fixes": "lexicon chem_class or the family mapping"},
+                {"value": "should_be_unclassified",
+                 "label": "It should not have a class at all",
+                 "fixes": "classifier gating"},
+                {"value": "should_be_classified",
+                 "label": "It should have a class, but was left Unclassified",
+                 "fixes": "classifier gating"},
+            ],
             "intro": (f"{len(questions)} conditions, one at a time. Each shows the deposition "
                       f"text, the reagents the parser found and the class it was given. Tick only "
                       f"if the class is wrong, then Next."
@@ -221,7 +244,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         for label, n in sorted(sampled_per_class.items(), key=lambda kv: -kv[1]):
             print(f"    {label:<34} {n:>4}")
         print(f"\n  {args.out}")
-        print(f"  open app/condition_courtroom_v6.html and drop the file on it")
+        print(f"  open app/condition_courtroom_v7.html and drop the file on it")
     return 0
 
 

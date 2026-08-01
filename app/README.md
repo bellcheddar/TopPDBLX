@@ -6,8 +6,8 @@ costs nothing.
 
 ## 📦 Versions
 
-Six versions ship, because the interaction model changed three times and the earlier ones are kept
-as the record of why. **Use v5 for decision payloads, v6 for the accuracy audit.**
+Seven versions ship, because the interaction model changed three times and the earlier ones are
+kept as the record of why. **Use v5 for decision payloads, v7 for the accuracy audit.**
 
 | Version | Payload | Decisions | Model |
 |---|---|---|---|
@@ -16,7 +16,33 @@ as the record of why. **Use v5 for decision payloads, v6 for the accuracy audit.
 | `condition_courtroom_v3.html` | `audit_decisions.json` | 919 | Distinct decisions ranked by corpus frequency, default-accept |
 | `condition_courtroom_v4.html` | `audit_questions.json` | 35 | Only the calls a human must make, with pre-computed dropdowns |
 | **`condition_courtroom_v5.html`** | **any questions payload** | **tens** | **v4 generalised: payload-driven title, multi-line questions, per-payload export filename** |
-| **`condition_courtroom_v6.html`** | **`class_audit_questions.json`** | **96** | **One condition per screen, one checkbox, Next. Keyboard-driven, with a rules-vs-model summary** |
+| `condition_courtroom_v6.html` | `class_audit_questions.json` | 96 | One condition per screen, one checkbox, Next. Keyboard-driven, with a rules-vs-model summary |
+| **`condition_courtroom_v7.html`** | **`class_audit_questions.json`** | **96** | **v6 plus a diagnosis on the flagged ones: correct class, what went wrong, which reagent** |
+
+### Why v7 asks a second question
+
+A corrected class is not training data. `assign.classify` is a **pure function of the components**
+— it collects `chem_class` into families and looks up `CLASSES[frozenset(families)]`, with no
+thresholds and nothing learned — and the SLM is trained on components, not on classes. Labelling
+the class would be labelling the output of a lookup table.
+
+Which is exactly why the follow-up is worth asking. Because classification is deterministic, a
+wrong class with correct components is close to impossible, so the wrong ones are nearly all
+**wrong parses**. The four causes route to different fixes:
+
+| Cause | Fix lands in |
+|---|---|
+| A reagent was missed, misread or given the wrong amount | the parser: **a hand-labelled residual example** |
+| The reagents are right, the class does not follow | `synonyms.yaml` `chem_class`, or `FAMILY_OF_CHEM_CLASS` |
+| It should not have a class at all | classifier gating |
+| It should have a class, but was left Unclassified | classifier gating |
+
+The parse-blamed ones matter most: `build_slm_dataset` says hand-labelling is escalated to "only
+if distillation plateaus", and it has — identification peaked at checkpoint 2000 and the lexicon
+is now the binding constraint. Those flags, plus the free-text note naming the reagent, are the
+first hand-labelled examples the project has.
+
+The follow-up appears **only when a card is ticked**, so the ~90% waved through stay one click.
 
 ### Why v6 exists alongside v5
 

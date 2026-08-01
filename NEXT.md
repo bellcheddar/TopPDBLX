@@ -52,10 +52,18 @@ disjoint intervals, grounded 93.41% → 94.36%, fully identified 64.10% → 68.2
 ## Waiting on Marc
 
 `data/interim/class_audit_questions.json`, now **96 conditions**, drop on
-`app/condition_courtroom_v6.html`. One condition per screen: deposition text, the reagents found,
+`app/condition_courtroom_v7.html`. One condition per screen: deposition text, the reagents found,
 the class it was given, and a single checkbox for "wrong class", then Next. Space ticks, Enter
 advances, so the whole set is a few minutes of keyboard work. Clicking Next on an untouched card
 records "seen, judged correct" — that is what keeps the denominator honest.
+
+**Ticking one opens a three-field diagnosis**, and only then: what the class should be, what went
+wrong, and optionally which reagent. This is not for training the classifier — `classify_condition`
+is a pure function of the components and nothing is learned from a class label. It is because that
+purity means a wrong class is almost always a *wrong parse*, so the flags sort into: parser bugs
+(**hand-labelled residual examples, which is what `build_slm_dataset` says to escalate to once
+distillation plateaus, and it has**), lexicon `chem_class` errors, and classifier gating errors.
+The free-text note naming the missed reagent is the actual training signal.
 
 Sized at 96 rather than the earlier 400: individual verdicts give exact counts instead of bands,
 and 48 per side is about ±8 points on each, which is coarse but enough to decide the only question
