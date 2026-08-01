@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="One condition at a time: is TopPDBLX's class assignment wrong?">
+<meta name="author" content="Marc C. Deller, D.Phil.">
+<title>Condition Courtroom v6 | One condition at a time | Marc C. Deller</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --md-primary:#1e73be; --md-primary-dark:#155a9c; --md-primary-light:#4a9fd4;
+  --md-bg:#fff; --md-bg-alt:#f4f7fb; --md-surface:#fff; --md-border:#dde4ed;
+  --md-text:#1a1a2e; --md-text-muted:#6b7c93; --md-text-light:#fff;
+  --md-accent-green:#00d084; --md-accent-orange:#ff6900; --md-accent-purple:#9b51e0;
+  --md-accent-amber:#fcb900; --md-accent-red:#d7263d;
+  --md-shadow-sm:6px 6px 9px rgba(0,0,0,.12); --md-radius:8px; --md-radius-lg:16px;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;overflow-x:hidden;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  font-size:15px;line-height:1.6;color:var(--md-text);background:var(--md-bg-alt)}
+code,pre,.mono{font-family:'Roboto Mono',monospace}
+
+.md-header{background:linear-gradient(135deg,var(--md-primary-dark),var(--md-primary));
+  color:#fff;box-shadow:var(--md-shadow-sm);position:sticky;top:0;z-index:100}
+.md-header-inner{max-width:920px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.md-header-brand a{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.9);text-decoration:none;
+  font-weight:600;font-size:13px;white-space:nowrap}
+.md-header-brand a:hover{color:#fff}
+.md-logo-dot{width:10px;height:10px;background:var(--md-accent-amber);border-radius:50%;flex-shrink:0}
+.md-header-title{flex:1;min-width:0}
+.md-header-title h1{font-size:16px;font-weight:700;color:#fff;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.md-header-links{display:flex;gap:10px;flex-shrink:0;flex-wrap:wrap}
+.md-header-links a{color:rgba(255,255,255,.85);text-decoration:none;font-size:12px;padding:4px 12px;
+  border:1px solid rgba(255,255,255,.3);border-radius:20px;white-space:nowrap}
+.md-header-links a:hover{background:rgba(255,255,255,.15);color:#fff}
+
+.md-main{max-width:920px;margin:0 auto;padding:18px 24px 60px}
+
+#dropzone{border:2px dashed var(--md-primary-light);border-radius:var(--md-radius-lg);padding:56px 24px;
+  text-align:center;background:#fff;cursor:pointer;transition:all .2s}
+#dropzone.hot{background:#eaf3fb;border-color:var(--md-primary)}
+#dropzone h2{margin:0 0 8px;font-size:20px}
+#dropzone p{color:var(--md-text-muted);margin:4px 0}
+
+.btn{background:var(--md-primary);color:#fff;border:none;border-radius:var(--md-radius);padding:11px 20px;
+  font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn:hover{background:var(--md-primary-dark)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--md-primary);border:1px solid var(--md-border)}
+.btn.ghost:hover{background:var(--md-bg-alt)}
+.btn.green{background:var(--md-accent-green);color:#06301f}
+.btn.big{padding:14px 34px;font-size:16px}
+
+/* Progress lives at the top and is the only chrome that persists. */
+.progress-bar{height:8px;background:var(--md-border);border-radius:6px;overflow:hidden;margin-bottom:6px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--md-primary),var(--md-accent-green));
+  width:0;transition:width .2s}
+.progress-row{display:flex;justify-content:space-between;align-items:center;gap:12px;
+  font-size:12.5px;color:var(--md-text-muted);margin-bottom:18px;flex-wrap:wrap}
+
+/* The card. Deliberately tall and quiet: one judgement, nothing competing for the eye. */
+.card{background:#fff;border:1px solid var(--md-border);border-radius:var(--md-radius-lg);
+  padding:26px 28px;box-shadow:var(--md-shadow-sm)}
+.card-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+.pill{font-family:'Roboto Mono',monospace;font-size:11.5px;border-radius:20px;padding:3px 11px;
+  border:1px solid var(--md-border);background:var(--md-bg-alt);color:var(--md-text-muted);white-space:nowrap}
+.pill.model{background:#f5ecfd;border-color:var(--md-accent-purple);color:#6a2fa0;font-weight:700}
+.pill.rules{background:#eaf3fb;border-color:var(--md-primary-light);color:var(--md-primary-dark);font-weight:700}
+
+.label{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--md-text-muted);
+  font-weight:700;margin-bottom:6px}
+.text{font-size:16px;line-height:1.65;background:var(--md-bg-alt);border-radius:var(--md-radius);
+  padding:14px 16px;word-break:break-word;margin-bottom:20px}
+.found{list-style:none;margin:0 0 20px;padding:0;display:flex;flex-wrap:wrap;gap:7px}
+.found li{font-family:'Roboto Mono',monospace;font-size:12.5px;background:var(--md-bg-alt);
+  border:1px solid var(--md-border);border-radius:20px;padding:4px 12px}
+.found li.model{background:#f5ecfd;border-color:var(--md-accent-purple);color:#4a1f73}
+.found li.none{background:#fff4e6;border-color:var(--md-accent-orange);color:#a33f00}
+.assigned{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.assigned .cls{font-size:26px;font-weight:700;color:var(--md-primary-dark);line-height:1.2}
+.note{font-size:13px;color:var(--md-text-muted);margin:0 0 22px}
+
+/* The single decision. Big hit area: this gets clicked up to 96 times. */
+.verdict{border:2px solid var(--md-border);border-radius:var(--md-radius);padding:16px 18px;
+  display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .15s;user-select:none;
+  background:#fff;margin-bottom:22px}
+.verdict:hover{border-color:var(--md-accent-red);background:#fff7f8}
+.verdict.on{border-color:var(--md-accent-red);background:#fdecef}
+.verdict input{width:22px;height:22px;accent-color:var(--md-accent-red);cursor:pointer;flex-shrink:0;margin:0}
+.verdict .vt{font-weight:600;font-size:15.5px}
+.verdict .vs{font-size:12.5px;color:var(--md-text-muted);display:block;font-weight:400}
+.verdict.on .vt{color:var(--md-accent-red)}
+
+.nav{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.keyhint{font-size:12px;color:var(--md-text-muted)}
+kbd{font-family:'Roboto Mono',monospace;font-size:11px;background:var(--md-bg-alt);
+  border:1px solid var(--md-border);border-bottom-width:2px;border-radius:4px;padding:1px 6px}
+
+.toolbar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.toolbar .btn{padding:7px 14px;font-size:13px}
+
+/* Summary, shown once every condition has been seen. */
+.stat-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:18px 0}
+.stat{background:#fff;border:1px solid var(--md-border);border-radius:var(--md-radius);padding:14px 16px}
+.stat .n{font-size:26px;font-weight:700;color:var(--md-primary-dark);line-height:1.2}
+.stat .l{font-size:10.5px;color:var(--md-text-muted);text-transform:uppercase;letter-spacing:.05em}
+.stat.model .n{color:#6a2fa0}
+.summary-note{background:#eaf3fb;border-left:4px solid var(--md-primary);border-radius:var(--md-radius);
+  padding:14px 18px;font-size:14px;color:var(--md-primary-dark);margin-bottom:18px}
+.hint{font-size:12.5px;color:var(--md-text-muted);text-align:center;margin-top:18px}
+.md-footer{text-align:center;padding:20px;color:var(--md-text-muted);font-size:13px}
+.md-footer a{color:var(--md-primary)}
+
+@media (max-width:768px){
+  .md-main{padding:13px 13px 40px} .md-header-inner{padding:10px 16px}
+  .md-header-title h1{font-size:14px} .md-logo-text{display:none}
+  .card{padding:18px 16px} .text{font-size:15px} .assigned .cls{font-size:22px}
+  .nav .btn.big{flex:1} .keyhint{display:none}
+}
+</style>
+</head>
+<body>
+<header class="md-header">
+  <div class="md-header-inner">
+    <div class="md-header-brand">
+      <a href="https://marcdeller.com" target="_blank" rel="noopener noreferrer">
+        <span class="md-logo-dot"></span><span class="md-logo-text">Marc C. Deller, D.Phil.</span>
+      </a>
+    </div>
+    <div class="md-header-title"><h1 id="pageTitle">Condition Courtroom v6 &middot; one condition at a time</h1></div>
+    <div class="md-header-links">
+      <a href="https://marcdeller.com" target="_blank" rel="noopener noreferrer">🌐 marcdeller.com</a>
+      <a href="mailto:marc@marcdeller.com">✉️ marc@marcdeller.com</a>
+    </div>
+  </div>
+</header>
+
+<main class="md-main">
+  <section id="loader">
+    <div id="dropzone" role="button" tabindex="0" aria-label="Load audit questions JSON">
+      <h2>⚖️ Drop a questions file here</h2>
+      <p>or click to choose a file</p>
+      <p style="font-size:13px;margin-top:14px">
+        <code>class_audit_questions.json</code> from<br>
+        <code>./run.sh eval.class_audit --slm-components&nbsp;…</code><br>
+        in <code>data/interim/</code>
+      </p>
+      <input type="file" id="fileInput" accept=".json,application/json" hidden>
+    </div>
+    <p class="hint" id="resumeNote"></p>
+  </section>
+
+  <section id="workspace" hidden>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-row">
+      <span id="progressLabel"></span>
+      <span id="flagCount"></span>
+    </div>
+
+    <div class="card" id="card"></div>
+
+    <div class="toolbar">
+      <button class="btn ghost" id="exportBtn">⬇ Export verdicts</button>
+      <button class="btn ghost" id="summaryBtn">📊 Summary</button>
+      <button class="btn ghost" id="resetBtn">Reset</button>
+    </div>
+    <p class="hint">Verdicts save in this browser as you go, so closing the tab costs nothing.</p>
+  </section>
+
+  <section id="done" hidden>
+    <div class="summary-note" id="summaryNote"></div>
+    <div class="stat-grid" id="summaryStats"></div>
+    <div id="summaryClasses"></div>
+    <div class="toolbar">
+      <button class="btn green big" id="exportBtn2">⬇ Export verdicts</button>
+      <button class="btn ghost" id="backBtn">← Back to the conditions</button>
+      <button class="btn ghost" id="resetBtn2">Reset</button>
+    </div>
+  </section>
+</main>
+
+<footer class="md-footer">
+  Built by <a href="https://marcdeller.com" target="_blank" rel="noopener noreferrer">Marc C. Deller, D.Phil.</a>
+  &middot; <a href="mailto:marc@marcdeller.com">marc@marcdeller.com</a> &middot; Condition Courtroom v6
+</footer>
+
+<script>
+const STORAGE_PREFIX = 'toppdblx.courtroom6.';
+let DATA = null, verdicts = {}, storageKey = null, idx = 0;
+const $ = id => document.getElementById(id);
+const esc = s => (s||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function save(){
+  if(!storageKey) return;
+  try{ localStorage.setItem(storageKey, JSON.stringify({verdicts, idx})); }
+  catch(e){ console.warn('save failed', e); }
+}
+
+// A verdict of `false` is a real answer (seen, judged correct) and must survive a reload just as
+// a `true` does. Storing only the flagged ones would silently reset everything judged fine.
+function restore(){
+  if(!storageKey) return;
+  try{
+    const s = JSON.parse(localStorage.getItem(storageKey) || '{}');
+    verdicts = s.verdicts || {};
+    idx = Math.min(s.idx || 0, DATA.questions.length - 1);
+  }catch(e){ verdicts = {}; idx = 0; }
+}
+
+function ingest(payload){
+  if(!payload || !Array.isArray(payload.questions))
+    throw new Error('Expected the output of ./run.sh eval.class_audit (no "questions" array).');
+  if(!payload.questions.length) throw new Error('That payload contains no questions.');
+  DATA = payload;
+  // Namespaced by title, lexicon version and size, so one round's verdicts can never attach
+  // themselves to a different question set.
+  storageKey = STORAGE_PREFIX + (payload.title || 'audit').replace(/\W+/g,'_')
+             + '.' + (payload.lexicon_version || 'v') + '.' + payload.questions.length;
+  restore();
+  if(payload.title) $('pageTitle').innerHTML = 'Condition Courtroom v6 &middot; ' + esc(payload.title);
+  $('loader').hidden = true;
+  $('workspace').hidden = false;
+  renderCard();
+}
+
+function readFile(file){
+  if(!file) return;
+  if(!/\.json$/i.test(file.name)){ alert('Please choose a .json file.'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    let payload;
+    try{ payload = JSON.parse(e.target.result); }
+    catch(err){ alert('That file is not valid JSON:\n\n' + err.message); return; }
+    try{ ingest(payload); }
+    catch(err){
+      console.error(err);
+      alert('The file loaded but the page could not render it:\n\n' + err.message);
+    }
+  };
+  reader.onerror = () => alert('Could not read that file.');
+  reader.readAsText(file);
+}
+
+function renderCard(){
+  const q = DATA.questions[idx];
+  const flagged = verdicts[q.id] === true;
+  const found = (q.found && q.found.length) ? q.found : ['nothing identified'];
+
+  $('card').innerHTML = `
+    <div class="card-top">
+      <span class="pill ${q.provenance === 'model' ? 'model' : 'rules'}">
+        ${q.provenance === 'model' ? 'read by the model' : 'read by the rules'}
+      </span>
+      <span class="pill">${esc(q.pdb_id || '')}</span>
+    </div>
+
+    <div class="label">Deposition text</div>
+    <div class="text">${esc(q.text)}</div>
+
+    <div class="label">Reagents found</div>
+    <ul class="found">${found.map(f => {
+      const cls = /\[model\]$/.test(f) ? 'model' : (f === 'nothing identified' ? 'none' : '');
+      return `<li class="${cls}">${esc(f)}</li>`;
+    }).join('')}</ul>
+
+    <div class="label">Classified as</div>
+    <div class="assigned"><span class="cls">${esc(q.assigned || q.condition_class)}</span></div>
+    <p class="note">${esc(q.note || '')}</p>
+
+    <label class="verdict ${flagged ? 'on' : ''}" id="verdict">
+      <input type="checkbox" id="wrongBox" ${flagged ? 'checked' : ''}
+             aria-label="Mark this class as wrong">
+      <span class="vt">This is the wrong class
+        <span class="vs">Leave unticked if the class fits the text above.</span>
+      </span>
+    </label>
+
+    <div class="nav">
+      <button class="btn ghost" id="prevBtn" ${idx === 0 ? 'disabled' : ''}>← Back</button>
+      <span class="keyhint"><kbd>space</kbd> tick &middot; <kbd>enter</kbd> next &middot; <kbd>←</kbd> <kbd>→</kbd> move</span>
+      <button class="btn big" id="nextBtn">
+        ${idx === DATA.questions.length - 1 ? 'Finish →' : 'Next →'}
+      </button>
+    </div>`;
+
+  $('wrongBox').addEventListener('change', e => {
+    verdicts[q.id] = e.target.checked;
+    $('verdict').classList.toggle('on', e.target.checked);
+    save(); updateProgress();
+  });
+  $('nextBtn').addEventListener('click', next);
+  $('prevBtn').addEventListener('click', prev);
+  updateProgress();
+}
+
+// Advancing records "seen and judged correct" for an untouched card, which is what makes the
+// denominator honest: an accuracy figure needs every condition looked at, not only the bad ones.
+function next(){
+  const q = DATA.questions[idx];
+  if(verdicts[q.id] === undefined) verdicts[q.id] = false;
+  if(idx === DATA.questions.length - 1){ save(); showSummary(); return; }
+  idx++; save(); renderCard(); window.scrollTo({top:0, behavior:'smooth'});
+}
+function prev(){
+  if(idx === 0) return;
+  idx--; save(); renderCard(); window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function updateProgress(){
+  const total = DATA.questions.length;
+  const judged = DATA.questions.filter(q => verdicts[q.id] !== undefined).length;
+  const flagged = DATA.questions.filter(q => verdicts[q.id] === true).length;
+  $('progressFill').style.width = (100 * (idx + 1) / total).toFixed(1) + '%';
+  $('progressLabel').textContent = `Condition ${idx + 1} of ${total} · ${judged} judged`;
+  $('flagCount').textContent = flagged ? `${flagged} marked wrong` : 'none marked wrong yet';
+}
+
+function tally(){
+  const rows = {};
+  DATA.questions.forEach(q => {
+    if(verdicts[q.id] === undefined) return;
+    const p = q.provenance || 'rules';
+    rows[p] = rows[p] || {n:0, wrong:0};
+    rows[p].n++; if(verdicts[q.id]) rows[p].wrong++;
+  });
+  return rows;
+}
+
+function showSummary(){
+  const rows = tally();
+  const judged = Object.values(rows).reduce((a,r) => a + r.n, 0);
+  const wrong = Object.values(rows).reduce((a,r) => a + r.wrong, 0);
+  $('workspace').hidden = true; $('done').hidden = false;
+
+  $('summaryNote').innerHTML = judged === DATA.questions.length
+    ? `<b>All ${judged} judged.</b> Export the verdicts and feed them to the accuracy stage.`
+    : `<b>${judged} of ${DATA.questions.length} judged.</b> The figures below cover only what you have seen.`;
+
+  const pct = (w,n) => n ? (100*(1 - w/n)).toFixed(1) + '%' : '—';
+  let cards = `<div class="stat"><div class="n">${pct(wrong, judged)}</div>
+      <div class="l">overall accuracy</div></div>`;
+  ['rules','model'].forEach(p => {
+    if(!rows[p]) return;
+    cards += `<div class="stat ${p === 'model' ? 'model' : ''}">
+        <div class="n">${pct(rows[p].wrong, rows[p].n)}</div>
+        <div class="l">${p}-derived · ${rows[p].n} judged</div></div>`;
+  });
+  cards += `<div class="stat"><div class="n">${wrong}</div><div class="l">marked wrong</div></div>`;
+  $('summaryStats').innerHTML = cards;
+
+  // The comparison the audit exists for, stated in words so it cannot be misread off the tiles.
+  let verdict = '';
+  if(rows.rules && rows.model){
+    const r = 100*(1 - rows.rules.wrong/rows.rules.n);
+    const m = 100*(1 - rows.model.wrong/rows.model.n);
+    const d = (m - r).toFixed(1);
+    verdict = `<p class="hint">Model-derived conditions are <b>${Math.abs(d)} points
+      ${m >= r ? 'better' : 'worse'}</b> than rules-derived ones in this sample. At roughly 48 per
+      side the interval is about ±8 points, so treat anything under that as no difference.</p>`;
+  }
+  $('summaryClasses').innerHTML = verdict;
+}
+
+function exportVerdicts(){
+  const judged = DATA.questions.filter(q => verdicts[q.id] !== undefined);
+  if(!judged.length){ alert('Nothing judged yet.'); return; }
+  const rows = tally();
+  const out = {
+    tool: 'condition_courtroom_v6',
+    lexicon_version: DATA.lexicon_version, schema_version: DATA.schema_version,
+    exported_at: new Date().toISOString(),
+    n_questions: DATA.questions.length, n_judged: judged.length,
+    n_wrong: judged.filter(q => verdicts[q.id]).length,
+    by_provenance: rows,
+    verdicts: judged.map(q => ({
+      id: q.id, pdb_id: q.pdb_id, provenance: q.provenance,
+      condition_class: q.condition_class, wrong_class: !!verdicts[q.id]
+    }))
+  };
+  const blob = new Blob([JSON.stringify(out, null, 1)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'class_audit_verdicts.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+
+function reset(){
+  if(!confirm('Discard every verdict recorded in this browser?')) return;
+  verdicts = {}; idx = 0; save();
+  $('done').hidden = true; $('workspace').hidden = false;
+  renderCard();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const zone = $('dropzone'), input = $('fileInput');
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); input.click(); }
+  });
+  input.addEventListener('change', e => readFile(e.target.files[0]));
+  ['dragenter','dragover'].forEach(t =>
+    zone.addEventListener(t, e => { e.preventDefault(); zone.classList.add('hot'); }));
+  ['dragleave','drop'].forEach(t =>
+    zone.addEventListener(t, e => { e.preventDefault(); zone.classList.remove('hot'); }));
+  zone.addEventListener('drop', e => readFile(e.dataTransfer.files[0]));
+
+  $('exportBtn').addEventListener('click', exportVerdicts);
+  $('exportBtn2').addEventListener('click', exportVerdicts);
+  $('summaryBtn').addEventListener('click', showSummary);
+  $('backBtn').addEventListener('click', () => {
+    $('done').hidden = true; $('workspace').hidden = false; renderCard();
+  });
+  $('resetBtn').addEventListener('click', reset);
+  $('resetBtn2').addEventListener('click', reset);
+
+  // 96 judgements is a lot of mousing. Space ticks, Enter or the arrows move.
+  document.addEventListener('keydown', e => {
+    if(!DATA || $('workspace').hidden) return;
+    if(e.target.tagName === 'INPUT' && e.target.type !== 'checkbox') return;
+    if(e.key === ' '){
+      e.preventDefault();
+      const box = $('wrongBox');
+      box.checked = !box.checked;
+      box.dispatchEvent(new Event('change'));
+    } else if(e.key === 'Enter' || e.key === 'ArrowRight'){
+      e.preventDefault(); next();
+    } else if(e.key === 'ArrowLeft'){
+      e.preventDefault(); prev();
+    }
+  });
+
+  const keys = Object.keys(localStorage).filter(k => k.startsWith(STORAGE_PREFIX));
+  if(keys.length){
+    try{
+      const s = JSON.parse(localStorage.getItem(keys[0]) || '{}');
+      const n = Object.keys(s.verdicts || {}).length;
+      if(n) $('resumeNote').textContent =
+        `${n} verdict${n === 1 ? '' : 's'} already saved in this browser. Drop the same file to carry on.`;
+    }catch(e){ /* a corrupt key is not worth a message */ }
+  }
+});
+</script>
+</body>
+</html>

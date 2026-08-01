@@ -51,10 +51,15 @@ disjoint intervals, grounded 93.41% → 94.36%, fully identified 64.10% → 68.2
 
 ## Waiting on Marc
 
-`data/interim/class_audit_questions.json`, now **16 questions**, drop on
-`app/condition_courtroom_v5.html`. Each lists 25 conditions of one class and asks only how many
-are wrong, because an error *rate* is what the accuracy figure needs and a count gives the same
-estimate for a fraction of the answers.
+`data/interim/class_audit_questions.json`, now **96 conditions**, drop on
+`app/condition_courtroom_v6.html`. One condition per screen: deposition text, the reagents found,
+the class it was given, and a single checkbox for "wrong class", then Next. Space ticks, Enter
+advances, so the whole set is a few minutes of keyboard work. Clicking Next on an untouched card
+records "seen, judged correct" — that is what keeps the denominator honest.
+
+Sized at 96 rather than the earlier 400: individual verdicts give exact counts instead of bands,
+and 48 per side is about ±8 points on each, which is coarse but enough to decide the only question
+being asked.
 
 Regenerated stratified by provenance now that `apply_slm` has run: eight classes × {rules-derived,
 model-derived}, so the answers give **separate accuracy figures for rules and for the model**,

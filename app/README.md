@@ -6,8 +6,8 @@ costs nothing.
 
 ## 📦 Versions
 
-Five versions ship, because the interaction model changed twice and the earlier ones are kept as
-the record of why. **Use v5.**
+Six versions ship, because the interaction model changed three times and the earlier ones are kept
+as the record of why. **Use v5 for decision payloads, v6 for the accuracy audit.**
 
 | Version | Payload | Decisions | Model |
 |---|---|---|---|
@@ -16,6 +16,21 @@ the record of why. **Use v5.**
 | `condition_courtroom_v3.html` | `audit_decisions.json` | 919 | Distinct decisions ranked by corpus frequency, default-accept |
 | `condition_courtroom_v4.html` | `audit_questions.json` | 35 | Only the calls a human must make, with pre-computed dropdowns |
 | **`condition_courtroom_v5.html`** | **any questions payload** | **tens** | **v4 generalised: payload-driven title, multi-line questions, per-payload export filename** |
+| **`condition_courtroom_v6.html`** | **`class_audit_questions.json`** | **96** | **One condition per screen, one checkbox, Next. Keyboard-driven, with a rules-vs-model summary** |
+
+### Why v6 exists alongside v5
+
+v5 rendered the accuracy audit as 16 dense cards, each listing 25 conditions and asking "how many
+of these are wrong". The batching logic was sound — an error *rate* is what the accuracy figure
+needs, and a count yields the same estimate for a fraction of the answers — but it asked the
+reader to hold a running tally while skimming 400 conditions, and that is the part that made it
+unusable. v6 asks 96 individual yes/no questions instead: more answers, less work per answer, and
+exact counts rather than bands.
+
+**v6 is for judging instances; v5 remains right for judging decisions.** Auditing 1,484 records
+one at a time was the v1 mistake, and v6 is not a return to it — it works only because the sample
+is 96 deduplicated conditions rather than the whole corpus. For anything where the same judgement
+recurs across thousands of components, v3/v4/v5's decision-level model is still the correct one.
 
 The progression is the point. Auditing 1,484 records one at a time ignores that the corpus is
 enormously redundant: judging "20% peg 3350 becomes PEG_3350" for the thirty-thousandth time buys
@@ -62,7 +77,10 @@ reproducible from corpus plus answers rather than hand-patched:
 ./run.sh eval.audit_metrics --verdicts ~/Downloads/audit_answers.json
 ```
 
-**Batching a repeated judgement into one question.** The accuracy audit asks "how many of these 25 are wrong" rather than putting 25 separate verdicts on screen: an error *rate* is what the number needs, and a count yields the same estimate for an eighth of the answers. Counts are banded rather than exact, because nobody counts 25 items reliably and false precision in a published figure is worse than a wide interval.
+**Advancing is itself an answer.** In v6, clicking Next on an untouched card records "seen, judged
+correct" rather than leaving it blank. That is what keeps the denominator honest: an accuracy
+figure needs every condition looked at, not only the ones that were flagged. Verdicts of `false`
+are therefore stored, not just the flagged `true` ones, and a reload restores both.
 
 **Only touched questions are exported.** A question absent from the export is an accepted
 recommendation, not an unanswered one, and the apply stages record which of the two each change

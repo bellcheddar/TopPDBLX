@@ -7,19 +7,24 @@ class?**
 The brief asks for a stratified sample of 1,000 to 2,000 assignments. That was written for a
 163-group ontology where each judgement is slow. Classification is now seven classes plus
 Unclassified, so a judgement is "does this text contain a PEG, a salt, an organic?" and takes
-seconds. The sample is therefore sized for the interval it buys rather than for the brief's
-number:
+seconds.
 
-    n = 200 overall            +/- 3.5 points at 90% accuracy
-    n = 25 per class            +/- 12 points, coarse but enough to find a broken class
+**One condition per question, 96 of them.** An earlier version batched 25 conditions into a single
+banded "how many of these are wrong" card, on the reasoning that an error *rate* is what the
+accuracy figure needs and a count yields the same estimate for a fraction of the answers. That is
+true and it still is, but 400 conditions spread over 16 dense cards asked the reader to hold a
+running tally while skimming, which is the part that made it unusable. 96 individual yes/no
+verdicts are more answers and less work, and they give exact counts rather than bands.
 
-**Stratified by class, not by frequency.** A proportional sample would be 24% Salt/PEG and 1.4%
-Organic, so the small classes would get too few judgements to say anything about. Equal
-allocation costs nothing here and gives every class its own number.
+**Proportional within provenance, not equal per class.** The question is whether the model's
+conditions are as well classified as the rules', so each half must be representative of its own
+population. Equal allocation across classes would over-sample Organic at roughly 40x its real
+share and produce a headline accuracy describing no population at all. Per-class figures are a
+by-product at this size and should be read as indicative only.
 
 **Deduplicated by text.** The corpus repeats itself: the same condition is deposited many times,
-and judging it twice buys no evidence. Sampling distinct condition texts is what keeps 200
-judgements informative rather than 200 repetitions of the popular ones.
+and judging it twice buys no evidence. Sampling distinct condition texts is what keeps the
+judgements informative rather than repetitions of the popular ones.
 
 Every condition is listed with its raw deposition text and the reagents the parser found beneath
 it, so a wrong class and a wrong parse can be told apart while reading.
@@ -35,7 +40,7 @@ every model-derived condition prints "nothing identified" beneath its class and 
 obvious error when it may be perfectly correct.
 
     ./run.sh eval.class_audit
-    ./run.sh eval.class_audit --per-class 40
+    ./run.sh eval.class_audit --n 48
     ./run.sh eval.class_audit --slm-components data/interim/slm_components.parquet
 """
 
@@ -54,7 +59,10 @@ from ..manifest import Manifest
 
 STAGE = "eval.class_audit"
 
-DEFAULT_PER_CLASS = 25
+# 96 conditions, one screen each: 48 rules-derived and 48 model-derived. At 90% accuracy that is
+# about +/- 8 points on each half, which is coarse but decides the only question being asked,
+# namely whether the model's conditions are materially worse than the rules'.
+DEFAULT_N = 96
 
 
 def main(argv: Optional[list[str]] = None) -> int:
@@ -71,7 +79,8 @@ def main(argv: Optional[list[str]] = None) -> int:
                              "conditions get separate accuracy numbers")
     parser.add_argument("--out", type=Path,
                         default=config.INTERIM_DIR / "class_audit_questions.json")
-    parser.add_argument("--per-class", type=int, default=DEFAULT_PER_CLASS)
+    parser.add_argument("--n", type=int, default=DEFAULT_N,
+                        help="total conditions to judge, split evenly between provenances")
     parser.add_argument("--seed", type=int, default=17)
     args = parser.parse_args(argv)
 
@@ -132,106 +141,72 @@ def main(argv: Optional[list[str]] = None) -> int:
     else:
         joined = joined.with_columns(pl.lit("rules").alias("provenance"))
 
-    with Manifest(STAGE, params={"per_class": args.per_class, "seed": args.seed}) as m:
+    with Manifest(STAGE, params={"n": args.n, "seed": args.seed}) as m:
         m.add_input(args.classes).add_input(args.conditions)
         if args.slm_components:
             m.add_input(args.slm_components)
 
-        questions: list[dict[str, Any]] = []
+        # One row per distinct deposition text: judging the same condition twice adds no evidence,
+        # and the popular conditions would otherwise crowd out everything else.
+        pools: dict[str, list[dict]] = {}
+        seen: set[str] = set()
+        for row in joined.iter_rows(named=True):
+            if not row["condition_class"]:
+                continue
+            text = " ".join((row["raw_details"] or "").split())
+            if not (20 < len(text) < 220) or text.lower() in seen:
+                continue
+            seen.add(text.lower())
+            pools.setdefault(row["provenance"], []).append(row)
+
+        # **Proportional within provenance, not equal per class.** The question this audit exists
+        # to answer is whether the model's conditions are as well classified as the rules', and
+        # that needs each half to be *representative* of its own population. Equal allocation
+        # across classes would over-sample Organic at 40x its real share and give a headline
+        # accuracy that describes no population at all.
+        half = max(1, args.n // (2 if model_read else 1))
+        chosen: list[dict] = []
+        for provenance in sorted(pools):
+            pool = pools[provenance]
+            rng.shuffle(pool)
+            chosen.extend(pool[:half])
+        rng.shuffle(chosen)
+
         sampled_per_class: dict[str, int] = {}
-        for (label, provenance), frame in joined.group_by(["condition_class", "provenance"]):
-            if not label:
-                continue
+        questions: list[dict[str, Any]] = []
+        for row in chosen:
+            label, provenance = row["condition_class"], row["provenance"]
             stratum = f"{label} ({provenance}-derived)" if model_read else label
-            # One row per distinct deposition text: judging the same condition twice adds no
-            # evidence, and the popular conditions would otherwise crowd out everything else.
-            seen: set[str] = set()
-            candidates = []
-            for row in frame.iter_rows(named=True):
-                text = " ".join((row["raw_details"] or "").split())
-                if not (20 < len(text) < 220) or text.lower() in seen:
-                    continue
-                seen.add(text.lower())
-                candidates.append(row)
-            rng.shuffle(candidates)
-            chosen = candidates[:args.per_class]
-            if not chosen:
-                continue
-            sampled_per_class[stratum] = len(chosen)
+            sampled_per_class[stratum] = sampled_per_class.get(stratum, 0) + 1
 
-            # **One question per class, not per condition.** A per-class error *rate* is what the
-            # accuracy number needs, and a rate can be read from a count: asking "how many of
-            # these 25 are wrong" yields the same estimate as 25 separate verdicts, for one
-            # answer instead of 25. 200 judgements become 8.
-            #
-            # Counts are banded rather than exact because nobody counts 25 items reliably, and a
-            # band is honest about that: each band is carried into the accuracy figure as an
-            # interval rather than a point.
-            n = len(chosen)
-            listing = []
-            for i, row in enumerate(chosen, 1):
-                key = (row["pdb_id"], row["crystal_id"])
-                detected = parts.get(key, [])
-                text = " ".join((row["raw_details"] or "").split())[:150]
-                listing.append(f"{i:>2}. {text}")
-                listing.append(f"     parser found: "
-                               f"{'; '.join(detected) if detected else 'nothing identified'}")
-
-            reason_note = ""
-            if label == "Unclassified":
-                reasons = [r["unclassified_reason"] for r in chosen if r["unclassified_reason"]]
-                common = max(set(reasons), key=reasons.count) if reasons else "various"
-                reason_note = (f" Most are unclassified because of "
-                               f"{common.replace('_', ' ')}.")
-
-            provenance_note = ""
-            if model_read:
-                provenance_note = (
-                    " These are conditions the rules could not read on their own: reagents marked "
-                    "[model] were read by the fine-tuned model, the rest by the rules."
-                    if provenance == "model"
-                    else " Every reagent below was read by the rules alone.")
+            key = (row["pdb_id"], row["crystal_id"])
+            detected = parts.get(key, [])
+            note = ""
+            if label == "Unclassified" and row["unclassified_reason"]:
+                note = f"Unclassified because of {row['unclassified_reason'].replace('_', ' ')}."
 
             questions.append({
-                "id": f"class::{label.replace('/', '_')}::{provenance}",
-                "group": ("Classification accuracy, model-derived" if provenance == "model"
-                          else "Classification accuracy"),
-                "question": f"How many of these {n} are in the wrong class?",
-                "why": (f"All {n} were classified as {label}.{reason_note}{provenance_note} They "
-                        f"are a random sample of distinct conditions from that class. Read down "
-                        f"the list and count the ones that look wrong: the count is what the "
-                        f"accuracy number is built from, so a rough band is enough."),
-                "weight": n,
-                "weight_label": f"{stratum}, {n} sampled",
+                "id": f"cond::{row['pdb_id']}::{row['crystal_id']}",
+                "pdb_id": row["pdb_id"],
                 "provenance": provenance,
                 "condition_class": label,
-                "type": "choice",
-                "options": [
-                    {"value": "0", "label": "None: all correct", "recommended": True},
-                    {"value": "1-2", "label": "1 or 2 wrong", "recommended": False},
-                    {"value": "3-5", "label": "3 to 5 wrong", "recommended": False},
-                    {"value": "6-12", "label": "6 to 12 wrong", "recommended": False},
-                    {"value": "13+", "label": "More than half wrong", "recommended": False},
-                ],
-                "allow_text": False,
-                "n_sampled": n,
-                "context": listing,
+                "assigned": label,
+                "note": note,
+                "text": " ".join((row["raw_details"] or "").split()),
+                "found": detected or ["nothing identified"],
+                "type": "flag",
+                "question": "Is this the wrong class?",
             })
 
-        rng.shuffle(questions)
         payload = {
             "schema_version": config.SCHEMA_VERSION,
             "lexicon_version": config.ONTOLOGY_VERSION,
             "title": "Classification accuracy audit",
-            "intro": (f"{len(questions)} questions, one per class"
-                      + (" and per provenance" if model_read else "") +
-                      f", covering {sum(sampled_per_class.values())} sampled conditions, so "
-                      f"every class gets its own number. Each card lists 25 conditions with the "
-                      f"reagents the parser found, and asks only how many are wrong. Everything "
-                      f"defaults to none, so this is a hunt for the bad ones: skim the list, "
-                      f"pick the band, move on."
-                      + (" Half the cards are conditions only the model could read: answering "
-                         "both halves is what separates the model's accuracy from the rules'."
+            "intro": (f"{len(questions)} conditions, one at a time. Each shows the deposition "
+                      f"text, the reagents the parser found and the class it was given. Tick only "
+                      f"if the class is wrong, then Next."
+                      + (" Half were read by the fine-tuned model and half by the rules alone, "
+                         "which is what separates the model's accuracy from the rules'."
                          if model_read else "")),
             "n_questions": len(questions),
             "totals": {"per_class": sampled_per_class, "n_questions": len(questions)},
@@ -242,14 +217,11 @@ def main(argv: Optional[list[str]] = None) -> int:
             "n_" + "".join(c if c.isalnum() else "_" for c in k.lower()): v
             for k, v in sampled_per_class.items()})
 
-        print(f"\n  {len(questions)} questions, covering "
-              f"{sum(sampled_per_class.values())} sampled conditions:")
+        print(f"\n  {len(questions)} conditions to judge, one per screen:")
         for label, n in sorted(sampled_per_class.items(), key=lambda kv: -kv[1]):
-            print(f"    {label:<20} {n:>4}")
-        print(f"\n  one question per class: the count of wrong ones gives the same error")
-        print(f"  rate as judging each condition separately, for an eighth of the answers.")
+            print(f"    {label:<34} {n:>4}")
         print(f"\n  {args.out}")
-        print(f"  open app/condition_courtroom_v5.html and drop the file on it")
+        print(f"  open app/condition_courtroom_v6.html and drop the file on it")
     return 0
 
 
