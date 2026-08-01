@@ -29,7 +29,7 @@ from .noncomponent import classify as classify_non_component
 from .prose import strip_prose
 from .schema import Component, ConditionRecord, DiscardReason, Provenance
 from .text import (classify, clauses_detailed, is_noise, normalise,
-                   split_trailing_ph, strip_quantity)
+                   split_trailing_ph, strip_quantity, tidy_name)
 
 PARSER_VERSION = "rules_v3"
 
@@ -99,6 +99,17 @@ class RuleParser:
     def __init__(self, lexicon: Lexicon):
         self.lexicon = lexicon
         self.index = lexicon.index()
+
+    def _head_is_reagent(self, head: str) -> bool:
+        """Does this clause head name a reagent we know?
+
+        The gate on truncating a clause at its trailing setup prose. `text` cannot ask this
+        itself, being the module the lexicon is built on, so it asks the caller instead.
+        Without the gate the cut fires on shape alone and yields "ul", "protein at 10" and
+        "nacl was": 3,752 unidentified heads against 221 real ones over 60,000 conditions.
+        """
+        name = tidy_name(strip_quantity(split_trailing_ph(head)[0]))
+        return bool(name) and normalise(name) in self.index
 
     # -- components --------------------------------------------------------
 
@@ -242,7 +253,7 @@ class RuleParser:
         previous_was_buffer = False
         ph_follows_buffer = False
 
-        for clause, bracket_depth in clauses_detailed(raw_details):
+        for clause, bracket_depth in clauses_detailed(raw_details, self._head_is_reagent):
             # Inside an unclosed bracket AND carrying no amount: the constituent list of the
             # reagent that opened it. "PEG Smear Broad (PEG 400, PEG 600, ...)" is one
             # reagent, and splitting it produced nine phantom PEGs.

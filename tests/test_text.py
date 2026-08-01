@@ -157,6 +157,16 @@ def test_noise_words_are_recognised():
 # component to a splitting failure, and each was invisible until a human read the deposition
 # beside the parse.
 
+# The truncation is gated on the caller recognising the head as a reagent, so these pass a
+# stand-in for the lexicon rather than the real one: the gate is the contract under test, not
+# the lexicon's contents.
+KNOWN = {"1-butanol", "peg 8000", "nacl"}
+
+
+def known(head: str) -> bool:
+    return tidy_name(strip_quantity(split_trailing_ph(head)[0])) in KNOWN
+
+
 def test_reagent_survives_trailing_setup_prose():
     """7O5Q and 7NRJ: "10% 1-BUTANOL mixed with the 10 mg/mL protein stock at 1:1 ratio".
 
@@ -165,9 +175,22 @@ def test_reagent_survives_trailing_setup_prose():
     """
     found = clauses(
         "0.1M HEPES pH 8.0, 10% PEG 8000, 10% 1-BUTANOL mixed with the 10 mg/mL protein "
-        "stock at 1:1 ratio.")
+        "stock at 1:1 ratio.", known)
     assert "10% 1-butanol" in found
     assert classify("10% 1-butanol") == "reagent"
+
+
+def test_no_gate_means_no_truncation():
+    """Every caller that does not hold a lexicon keeps the behaviour it had before."""
+    text = ("10% 1-BUTANOL mixed with the 10 mg/mL protein stock at 1:1 ratio.")
+    assert clauses(text) == ["10% 1-butanol mixed with the 10 mg/ml protein stock at 1:1 ratio."]
+
+
+def test_an_unrecognised_head_is_not_truncated():
+    """The shape test alone yields "ul", "protein at 10" and "nacl was": 3,752 junk heads
+    against 221 real ones over 60,000 conditions. Only a head the caller knows is cut to."""
+    assert clauses("10 mg/ml lysozyme mixed with the reservoir at 1:1", known) == [
+        "10 mg/ml lysozyme mixed with the reservoir at 1:1"]
 
 
 def test_section_label_does_not_glue_two_components_together():
@@ -188,7 +211,7 @@ def test_protein_section_label_is_kept_so_the_clause_is_still_rejected():
     clause must stay rejectable. Stripping the label as if it introduced components turned
     "12-15 mg/ml" into a bare "12-15" that classified as a reagent.
     """
-    found = clauses("20% PEG 3350, protein solution: 15 mg/ml in 10 mM tris")
+    found = clauses("20% PEG 3350, protein solution: 15 mg/ml in 10 mM tris", known)
     assert "20% peg 3350" in found
     assert any(c.startswith("protein solution:") for c in found)
     assert "12-15" not in found
@@ -199,5 +222,5 @@ def test_protein_section_label_is_kept_so_the_clause_is_still_rejected():
 
 def test_setup_prose_alone_is_not_split_into_a_component():
     """The head must carry both a number and a name, or prose splits into more prose."""
-    assert clauses("mother liquor mixed with protein at 1:1") == [
+    assert clauses("mother liquor mixed with protein at 1:1", known) == [
         "mixed with protein at 1:1"]

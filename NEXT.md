@@ -105,8 +105,31 @@ Three fixes, each traced to a specific flagged record:
    section label written mid-string with no comma no longer glues two components together, so
    3ZY1 keeps both its NaCl and its PEG 8000.
 
-**Fixes 2 and 3 are not in the data yet.** They change parsing, so they need a re-parse and then
-`apply_slm` and `classify` again; only fix 1 is live. Coverage currently 77.2%.
+**All three are now in the data.** Re-parsed, `apply_slm` and `classify` re-run on 2026-08-01.
+Components identified **514,042 → 515,872**, and the identification rate held *exactly* flat at
+0.8518 (chemistry-only 0.8753 → 0.8755). Coverage 77.2%. All six flagged records now parse
+correctly: 7O5Q and 7NRJ recover `BUTANOL_1`, 3ZY1 `PEG_8000`, 2ATB `HEXANEDIOL_16`, 3THP
+`OXOGLUTARATE_2`, 3P03 `CHOLINE`.
+
+**`apply_slm` did not need its 4h 42m again.** Generation is deterministic (`temp=0.0`) and the
+prompt is the deposition text, which a re-parse does not alter, so the progress file was filtered
+to the new residual instead: 52,079 of 52,817 rows reused unchanged, 738 dropped because the rules
+now read those records, and only **176 newly-residual records generated**, in 49 seconds. Do this
+on every re-parse — but filter the progress file first, because `apply_slm` builds its output by
+iterating the progress file rather than the residual, so stale rows would otherwise leak in.
+
+### The trap in fix 3, worth not re-stepping in
+
+Truncating a clause at its trailing setup prose **on shape alone made things worse**: 12,449 extra
+components for 1,852 more identifications, dropping the identification rate 1.4 points to 0.8376.
+Measured over 60,000 conditions, the cut produced 3,752 unidentified heads against 221 real ones —
+`ul`, `protein at 10`, `nacl was`, `set up in a 1:1`. Requiring a digit *and* a letter does not
+help: "protein at 10" has both.
+
+The cut is now gated on the caller recognising the head as a reagent. `text.py` cannot ask the
+lexicon itself, being the module the lexicon is built on, so `clauses_detailed` takes an optional
+`is_reagent` predicate and `rules.py` supplies one from its index. Without a predicate nothing is
+cut, so every other caller keeps its old behaviour.
 
 ### Still open from the audit
 
