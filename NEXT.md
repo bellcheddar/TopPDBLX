@@ -3,34 +3,67 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
-## Running now
+## Settled 2026-08-01: rounds should be 2,000 iterations, not 6,000
 
-**Round 06** is training: 6,000 iterations (a full epoch), LoRA rank 16, 99,189 pairs including
-6,856 whose correct answer is no chemistry at all. Log at `data/interim/slm/train_r1_round06.log`.
+The round 06 checkpoint sweep ran to completion on the frozen benchmark. Identification peaks at
+2,000 and then **declines and stays down**:
 
-When it finishes:
+| iter | fidelity exact | schema valid | identification | CI95 | grounded | fully ident. |
+|---|---|---|---|---|---|---|
+| 500 | 80.60% | 96.80% | 86.80% | [85.97, 87.59] | 93.66% | 58.15% |
+| 1000 | 84.80% | 97.00% | 87.19% | [86.37, 87.98] | 94.42% | 58.45% |
+| **2000** | 89.60% | 98.60% | **90.52%** | [89.76, 91.22] | 94.36% | **68.25%** |
+| 4000 | 93.20% | 99.05% | 88.91% | [88.13, 89.64] | 94.33% | 62.40% |
+| 6000 | 93.60% | 99.10% | 88.99% | [88.20, 89.73] | 93.96% | 62.35% |
 
-1. Sweep its checkpoints on the frozen benchmark, which is the point of the run:
-   `./run.sh models.eval_slm --frozen --checkpoint N --adapter-dir data/interim/slm/runs/r1-parse-residual-smollm2-360m-round06`
-   for N in 250, 1000, 2000, 4000, 6000.
-2. **This settles the epoch question.** An earlier claim that identification plateaus at 0.09 of
-   an epoch was measured on training data that was 36% duplicates, against a residual that shrank
-   from the easy end each time curation improved. Neither holds now. If identification and
-   grounding are still climbing at 6,000, the plateau claim was an artefact and longer runs are
-   worth it; if flat from ~600, it was right for the wrong reason.
-3. Then run `models.apply_slm`, which has never been run. It is the only thing that would convert
-   the model from a measurement into data: the released database currently contains **zero**
-   model-derived components after six training rounds.
+2000 → 4000 loses 1.61 points on disjoint intervals, and 4000 → 6000 moves +0.08, which is
+nothing. **The plateau claim was wrong, but so was the full-epoch decision**: learning continues
+well past 1,000 and stops well before 6,000.
+
+**Fidelity climbs monotonically the whole way, 80.6% to 93.6%, while identification turns over.**
+That divergence is the circularity trap made visible: everything after 2,000 iterations went into
+imitating `rules_v3` more exactly, which is capacity spent learning what is already in code, and
+it came at the cost of the residual. Val loss moved 0.003 across the whole span and pointed at
+6,000 throughout. **Watch fidelity as a divergence signal, never as a score.**
+
+Consequences: promote **checkpoint 2000**, not the final adapter; train future rounds for ~2,000
+iterations; keep judging rounds on residual identification.
+
+### Correction: `--limit` never applied to the frozen benchmark
+
+An earlier version of this file warned that a sweep passing `--limit 500` scored only 500 of the
+frozen set's 2,000 records, and that its figures must not sit beside full-set scores. **That was
+wrong.** In `eval_slm.py` the fidelity set is truncated unconditionally but the residual set is
+truncated only when `--frozen` is *not* passed:
+
+    valid_rows = valid_rows[:args.limit]
+    if not args.frozen:
+        residual_rows = residual_rows[:args.limit]
+
+So every `--frozen` identification, schema, grounding and fully-identified figure is already a
+full 2,000-record number, whatever `--limit` says. Only fidelity is subsetted. The full re-run of
+checkpoint 2000 reproduced the sweep's residual metrics exactly, to the invalid-reason counts,
+which is what proved it.
+
+Round 06 checkpoint 2000 against round 05, both full-set: identification **87.58% → 90.52%** on
+disjoint intervals, grounded 93.41% → 94.36%, fully identified 64.10% → 68.25%, fidelity 83.90% →
+91.22%.
 
 ## Waiting on Marc
 
-`data/interim/class_audit_questions.json`, 8 questions, drop on `app/condition_courtroom_v5.html`.
-Each lists 25 conditions of one class and asks only how many are wrong, because an error *rate* is
-what the accuracy figure needs and a count gives the same estimate for an eighth of the answers.
+`data/interim/class_audit_questions.json`, now **16 questions**, drop on
+`app/condition_courtroom_v5.html`. Each lists 25 conditions of one class and asks only how many
+are wrong, because an error *rate* is what the accuracy figure needs and a count gives the same
+estimate for a fraction of the answers.
 
-Best answered **after** `apply_slm`, so it can be regenerated stratified by provenance: the same
-8 answers then give accuracy for rules-derived and model-derived conditions separately, which is
-what decides whether the model earned its place.
+Regenerated stratified by provenance now that `apply_slm` has run: eight classes × {rules-derived,
+model-derived}, so the answers give **separate accuracy figures for rules and for the model**,
+which is what decides whether the model earned its place. A single blended number cannot answer
+it, because the model's conditions are by construction the ones the rules found hardest.
+
+Model-derived means the model contributed a reagent the rules missed, not merely that it ran on
+that record — reagents it merely reproduced are attributed to the rules and tagged accordingly.
+Reagents marked `[model]` in the listings are the model's own.
 
 ## Commercial screens: one vendor of six done
 
@@ -61,34 +94,35 @@ never matched to a formulation.
 the shortfall guard passed: 95 real conditions plus one artefact is indistinguishable from a
 complete plate by counting alone. Check that every well states a concentration.
 
-## Running right now (started 2026-07-31, unattended)
+## Done 2026-08-01: the model is in the data
 
-**Round 06 checkpoint sweep**, launched with `nohup`, survives any session reset.
+`models.apply_slm` ran for the first time, on checkpoint 2000. Output
+`data/interim/slm_components.parquet`, 166,233 components across 50,818 records, every row
+`parser = slm_v1` and `parse_confidence = 0.7`.
 
-    ls data/interim/slm/sweep06/*.json            # one per finished checkpoint
-    [ -f data/interim/slm/sweep06/DONE ] && echo complete
-    tr '\r' '\n' < data/interim/slm/sweep06/sweep.log | tail -2   # live progress
+| | |
+|---|---|
+| residual records offered | 52,817 (not the 59,673 the docstring claims; curation shrank it) |
+| records the model read | 50,930 |
+| components kept | 166,233, of which 17,490 are `not_a_component` |
+| dropped, name not in lexicon | 17,967 |
+| dropped, not in the text | 2,903 |
+| dropped, invalid JSON | 706 |
+| kept as typo correction | 5,526 |
 
-Scores checkpoints 250, 500, 1000, 2000, 4000 and 6000 against the frozen benchmark.
-Roughly 13 minutes each, so about 80 minutes total: each checkpoint runs a fidelity pass
-(16 batches) and then a residual pass (63 batches) which is four times the work. Resumable,
-because it skips any checkpoint whose JSON already exists.
+`assign.classify --slm-components …` then merged it. **Coverage 59.50% → 77.18%**, and
+`unidentified_reagent` as a blocking reason collapsed from 39,679 to 654, a 98.4% reduction.
+The other reasons grew — `no_amount` 24,333 → 26,179, `no_precipitant` 6,289 → 9,634, `mixture`
+5,096 → 6,033 — because records previously stuck at the first blocker now reach the next one.
+Classified rose 110,785 → 143,682, which is exactly the 32,897 freed net of those.
 
-**Read the results as a ranking, not as headline numbers.** The sweep passes `--limit 500`,
-so it scores 500 of the frozen set's 2,000 records. Same seed and same subset across all six,
-which is what makes "which checkpoint is best" answerable, but the absolute figures must not
-go into the round-by-round table beside full-set scores.
+**The lexicon is now the binding constraint, not the model.** 17,967 names were dropped purely
+because `synonyms.yaml` has never heard of them: 9.6% of everything generated, and six times the
+invention rate. Candidates named by the frozen run include `MALONATE`, `PHOSPHATE`, `PEG`,
+`JEFFAMINE`, `AMMONIUM_DIHYDROGEN_PHOSPHATE`, `TEA`, `SULFATE`. Lexicon additions now buy more
+coverage than more training does.
 
-**The question it settles.** Round 06 val loss was 0.022 by iteration 250 and 0.002 at 6,000,
-so the last 4,500 iterations moved it by 0.003. Loss has stopped discriminating. If
-identification and grounding are also flat from 250 onwards, future rounds should be about
-500 iterations rather than 6,000, which is most of a day back on every round. Loss cannot
-answer this: a model that has perfectly learned to imitate the rule parser has by
-construction learned nothing the rule parser does not already know, and near-zero loss is
-what both success and the circularity trap look like from the inside.
-
-**Then run `models.apply_slm`.** Six rounds are trained and the model has still contributed
-zero components to the dataset. It is the only step that turns training into data.
+Baseline snapshot kept at `data/interim/condition_classes.prelsm.parquet` for before/after work.
 
 ## Known gaps, each a deliberate choice
 

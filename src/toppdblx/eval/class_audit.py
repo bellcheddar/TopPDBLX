@@ -24,8 +24,19 @@ judgements informative rather than 200 repetitions of the popular ones.
 Every condition is listed with its raw deposition text and the reagents the parser found beneath
 it, so a wrong class and a wrong parse can be told apart while reading.
 
+**Stratified by provenance too, once the model has run.** `--slm-components` splits every class
+into the conditions the rules read and the conditions only the fine-tuned model could read, and
+asks about each separately. This is the only measurement that answers whether the model earned its
+place: a single blended accuracy figure cannot, because the model's conditions are by construction
+the ones the rules found hardest, and averaging them together hides both.
+
+Passing it also fixes the listings. The model's components live in their own file, so without it
+every model-derived condition prints "nothing identified" beneath its class and reads as an
+obvious error when it may be perfectly correct.
+
     ./run.sh eval.class_audit
     ./run.sh eval.class_audit --per-class 40
+    ./run.sh eval.class_audit --slm-components data/interim/slm_components.parquet
 """
 
 from __future__ import annotations
@@ -54,6 +65,10 @@ def main(argv: Optional[list[str]] = None) -> int:
                         default=config.INTERIM_DIR / "parsed_conditions.parquet")
     parser.add_argument("--components", type=Path,
                         default=config.INTERIM_DIR / "parsed_components.parquet")
+    parser.add_argument("--slm-components", type=Path, default=None,
+                        help="components read by the fine-tuned model. Supplying this splits "
+                             "every class by provenance, so rules-derived and model-derived "
+                             "conditions get separate accuracy numbers")
     parser.add_argument("--out", type=Path,
                         default=config.INTERIM_DIR / "class_audit_questions.json")
     parser.add_argument("--per-class", type=int, default=DEFAULT_PER_CLASS)
@@ -68,22 +83,66 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     joined = classes.join(conditions, on=["pdb_id", "crystal_id"], how="left")
 
-    parts: dict[tuple, list[str]] = {}
-    for row in components.iter_rows(named=True):
-        if row["name_canonical"]:
-            amount = (f"{row['concentration']:g} {row['unit']}"
-                      if row["concentration"] is not None and row["unit"] else "amount unstated")
-            parts.setdefault((row["pdb_id"], row["crystal_id"]), []).append(
-                f"{row['name_canonical'].replace('_', ' ').lower()} ({amount})")
+    # Only these five columns feed the listing, and the two parquets do not share a schema, so
+    # project rather than align: the rules carry range_low and friends that the model never emits.
+    LISTED = ["pdb_id", "crystal_id", "name_canonical", "concentration", "unit"]
+    components = components.select(LISTED)
+    slm = None
+    if args.slm_components:
+        slm = pl.read_parquet(args.slm_components).select(LISTED)
+
+    # A residual record is one the rules could not read *fully*, not one they read not at all, so
+    # a record can carry components from both parsers. Listing each frame in turn would print the
+    # reagents they agree on twice, which reads as a duplicate-component parsing bug that is not
+    # there. Key on the reagent and its amount, and let the rules claim it first: anything left
+    # over is the model's own contribution and is the part worth marking.
+    def amount_of(row: dict) -> str:
+        return (f"{row['concentration']:g} {row['unit']}"
+                if row["concentration"] is not None and row["unit"] else "amount unstated")
+
+    seen_parts: dict[tuple, dict[tuple, str]] = {}
+    for frame, source in ((components, "rules"), (slm, "model")):
+        if frame is None:
+            continue
+        for row in frame.iter_rows(named=True):
+            if not row["name_canonical"]:
+                continue
+            key = (row["pdb_id"], row["crystal_id"])
+            amount = amount_of(row)
+            seen_parts.setdefault(key, {}).setdefault(
+                (row["name_canonical"], amount),
+                f"{row['name_canonical'].replace('_', ' ').lower()} ({amount})"
+                + (" [model]" if source == "model" else ""))
+
+    parts: dict[tuple, list[str]] = {k: list(v.values()) for k, v in seen_parts.items()}
+
+    # **Model-derived means the model contributed something, not merely that it ran.** apply_slm
+    # generates for every residual record, including those where it only reproduced reagents the
+    # rules had already found. Counting those as model-derived would fill half the sample with
+    # conditions the rules could have classified alone, and the resulting figure would measure a
+    # mixture while claiming to measure the model.
+    model_read: set[tuple] = {k for k, v in parts.items()
+                              if any(p.endswith("[model]") for p in v)}
+    if model_read:
+        joined = joined.with_columns(
+            pl.struct("pdb_id", "crystal_id")
+              .map_elements(lambda s: "model" if (s["pdb_id"], s["crystal_id"]) in model_read
+                            else "rules", return_dtype=pl.Utf8)
+              .alias("provenance"))
+    else:
+        joined = joined.with_columns(pl.lit("rules").alias("provenance"))
 
     with Manifest(STAGE, params={"per_class": args.per_class, "seed": args.seed}) as m:
         m.add_input(args.classes).add_input(args.conditions)
+        if args.slm_components:
+            m.add_input(args.slm_components)
 
         questions: list[dict[str, Any]] = []
         sampled_per_class: dict[str, int] = {}
-        for (label,), frame in joined.group_by(["condition_class"]):
+        for (label, provenance), frame in joined.group_by(["condition_class", "provenance"]):
             if not label:
                 continue
+            stratum = f"{label} ({provenance}-derived)" if model_read else label
             # One row per distinct deposition text: judging the same condition twice adds no
             # evidence, and the popular conditions would otherwise crowd out everything else.
             seen: set[str] = set()
@@ -98,7 +157,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             chosen = candidates[:args.per_class]
             if not chosen:
                 continue
-            sampled_per_class[label] = len(chosen)
+            sampled_per_class[stratum] = len(chosen)
 
             # **One question per class, not per condition.** A per-class error *rate* is what the
             # accuracy number needs, and a rate can be read from a count: asking "how many of
@@ -125,16 +184,27 @@ def main(argv: Optional[list[str]] = None) -> int:
                 reason_note = (f" Most are unclassified because of "
                                f"{common.replace('_', ' ')}.")
 
+            provenance_note = ""
+            if model_read:
+                provenance_note = (
+                    " These are conditions the rules could not read on their own: reagents marked "
+                    "[model] were read by the fine-tuned model, the rest by the rules."
+                    if provenance == "model"
+                    else " Every reagent below was read by the rules alone.")
+
             questions.append({
-                "id": f"class::{label.replace('/', '_')}",
-                "group": "Classification accuracy",
+                "id": f"class::{label.replace('/', '_')}::{provenance}",
+                "group": ("Classification accuracy, model-derived" if provenance == "model"
+                          else "Classification accuracy"),
                 "question": f"How many of these {n} are in the wrong class?",
-                "why": (f"All {n} were classified as {label}.{reason_note} They are a random "
-                        f"sample of distinct conditions from that class. Read down the list and "
-                        f"count the ones that look wrong: the count is what the accuracy number "
-                        f"is built from, so a rough band is enough."),
+                "why": (f"All {n} were classified as {label}.{reason_note}{provenance_note} They "
+                        f"are a random sample of distinct conditions from that class. Read down "
+                        f"the list and count the ones that look wrong: the count is what the "
+                        f"accuracy number is built from, so a rough band is enough."),
                 "weight": n,
-                "weight_label": f"{label}, {n} sampled",
+                "weight_label": f"{stratum}, {n} sampled",
+                "provenance": provenance,
+                "condition_class": label,
                 "type": "choice",
                 "options": [
                     {"value": "0", "label": "None: all correct", "recommended": True},
@@ -153,19 +223,24 @@ def main(argv: Optional[list[str]] = None) -> int:
             "schema_version": config.SCHEMA_VERSION,
             "lexicon_version": config.ONTOLOGY_VERSION,
             "title": "Classification accuracy audit",
-            "intro": (f"{len(questions)} questions, one per class, covering "
-                      f"{sum(sampled_per_class.values())} sampled conditions, so "
+            "intro": (f"{len(questions)} questions, one per class"
+                      + (" and per provenance" if model_read else "") +
+                      f", covering {sum(sampled_per_class.values())} sampled conditions, so "
                       f"every class gets its own number. Each card lists 25 conditions with the "
                       f"reagents the parser found, and asks only how many are wrong. Everything "
                       f"defaults to none, so this is a hunt for the bad ones: skim the list, "
-                      f"pick the band, move on."),
+                      f"pick the band, move on."
+                      + (" Half the cards are conditions only the model could read: answering "
+                         "both halves is what separates the model's accuracy from the rules'."
+                         if model_read else "")),
             "n_questions": len(questions),
             "totals": {"per_class": sampled_per_class, "n_questions": len(questions)},
             "questions": questions,
         }
         args.out.write_text(json.dumps(payload, indent=2) + "\n")
         m.add_output(args.out).note(n_questions=len(questions), **{
-            f"n_{k.lower().replace('/', '_')}": v for k, v in sampled_per_class.items()})
+            "n_" + "".join(c if c.isalnum() else "_" for c in k.lower()): v
+            for k, v in sampled_per_class.items()})
 
         print(f"\n  {len(questions)} questions, covering "
               f"{sum(sampled_per_class.values())} sampled conditions:")
