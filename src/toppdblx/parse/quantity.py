@@ -18,7 +18,7 @@ from typing import Optional
 import regex as re
 
 from .schema import Unit
-from .text import PEG_MME_MOLECULAR_WEIGHT
+from .text import PEG_MME_MOLECULAR_WEIGHT, UNIT_WORDS
 
 _NUMBER = r"\d+(?:[.,]\d+)?"
 
@@ -43,6 +43,8 @@ _QUANTITY_BODY = rf"""
       | %\s*\(?\s*(?:v\s*/\s*v|v\s*:\s*v)\s*\)?
       | %\s*\(?\s*w\s*/\s*w\s*\)?
       | %
+      # Spelled-out forms, shared with `text.UNIT_BODY` so the two never diverge.
+      | {UNIT_WORDS}
       | mg\s*/\s*ml | mg\s*/\s*l | g\s*/\s*l
       | mm | µm | um | nm | m
     )?
@@ -61,6 +63,16 @@ _UNIT_MAP: dict[str, Unit] = {
     "%v/v": "percent_v_v", "%v:v": "percent_v_v",
     "m": "molar", "mm": "millimolar", "µm": "micromolar", "um": "micromolar",
     "nm": "nanomolar", "mg/ml": "mg_ml", "mg/l": "g_l", "g/l": "g_l",
+    # The spelled-out forms, normalised by `_canonical_unit` (spaces, parens and hyphens
+    # removed) before lookup: "per cent" and "milli-molar" arrive here as one word.
+    "molar": "molar", "mol/l": "molar", "mol": "molar",
+    "millimolar": "millimolar", "millim": "millimolar", "mmol/l": "millimolar",
+    "nanom": "nanomolar",
+    "mmol": "millimolar",
+    "micromolar": "micromolar", "microm": "micromolar",
+    "µmol/l": "micromolar", "umol/l": "micromolar",
+    "nanomolar": "nanomolar", "nmol/l": "nanomolar",
+    "percent": "percent_unspecified",
 }
 
 # Percent units that the reagent's chemistry must disambiguate.
@@ -130,7 +142,9 @@ def _to_float(text: str) -> Optional[float]:
 def _canonical_unit(raw: Optional[str]) -> Optional[Unit]:
     if not raw:
         return None
-    key = re.sub(r"[\s()]", "", raw).lower()
+    # Hyphens too: "milli-molar" and "micro-molar" are the same unit as their
+    # unhyphenated spellings, and the map should not carry both.
+    key = re.sub(r"[\s()\-]", "", raw).lower()
     return _UNIT_MAP.get(key)
 
 

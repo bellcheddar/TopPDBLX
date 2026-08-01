@@ -181,3 +181,41 @@ def test_a_bare_molecular_weight_before_mme_is_not_an_amount():
 def test_an_explicit_peg_mme_keeps_its_amount():
     found = extract("5% peg mme 5000")
     assert (found.value, found.unit) == (5.0, "percent_unspecified")
+
+
+# Spelled-out unit words, added 2026-08-01. 1,409 occurrences in the corpus where the depositor
+# stated the unit and the parser discarded it, leaving infer_unit to guess on a value whose unit
+# was never in doubt.
+
+@pytest.mark.parametrize("clause,value,unit", [
+    ("100 millimolar nacl", 100.0, "millimolar"),
+    ("200 milli-m nacl", 200.0, "millimolar"),
+    ("500 mmol/l nacl", 500.0, "millimolar"),
+    ("1.5 mmol nacl", 1.5, "millimolar"),
+    ("0.1 molar hepes", 0.1, "molar"),
+    ("2 mol/l nacl", 2.0, "molar"),
+    ("38 mol nacl", 38.0, "molar"),
+    ("100 microm zncl2", 100.0, "micromolar"),
+    ("96 micromolar zn", 96.0, "micromolar"),
+    ("5 micro-molar x", 5.0, "micromolar"),
+    ("20 percent peg 3350", 20.0, "percent_unspecified"),
+    ("20 per cent peg 3350", 20.0, "percent_unspecified"),
+])
+def test_spelled_out_units_are_read_as_stated(clause, value, unit):
+    found = extract(clause)
+    assert (found.value, found.unit) == (value, unit)
+    assert found.unit_explicit is True, "a stated unit must never be recorded as inferred"
+
+
+@pytest.mark.parametrize("clause", [
+    "10 ul of reservoir", "500 nl drop", "2 ml solution", "20 microliter drop",
+])
+def test_volume_words_are_not_concentration_units(clause):
+    """ul (6,395), nl (1,364), ml (1,136) and microliter (940) are all commoner than any
+    concentration word here, and every one describes the drop rather than the chemistry."""
+    assert extract(clause).unit is None
+
+
+@pytest.mark.parametrize("clause", ["20 mole x", "5 molybdate", "3 micrometer y"])
+def test_words_that_merely_start_like_a_unit_are_not_units(clause):
+    assert extract(clause).unit is None

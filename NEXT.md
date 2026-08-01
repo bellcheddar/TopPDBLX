@@ -193,15 +193,32 @@ The guard now masks these in the output, which makes writing them down matter mo
   already gives the right outcome — reagent kept, stray amount dropped, record flagged — so this
   is closed rather than open.
 
-### Found while measuring the above, not yet fixed
+### Done 2026-08-01: spelled-out unit words
 
-**Spelled-out and variant unit words are not recognised**, so a stated unit is discarded and
-`infer_unit` guesses in its place. `100 millimolar nacl`, `500 mmol/l nacl`, `200 milli-m nacl`,
-`100 microm zncl2` all reach the parser with no unit. This is a bigger prize than either bug
-above: the unit is *in the text* and being thrown away, and unit inference is described in the
-parser's own docstring as its highest-consequence rule. `_UNIT_BODY` in `parse/text.py` and
-`_QUANTITY_BODY` in `parse/quantity.py` both need the word forms, and they must gain them
-together.
+Found while measuring the line-break case, and worth more than either bug it was found beside.
+**1,409 occurrences where the depositor stated the unit in words and the parser discarded it**,
+leaving `infer_unit` to guess on a value whose unit was never in doubt. Counted: millimolar 533,
+molar 239, microm 169, percent 166, micromolar 96, mol/l 82, mmol/l 38, mol 38, mmol 14,
+millim 11, per cent 9, plus hyphenated and spaced spellings of each.
+
+`UNIT_WORDS` now lives in `parse/text.py` and is imported by `parse/quantity.py`, so the two
+cannot drift; `_canonical_unit` strips hyphens as well as spaces, so `milli-molar` and
+`per cent` need no separate map entries.
+
+Identification **515,878 → 516,241**, rate 0.8519 → **0.8526**, `unidentified_reagent` as a
+blocking reason 653 → 632. Components fell 605,592 → 605,481, which is the point: a unit word
+was previously part of the reagent's name and made a clause that identified to nothing.
+
+**Volume words are deliberately excluded.** `ul` (6,395), `nl` (1,364), `ml` (1,136) and
+`microliter` (940) are each commoner than any concentration word here, and every one describes
+the drop rather than the chemistry. A test pins this, along with `mole`, `molybdate` and
+`micrometer`, which merely start like units.
+
+**`unit_inferred` rose 192,146 → 192,578, and that is not a regression.** `12 PERCENT MEPEG 2000`
+now identifies where the whole clause used to fail, and `percent` maps to `percent_unspecified`
+because the word genuinely does not say w/v or v/v — so chemistry resolves it and the flag is
+set, honestly. Of the 4,322 components in records using a spelled-out unit, 3,427 carry an
+explicit one.
 
 ### Still open from the audit
 

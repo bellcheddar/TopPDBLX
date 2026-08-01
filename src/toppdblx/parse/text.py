@@ -21,9 +21,31 @@ import regex as re
 _DASHES = dict.fromkeys(map(ord, "‐‑‒–—―−"), "-")
 
 _NUMBER = r"\d+(?:[.,]\d+)?"
-_UNIT_BODY = r"""(?:
+
+# Spelled-out and variant unit words: 1,409 occurrences in the corpus, every one a unit the
+# depositor actually stated and the parser then discarded, leaving `infer_unit` to guess in its
+# place on a value whose unit was never in doubt. Counted: millimolar 533, molar 239, microm 169,
+# percent 166, micromolar 96, mol/l 82, mmol/l 38, mol 38, mmol 14, millim 11, per cent 9.
+#
+# **Volume words are deliberately absent.** `ul` (6,395), `nl` (1,364), `ml` (1,136) and
+# `microliter` (940) are far commoner than any of these, and every one of them describes the drop
+# rather than a concentration. Admitting them would turn setup text into chemistry.
+#
+# Longest-first within each family, so "millimolar" cannot be clipped to "milli" by an earlier
+# alternative. `\b` after the short forms is what keeps "microm" out of "micrometer" and "mol"
+# out of "mole".
+UNIT_WORDS = r"""
+      milli\s*-?\s*molar | milli\s*-?\s*m\b | mmol\s*/\s*l\b | mmol\b
+    | micro\s*-?\s*molar | micro\s*-?\s*m\b | (?:µ|u)mol\s*/\s*l\b
+    | nano\s*-?\s*molar  | nano\s*-?\s*m\b  | nmol\s*/\s*l\b
+    | molar | mol\s*/\s*l\b | mol\b
+    | per\s*cent | percent
+"""
+
+_UNIT_BODY = rf"""(?:
       %\s*\(?\s*(?:w\s*/\s*v|v\s*/\s*v|w\s*/\s*w)\s*\)?
     | %
+    | {UNIT_WORDS}
     | m\b | mm\b | µm\b | um\b | nm\b | mol/l\b
     | mg\s*/\s*ml\b | g\s*/\s*l\b | mg\s*/\s*l\b
 )"""
