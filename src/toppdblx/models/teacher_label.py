@@ -31,6 +31,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import random
 from pathlib import Path
 from typing import Any, Optional
 
@@ -113,7 +114,7 @@ FEWSHOT: list[tuple[str, str]] = [
 
 
 def _load_targets(args: argparse.Namespace) -> list[dict[str, Any]]:
-    """The records to label: either a named subset or the live residual."""
+    """The records to label: either a named subset or a sample of the live residual."""
     residual = {}
     for line in (args.data_dir / "residual.jsonl").read_text().splitlines():
         if line.strip():
@@ -121,7 +122,18 @@ def _load_targets(args: argparse.Namespace) -> list[dict[str, Any]]:
             residual[(row["pdb_id"], row["crystal_id"])] = row
 
     if not args.records:
-        return list(residual.values())
+        rows = list(residual.values())
+        if args.exclude:
+            held = {(r["pdb_id"], r.get("crystal_id", "1"))
+                    for r in json.loads(args.exclude.read_text()).get("records", [])}
+            rows = [r for r in rows if (r["pdb_id"], r["crystal_id"]) not in held]
+        if args.sample and args.sample < len(rows):
+            # Random, not the head. `residual.jsonl` is ordered by pdb_id and pdb_id is
+            # chronological, so the first 5,000 records are the oldest depositions in the
+            # corpus: all-caps, differently punctuated, and not what the model will mostly meet.
+            random.Random(args.seed).shuffle(rows)
+            rows = rows[:args.sample]
+        return rows
 
     doc = json.loads(args.records.read_text())
     rows = doc.get("records") or doc.get("questions") or []
@@ -146,6 +158,15 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument("--progress", type=Path, default=None,
                         help="defaults to teacher_progress_<model>.jsonl, so candidate "
                              "teachers never overwrite each other's work")
+    parser.add_argument("--sample", type=int, default=None,
+                        help="label a random sample of the residual rather than its head. The "
+                             "residual is sorted by pdb_id, which is chronological, so --limit "
+                             "alone would train only on the oldest depositions and their "
+                             "conventions")
+    parser.add_argument("--exclude", type=Path, default=None,
+                        help="a gold set whose records must never be labelled. Training on the "
+                             "yardstick is how a yardstick stops measuring anything")
+    parser.add_argument("--seed", type=int, default=41)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--batch", type=int, default=BATCH)
     args = parser.parse_args(argv)
