@@ -39,7 +39,8 @@ from tqdm import tqdm
 
 from .. import config
 from ..manifest import Manifest
-from ..parse import quantity
+from ..parse import lexicon as lexicon_module, quantity
+from ..parse.text import normalise, tidy_name
 from .apply_slm import SCHEMA, SLM_CONFIDENCE
 from .eval_slm import check, grounded_in_text, load_aliases, load_lexicon
 
@@ -47,7 +48,15 @@ STAGE = "models.teacher_label"
 
 DEFAULT_MODEL = "mlx-community/Qwen2.5-32B-Instruct-4bit"
 BATCH = 8
-MAX_TOKENS = 512
+# Double the SLM's budget, because the teacher is not terse: it was trained to emit compact JSON
+# and a general instruct model writes every field out with spacing.
+#
+# **This was not what caused the invalid generations, despite looking like it.** 18 of the first
+# 96 were scored invalid and the last visible characters were a half-written object, so truncation
+# was the obvious read. It was wrong: raising the budget changed the count by zero. Every one of
+# those generations was complete, ended in `}]`, and failed on `bad_unit` -- see `tidy_generation`.
+# The headroom is kept anyway, being cheap, but the fix was elsewhere.
+MAX_TOKENS = 1024
 PARSER_NAME = "teacher_v1"
 
 # Deliberately the same contract as the SLM's own system prompt, so a label can be used as a
@@ -71,6 +80,36 @@ SYSTEM = (
     "- A cryoprotectant added after growth still gets role cryo, not precipitant.\n"
     "- If the text states an impossible amount, report it as written; do not silently fix it."
 )
+
+
+# **Worked examples, because the instructions alone were not enough.** Zero-shot, this teacher
+# scored below the 360M student it was meant to teach: it wrote units on non-components, invented
+# reagents at seven times the student's rate, and reached for its own spelling of a canonical id.
+# Showing the contract beats describing it.
+#
+# Taken verbatim from `train.jsonl`, which is drawn from records the *rules* read confidently.
+# That matters twice over: the answers are known-good, and the split is disjoint from both the
+# residual and the 96 gold records, so nothing the teacher is scored on appears in its prompt.
+# Hardcoded rather than sampled at run time so a rebuild of the training set cannot silently
+# change the prompt and with it every label the teacher has produced.
+FEWSHOT: list[tuple[str, str]] = [
+    ("0.2 M ammonium sulfate, 0.02 M sodium chloride, 0.02 M sodium acetate pH 4.0, 33% PEG 200",
+     '[{"role":"salt","name":"AMMONIUM_SULFATE","amount":0.2,"unit":"molar"},'
+     '{"role":"salt","name":"SODIUM_CHLORIDE","amount":0.02,"unit":"molar"},'
+     '{"role":"buffer","name":"SODIUM_ACETATE","amount":0.02,"unit":"molar"},'
+     '{"role":"precipitant","name":"PEG_200","amount":33.0,"unit":"percent_v_v"}]'),
+    ("100 MM AMMONIUM ACETATE, 50 MM MAGNESIUM ACETATE, 1 MM DTT, 12-16 % PEG 6000",
+     '[{"role":"salt","name":"AMMONIUM_ACETATE","amount":100.0,"unit":"millimolar"},'
+     '{"role":"salt","name":"MAGNESIUM_ACETATE","amount":50.0,"unit":"millimolar"},'
+     '{"role":"additive","name":"DTT","amount":1.0,"unit":"millimolar"},'
+     '{"role":"precipitant","name":"PEG_6000","amount":14.0,"unit":"percent_w_v"}]'),
+    # The two things it got wrong on its own: a temperature is a non-component and carries no
+    # unit, and a protein concentration is setup rather than chemistry.
+    ("20% PEG 3350, 0.2 M NaCl, 10 mg/mL protein, VAPOR DIFFUSION, temperature 293K",
+     '[{"role":"precipitant","name":"PEG_3350","amount":20.0,"unit":"percent_w_v"},'
+     '{"role":"salt","name":"SODIUM_CHLORIDE","amount":0.2,"unit":"molar"},'
+     '{"role":"not_a_component","name":null,"amount":null,"unit":null}]'),
+]
 
 
 def _load_targets(args: argparse.Namespace) -> list[dict[str, Any]]:
@@ -124,6 +163,55 @@ def main(argv: Optional[list[str]] = None) -> int:
     aliases = load_aliases()
     targets = _load_targets(args)
 
+    # **The teacher is mapped onto the lexicon, not required to have memorised it.** The SLM was
+    # trained to emit canonical ids, so it mostly does; a general model has never seen them and
+    # writes the chemistry the way a chemist would. Of the first run's 101 rejected names, the
+    # commonest were TRIS_HCL, SODIUM_HEPES, MGCL2, KCL, PEG400 and MgSO4 -- every one a real
+    # reagent the lexicon already knows under an alias. Rejecting those measures whether the
+    # teacher guessed our internal spelling, which is not the question being asked of it.
+    lex_full = lexicon_module.load()
+    alias_index, by_id = lex_full.index(), lex_full.by_id()
+
+    def tidy_generation(text: str) -> str:
+        """Repair the two things this teacher gets wrong about the *schema*, not the chemistry.
+
+        **A whole record was being discarded over a unit on a non-component.** The model marks
+        "temperature 277K" as `not_a_component`, which is right, and then writes `"unit": "K"` or
+        `"DEG_C"` on it. `check` validates units against a closed vocabulary and fails the entire
+        generation, so every real reagent in that record went with it: 18 of 96 records, and not
+        one of them was malformed JSON. A non-component has no amount and no unit by definition,
+        so both are cleared rather than argued with.
+
+        The second is the string `"null"` where JSON null was meant, which is a formatting slip
+        and nothing more.
+        """
+        try:
+            parsed = json.loads(text)
+        except (ValueError, TypeError):
+            return text
+        if not isinstance(parsed, list):
+            return text
+        for item in parsed:
+            if not isinstance(item, dict):
+                continue
+            for field in ("amount", "unit"):
+                value = item.get(field)
+                if isinstance(value, str) and value.strip().lower() in ("null", "none", ""):
+                    item[field] = None
+            if item.get("role") == "not_a_component":
+                item["amount"] = None
+                item["unit"] = None
+        return json.dumps(parsed)
+
+    def canonicalise(name: Optional[str]) -> Optional[str]:
+        """A generated reagent name to a canonical id, or None if the lexicon cannot place it."""
+        if not name or not isinstance(name, str):
+            return None
+        if name in by_id:
+            return name
+        reagent = alias_index.get(normalise(tidy_name(name.replace("_", " "))))
+        return reagent.canonical_id if reagent else None
+
     done: set[tuple] = set()
     if args.progress.exists():
         for line in args.progress.read_text().splitlines():
@@ -149,8 +237,12 @@ def main(argv: Optional[list[str]] = None) -> int:
                 for i in tqdm(range(0, len(pending), args.batch), desc="labelling",
                               unit="batch"):
                     chunk = pending[i:i + args.batch]
+                    shots: list[dict[str, str]] = []
+                    for shot_user, shot_answer in FEWSHOT:
+                        shots.append({"role": "user", "content": shot_user})
+                        shots.append({"role": "assistant", "content": shot_answer})
                     prompts = [tokenizer.apply_chat_template(
-                        [{"role": "system", "content": SYSTEM},
+                        [{"role": "system", "content": SYSTEM}, *shots,
                          {"role": "user", "content": r["text"]}],
                         add_generation_prompt=True) for r in chunk]
                     result = batch_generate(model, tokenizer, prompts=prompts,
@@ -174,14 +266,15 @@ def main(argv: Optional[list[str]] = None) -> int:
             key = (row["pdb_id"], row["crystal_id"])
             if wanted is not None and key not in wanted:
                 continue
-            scored = check(row["generated"], lexicon)
+            scored = check(tidy_generation(row["generated"]), lexicon)
             if not scored["valid"]:
                 invalid += 1
                 continue
             emitted, index = [], 0
             for item in scored["parsed"]:
-                role, name = item.get("role"), item.get("name")
-                if role != "not_a_component" and name not in lexicon:
+                role = item.get("role")
+                name = canonicalise(item.get("name"))
+                if role != "not_a_component" and name is None:
                     unknown += 1
                     continue
                 source = text_by_key.get(key, "")
