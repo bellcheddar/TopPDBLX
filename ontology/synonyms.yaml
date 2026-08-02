@@ -1,4 +1,4 @@
-version: 0.5.0
+version: 0.5.1
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -292,8 +292,6 @@ reagents:
   - benzamidine
   - benzamidine hcl
   - benzamidine hydrochloride
-  - guanidine hydrochloride
-  - betaine hydrochloride
   - benzamidine-hcl
   note: Serine protease inhibitor, added to protect the construct rather than to precipitate it.
 - chem_class: additive
@@ -313,6 +311,7 @@ reagents:
   canonical_id: BETAINE
   display_name: Betaine
   aliases:
+  - betaine hydrochloride
   - betaine
 - canonical_id: BETA_MERCAPTOETHANOL
   display_name: Beta-mercaptoethanol
@@ -848,7 +847,6 @@ reagents:
   - dibasic sodium phosphate
   - na2po4
   - di-sodium hydrogen phosphate
-  - sodium pyrophosphate
   - napo4
   note: Basic in solution (about pH 9 at 0.1 M).
 - chem_class: additive
@@ -1176,6 +1174,7 @@ reagents:
   canonical_id: GUANIDINE_HCL
   display_name: Guanidine hcl
   aliases:
+  - guanidine hydrochloride
   - guanidine hcl
 - chem_class: additive
   default_unit: millimolar
@@ -1585,6 +1584,9 @@ reagents:
   canonical_id: L_SERINE
   display_name: L-serine
   aliases:
+  # Bare "serine" was an alias of SPERMINE until 2026-08-02, an amino acid aliased
+  # to a polyamine. It belongs here: in a crystallisation drop it is the L form.
+  - serine
   - l-serine
 - chem_class: additive
   default_unit: millimolar
@@ -1666,10 +1668,7 @@ reagents:
   - l-malic acid
   - malate
   - sodium malate
-  - malonic acid
   - dl malic acid
-  - maleic acid
-  - sodium molybdate
 - chem_class: additive
   default_unit: millimolar
   canonical_id: MALTOSE
@@ -3027,6 +3026,7 @@ reagents:
   hofmeister_rank: -3
   default_unit: molar
   aliases:
+  - kcitrate
   - potassium citrate tribasic
   - tripotassium citrate
   - tri-potassium citrate
@@ -3327,6 +3327,70 @@ reagents:
   display_name: Sodium 4-(hydroxymercury)benzoate
   aliases:
   - sodium 4-(hydroxymercury)benzoate
+- canonical_id: MALONIC_ACID
+  display_name: Malonic acid
+  chem_class: buffer
+  default_unit: molar
+  buffer_pka: 2.83
+  aliases:
+  - malonic acid
+  note: 'Was an alias of MALIC_ACID until 2026-08-02. A different diacid, and MALIC_ACID had
+    swallowed three of them: malonic, maleic and molybdate. 123 records.'
+- canonical_id: MALEIC_ACID
+  display_name: Maleic acid
+  chem_class: buffer
+  default_unit: molar
+  buffer_pka: 1.92
+  aliases:
+  - maleic acid
+  note: 'Was an alias of MALIC_ACID until 2026-08-02. One letter apart in spelling and a
+    different molecule: malic is hydroxysuccinic, maleic is the cis-butenedioic. 42 records.'
+- canonical_id: SODIUM_MOLYBDATE
+  display_name: Sodium molybdate
+  chem_class: salt
+  default_unit: molar
+  aliases:
+  - sodium molybdate
+  - na molybdate
+  note: 'Was an alias of MALIC_ACID until 2026-08-02, which is not a near miss of any kind.
+    19 records.'
+- canonical_id: SODIUM_OXALATE
+  display_name: Sodium oxalate
+  chem_class: salt
+  default_unit: molar
+  aliases:
+  - sodium oxalate
+  - na oxalate
+  note: 'Was an alias of SODIUM_OXAMATE until 2026-08-02. Oxalate is the diacid anion, oxamate
+    the amide: different reagents. 50 records.'
+- canonical_id: SODIUM_THIOSULFATE
+  display_name: Sodium thiosulfate
+  chem_class: salt
+  default_unit: molar
+  aliases:
+  - sodium thiosulfate
+  - sodium thiosulphate
+  - na thiosulfate
+  note: 'Was an alias of SODIUM_SULFATE until 2026-08-02, along with sodium sulfite. 30 records.'
+- canonical_id: SODIUM_SULFITE
+  display_name: Sodium sulfite
+  chem_class: salt
+  default_unit: molar
+  aliases:
+  - sodium sulfite
+  - sodium sulphite
+  note: 'Was an alias of SODIUM_SULFATE until 2026-08-02. Sulfite and sulfate differ by an
+    oxygen and by Hofmeister behaviour. 23 records.'
+- canonical_id: SODIUM_PYROPHOSPHATE
+  display_name: Sodium pyrophosphate
+  chem_class: salt
+  default_unit: molar
+  aliases:
+  - sodium pyrophosphate
+  - tetrasodium pyrophosphate
+  - na pyrophosphate
+  note: 'Was an alias of DISODIUM_HYDROGEN_PHOSPHATE until 2026-08-02. A condensed diphosphate,
+    not the orthophosphate. 29 records.'
 - canonical_id: SODIUM_ACETATE
   display_name: Sodium acetate
   chem_class: buffer
@@ -3400,7 +3464,6 @@ reagents:
   - sodium cacodilate
   - sodium cacodylate/hcl
   - cacodilate
-  - carboxylic acid
   note: Bare "cacodylate" is mapped here because the sodium salt is essentially the only form used in
     crystallisation. Bare "citrate", "acetate" and "phosphate" are deliberately left unmapped, since those
     genuinely vary by counter-ion.
@@ -3432,7 +3495,6 @@ reagents:
   - citrate
   - sodium citrate tribasic dehydrate
   - sodium citrate buffer
-  - kcitrate
   - tri-na citrate
   - tri-sodium citrate dehydrate
   - sodium citrate dibasic
@@ -3447,7 +3509,6 @@ reagents:
   - tris-sodium citrate
   - sodiumcitrate
   - m tri-sodium citrate
-  - na nitrate
   note: Citrate is triprotic (3.13, 4.76, 6.40). The middle pKa is recorded; crystallisation citrate buffers
     are typically used between pH 4 and 6.
 - canonical_id: SODIUM_DIHYDROGEN_PHOSPHATE
@@ -3546,6 +3607,7 @@ reagents:
   hofmeister_rank: 2
   default_unit: molar
   aliases:
+  - na nitrate
   - nano3
 - chem_class: salt
   default_unit: molar
@@ -3561,7 +3623,6 @@ reagents:
   aliases:
   - oxamate
   - sodium oxamate hydrate
-  - sodium oxalate
   - oxalate
   note: Added from the 2026-07-29 audit, 216 components.
 - canonical_id: SODIUM_PHOSPHATE
@@ -3630,8 +3691,6 @@ reagents:
   - sodium sulphate
   - na2so4
   - naso4
-  - sodium thiosulfate
-  - sodium sulfite
 - canonical_id: SODIUM_TARTRATE
   display_name: Sodium tartrate
   chem_class: salt
@@ -3679,7 +3738,6 @@ reagents:
   - spermine tetra-hcl
   - spermine-hcl
   - spermine tetrachloride
-  - serine
   - spermine hcl
   - spermine 4hcl
 - canonical_id: SPG
@@ -3760,6 +3818,7 @@ reagents:
   chem_class: additive
   default_unit: millimolar
   aliases:
+  - tcep hydrochloride
   - tris(2-carboxyethyl)phosphine
   - tcep-hcl
   - tcep hcl
@@ -3871,7 +3930,6 @@ reagents:
   - tris.cl
   - tris/cl
   - bistris-hcl
-  - tcep hydrochloride
   - tris/hcl buffer
   - tris_hcl
   - tris-base

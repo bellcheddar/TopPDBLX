@@ -7,7 +7,7 @@ Two artefacts are versioned here, independently:
 
 | File | Version | What it is |
 |------|---------|------------|
-| `synonyms.yaml` | 0.5.0 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
+| `synonyms.yaml` | 0.5.1 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
 | `groups.yaml` | 0.3.0 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
 
 ## groups.yaml
@@ -106,6 +106,44 @@ Known gaps recorded rather than hidden:
   could ever have been assigned to it.
 
 ## synonyms.yaml
+
+### 0.5.1 (2026-08-02)
+
+**542 reagents, 1,306 names.** Twelve more aliases naming a different molecule, found by scanning
+every entry for a *multi-word* alias sharing no substantial word with its own name. The first pass
+of that scan ranked by corpus frequency and surfaced only formulae (`nacl`, `mgcl2`) and
+concatenations (`peg3350`), which are legitimate; restricting it to multi-word English names cut
+246 candidates to 50 and made the real errors visible.
+
+| Entry | Alias removed | Now resolves to | Records |
+|---|---|---|---|
+| `SODIUM_CACODYLATE` | `carboxylic acid` | nothing, correctly: it names a chemical class | 381 |
+| `MALIC_ACID` | `malonic acid` | new `MALONIC_ACID` | 123 |
+| `BENZAMIDINE` | `guanidine hydrochloride` | `GUANIDINE_HCL`, which already existed | 73 |
+| `SODIUM_OXAMATE` | `sodium oxalate` | new `SODIUM_OXALATE` | 50 |
+| `MALIC_ACID` | `maleic acid` | new `MALEIC_ACID` | 42 |
+| `SODIUM_SULFATE` | `sodium thiosulfate` | new `SODIUM_THIOSULFATE` | 30 |
+| `DISODIUM_HYDROGEN_PHOSPHATE` | `sodium pyrophosphate` | new `SODIUM_PYROPHOSPHATE` | 29 |
+| `TRIS` | `tcep hydrochloride` | `TCEP`, which already existed | 25 |
+| `BENZAMIDINE` | `betaine hydrochloride` | `BETAINE`, which already existed | 25 |
+| `SODIUM_SULFATE` | `sodium sulfite` | new `SODIUM_SULFITE` | 23 |
+| `SODIUM_CITRATE` | `na nitrate` | `SODIUM_NITRATE`, which already existed | 19 |
+| `MALIC_ACID` | `sodium molybdate` | new `SODIUM_MOLYBDATE` | 19 |
+
+Plus `SPERMINE` ← `serine` and `SODIUM_CITRATE` ← `kcitrate`, both found the same way.
+
+**`MALIC_ACID` had swallowed three unrelated reagents** — malonic acid, maleic acid and sodium
+molybdate — and drops from 636 components to 636 minus the 87 that were never malic acid.
+**`SPERMINE` had swallowed serine**, an amino acid aliased to a polyamine; `L_SERINE` already
+existed, so the alias simply belonged there.
+
+None of this was visible in any metric. A wrong alias *raises* the identification rate, because
+the name resolves: the corpus looked better for being wrong. Identification moves 516,301 to
+516,291, entirely from `carboxylic acid` correctly ceasing to resolve.
+
+The uniqueness validator earned its place three times in one edit, rejecting `l-serine`,
+`malonate` and `maleate` as already claimed — which is how `L_SERINE`, `SODIUM_MALONATE` and
+`SODIUM_MALEATE` turned out to exist already.
 
 ### 0.5.0 (2026-08-01)
 
