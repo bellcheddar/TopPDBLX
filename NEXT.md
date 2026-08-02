@@ -3,7 +3,32 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
-## Running now: teacher distillation (2026-08-02)
+## Closed 2026-08-02: the teacher route did not work
+
+Round 07 trained on 1,926 teacher-labelled residual records (union target, 92.6% precise by
+construction) and **failed the pre-committed target**: recall above 91.5% without dropping below
+99% precision.
+
+| | round 06 final | round 07 |
+|---|---|---|
+| precision | **99.6%** | 92.3% |
+| recall | 91.5% | **93.9%** |
+| false positives | **1** | 23 |
+
+Paired on the same 96 records: recall recovered 18 and lost 11 (p = 0.26, not significant), false
+positives 1 → 23 (p < 0.0001). **The signal transferred weakly and the noise transferred
+strongly** — the student learned the teacher's 7.4% false-positive rate almost exactly.
+
+Adapters for every round are public at
+[`Dellboy/toppdblx-residual-parser`](https://huggingface.co/Dellboy/toppdblx-residual-parser),
+round 07 included, with the regression stated in its card.
+
+**What remains untried, in order of prior:** agreement-only labels as an *additive* signal rather
+than a replacement (100% precise, but probably teaches nothing the student does not already say);
+a stronger teacher; or accepting that a general 32B is not a good enough labeller at this
+precision bar and that the rules-distilled student is the best available parser.
+
+## Superseded: teacher distillation (2026-08-02)
 
 `models.teacher_label` is labelling ~5,000 residual records with a local 4-bit Qwen2.5-32B, gold
 set excluded by name, resumable per record.
@@ -62,8 +87,17 @@ imitating `rules_v3` more exactly, which is capacity spent learning what is alre
 it came at the cost of the residual. Val loss moved 0.003 across the whole span and pointed at
 6,000 throughout. **Watch fidelity as a divergence signal, never as a score.**
 
-Consequences: promote **checkpoint 2000**, not the final adapter; train future rounds for ~2,000
-iterations; keep judging rounds on residual identification.
+**Consequences, revised 2026-08-02.** ~~Promote checkpoint 2000, not the final adapter.~~ That was
+wrong, and only the gold set could show it: against hand-labelled truth the final adapter beats
+checkpoint 2000, 99.6% precision to 95.7%, one false positive against twelve (p = 0.0034).
+Identification cannot see a reagent that is real, in the text, and not what the depositor meant.
+**Judge checkpoints on the gold set; the frozen benchmark compares rounds but cannot choose within
+one.** Train future rounds for ~2,000 iterations still stands.
+
+**`apply_slm` accepted `--checkpoint` and ignored it** until 2026-08-02, so the 163,353 components
+released on 2026-08-01 came from the final adapter rather than the promoted checkpoint. That was
+the better model, so the release is unaffected — but every note claiming it used checkpoint 2000
+was wrong.
 
 ### Correction: `--limit` never applied to the frozen benchmark
 

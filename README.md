@@ -298,79 +298,40 @@ It also confirmed the shape every audit had gestured at: **precision was never t
 
 Tracked honestly, including the rounds that delivered nothing. From round 05 onwards these are measured on the **frozen benchmark**, so they are comparable to each other; earlier rounds were scored against a live residual that shrank from the easy end every time curation improved, and are not comparable to anything. Components contributed counts rows that actually reached the dataset.
 
-| Round | What changed | Identification | Grounding | Components contributed |
-|---|---|---|---|---|
-| 01 | Bootstrap distillation, lexicon 0.1.0 | 87.0% | not measured | 0 |
-| 02 | `not_a_component` class, confidence gate fixed | 89.7% | not measured | 0 |
-| 03 | Cosine schedule, dropout, class rebalanced | 88.4% | not measured | 0 |
-| 04 | Retrained on the 502-reagent lexicon | abandoned, trained on duplicated data | | 0 |
-| 05 | Deduplicated training set, 95,818 distinct pairs | 87.58% | 93.41% | 0 |
-| 06 | Full epoch, LoRA rank 16, 6,856 empty-answer examples | **90.52%** at iteration 2,000 | 94.36% | **163,353** |
-| 07 | Teacher-distilled labels on the residual | in progress | in progress | |
+| Round | What changed | Identification | Grounding | Components contributed | Adapter |
+|---|---|---|---|---|---|
+| 01 | Bootstrap distillation, lexicon 0.1.0 | 87.0% | not measured | 0 | [round01](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01) |
+| 02 | `not_a_component` class, confidence gate fixed | 89.7% | not measured | 0 | [round02](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round02) |
+| 03 | Cosine schedule, dropout, class rebalanced | 88.4% | not measured | 0 | [round03](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03) |
+| 04 | Retrained on the 502-reagent lexicon | abandoned, trained on duplicated data | | 0 | [round04](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04) |
+| 05 | Deduplicated training set, 95,818 distinct pairs | 87.58% | 93.41% | 0 | [round05](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05) |
+| 06 | Full epoch, LoRA rank 16, 6,856 empty-answer examples | **90.52%** at iteration 2,000 | 94.36% | **163,353** | [round06](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) |
+| 07 | Teacher-distilled labels on the residual | not run | not run | 0, **regressed** | [round07](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) |
 
-**That last column was zero for five rounds, and is not any more.** `models.apply_slm` ran for the first time on 2026-08-01, on checkpoint 2000 of round 06. It read 50,930 of 52,817 residual records and contributed 163,353 components, and the classified share of the corpus went from **59.5% to 77.1%** in one step: `unidentified_reagent` as a blocking reason fell from 39,679 conditions to 631.
+### 🤗 Models on HuggingFace
 
-| Change | Identification |
-|---|---|
-| Starting point | 79.1% |
-| Lexicon curation, rounds 1 and 2 | 84.5% |
-| Prose stripping, a parser fix of about forty lines | 85.2% |
-| Lexicon 0.4.1 and 0.5.0, splitter and unit-word fixes | **85.3%** |
-| The fine-tuned model | **+17.6 points of classified coverage, +20.1 points of recall** |
+All rounds ship as LoRA adapters for `mlx-community/SmolLM2-360M-Instruct`, in one repo with a
+directory per round: **[`Dellboy/toppdblx-residual-parser`](https://huggingface.co/Dellboy/toppdblx-residual-parser)**. Each is 33 MB; the base model
+is not redistributed.
 
-**Round 06 also settled how long to train, and the answer was neither of the two previously argued.** Checkpoints were swept against the frozen benchmark:
-
-| Iteration | Fidelity to `rules_v3` | Residual identification |
-|---|---|---|
-| 500 | 80.60% | 86.80% |
-| 1,000 | 84.80% | 87.19% |
-| **2,000** | 89.60% | **90.52%** |
-| 4,000 | 93.20% | 88.91% |
-| 6,000 | 93.60% | 88.99% |
-
-Identification peaks at 2,000 and falls, on disjoint confidence intervals, while fidelity climbs monotonically the whole way. **That divergence is the circularity trap made visible**: everything after 2,000 iterations went into imitating the rule parser more exactly, which is capacity spent learning what is already in code, and it was paid for out of the residual. Validation loss moved 0.003 across the entire span and pointed at 6,000 throughout. Rounds are now ~2,000 iterations, checkpoints are chosen on residual identification, and rising fidelity beside falling identification is treated as a stop signal rather than a score.
-
-## 🧑‍🏫 Teacher distillation, in progress
-
-**In plain terms:** the small model was taught entirely by the rule parser, so the rule parser is the best it can ever be. To get past that ceiling it needs a teacher that can read the depositions the rules cannot — so a 32-billion-parameter model is being run over those records locally, and the small model will be retrained on what it produces.
-
-**The ceiling is measurable, not theoretical.** Round 06's sweep showed fidelity to `rules_v3` climbing to 93.6% while residual identification peaked at 2,000 iterations and declined. Training longer bought a better imitation and a worse reader, because `build_slm_dataset` bootstraps from records the rules read *confidently* — the model never sees an example the rules got wrong, so it cannot learn to do better than them.
-
-**Local, not an API.** `mlx-community/Qwen2.5-32B-Instruct-4bit` under MLX on the M1 Max: the corpus never leaves the machine and the run costs time rather than money. `models.teacher_label` takes any MLX repo, names its progress file after the model so candidates cannot overwrite each other, and is resumable per record.
-
-### The teacher is worse, and that is not the point
-
-Scored on the same 96 gold records:
-
-| Source | Precision | Recall | Reagents missed |
+| Model | Round | What it is | How well it works |
 |---|---|---|---|
-| Rules alone | 100.0% | 71.4% | 84 |
-| Rules + 360M student | **99.6%** | 91.5% | 25 |
-| Rules + 32B teacher | 91.0% | 89.1% | 32 |
-| **Union of all three** | 91.4% | **97.6%** | **7** |
-| Rules + where student and teacher agree | **100.0%** | 83.0% | 50 |
+| [**`round06/promoted_checkpoint_2000`**](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) | 06 | **The one to use.** The peak checkpoint, not the final adapter | With the rules: **99.6% precision, 91.5% recall** on 96 hand-labelled records. Alone on the frozen benchmark: 90.52% identification, 94.36% grounding |
+| [`round06/adapters`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) | 06 | The 6,000-iteration endpoint | 88.99% identification: **worse than the checkpoint it passed through at 2,000**, which is the distillation ceiling in one number |
+| [`round05`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05) | 05 | First round on the frozen benchmark | 87.58% identification, 93.41% grounding |
+| [`round01`–`round04`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01) | 01–04 | History, kept for reproducibility | Scored against a live residual that shrank as curation improved, so **not comparable to anything**; round 04 was trained on 36% duplicate rows and abandoned |
 
-The 32B loses to the 360M on the headline, and few-shot prompting did not close it. **But their recalls are statistically indistinguishable (p = 0.33) while their errors are not the same errors**: the teacher finds 18 correct reagents that the rules and the student together miss, and the union drops the misses from 25 to 7 out of 294.
+**A correction, and the reason the gold set exists.** The frozen-benchmark sweep promoted
+checkpoint 2,000 over the final adapter on *identification*, and against hand-labelled truth that
+was wrong: the checkpoint makes twelve false positives where the final adapter makes one
+(p = 0.0034). Identification asks only whether an emitted reagent exists in the lexicon, so it
+cannot see a name that is real, present in the text, and simply not what the depositor meant — the
+exact failure a checkpoint trained a little too long produces.
 
-So the teacher is not a better reader. It is a **differently wrong** one, which is exactly what makes it useful as a source of labels: a training set drawn from both covers ground neither reaches alone, and the agreement row shows how to keep precision while doing it — what both assert is right 100% of the time.
-
-### What is running, and the target
-
-~5,000 randomly sampled residual records, gold set held out by name, labels canonicalised through the lexicon rather than required to match internal ids. Training pairs will be built from teacher–student agreement plus teacher-only finds that pass grounding, and round 07 trains on that at ~2,000 iterations.
-
-**The target is explicit and falsifiable: recall above 91.5% without dropping below 99% precision.** If round 07 misses it, the teacher route is closed and reported as closed.
-
-### Three harness bugs worth recording
-
-Each made a model look worse than it was, and each was caught by a number looking wrong rather than by code looking wrong:
-
-- **Canonical ids were required of a model that has never seen them.** 101 rejected names were `TRIS_HCL`, `MGCL2`, `KCL`, `PEG400` — real reagents the lexicon already knew as aliases. That measured whether the teacher guessed our spelling conventions.
-- **A whole record was discarded over a unit on a non-component.** The teacher marks `temperature 277K` as `not_a_component`, correctly, then writes `"unit": "K"` on it; the validator failed the entire generation and every real reagent went with it. 18 of 96 records, none of them malformed JSON.
-- **The first diagnosis of those 18 was truncation, and it was wrong.** Doubling the token budget changed the count by zero.
-
-### And one about the machine
-
-The job runs near 101 s/batch for its first fifteen minutes, then settles two to five times slower. Comparing a cold run against a hot one made an innocent batch-size change look like a 5.5x penalty; per record the real difference between batch 8 and batch 16 is about 5%. **Never size this job from its first progress bar.** `mx.set_wired_limit()` is being evaluated as the fix.
+**And the released data was never affected**, by accident rather than design. `apply_slm` accepted
+`--checkpoint` and silently ignored it until 2026-08-02, so the 163,353 components shipped on
+2026-08-01 came from the final adapter, which is the better model. The flag now works; the notes
+that said the release used checkpoint 2,000 were wrong and are corrected.
 
 ## 🔁 Redundancy
 

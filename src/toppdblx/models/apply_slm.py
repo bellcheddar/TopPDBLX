@@ -33,6 +33,8 @@ import argparse
 import difflib
 import json
 import os
+import shutil
+import tempfile
 from pathlib import Path
 from typing import Any, Optional
 
@@ -107,6 +109,10 @@ def main(argv: Optional[list[str]] = None) -> int:
                         default=config.INTERIM_DIR / "slm_components.parquet")
     parser.add_argument("--progress", type=Path,
                         default=config.INTERIM_DIR / "slm" / "apply_progress.jsonl")
+    parser.add_argument("--records", type=Path, default=None,
+                        help="a gold set or questions payload: apply to only those records. "
+                             "Scoring a new round against 96 labelled records takes minutes; "
+                             "applying to the whole residual to find out takes hours")
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--batch", type=int, default=BATCH)
     args = parser.parse_args(argv)
@@ -121,6 +127,21 @@ def main(argv: Optional[list[str]] = None) -> int:
         if not runs:
             raise SystemExit("no trained runs found. Run: ./run.sh models.train_slm")
         args.adapter_dir = runs[-1]
+
+    # **`--checkpoint` was accepted and ignored here until 2026-08-02**, while `eval_slm`
+    # honoured it. So a sweep would choose a checkpoint on the evidence and then this stage would
+    # quietly apply the *final* adapter instead: the 163,353 components released on 2026-08-01
+    # were produced by round 06's 6,000-iteration adapter, not the 2,000-iteration one the sweep
+    # had promoted, and every note saying otherwise was wrong. Mirrors eval_slm's staging exactly,
+    # including writing outside the project tree, which is iCloud-synced.
+    if args.checkpoint is not None:
+        source = args.adapter_dir / f"{args.checkpoint:07d}_adapters.safetensors"
+        if not source.exists():
+            raise SystemExit(f"no checkpoint at iteration {args.checkpoint}: {source}")
+        staged = Path(tempfile.mkdtemp(prefix=f"toppdblx_apply_{args.checkpoint:07d}_"))
+        shutil.copy2(source, staged / "adapters.safetensors")
+        shutil.copy2(args.adapter_dir / "adapter_config.json", staged / "adapter_config.json")
+        args.adapter_dir = staged
 
     lexicon_by_id = {}
     import yaml
@@ -139,6 +160,11 @@ def main(argv: Optional[list[str]] = None) -> int:
             if line.strip():
                 row = json.loads(line)
                 done.add((row["pdb_id"], row["crystal_id"]))
+    if args.records:
+        doc = json.loads(args.records.read_text())
+        wanted = {(r["pdb_id"], r.get("crystal_id", "1"))
+                  for r in (doc.get("records") or doc.get("questions") or [])}
+        residual = [r for r in residual if (r["pdb_id"], r["crystal_id"]) in wanted]
     pending = [r for r in residual if (r["pdb_id"], r["crystal_id"]) not in done]
     if args.limit:
         pending = pending[:args.limit]
