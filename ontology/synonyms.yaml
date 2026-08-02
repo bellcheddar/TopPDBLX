@@ -1,4 +1,4 @@
-version: 0.5.1
+version: 0.6.0
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -177,6 +177,8 @@ reagents:
   hofmeister_rank: -4
   default_unit: molar
   aliases:
+  - diammonium sulfate
+  - diammonium sulphate
   - ammonium sulphate
   - (nh4)2so4
   - nh4so4
@@ -1098,6 +1100,9 @@ reagents:
   chem_class: additive
   default_unit: millimolar
   aliases:
+  - gsh
+  - gssg
+  - gsh/gssg
   - gsh
   - reduced glutathione
   - l-glutathione
@@ -3391,6 +3396,118 @@ reagents:
   - na pyrophosphate
   note: 'Was an alias of DISODIUM_HYDROGEN_PHOSPHATE until 2026-08-02. A condensed diphosphate,
     not the orthophosphate. 29 records.'
+- canonical_id: AMPD
+  display_name: AMPD
+  chem_class: buffer
+  default_unit: millimolar
+  buffer_pka: 8.8
+  aliases:
+  - ampd
+  - 2-amino-2-methyl-1,3-propanediol
+  - 2-amino-2-methyl-1,3-propanediol (ampd)
+- canonical_id: GLYCYLGLYCINE
+  display_name: Glycylglycine
+  chem_class: buffer
+  default_unit: millimolar
+  buffer_pka: 8.2
+  aliases:
+  - glycylglycine
+  - gly-gly
+  - glygly
+- canonical_id: CALCIUM_NITRATE
+  display_name: Calcium nitrate
+  chem_class: salt
+  default_unit: molar
+  aliases:
+  - calcium nitrate
+  - ca(no3)2
+  - calcium nitrate tetrahydrate
+- canonical_id: NDSB_195
+  display_name: NDSB-195
+  chem_class: additive
+  default_unit: molar
+  aliases:
+  - ndsb-195
+  - ndsb 195
+  - dimethylethyl-(3-sulfopropyl)-ammonium
+  note: 'The non-detergent sulfobetaine sold as NDSB-195 *is* dimethylethyl-(3-sulfopropyl)-
+    ammonium; 3RFC writes the systematic name and 9P0C the trade name. Both are this entry.'
+- canonical_id: CYMAL_3
+  display_name: CYMAL-3
+  chem_class: detergent
+  default_unit: percent_w_v
+  aliases:
+  - cymal-3
+  - cymal 3
+  - 3-cyclohexyl-1-propyl-beta-d-maltoside
+- canonical_id: NONYL_GLUCOSIDE
+  display_name: Nonyl glucoside
+  chem_class: detergent
+  default_unit: percent_w_v
+  aliases:
+  - nonylglucoside
+  - nonyl glucoside
+  - n-nonyl-beta-d-glucoside
+- canonical_id: TETRAETHYLAMMONIUM_CHLORIDE
+  display_name: Tetraethylammonium chloride
+  chem_class: salt
+  default_unit: millimolar
+  aliases:
+  - tetraethylammonium chloride
+  - teacl
+- canonical_id: ALUMINIUM_FLUORIDE
+  display_name: Aluminium fluoride
+  chem_class: salt
+  default_unit: millimolar
+  aliases:
+  - alf4
+  - alf3
+  - aluminium fluoride
+  - aluminum fluoride
+- canonical_id: RHODIUM_HEXAMINE
+  display_name: Rhodium(III) hexammine
+  chem_class: salt
+  default_unit: millimolar
+  aliases:
+  - rhodium(iii) hexammine
+  - rhodium(iii) hexamine
+  - rhodium hexammine
+- canonical_id: CHLOROTRYPTOPHAN_7
+  display_name: 7-Chlorotryptophan
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - 7-chlorotryptophan
+  - 7 chlorotryptophan
+- canonical_id: DEOXYGUANOSINE
+  display_name: 2-Deoxyguanosine
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - 2-deoxyguanosine
+  - 2 deoxyguanosine
+  - deoxyguanosine
+- canonical_id: DEOXYCYTIDINE
+  display_name: Deoxycytidine
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - deoxycytidine
+  - 2-deoxycytidine
+- canonical_id: SAH
+  display_name: S-adenosylhomocysteine
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - sah
+  - s-adenosylhomocysteine
+  - s-adenosyl-l-homocysteine
+- canonical_id: STAUROSPORINE
+  display_name: Staurosporine
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - staurosporine
 - canonical_id: SODIUM_ACETATE
   display_name: Sodium acetate
   chem_class: buffer
@@ -3654,6 +3771,8 @@ reagents:
   hofmeister_rank: -3
   default_unit: molar
   aliases:
+  - na/k po4
+  - na/k phosphate
   - na/k phosphate
   - sodium/potassium phosphate
   - k/na phosphate

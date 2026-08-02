@@ -169,7 +169,7 @@ def test_yaml_file_parses_as_plain_yaml():
 
 
 def test_reported_name_count_is_the_parser_lookup_index(shipped):
-    """"542 reagents, 1,306 names" in the README and changelog means the *normalised lookup index*,
+    """"556 reagents, 1,346 names" in the README and changelog means the *normalised lookup index*,
     not the raw alias count nor aliases plus display names.
 
     Pinned because the three counts differ by up to 25% and the changelog was published with the
@@ -178,7 +178,7 @@ def test_reported_name_count_is_the_parser_lookup_index(shipped):
     string are one name, not two.
     """
     index = shipped.index()
-    assert len(index) == 1306, f"lookup index is {len(index)}; update the README and CHANGELOG"
-    assert len(shipped.reagents) == 542
+    assert len(index) == 1346, f"lookup index is {len(index)}; update the README and CHANGELOG"
+    assert len(shipped.reagents) == 556
     raw_aliases = sum(len(r.aliases) for r in shipped.reagents)
     assert raw_aliases != len(index), "the two counts must not be conflated"

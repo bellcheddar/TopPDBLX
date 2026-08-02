@@ -251,7 +251,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             return None
         if name in by_id:
             return name
-        reagent = alias_index.get(normalise(tidy_name(name.replace("_", " "))))
+        reagent = alias_index.get(normalise(tidy_name(name.replace("_", " ").lower())))
         return reagent.canonical_id if reagent else None
 
     done: set[tuple] = set()

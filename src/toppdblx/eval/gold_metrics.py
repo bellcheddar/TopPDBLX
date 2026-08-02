@@ -62,6 +62,10 @@ def main(argv: Optional[list[str]] = None) -> int:
                         help="a third source. Adds the union and the agreement rows, which is "
                              "where the interesting result lives: two parsers can score the same "
                              "and still be wrong about different reagents")
+    parser.add_argument("--keep-incomplete", action="store_true",
+                        help="score records whose gold labels could not all be resolved. Off by "
+                             "default: their truth set is known to be missing a reagent, so a "
+                             "correct prediction there counts as a false positive")
     parser.add_argument("--out", type=Path,
                         default=config.INTERIM_DIR / "gold_metrics.json")
     args = parser.parse_args(argv)
@@ -82,7 +86,10 @@ def main(argv: Optional[list[str]] = None) -> int:
         """
         if name in by_id:
             return name
-        reagent = index.get(normalise(tidy_name(name.replace("_", " "))))
+        # **Lowercase before tidying.** `tidy_name`'s polymer rule is a lowercase-only regex, so
+        # "PEG4000" passes through untouched and misses `peg 4000`, while "peg4000" resolves. A
+        # label typed in capitals was being reported as a gap in the lexicon.
+        reagent = index.get(normalise(tidy_name(name.replace("_", " ").lower())))
         return reagent.canonical_id if reagent else None
 
     def predicted(frame: Path) -> dict[tuple, set[str]]:
@@ -99,17 +106,27 @@ def main(argv: Optional[list[str]] = None) -> int:
     from_rules = predicted(args.components)
     from_model = predicted(args.slm_components)
 
+    # **A record whose gold is incomplete cannot judge a false positive.** If a label could not be
+    # resolved, the truth set for that record is missing a reagent, so a parser naming it correctly
+    # is scored as wrong. That penalty falls hardest on whichever model says the most, which is a
+    # bias in favour of the quieter one -- exactly backwards for a metric meant to reward recall.
+    # Such records are excluded from the comparison and counted, rather than silently distorting it.
     unresolved: dict[str, int] = {}
     truth: dict[tuple, set[str]] = {}
+    n_excluded = 0
     for record in records:
         key = (record["pdb_id"], record["crystal_id"])
-        names = set()
+        names, incomplete = set(), False
         for raw in record["gold"]:
             canonical = resolve(raw)
             if canonical:
                 names.add(canonical)
             else:
                 unresolved[raw] = unresolved.get(raw, 0) + 1
+                incomplete = True
+        if incomplete and not args.keep_incomplete:
+            n_excluded += 1
+            continue
         truth[key] = names
 
     def score(get: Any, label: str) -> dict[str, Any]:
@@ -158,7 +175,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         m.add_input(args.gold).add_input(args.components)
         payload = {
             "gold_generated_at": gold_doc.get("generated_at"),
-            "n_records": len(records),
+            "n_records": len(truth), "n_excluded_incomplete": n_excluded,
             "n_gold_reagents": sum(len(v) for v in truth.values()),
             "rows": reported,
             "unresolved_gold_names": dict(sorted(unresolved.items(),
@@ -169,8 +186,11 @@ def main(argv: Optional[list[str]] = None) -> int:
             n_records=len(records), n_gold=payload["n_gold_reagents"],
             rules_recall=rules_only["recall"], shipped_recall=shipped["recall"])
 
-        print(f"\n  {len(records)} labelled records, {payload['n_gold_reagents']} gold reagents "
-              f"({payload['n_gold_reagents']/len(records):.2f} per record)\n")
+        if n_excluded:
+            print(f"\n  {n_excluded} records excluded: a gold label there could not be resolved, "
+                  f"so their truth is incomplete")
+        print(f"\n  {len(truth)} labelled records, {payload['n_gold_reagents']} gold reagents "
+              f"({payload['n_gold_reagents']/max(1,len(truth)):.2f} per record)\n")
         print(f"  {'source':<26}{'precision':>22}{'recall':>22}{'F1':>8}")
         for row in reported:
             p, r = row["precision_ci95"], row["recall_ci95"]
