@@ -1,6 +1,6 @@
 # Datasheet: toppdblx-conditions v0.1.0
 
-Generated 2026-07-31 by `./run.sh release.datasheet`. Every figure is read
+Generated 2026-08-02 by `./run.sh release.datasheet`. Every figure is read
 from the data at generation time, so this file cannot drift from what it describes.
 
 **Schema version** `0.1.0-draft` · **Ontology version** `0.2.0`
@@ -20,28 +20,19 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 2. **Condition frequency reflects screen popularity, not intrinsic success rate.** PEG 3350
    and PEG/Ion dominate because they are in everyone's screens. A condition being common here
    is evidence about what crystallographers tried, not about what works best.
-3. **Reported conditions are often optimised, not screen hits.** Of the 45,547 records
-   whose component set matches a published screen well, only 20,339 agree on every
+3. **Reported conditions are often optimised, not screen hits.** Of the 79,133 records
+   whose component set matches a published screen well, only 37,838 agree on every
    concentration. The rest are flagged `optimised_not_screen`, but it remains a confounder.
 4. **Protein concentration, drop ratio and equilibration volume are usually missing**, and
    they matter. They are captured where present and null otherwise.
 5. **Unit inference is doing real work.** About 80% of percentage concentrations in the source
    text carry no w/v or v/v marker. Where the parser inferred one it is flagged
    `unit_inferred`; filter on that field before treating a unit as reported fact.
-6. **Depositor errors are reproduced, not corrected, with one exception.** The parser reads what
-   the text says. A handful of records state nanomolar concentrations of bulk reagents
-   (`20nM spermidine`, `50 Nm Hepes`, `1nM TCEP`), which are almost certainly millimolar typos
-   at source. Silently correcting them would be a worse failure than passing them through, so
-   they are passed through: filter on implausible values for your own chemistry if it matters.
-
-   The exception is an amount that **cannot be true at all**: above 8 M equivalent, or above
-   100%. `10 M ZnCl2` (4IBR), `3000 M Sodium malonate dibasic` (7DXZ) and `335015% ethylene
-   glycol` (5K79) are what those depositions say. The reagent is kept and the **amount is
-   dropped**, so the condition reads as one that never stated a concentration, and the record
-   carries the flag `implausible_concentration`. 238 records and 340 model-read components are
-   affected. The floor is a floor on absurdity, not a solubility check: `6 M ammonium sulfate`
-   is also impossible and passes, because refusing it needs a per-reagent limit and the lexicon
-   carries no solubilities.
+6. **Depositor errors are reproduced, not corrected.** The parser reads what the text says.
+   A handful of records state nanomolar concentrations of bulk reagents (`20nM spermidine`,
+   `50 Nm Hepes`, `1nM TCEP`), which are almost certainly millimolar typos at source. Silently
+   correcting them would be a worse failure than passing them through, so they are passed
+   through: filter on implausible values for your own chemistry if it matters.
 7. **Any recommendation built on this is a prior over screening space**, not a prediction of a
    specific hit.
 
@@ -53,14 +44,14 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 |---------|-------|
 | Records (one per `pdb_id` + `crystal_id`) | 199,185 |
 | Distinct PDB entries | 198,691 |
-| Usable records | 186,162 (93.5%) |
-| Discarded, with a reason code | 13,023 |
-| Components | 603,459 |
-| Components identified as a canonical reagent | 514,084 (85.2%) |
+| Usable records | 186,260 (93.5%) |
+| Discarded, with a reason code | 12,925 |
+| Components | 605,481 |
+| Components identified as a canonical reagent | 516,291 (85.3%) |
 | Records with a linked protein sequence | 195,985 |
 | Distinct 30% identity sequence clusters | 23,868 |
-| Classified into a precipitant class | 109,683 |
-| Unclassified, with the reason recorded | 76,479 |
+| Classified into a precipitant class | 143,626 |
+| Unclassified, with the reason recorded | 42,634 |
 | Assigned at L2 (fallback) | 0 |
 
 ### Why records are discarded
@@ -70,27 +61,27 @@ distribution is itself a result.
 
 | Reason | Records | Share |
 |--------|---------|-------|
-| `NO_REAGENT_MATCH` | 5,795 | 2.91% |
+| `NO_REAGENT_MATCH` | 5,629 | 2.83% |
 | `TOO_SHORT` | 4,369 | 2.19% |
-| `METHOD_ONLY` | 2,400 | 1.20% |
-| `UNPARSEABLE_RESIDUAL` | 178 | 0.09% |
+| `METHOD_ONLY` | 2,500 | 1.26% |
+| `UNPARSEABLE_RESIDUAL` | 155 | 0.08% |
 | `REFERENCE_ONLY` | 103 | 0.05% |
 | `EMPTY` | 91 | 0.05% |
-| `NON_CRYSTALLISATION_TEXT` | 87 | 0.04% |
+| `NON_CRYSTALLISATION_TEXT` | 78 | 0.04% |
 
 ### Identified components by chemical class
 
 | Class | Components |
 |-------|-----------|
-| buffer | 163,701 |
-| salt | 146,227 |
-| peg | 127,394 |
-| additive | 25,167 |
-| organic | 23,357 |
-| polyol | 20,152 |
-| premix | 5,890 |
-| detergent | 1,182 |
-| other | 1,014 |
+| buffer | 163,918 |
+| salt | 147,097 |
+| peg | 127,540 |
+| additive | 25,822 |
+| organic | 23,462 |
+| polyol | 20,347 |
+| premix | 5,905 |
+| detergent | 1,184 |
+| other | 1,016 |
 
 ### How pH was attributed
 
@@ -100,8 +91,8 @@ value and refuses to guess its meaning.
 
 | Source | Records |
 |--------|---------|
-| buffer | 98,542 |
-| unstated | 87,571 |
+| buffer | 98,835 |
+| unstated | 87,376 |
 | final | 49 |
 
 ---
@@ -116,7 +107,7 @@ value and refuses to guess its meaning.
   because clustering a protein against an RNA chain is meaningless.
 - **Clustering.** MMseqs2 `easy-cluster`, 80% coverage, sensitivity 7.5 below 40% identity.
   Cluster ids at 30%, 50% and 90% ship with every record.
-- **Screen matching.** 434 wells across 9 Hampton screens, extracted verbatim from the
+- **Screen matching.** 2910 wells across 9 Hampton screens, extracted verbatim from the
   vendor's own support-material PDFs, never transcribed from memory.
 
 ---

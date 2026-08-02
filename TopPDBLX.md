@@ -97,7 +97,7 @@ The cycle has three participants and each does the one thing it is best at:
 | **Teacher** (Qwen2.5-32B, local) | Labels a few thousand residual records | ~40 s/record | Far too slow for the corpus, and 91% precise where the student is 99.6% |
 | **Student** (SmolLM2-360M) | Reads all 52,000 residual records | ~0.1 s/record | Bootstrapped from the rules, so the rules are its ceiling until a teacher lifts it |
 
-**Why a teacher is needed at all.** The student was taught entirely by the rule parser, on records the rules read *confidently*. It therefore never sees an example the rules got wrong, and cannot learn to beat them. Round 06 made that visible: sweeping its checkpoints, fidelity to `rules_v3` climbed to 93.6% while identification on the residual peaked at 2,000 iterations and then fell. Training longer bought a better imitation and a worse reader.
+**Why a teacher is needed at all.** The student was taught entirely by the rule parser, on records the rules read *confidently*. It therefore never sees an example the rules got wrong, and cannot learn to beat them. Round 06 made that visible: sweeping its checkpoints, fidelity to `rules_v3` climbed to 93.6% while identification on the residual peaked at 2,000 iterations and then fell. Read at the time as *training longer buys a better imitation and a worse reader* — and the direction of that reading did not survive contact with labelled truth, which prefers the 6,000-iteration adapter. What the divergence shows is that the two metrics measure different things, not which checkpoint to keep.
 
 **Why this teacher, when it scores worse than its student.** On the 96 gold records the 32B reaches 91.0% precision and 89.1% recall, against the 360M's 99.6% and 91.5%. It loses. But their recalls are statistically indistinguishable (p = 0.33) and **their errors are different errors**: the teacher finds 18 correct reagents that the rules and the student together miss, and taking neither away drops the misses from 25 to 7 out of 294. It is not a better reader, it is a *differently wrong* one, and that is precisely what makes it useful as a source of labels.
 
@@ -257,7 +257,7 @@ Progress per round, and what each has actually delivered, is tracked in [How the
 Three findings shaped how it is trained, and two of them contradict the obvious approach:
 
 - **Validation loss is the wrong stopping signal.** The labels are the rule parser's own output, so validation loss measures fidelity to the teacher rather than skill on the residual. It flattens by iteration 400 while identification is still climbing, and fidelity keeps improving to 91% long after identification has plateaued. Checkpoints are chosen by sweeping residual identification instead.
-- **How long to train is settled, and both earlier answers were wrong.** Identification was once thought to plateau at about iteration 600, on curves measured against 36% duplicate training rows and a residual that shrank from the easy end; a full epoch was then run to test it. Neither was right. Sweeping round 06's checkpoints on the frozen benchmark puts the peak at **2,000 iterations**, with identification falling by 1.6 points at 4,000 and flat thereafter. Rounds are ~2,000 iterations, and the peak checkpoint is promoted rather than the final one.
+- **How long to train is unsettled, and three answers have now been wrong.** A plateau at ~600 iterations, measured against 36% duplicate rows. Then a full epoch. Then a frozen-benchmark sweep putting the peak at 2,000 — which is the version that reached this README, and it is wrong too. Against hand-labelled truth round 06's **6,000-iteration final adapter beats its own 2,000 checkpoint**: 99.6% precision to 95.7%, one false positive against twelve (p = 0.0034). Every one of those three answers came from `identification`, which cannot see a reagent that is real, present in the text, and not what the depositor meant. **The guidance is withdrawn until it is re-derived on the gold set.** On current evidence longer is better, which is also what the [SmolLM2 paper](https://arxiv.org/abs/2502.02737) reports for small models.
 - **Gates are judged on the lower confidence bound**, so a lucky sample cannot pass them. An 800-record sweep once put two checkpoints on opposite sides of the identification gate whose intervals overlapped entirely.
 
 Training data is deduplicated before oversampling: see [Redundancy](#-redundancy) for why that is not a detail. Every run is named `r1-parse-residual-smollm2-360m-roundNN` and logged to Weights & Biases, with the adapter directory carrying the same name so a checkpoint on disk traces back to the run that produced it.
@@ -305,7 +305,7 @@ Tracked honestly, including the rounds that delivered nothing. From round 05 onw
 | 03 | Cosine schedule, dropout, class rebalanced | 88.4% | not measured | 0 | [round03](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03) |
 | 04 | Retrained on the 502-reagent lexicon | abandoned, trained on duplicated data | | 0 | [round04](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04) |
 | 05 | Deduplicated training set, 95,818 distinct pairs | 87.58% | 93.41% | 0 | [round05](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05) |
-| 06 | Full epoch, LoRA rank 16, 6,856 empty-answer examples | **90.52%** at iteration 2,000 | 94.36% | **163,353** | [round06](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) |
+| 06 | Full epoch, LoRA rank 16, 6,856 empty-answer examples | 90.52% at iter 2,000, 88.99% final | 94.36% | **163,419** | [round06](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) |
 | 07 | Teacher-distilled labels on the residual | not run | not run | 0, **regressed** | [round07](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) |
 
 ### 🤗 Models on HuggingFace
@@ -332,6 +332,50 @@ exact failure a checkpoint trained a little too long produces.
 `--checkpoint` and silently ignored it until 2026-08-02, so the 163,353 components shipped on
 2026-08-01 came from the final adapter, which is the better model. The flag now works; the notes
 that said the release used checkpoint 2,000 were wrong and are corrected.
+
+### Round 08: the plan, and what would make it a fair test
+
+Round 07 failed its target, but it was not a clean test of the idea, and the
+[SmolLM2 paper](https://arxiv.org/abs/2502.02737) names both reasons.
+
+**It was under-trained by a factor of four.** Round 06 saw 96,000 examples of a 102,352-pair pool
+— 0.94 epochs. Round 07 saw 32,000 of 137,020: **0.23 epochs**. They were compared as though only
+the labels differed. The paper's own SFT recipe is **2 epochs**, and it reports that "long
+trainings of small models can make them acquire abilities typically associated with larger
+models".
+
+**And it was fed the hardest data in the project.** For the 360M and 135M specifically, the paper
+uses *a filtered* SmolTalk, "removing complex instruction-following tasks and hard examples from
+MagPie-Ultra to better align with the models' capacity". Round 07 did the opposite: the teacher's
+labels carry a 7.4% false-positive rate by construction, and the student learned that rate almost
+exactly — false positives 1 → 23, p < 0.0001, while recall moved +2.4 points at p = 0.26.
+
+So round 08 changes exactly two things and holds the rest:
+
+| | Round 07 | Round 08 |
+|---|---|---|
+| Teacher labels kept | any find stating an amount — **92.6%** precise | amount **and** a text match of 8+ characters — **97.6%** precise |
+| Residual share of the mix | 25%, each record seen 4.2x | 15%, each record seen 10x |
+| Rules pairs seen | 0.23 epochs | **1.06 epochs**, matching round 06 |
+| Checkpoint chosen on | identification, frozen benchmark | **the gold set** |
+
+8,000 iterations rather than the paper's two epochs, and the difference is deliberate: two epochs
+of this file would repeat the 1,908 residual records **36 times**, far past the 4–5 repetition
+threshold the same paper recommends. 8,000 gives the rules pairs the exposure round 06 had — the
+best model measured so far — while showing each residual record ten times.
+
+**It has to beat 99.6% precision at 91.5% recall to ship**, on the same 96 records, and it will be
+reported either way. The prior is not strong, and the arithmetic says so: round 07 learned its
+labels' 7.4% false-positive rate almost exactly, and these labels are 2.4% wrong, so precision
+around 97–98% is the honest expectation. That would beat round 06 on **F1** while still missing
+the precision bar — in which case the answer is that the bar, not the model, decides, and a
+dataset is better served by missing chemistry than by inventing it.
+
+**And the checkpoint rule is under revision.** "Train ~2,000 iterations and promote the peak" came
+from `identification` — the metric that also promoted the checkpoint with twelve false positives
+over the one with a single one. Against labelled truth, round 06's **6,000-iteration final adapter
+beat its own 2,000 checkpoint**. Longer training looks better, not worse, and the guidance stays
+withdrawn until it is re-derived on the gold set.
 
 ## 🔁 Redundancy
 
