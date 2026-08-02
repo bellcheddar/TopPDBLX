@@ -131,7 +131,7 @@ for deposition in archive:
 | RCSB Data GraphQL API | Fetches every deposition, batched and resumable |
 | gemmi | Reads the archive mmCIF for the byte-level fidelity gate |
 | `regex` | Clause splitting, which turned out to be the hard part rather than the chemistry |
-| `ontology/synonyms.yaml` | The reagent dictionary: 542 reagents, 1,306 spellings |
+| `ontology/synonyms.yaml` | The reagent dictionary: 556 reagents, 1,346 spellings |
 | pydantic | Enforces the schema and the chemical invariants on load |
 | polars, pyarrow, duckdb | Tables, joins and the queryable release |
 | MMseqs2 | Sequence clustering at 30%, 50% and 90% identity, to control redundancy |
@@ -150,7 +150,7 @@ for deposition in archive:
 | Records | 199,185 |
 | Usable | **186,263 (93.5%)** |
 | Components | 605,481, **85.3% identified** as a canonical reagent (87.6% excluding text that names no chemistry) |
-| Reagent lexicon | 542 reagents, 1,306 names (v0.5.1) |
+| Reagent lexicon | 556 reagents, 1,346 names (v0.6.0) |
 | Linked sequences | 184,229 across **23,159** distinct 30% identity clusters |
 | Screen-well matches | 45,547 component-set matches, 20,339 agreeing on every concentration |
 | Archive fidelity | **100.0000%** over 205,943 entries against the 90 GB mmCIF snapshot |
@@ -228,7 +228,7 @@ An earlier three-level ontology of 163 binned groups was withdrawn at v0.3.0. It
 | Round 2: 10 grouped decisions, 1,004 names | 502 | 1,265 | 84.5% |
 | Prose stripping (a parser fix, not curation) | 502 | 1,265 | 85.2% |
 | Separating apparatus notes and bare units from reagents | 502 | 1,265 | 85.2% (87.5% on chemistry alone) |
-| The 26 ionic liquids from PEG/Ionic Liquid 1 and 2 | 542 | 1,306 | **85.2%** (87.5% on chemistry alone) |
+| The 26 ionic liquids from PEG/Ionic Liquid 1 and 2 | 556 | 1,346 | **85.2%** (87.5% on chemistry alone) |
 
 **For the crystallographer:** every reagent carries the chemistry the ontology needs, and each field is enforced on load rather than being optional documentation. A `peg` entry must state its molecular weight, a `buffer` must state its pKa, and a `premix` must list its constituents. Those invariants caught three separate attempts to bulk-add entries that could not satisfy them.
 
@@ -334,48 +334,47 @@ exact failure a checkpoint trained a little too long produces.
 2026-08-01 came from the final adapter, which is the better model. The flag now works; the notes
 that said the release used checkpoint 2,000 were wrong and are corrected.
 
-### Rounds 07 and 08: a closed line of work
+### Rounds 07 and 08: distillation, and a measurement that was wrong
 
 Two attempts to train past the rule parser's ceiling using labels from a local Qwen2.5-32B teacher
-instead of from `rules_v3`. Both failed. They are written up rather than deleted because two
-failures that agree say more than one.
+instead of `rules_v3`. Both scored worse than round 06 — and then the metric that said so turned
+out to be biased against them.
 
-| | round 06 final | round 07 | round 08 |
+**Five of the 96 gold records carried a label the lexicon could not place**, so their truth set was
+missing a reagent, and a parser naming that reagent correctly scored a *false positive*. 3KDJ is
+the clearest case: the text reads `0.01M GSH/GSSG`, the model answered `GLUTATHIONE`, which is
+right, and it counted against it. That penalty lands hardest on whichever model says the most —
+a bias in favour of the quieter one, which is precisely backwards for a metric whose purpose is
+to measure recall.
+
+Lexicon 0.6.0 resolves 18 of the 25 unresolvable labels; the remaining seven are labelling
+artefacts rather than lexicon gaps (`GSMT` is the protein, `POLYAMINES` a class, `BSI100156` a
+compound code), so those records are now excluded from scoring and counted. Re-scored:
+
+| | precision | recall | F1 |
 |---|---|---|---|
-| Label source | rule parser | 32B teacher, **92.6%** precise | 32B teacher, **97.6%** precise |
-| Rules pairs seen | 0.94 epochs | 0.23 | 1.06 |
-| Precision | **99.6%** | 92.3% | 94.5% |
-| Recall | 91.5% | **93.9%** | 93.2% |
-| False positives in 270 | **1** | 23 | 16 |
+| rules only | 100.0% | 67.7% | 80.7 |
+| **round 06** | **99.6%** | 87.4% | **93.1** |
+| round 07 — teacher labels 92.6% precise, 0.23 epochs | 93.6% | **89.1%** | 91.3 |
+| round 08 — labels 97.6% precise, 1.06 epochs | 95.3% | **89.1%** | 92.1 |
 
-**Round 07 was not a clean test**, and the [SmolLM2 paper](https://arxiv.org/abs/2502.02737) named
-both reasons: it was under-trained by a factor of four, and it was fed the hardest data in the
-project when the paper's recipe for this model size is a *filtered* set "to better align with the
-models' capacity".
+Round 06 still leads on F1 and holds a 4.3-point precision advantage, so **it remains the shipped
+model**. But the gap is smaller than first reported, both teacher rounds do gain real recall, and
+the line of work is **unresolved rather than closed** — an earlier version of this section
+declared it closed on the strength of the biased measurement.
 
-**Round 08 fixed both and regressed anyway.** A stricter filter — a teacher-only find must state an
-amount *and* match eight or more characters of the source text — lifted label precision from 92.6%
-to 97.6%; training went from 0.23 epochs to 1.06. Sweeping its checkpoints against the labelled set
-gives F1 between 93.0 and 93.9 at 1,000, 2,000, 4,000, 6,000 and 8,000 iterations. **Flat.** No
-checkpoint approaches round 06's 95.4.
+**The remaining errors are misattribution, not invention.** Of round 08's false positives, *none*
+name a reagent absent from the text. They are reagents genuinely present but not part of the
+crystallisation condition: a protein storage buffer (`PROTEIN SOLUTION CONTAINING 50MM HEPES`), a
+soak, a cryo step. That is a far more tractable target than hallucination, and it is a question
+about *roles* rather than chemistry.
 
-**What the two rounds establish together.** Teacher labels reliably buy about **+2 points of recall
-for −5 of precision**, across a 5-point range of label quality and a 4x range of training. Paired
-against round 06 on the same 96 records, round 08's recall gain is not significant (13 recovered,
-8 lost, p = 0.38) while its precision loss is (p = 0.0003).
-
-**An expectation that was written down first and turned out wrong.** Round 07 learned its labels'
-error rate almost exactly — 92.6% labels, 92.3% model — so round 08 was predicted at 97–98%
-precision from 97.6% labels. It came out at 94.5%: the noise was *amplified*, not matched. "The
-student learns the label error rate" is too simple a description of what happens, and the
-prediction should not have leaned on a single observation.
-
-**The conclusion, and what the teacher was actually good for.** A general 32B is not a good enough
-labeller for this task at this precision bar. Its value proved diagnostic rather than generative:
-it found 18 reagents that the rules and the student both miss, which says usefully *where* recall
-is lost without being able to teach it. For a released dataset, missing chemistry is recoverable
-and invented chemistry is not — so **round 06's final adapter remains the shipped model**, and the
-next gain in recall will have to come from the parser or the lexicon rather than from distillation.
+**Next: agreement gating across two teachers.** The errors are systematic rather than random —
+11 of round 08's 14 false positives are the same reagents as round 07's, across independently
+filtered labels and four times the training. Correlated single-model error is what independent-model
+agreement filters and what heuristic filters cannot, so a teacher-only find is kept only when a
+second, architecturally different 32B (Gemma-4-31b, not another Qwen) names the same reagent
+independently.
 
 ## 🔁 Redundancy
 

@@ -244,7 +244,7 @@
 </tr>
 <tr>
 <td data-label="Tool"><code>ontology/synonyms.yaml</code></td>
-<td data-label="What it does here">The reagent dictionary: 542 reagents, 1,306 spellings</td>
+<td data-label="What it does here">The reagent dictionary: 556 reagents, 1,346 spellings</td>
 </tr>
 <tr>
 <td data-label="Tool">pydantic</td>
@@ -304,7 +304,7 @@
 </tr>
 <tr>
 <td data-label="Measure">Reagent lexicon</td>
-<td data-label="Value">542 reagents, 1,306 names (v0.5.1)</td>
+<td data-label="Value">556 reagents, 1,346 names (v0.6.0)</td>
 </tr>
 <tr>
 <td data-label="Measure">Linked sequences</td>
@@ -516,8 +516,8 @@
 </tr>
 <tr>
 <td data-label="Round">The 26 ionic liquids from PEG/Ionic Liquid 1 and 2</td>
-<td data-label="Reagents">542</td>
-<td data-label="Names">1,306</td>
+<td data-label="Reagents">556</td>
+<td data-label="Names">1,346</td>
 <td data-label="Component identification"><strong>85.2%</strong> (87.5% on chemistry alone)</td>
 </tr>
 </tbody>
@@ -779,55 +779,49 @@
 </table></div>
 <p><strong>A correction, and the reason the gold set exists.</strong> The frozen-benchmark sweep promoted checkpoint 2,000 over the final adapter on <em>identification</em>, and against hand-labelled truth that was wrong: the checkpoint makes twelve false positives where the final adapter makes one (p = 0.0034). Identification asks only whether an emitted reagent exists in the lexicon, so it cannot see a name that is real, present in the text, and simply not what the depositor meant — the exact failure a checkpoint trained a little too long produces.</p>
 <p><strong>And the released data was never affected</strong>, by accident rather than design. <code>apply_slm</code> accepted <code>--checkpoint</code> and silently ignored it until 2026-08-02, so the 163,353 components shipped on 2026-08-01 came from the final adapter, which is the better model. The flag now works; the notes that said the release used checkpoint 2,000 were wrong and are corrected.</p>
-<h3>Rounds 07 and 08: a closed line of work</h3>
-<p>Two attempts to train past the rule parser's ceiling using labels from a local Qwen2.5-32B teacher instead of from <code>rules_v3</code>. Both failed. They are written up rather than deleted because two failures that agree say more than one.</p>
+<h3>Rounds 07 and 08: distillation, and a measurement that was wrong</h3>
+<p>Two attempts to train past the rule parser's ceiling using labels from a local Qwen2.5-32B teacher instead of <code>rules_v3</code>. Both scored worse than round 06 — and then the metric that said so turned out to be biased against them.</p>
+<p><strong>Five of the 96 gold records carried a label the lexicon could not place</strong>, so their truth set was missing a reagent, and a parser naming that reagent correctly scored a <em>false positive</em>. 3KDJ is the clearest case: the text reads <code>0.01M GSH/GSSG</code>, the model answered <code>GLUTATHIONE</code>, which is right, and it counted against it. That penalty lands hardest on whichever model says the most — a bias in favour of the quieter one, which is precisely backwards for a metric whose purpose is to measure recall.</p>
+<p>Lexicon 0.6.0 resolves 18 of the 25 unresolvable labels; the remaining seven are labelling artefacts rather than lexicon gaps (<code>GSMT</code> is the protein, <code>POLYAMINES</code> a class, <code>BSI100156</code> a compound code), so those records are now excluded from scoring and counted. Re-scored:</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
 <tr>
 <th></th>
-<th>round 06 final</th>
-<th>round 07</th>
-<th>round 08</th>
+<th>precision</th>
+<th>recall</th>
+<th>F1</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td data-label="">Label source</td>
-<td data-label="round 06 final">rule parser</td>
-<td data-label="round 07">32B teacher, <strong>92.6%</strong> precise</td>
-<td data-label="round 08">32B teacher, <strong>97.6%</strong> precise</td>
+<td data-label="">rules only</td>
+<td data-label="precision">100.0%</td>
+<td data-label="recall">67.7%</td>
+<td data-label="F1">80.7</td>
 </tr>
 <tr>
-<td data-label="">Rules pairs seen</td>
-<td data-label="round 06 final">0.94 epochs</td>
-<td data-label="round 07">0.23</td>
-<td data-label="round 08">1.06</td>
+<td data-label=""><strong>round 06</strong></td>
+<td data-label="precision"><strong>99.6%</strong></td>
+<td data-label="recall">87.4%</td>
+<td data-label="F1"><strong>93.1</strong></td>
 </tr>
 <tr>
-<td data-label="">Precision</td>
-<td data-label="round 06 final"><strong>99.6%</strong></td>
-<td data-label="round 07">92.3%</td>
-<td data-label="round 08">94.5%</td>
+<td data-label="">round 07 — teacher labels 92.6% precise, 0.23 epochs</td>
+<td data-label="precision">93.6%</td>
+<td data-label="recall"><strong>89.1%</strong></td>
+<td data-label="F1">91.3</td>
 </tr>
 <tr>
-<td data-label="">Recall</td>
-<td data-label="round 06 final">91.5%</td>
-<td data-label="round 07"><strong>93.9%</strong></td>
-<td data-label="round 08">93.2%</td>
-</tr>
-<tr>
-<td data-label="">False positives in 270</td>
-<td data-label="round 06 final"><strong>1</strong></td>
-<td data-label="round 07">23</td>
-<td data-label="round 08">16</td>
+<td data-label="">round 08 — labels 97.6% precise, 1.06 epochs</td>
+<td data-label="precision">95.3%</td>
+<td data-label="recall"><strong>89.1%</strong></td>
+<td data-label="F1">92.1</td>
 </tr>
 </tbody>
 </table></div>
-<p><strong>Round 07 was not a clean test</strong>, and the <a href="https://arxiv.org/abs/2502.02737">SmolLM2 paper</a> named both reasons: it was under-trained by a factor of four, and it was fed the hardest data in the project when the paper's recipe for this model size is a <em>filtered</em> set "to better align with the models' capacity".</p>
-<p><strong>Round 08 fixed both and regressed anyway.</strong> A stricter filter — a teacher-only find must state an amount <em>and</em> match eight or more characters of the source text — lifted label precision from 92.6% to 97.6%; training went from 0.23 epochs to 1.06. Sweeping its checkpoints against the labelled set gives F1 between 93.0 and 93.9 at 1,000, 2,000, 4,000, 6,000 and 8,000 iterations. <strong>Flat.</strong> No checkpoint approaches round 06's 95.4.</p>
-<p><strong>What the two rounds establish together.</strong> Teacher labels reliably buy about <strong>+2 points of recall for −5 of precision</strong>, across a 5-point range of label quality and a 4x range of training. Paired against round 06 on the same 96 records, round 08's recall gain is not significant (13 recovered, 8 lost, p = 0.38) while its precision loss is (p = 0.0003).</p>
-<p><strong>An expectation that was written down first and turned out wrong.</strong> Round 07 learned its labels' error rate almost exactly — 92.6% labels, 92.3% model — so round 08 was predicted at 97–98% precision from 97.6% labels. It came out at 94.5%: the noise was <em>amplified</em>, not matched. "The student learns the label error rate" is too simple a description of what happens, and the prediction should not have leaned on a single observation.</p>
-<p><strong>The conclusion, and what the teacher was actually good for.</strong> A general 32B is not a good enough labeller for this task at this precision bar. Its value proved diagnostic rather than generative: it found 18 reagents that the rules and the student both miss, which says usefully <em>where</em> recall is lost without being able to teach it. For a released dataset, missing chemistry is recoverable and invented chemistry is not — so <strong>round 06's final adapter remains the shipped model</strong>, and the next gain in recall will have to come from the parser or the lexicon rather than from distillation.</p>
+<p>Round 06 still leads on F1 and holds a 4.3-point precision advantage, so <strong>it remains the shipped model</strong>. But the gap is smaller than first reported, both teacher rounds do gain real recall, and the line of work is <strong>unresolved rather than closed</strong> — an earlier version of this section declared it closed on the strength of the biased measurement.</p>
+<p><strong>The remaining errors are misattribution, not invention.</strong> Of round 08's false positives, <em>none</em> name a reagent absent from the text. They are reagents genuinely present but not part of the crystallisation condition: a protein storage buffer (<code>PROTEIN SOLUTION CONTAINING 50MM HEPES</code>), a soak, a cryo step. That is a far more tractable target than hallucination, and it is a question about <em>roles</em> rather than chemistry.</p>
+<p><strong>Next: agreement gating across two teachers.</strong> The errors are systematic rather than random — 11 of round 08's 14 false positives are the same reagents as round 07's, across independently filtered labels and four times the training. Correlated single-model error is what independent-model agreement filters and what heuristic filters cannot, so a teacher-only find is kept only when a second, architecturally different 32B (Gemma-4-31b, not another Qwen) names the same reagent independently.</p>
 <h2>🔁 Redundancy</h2>
 <p><strong>In plain terms:</strong> the same experiment appears in the archive over and over. Popular proteins are solved hundreds of times, and a successful recipe gets copied. One condition string in this corpus appears <strong>1,784 times</strong>. That sounds harmless, and it quietly corrupts three different things if you let it.</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
