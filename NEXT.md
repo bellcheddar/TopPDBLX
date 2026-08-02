@@ -3,30 +3,50 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
-## Closed 2026-08-02: the teacher route did not work
+## Closed 2026-08-02: teacher distillation, after two rounds
 
-Round 07 trained on 1,926 teacher-labelled residual records (union target, 92.6% precise by
-construction) and **failed the pre-committed target**: recall above 91.5% without dropping below
-99% precision.
+Both attempts to train past the rule parser's ceiling with 32B-teacher labels failed, and the
+second was a clean test of the first's excuses.
 
-| | round 06 final | round 07 |
-|---|---|---|
-| precision | **99.6%** | 92.3% |
-| recall | 91.5% | **93.9%** |
-| false positives | **1** | 23 |
+| | round 06 final | round 07 | round 08 |
+|---|---|---|---|
+| Labels | rule parser | teacher, 92.6% precise | teacher, 97.6% precise |
+| Rules epochs | 0.94 | 0.23 | 1.06 |
+| Precision / recall | **99.6% / 91.5%** | 92.3% / 93.9% | 94.5% / 93.2% |
+| False positives | **1** | 23 | 16 |
 
-Paired on the same 96 records: recall recovered 18 and lost 11 (p = 0.26, not significant), false
-positives 1 → 23 (p < 0.0001). **The signal transferred weakly and the noise transferred
-strongly** — the student learned the teacher's 7.4% false-positive rate almost exactly.
+Round 08 swept on the gold set at 1,000 / 2,000 / 4,000 / 6,000 / 8,000 iterations: F1 93.0–93.9,
+**flat**. Paired against round 06: recall +13/−8 (p = 0.38), false positives 1 → 16 (p = 0.0003).
 
-Adapters for every round are public at
+**Consistent trade: +2 recall for −5 precision**, across a 5-point range of label quality and a 4x
+range of training. Not worth it for a released dataset.
+
+**Round 06's final adapter stays shipped.** All rounds are public at
 [`Dellboy/toppdblx-residual-parser`](https://huggingface.co/Dellboy/toppdblx-residual-parser),
-round 07 included, with the regression stated in its card.
+both regressions documented in the card.
 
-**What remains untried, in order of prior:** agreement-only labels as an *additive* signal rather
-than a replacement (100% precise, but probably teaches nothing the student does not already say);
-a stronger teacher; or accepting that a general 32B is not a good enough labeller at this
-precision bar and that the rules-distilled student is the best available parser.
+### Where recall improvement has to come from now
+
+Not distillation. The gold set says 25 of 294 reagents are still missed by rules + model; the
+teacher located 18 of them, so the *targets* are known even though the teacher cannot teach them:
+
+- **A second, disagreement-sampled gold set.** The current one is 9% informative — 269 of 294
+  judgements confirmed something already right. Sampling where student and teacher disagree would
+  invert that ratio for the same hour of Marc's time. It measures rather than fixes, but it is the
+  only thing that has repeatedly overturned a wrong conclusion here.
+- **The 25 gold-named lexicon gaps** — CYMAL-3, NDSB-195, GSH/GSSG, ALF4, rhodium(III) hexamine.
+  Human-verified, unlike the model's 8,170-name tail.
+- **The parser.** The rules are 100% precise at 71.4% recall; the 84 reagents they miss on the gold
+  set are a concrete list, and parser fixes have historically paid better than modelling here.
+
+### Do not repeat
+
+- **Training longer does not rescue noisy labels.** Round 08 was flat across an 8x range of
+  iterations.
+- **Do not predict a model's precision from its labels' precision.** Round 07 matched, round 08
+  amplified.
+- **`identification` cannot choose a checkpoint.** Three answers to "how long to train" came from
+  it and all three were wrong. Use the gold set.
 
 ## Superseded: teacher distillation (2026-08-02)
 

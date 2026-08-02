@@ -306,7 +306,8 @@ Tracked honestly, including the rounds that delivered nothing. From round 05 onw
 | 04 | Retrained on the 502-reagent lexicon | abandoned, trained on duplicated data | | 0 | [round04](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04) |
 | 05 | Deduplicated training set, 95,818 distinct pairs | 87.58% | 93.41% | 0 | [round05](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05) |
 | 06 | Full epoch, LoRA rank 16, 6,856 empty-answer examples | 90.52% at iter 2,000, 88.99% final | 94.36% | **163,419** | [round06](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) |
-| 07 | Teacher-distilled labels on the residual | not run | not run | 0, **regressed** | [round07](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) |
+| 07 | 32B-teacher labels, 92.6% precise, 0.23 epochs | not run | not run | 0, **regressed** | [round07](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) |
+| 08 | Same, labels 97.6% precise, 1.06 epochs | not run | not run | 0, **regressed** | [round08](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08) |
 
 ### 🤗 Models on HuggingFace
 
@@ -333,49 +334,48 @@ exact failure a checkpoint trained a little too long produces.
 2026-08-01 came from the final adapter, which is the better model. The flag now works; the notes
 that said the release used checkpoint 2,000 were wrong and are corrected.
 
-### Round 08: the plan, and what would make it a fair test
+### Rounds 07 and 08: a closed line of work
 
-Round 07 failed its target, but it was not a clean test of the idea, and the
-[SmolLM2 paper](https://arxiv.org/abs/2502.02737) names both reasons.
+Two attempts to train past the rule parser's ceiling using labels from a local Qwen2.5-32B teacher
+instead of from `rules_v3`. Both failed. They are written up rather than deleted because two
+failures that agree say more than one.
 
-**It was under-trained by a factor of four.** Round 06 saw 96,000 examples of a 102,352-pair pool
-— 0.94 epochs. Round 07 saw 32,000 of 137,020: **0.23 epochs**. They were compared as though only
-the labels differed. The paper's own SFT recipe is **2 epochs**, and it reports that "long
-trainings of small models can make them acquire abilities typically associated with larger
-models".
+| | round 06 final | round 07 | round 08 |
+|---|---|---|---|
+| Label source | rule parser | 32B teacher, **92.6%** precise | 32B teacher, **97.6%** precise |
+| Rules pairs seen | 0.94 epochs | 0.23 | 1.06 |
+| Precision | **99.6%** | 92.3% | 94.5% |
+| Recall | 91.5% | **93.9%** | 93.2% |
+| False positives in 270 | **1** | 23 | 16 |
 
-**And it was fed the hardest data in the project.** For the 360M and 135M specifically, the paper
-uses *a filtered* SmolTalk, "removing complex instruction-following tasks and hard examples from
-MagPie-Ultra to better align with the models' capacity". Round 07 did the opposite: the teacher's
-labels carry a 7.4% false-positive rate by construction, and the student learned that rate almost
-exactly — false positives 1 → 23, p < 0.0001, while recall moved +2.4 points at p = 0.26.
+**Round 07 was not a clean test**, and the [SmolLM2 paper](https://arxiv.org/abs/2502.02737) named
+both reasons: it was under-trained by a factor of four, and it was fed the hardest data in the
+project when the paper's recipe for this model size is a *filtered* set "to better align with the
+models' capacity".
 
-So round 08 changes exactly two things and holds the rest:
+**Round 08 fixed both and regressed anyway.** A stricter filter — a teacher-only find must state an
+amount *and* match eight or more characters of the source text — lifted label precision from 92.6%
+to 97.6%; training went from 0.23 epochs to 1.06. Sweeping its checkpoints against the labelled set
+gives F1 between 93.0 and 93.9 at 1,000, 2,000, 4,000, 6,000 and 8,000 iterations. **Flat.** No
+checkpoint approaches round 06's 95.4.
 
-| | Round 07 | Round 08 |
-|---|---|---|
-| Teacher labels kept | any find stating an amount — **92.6%** precise | amount **and** a text match of 8+ characters — **97.6%** precise |
-| Residual share of the mix | 25%, each record seen 4.2x | 15%, each record seen 10x |
-| Rules pairs seen | 0.23 epochs | **1.06 epochs**, matching round 06 |
-| Checkpoint chosen on | identification, frozen benchmark | **the gold set** |
+**What the two rounds establish together.** Teacher labels reliably buy about **+2 points of recall
+for −5 of precision**, across a 5-point range of label quality and a 4x range of training. Paired
+against round 06 on the same 96 records, round 08's recall gain is not significant (13 recovered,
+8 lost, p = 0.38) while its precision loss is (p = 0.0003).
 
-8,000 iterations rather than the paper's two epochs, and the difference is deliberate: two epochs
-of this file would repeat the 1,908 residual records **36 times**, far past the 4–5 repetition
-threshold the same paper recommends. 8,000 gives the rules pairs the exposure round 06 had — the
-best model measured so far — while showing each residual record ten times.
+**An expectation that was written down first and turned out wrong.** Round 07 learned its labels'
+error rate almost exactly — 92.6% labels, 92.3% model — so round 08 was predicted at 97–98%
+precision from 97.6% labels. It came out at 94.5%: the noise was *amplified*, not matched. "The
+student learns the label error rate" is too simple a description of what happens, and the
+prediction should not have leaned on a single observation.
 
-**It has to beat 99.6% precision at 91.5% recall to ship**, on the same 96 records, and it will be
-reported either way. The prior is not strong, and the arithmetic says so: round 07 learned its
-labels' 7.4% false-positive rate almost exactly, and these labels are 2.4% wrong, so precision
-around 97–98% is the honest expectation. That would beat round 06 on **F1** while still missing
-the precision bar — in which case the answer is that the bar, not the model, decides, and a
-dataset is better served by missing chemistry than by inventing it.
-
-**And the checkpoint rule is under revision.** "Train ~2,000 iterations and promote the peak" came
-from `identification` — the metric that also promoted the checkpoint with twelve false positives
-over the one with a single one. Against labelled truth, round 06's **6,000-iteration final adapter
-beat its own 2,000 checkpoint**. Longer training looks better, not worse, and the guidance stays
-withdrawn until it is re-derived on the gold set.
+**The conclusion, and what the teacher was actually good for.** A general 32B is not a good enough
+labeller for this task at this precision bar. Its value proved diagnostic rather than generative:
+it found 18 reagents that the rules and the student both miss, which says usefully *where* recall
+is lost without being able to teach it. For a released dataset, missing chemistry is recoverable
+and invented chemistry is not — so **round 06's final adapter remains the shipped model**, and the
+next gain in recall will have to come from the parser or the lexicon rather than from distillation.
 
 ## 🔁 Redundancy
 
