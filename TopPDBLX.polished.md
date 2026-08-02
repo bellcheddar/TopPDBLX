@@ -115,21 +115,22 @@ for deposition in archive:
 | Measure | Value |
 |---|---|
 | Records | 199,185 |
-| Usable | **186,180 (93.5%)** |
-| Components | 603,459, **85.2% identified** as a canonical reagent (87.5% excluding text that names no chemistry) |
+| Usable | **186,263 (93.5%)** |
+| Components | 605,481, **85.3% identified** as a canonical reagent (87.6% excluding text that names no chemistry) |
 | Reagent lexicon | 535 reagents, 1,300 names (v0.5.0) |
 | Linked sequences | 184,229 across **23,159** distinct 30% identity clusters |
 | Screen-well matches | 45,547 component-set matches, 20,339 agreeing on every concentration |
 | Archive fidelity | **100.0000%** over 205,943 entries against the 90 GB mmCIF snapshot |
-| Condition classes | Seven JCSG Top96 precipitant classes (v0.3.0), **59.5% classified**, 40.5% honestly unclassified |
+| Condition classes | Seven JCSG Top96 precipitant classes (v0.3.0), **77.1% classified**, 22.9% honestly unclassified |
+| Parser accuracy | Against 96 hand-labelled records: **99.6% precision, 91.5% recall** (rules alone: 100.0% / 71.4%) |
 | Leak-free splits | 181,007 records, no cluster spanning folds at 30%, 50% or 90% |
-| Tests | 400 passing |
+| Tests | 492 passing |
 
 The project brief anticipated a rule-based parser plateauing near 75%. It reaches 93.5%, because most of the difficulty in this corpus turned out to be clause splitting rather than chemistry: newlines, double spaces, `in`, spaced slashes and stray brackets all separate components, and handling them properly recovered far more than chasing reagent names did.
 
 ### Two denominators, both reported
 
-12,295 of the "unidentified" components contain no chemistry at all: method notes (`streak seeded`), screen references (`hampton research index screen`), unnamed ligands (`protein`, `inhibitor`) and bare splitter fragments (`na`). No lexicon entry can ever match them, so counting them as reagents the parser failed to identify measures an artefact rather than the parser. They carry the role `not_a_component` with an auditable reason, and both denominators are published: **85.2%** over every component, **87.0%** over those that actually name a substance.
+16,268 of the "unidentified" components contain no chemistry at all: method notes (`streak seeded`), screen references (`hampton research index screen`), unnamed ligands (`protein`, `inhibitor`) and bare splitter fragments (`na`). No lexicon entry can ever match them, so counting them as reagents the parser failed to identify measures an artefact rather than the parser. They carry the role `not_a_component` with an auditable reason, and both denominators are published: **85.3%** over every component, **87.6%** over those that actually name a substance.
 
 ### Why records are discarded
 
@@ -223,7 +224,7 @@ Progress per round, and what each has actually delivered, is tracked in [How the
 Three findings shaped how it is trained, and two of them contradict the obvious approach:
 
 - **Validation loss is the wrong stopping signal.** The labels are the rule parser's own output, so validation loss measures fidelity to the teacher rather than skill on the residual. It flattens by iteration 400 while identification is still climbing, and fidelity keeps improving to 91% long after identification has plateaued. Checkpoints are chosen by sweeping residual identification instead.
-- **How long to train is an open question, and an earlier claim here was wrong.** Identification appeared to plateau at about iteration 600, on two curves with different batch sizes and schedules. Both were measured on training data that was 36% duplicate rows, where extra iterations largely repeated conditions already seen, and against a residual that shrank from the easy end every time curation improved. Neither condition holds now, so the plateau evidence does not transfer and a full epoch is being run to settle it against the frozen benchmark.
+- **How long to train is settled, and both earlier answers were wrong.** Identification was once thought to plateau at about iteration 600, on curves measured against 36% duplicate training rows and a residual that shrank from the easy end; a full epoch was then run to test it. Neither was right. Sweeping round 06's checkpoints on the frozen benchmark puts the peak at **2,000 iterations**, with identification falling by 1.6 points at 4,000 and flat thereafter. Rounds are ~2,000 iterations, and the peak checkpoint is promoted rather than the final one.
 - **Gates are judged on the lower confidence bound**, so a lucky sample cannot pass them. An 800-record sweep once put two checkpoints on opposite sides of the identification gate whose intervals overlapped entirely.
 
 Training data is deduplicated before oversampling: see [Redundancy](#-redundancy) for why that is not a detail. Every run is named `r1-parse-residual-smollm2-360m-roundNN` and logged to Weights & Biases, with the adapter directory carrying the same name so a checkpoint on disk traces back to the run that produced it.
@@ -243,7 +244,22 @@ Training data is deduplicated before oversampling: see [Redundancy](#-redundancy
 
 **Grounding closes that hole and needs no labels.** If the model names a reagent, some spelling of that reagent should appear in the source string. Punctuation and spacing are stripped on both sides, so `peg-3350`, `PEG3350` and `peg 3,350` all match one alias. A failure is either a hallucination or a spelling the lexicon has never seen, and both are worth knowing about, so ungrounded cases are written out for inspection rather than only counted.
 
-**For the crystallographer:** none of these is accuracy. There is no structured ground truth for a crystallisation condition anywhere in the PDB, which is the reason this project exists, so nothing can be scored against an authoritative answer. Fidelity comes closest, but only on the easy population: it compares the model to the rule parser on text the rules already read, so it is a ceiling on imitation rather than evidence of skill. The only genuinely external checks are the commercial screen cross-reference, where 20,339 conditions match a vendor-published formulation on every concentration, and the human audit.
+**Every one of those four is precision-shaped, and that was the hole.** Each asks whether what the parser *said* is defensible. None can see a reagent it never mentioned at all, so a parser that reads one component per record and stops scores well on all four. Measured directly: on 4,000 residual records, 67% contain more reagent clauses than the parser emitted components.
+
+### 🏅 The gold set: precision and recall against labelled truth
+
+96 conditions were hand-labelled by a crystallographer in `app/gold_bench_v1.html`, one per screen, reagent names only. They are the yardstick, never training data, and they are excluded from every teacher run by name.
+
+| Source | Precision | Recall | F1 | Reagents missed |
+|---|---|---|---|---|
+| Rule parser alone | **100.0%** | 71.4% | 83.3 | 84 |
+| Rules + fine-tuned model *(shipped)* | 99.6% | **91.5%** | **95.4** | 25 |
+
+**This is the number that settles what the model is for.** It adds **+20.1 points of recall** and finds 59 reagents the rules never reach, for 0.4 points of precision. The fidelity metric had made it look like an expensive imitation of `rules_v3`; against labelled truth it is reading a fifth of the corpus that the rules cannot.
+
+It also confirmed the shape every audit had gestured at: **precision was never the problem.** One proposed reagent was removed across 96 records; 50 were added.
+
+**For the crystallographer:** 96 records is a small yardstick and its intervals are wide (recall [88, 94]). It measures reagent *identity*, not concentration or unit. It does not replace the commercial screen cross-reference, where 20,339 conditions match a vendor-published formulation on every concentration, and it does not replace the human audit. What it does is make "did we miss something" answerable at all, which nothing in this project could do before.
 
 ### 🤗 What the model has delivered
 
@@ -256,18 +272,72 @@ Tracked honestly, including the rounds that delivered nothing. From round 05 onw
 | 03 | Cosine schedule, dropout, class rebalanced | 88.4% | not measured | 0 |
 | 04 | Retrained on the 502-reagent lexicon | abandoned, trained on duplicated data | | 0 |
 | 05 | Deduplicated training set, 95,818 distinct pairs | 87.58% | 93.41% | 0 |
-| 06 | Full epoch, LoRA rank 16, 6,856 empty-answer examples | in progress | in progress | 0 |
+| 06 | Full epoch, LoRA rank 16, 6,856 empty-answer examples | **90.52%** at iteration 2,000 | 94.36% | **163,353** |
+| 07 | Teacher-distilled labels on the residual | in progress | in progress | |
 
-**The last column is the one that counts, and it has been zero throughout.** Five training rounds have produced measurements, not data: `models.apply_slm` exists but has not been run, so no component in the released database came from the model. Every gain in component identification this project has made came from the reagent lexicon and from the rule parser:
+**That last column was zero for five rounds, and is not any more.** `models.apply_slm` ran for the first time on 2026-08-01, on checkpoint 2000 of round 06. It read 50,930 of 52,817 residual records and contributed 163,353 components, and the classified share of the corpus went from **59.5% to 77.1%** in one step: `unidentified_reagent` as a blocking reason fell from 39,679 conditions to 631.
 
 | Change | Identification |
 |---|---|
 | Starting point | 79.1% |
 | Lexicon curation, rounds 1 and 2 | 84.5% |
-| Prose stripping, a parser fix of about forty lines | **85.2%** |
-| The fine-tuned model | no contribution yet |
+| Prose stripping, a parser fix of about forty lines | 85.2% |
+| Lexicon 0.4.1 and 0.5.0, splitter and unit-word fixes | **85.3%** |
+| The fine-tuned model | **+17.6 points of classified coverage, +20.1 points of recall** |
 
-Whether the model earns its place will be settled by running it over the residual and auditing the result by provenance, not by another held-out metric.
+**Round 06 also settled how long to train, and the answer was neither of the two previously argued.** Checkpoints were swept against the frozen benchmark:
+
+| Iteration | Fidelity to `rules_v3` | Residual identification |
+|---|---|---|
+| 500 | 80.60% | 86.80% |
+| 1,000 | 84.80% | 87.19% |
+| **2,000** | 89.60% | **90.52%** |
+| 4,000 | 93.20% | 88.91% |
+| 6,000 | 93.60% | 88.99% |
+
+Identification peaks at 2,000 and falls, on disjoint confidence intervals, while fidelity climbs monotonically the whole way. **That divergence is the circularity trap made visible**: everything after 2,000 iterations went into imitating the rule parser more exactly, which is capacity spent learning what is already in code, and it was paid for out of the residual. Validation loss moved 0.003 across the entire span and pointed at 6,000 throughout. Rounds are now ~2,000 iterations, checkpoints are chosen on residual identification, and rising fidelity beside falling identification is treated as a stop signal rather than a score.
+
+## 🧑‍🏫 Teacher distillation, in progress
+
+**In plain terms:** the small model was taught entirely by the rule parser, so the rule parser is the best it can ever be. To get past that ceiling it needs a teacher that can read the depositions the rules cannot — so a 32-billion-parameter model is being run over those records locally, and the small model will be retrained on what it produces.
+
+**The ceiling is measurable, not theoretical.** Round 06's sweep showed fidelity to `rules_v3` climbing to 93.6% while residual identification peaked at 2,000 iterations and declined. Training longer bought a better imitation and a worse reader, because `build_slm_dataset` bootstraps from records the rules read *confidently* — the model never sees an example the rules got wrong, so it cannot learn to do better than them.
+
+**Local, not an API.** `mlx-community/Qwen2.5-32B-Instruct-4bit` under MLX on the M1 Max: the corpus never leaves the machine and the run costs time rather than money. `models.teacher_label` takes any MLX repo, names its progress file after the model so candidates cannot overwrite each other, and is resumable per record.
+
+### The teacher is worse, and that is not the point
+
+Scored on the same 96 gold records:
+
+| Source | Precision | Recall | Reagents missed |
+|---|---|---|---|
+| Rules alone | 100.0% | 71.4% | 84 |
+| Rules + 360M student | **99.6%** | 91.5% | 25 |
+| Rules + 32B teacher | 91.0% | 89.1% | 32 |
+| **Union of all three** | 91.4% | **97.6%** | **7** |
+| Rules + where student and teacher agree | **100.0%** | 83.0% | 50 |
+
+The 32B loses to the 360M on the headline, and few-shot prompting did not close it. **But their recalls are statistically indistinguishable (p = 0.33) while their errors are not the same errors**: the teacher finds 18 correct reagents that the rules and the student together miss, and the union drops the misses from 25 to 7 out of 294.
+
+So the teacher is not a better reader. It is a **differently wrong** one, which is exactly what makes it useful as a source of labels: a training set drawn from both covers ground neither reaches alone, and the agreement row shows how to keep precision while doing it — what both assert is right 100% of the time.
+
+### ▶️ What is running, and the target
+
+~5,000 randomly sampled residual records, gold set held out by name, labels canonicalised through the lexicon rather than required to match internal ids. Training pairs will be built from teacher–student agreement plus teacher-only finds that pass grounding, and round 07 trains on that at ~2,000 iterations.
+
+**The target is explicit and falsifiable: recall above 91.5% without dropping below 99% precision.** If round 07 misses it, the teacher route is closed and reported as closed.
+
+### Three harness bugs worth recording
+
+Each made a model look worse than it was, and each was caught by a number looking wrong rather than by code looking wrong:
+
+- **Canonical ids were required of a model that has never seen them.** 101 rejected names were `TRIS_HCL`, `MGCL2`, `KCL`, `PEG400` — real reagents the lexicon already knew as aliases. That measured whether the teacher guessed our spelling conventions.
+- **A whole record was discarded over a unit on a non-component.** The teacher marks `temperature 277K` as `not_a_component`, correctly, then writes `"unit": "K"` on it; the validator failed the entire generation and every real reagent went with it. 18 of 96 records, none of them malformed JSON.
+- **The first diagnosis of those 18 was truncation, and it was wrong.** Doubling the token budget changed the count by zero.
+
+### And one about the machine
+
+The job runs near 101 s/batch for its first fifteen minutes, then settles two to five times slower. Comparing a cold run against a hot one made an innocent batch-size change look like a 5.5x penalty; per record the real difference between batch 8 and batch 16 is about 5%. **Never size this job from its first progress bar.** `mx.set_wired_limit()` is being evaluated as the fix.
 
 ## 🔁 Redundancy
 
@@ -299,9 +369,10 @@ Expert time is the scarcest input, so every audit is reduced to **tens of decisi
 | Reagent lexicon, rounds 1 and 2 | 35, then 13 | Seeded the original lexicon |
 | Lexicon gaps | 40 | 7,018 unidentified components |
 | Lexicon gaps, grouped | 10 | 1,004 names, 34% of the unidentified mass |
-| Classification accuracy | 200 | The per-class accuracy number (spec 6.6) |
+| Classification accuracy, rounds 1 and 2 | 96 each | The per-class accuracy number (spec 6.6), split by provenance |
+| **Gold set** | **96** | **Precision and recall against labelled truth, the yardstick for every future round** |
 
-`app/condition_courtroom_v5.html` renders any payload with the same shape, so a new audit is a new generator stage rather than a new page.
+`app/condition_courtroom_v5.html` renders any payload with the same shape, so a new audit is a new generator stage rather than a new page. `condition_courtroom_v7.html` is the accuracy audit: one condition per screen, one checkbox, and a three-field diagnosis that appears only when a card is ticked, so the ~90% waved through stay a single click. `gold_bench_v1.html` is the labeller: deposition text, removable reagent chips, and an autocomplete over all 535 lexicon names for what the pipeline missed.
 
 **A recommendation is an answer, not a suggestion.** Every dropdown is pre-set and there is an accept-all button, so a wrong recommendation is not caught, it is accepted in bulk. Generators therefore carry explicit chemistry guards: numbers must match exactly (a number in a reagent name is molecular weight or substitution position, never decoration), element and acid words must agree, and a family name such as bare `peg` identifies to nothing rather than inventing a member. Guards decide what is **recommended**, never what is **available**.
 
@@ -366,12 +437,16 @@ Every stage is a single command and writes its own manifest.
 | `parse.curation_queue` | Groups the remaining gaps into ten bucketed decisions |
 | `parse.apply_curation_queue` | Applies a bucketed answer to every name in its bucket |
 | `assign.classify` | The seven JCSG Top96 precipitant classes, or Unclassified with a reason |
-| `eval.class_audit` | Stratified accuracy audit, 25 conditions per class |
+| `eval.class_audit` | Accuracy audit, 96 conditions split by provenance, one decision each |
+| `eval.gold_questions` | Samples 96 residual records for hand labelling, banded by text length |
+| `eval.gold_metrics` | Precision, recall and F1 against the gold set, per source and unioned |
 | `eval.splits` | Cluster-based train, validation and test splits, leak-free at all three thresholds |
 | `eval.baselines` | Frequency prior and homology retrieval, the baselines any model must beat |
 | `models.build_slm_dataset` | Bootstrap training data for the residual parser, no hand labelling |
 | `models.train_slm` | LoRA fine-tune under MLX-LM, W&B logged, one named run per round |
 | `models.eval_slm` | Fidelity and residual identification, with Wilson intervals on both gates |
+| `models.apply_slm` | Runs the model over the residual and writes the components it reads |
+| `models.teacher_label` | Labels the residual with a local 32B, to train past the rule parser's ceiling |
 | `release.assemble` | Builds the released database in five formats |
 | `release.snapshot` | Frozen 90 GB mmCIF archive, for the full-scale fidelity check |
 | `release.verify_archive` | Compares the parsed source field against the archive, for every entry |
@@ -424,6 +499,8 @@ These determine what conclusions the data can support, and are stated in full in
 | Screen matching cannot validate reagent naming | Both sides use the same lexicon, so a systematic naming error moves both identically |
 | R1 labels come from the rule parser | Fidelity to `rules_v3` is a ceiling, not evidence of beating it: only residual identification, where no label exists, measures a real gain |
 | The residual parser cannot discover new chemistry | It emits only names it has seen, so a genuinely absent reagent looks the same as a model error. Closing that gap is curation, not modelling |
+| The gold set is 96 records | Wide intervals (recall [88, 94]), reagent identity only, no concentrations. It makes "did we miss something" answerable, not precisely answerable |
+| Recall is the weaker half | 99.6% precision against 91.5% recall: the parser is far likelier to miss a reagent than to invent one, and every headline metric before the gold set was blind to that |
 
 ## ✅ To Do
 
@@ -437,8 +514,11 @@ These determine what conclusions the data can support, and are stated in full in
 - [x] Reagent lexicon: two curation rounds plus the ionic liquids, 147 to 526 reagents
 - [x] Seven-class condition ontology, replacing the withdrawn three-level version
 - [x] Fine-tune SmolLM2 on the parse residual, and strip narrative prose in the parser
-- [ ] Classification accuracy audit: 200 judgements outstanding (spec 6.6)
-- [ ] Apply the trained model over the residual, so it identifies components rather than sitting idle
+- [x] Classification accuracy audit, two rounds of 96 (spec 6.6): 85.4% rules-derived, 83.3% model-derived, pooled
+- [x] Apply the trained model over the residual: 163,353 components, classified coverage 59.5% to 77.1%
+- [x] Gold set of 96 hand-labelled records, and the first precision/recall this project has had
+- [ ] Teacher distillation: label the residual with a local 32B and retrain past the rule parser's ceiling
+- [ ] Add the 25 reagents the gold set named that the lexicon cannot place (CYMAL-3, NDSB-195, GSH/GSSG, ALF4)
 - [ ] Supply pKa values for 59 buffers, or fix the clause splitter that produced them
 - [ ] Publish to Zenodo for a citable DOI, and mirror on HuggingFace Datasets
 - [ ] Browser front end (an exploration tool, not a predictor)

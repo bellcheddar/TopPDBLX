@@ -3,6 +3,42 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
+## Running now: teacher distillation (2026-08-02)
+
+`models.teacher_label` is labelling ~5,000 residual records with a local 4-bit Qwen2.5-32B, gold
+set excluded by name, resumable per record.
+
+    wc -l data/interim/slm/teacher_progress_5k.jsonl        # progress
+    tr '\r' '\n' < /tmp/teacher_wired.log | grep labelling: | tail -1
+
+**Why, in one line:** the student is bootstrapped from `rules_v3`, so `rules_v3` is its ceiling,
+and the round 06 sweep showed exactly that — fidelity climbing to 93.6% while residual
+identification peaked at 2,000 iterations and fell.
+
+**The teacher is worse than the student and that is not the point.** On the 96 gold records the
+32B scores 91.0% precision and 89.1% recall against the 360M's 99.6% and 91.5%. But their recalls
+are statistically indistinguishable (p = 0.33) and their errors are different: the teacher finds
+**18 correct reagents that rules and student together miss**, and the union takes misses from 25
+to 7 of 294. A training set drawn from both covers ground neither reaches alone.
+
+Next: build training pairs from teacher–student agreement plus teacher-only finds that pass
+grounding, then round 07 at ~2,000 iterations. **Target, explicit and falsifiable: recall above
+91.5% without dropping below 99% precision.** If round 07 misses it, the teacher route is closed.
+
+### The machine, and how it misled me three times
+
+The job runs near 101 s/batch for its first fifteen minutes then settles two to five times
+slower. Consequences, all learned the expensive way on 2026-08-02:
+
+- **Never size this job from its first progress bar.** A cold 20-minute measurement compared
+  against a hot 8-hour one made a batch-size change look like a 5.5x penalty. Per record the real
+  difference between batch 8 and batch 16 is about 5%: 38.2 s against 40.2 s.
+- **`MAX_TOKENS` was 1024 on a truncation theory that was wrong.** Raising it changed the invalid
+  count by zero; the real cause was `bad_unit`. Measured over 720 real generations the longest is
+  ~330 tokens, so it is now 448.
+- **`mx.set_wired_limit()` is under evaluation** as the fix for the sustained-load slowdown, and
+  must be judged on a steady-state window, not on its opening batches.
+
 ## Settled 2026-08-01: rounds should be 2,000 iterations, not 6,000
 
 The round 06 checkpoint sweep ran to completion on the frozen benchmark. Identification peaks at
@@ -51,32 +87,21 @@ disjoint intervals, grounded 93.41% → 94.36%, fully identified 64.10% → 68.2
 
 ## Waiting on Marc
 
-`data/interim/class_audit_questions.json`, now **96 conditions**, drop on
-`app/condition_courtroom_v7.html`. One condition per screen: deposition text, the reagents found,
-the class it was given, and a single checkbox for "wrong class", then Next. Space ticks, Enter
-advances, so the whole set is a few minutes of keyboard work. Clicking Next on an untouched card
-records "seen, judged correct" — that is what keeps the denominator honest.
+**Nothing, as of 2026-08-02.** Both accuracy audits and the 96-record gold set are done. What
+follows is the record of what they asked and answered.
 
-**Ticking one opens a three-field diagnosis**, and only then: what the class should be, what went
-wrong, and optionally which reagent. This is not for training the classifier — `classify_condition`
-is a pure function of the components and nothing is learned from a class label. It is because that
-purity means a wrong class is almost always a *wrong parse*, so the flags sort into: parser bugs
-(**hand-labelled residual examples, which is what `build_slm_dataset` says to escalate to once
-distillation plateaus, and it has**), lexicon `chem_class` errors, and classifier gating errors.
-The free-text note naming the missed reagent is the actual training signal.
+### Round 2 of the accuracy audit, 2026-08-01
 
-Sized at 96 rather than the earlier 400: individual verdicts give exact counts instead of bands,
-and 48 per side is about ±8 points on each, which is coarse but enough to decide the only question
-being asked.
+96 fresh conditions on the fixed pipeline. Overall **86.5%** [78.2, 91.9], against round 1's 82.3%.
+Rules-derived **85.4%** (identical to round 1); model-derived **87.5%**, up from 79.2%. The
+model-side gain is +8.3 points but not significant on independent samples of 48 (p = 0.27).
 
-Regenerated stratified by provenance now that `apply_slm` has run: eight classes × {rules-derived,
-model-derived}, so the answers give **separate accuracy figures for rules and for the model**,
-which is what decides whether the model earned its place. A single blended number cannot answer
-it, because the model's conditions are by construction the ones the rules found hardest.
+Pooled over both rounds, 192 judgements: rules **85.4%** [77.0, 91.1], model **83.3%**
+[74.6, 89.5], difference +2.1 points, **p = 0.691**. No evidence the model's conditions are
+classified worse than the rules', now across two independent samples.
 
-Model-derived means the model contributed a reagent the rules missed, not merely that it ran on
-that record — reagents it merely reproduced are attributed to the rules and tagged accordingly.
-Reagents marked `[model]` in the listings are the model's own.
+The fifth cause added for round 2 — "the class is right, I am reporting a bad reagent" — fired
+once (3AMB) and correctly kept a good classification out of the numerator.
 
 ## Done 2026-08-01: the first accuracy audit, and the three fixes it bought
 

@@ -48,16 +48,22 @@ from .eval_slm import check, grounded_in_text, load_aliases, load_lexicon
 STAGE = "models.teacher_label"
 
 DEFAULT_MODEL = "mlx-community/Qwen2.5-32B-Instruct-4bit"
+
+# **Batch size barely matters here, contrary to what a first look suggested.** Per record in
+# steady state: 40.2 s at batch 16, 38.2 s at batch 8. The apparent 5.5x penalty for the larger
+# batch was an artefact of comparing a cold 20-minute run against a hot 8-hour one -- the job
+# starts near 101 s/batch and settles two to five times slower within about fifteen minutes,
+# whatever the batch size. Never size this job from its first progress bar.
 BATCH = 8
-# Double the SLM's budget, because the teacher is not terse: it was trained to emit compact JSON
-# and a general instruct model writes every field out with spacing.
+# **Measured, not guessed, and the guess was expensive.** Over 720 real generations the median is
+# 347 characters and the longest 1,154, which is about 330 tokens. 448 clears that with room.
 #
-# **This was not what caused the invalid generations, despite looking like it.** 18 of the first
-# 96 were scored invalid and the last visible characters were a half-written object, so truncation
-# was the obvious read. It was wrong: raising the budget changed the count by zero. Every one of
-# those generations was complete, ended in `}]`, and failed on `bad_unit` -- see `tidy_generation`.
-# The headroom is kept anyway, being cheap, but the fix was elsewhere.
-MAX_TOKENS = 1024
+# This was 1024 for a while, on a theory that the invalid generations were truncated. They were
+# not -- every one was complete, ended in `}]`, and failed on `bad_unit` -- and raising the budget
+# changed the count by zero. Nor was the headroom free, which is the part that cost real time:
+# `batch_generate` runs a batch until *every* sequence in it finishes or hits the cap, so an
+# oversized cap is paid for on every batch that contains one sequence lacking a stop token.
+MAX_TOKENS = 448
 PARSER_NAME = "teacher_v1"
 
 # Deliberately the same contract as the SLM's own system prompt, so a label can be used as a
@@ -169,11 +175,26 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument("--seed", type=int, default=41)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--batch", type=int, default=BATCH)
+    parser.add_argument("--wired-limit-gb", type=float, default=32.0,
+                        help="hold this much GPU memory resident. 0 disables it")
     args = parser.parse_args(argv)
 
     config.ensure_dirs()
+    import mlx.core as mx
     from mlx_lm import batch_generate, load
     from mlx_lm.sample_utils import make_sampler
+
+    # **Keep the weights resident.** A 4-bit 32B is ~18 GB and every token of every batch reads
+    # all of it. Without a raised wired limit macOS is free to page those buffers out under
+    # sustained load, and the run slows from ~101 s/batch in its first minutes to 220-577 s/batch
+    # for the rest -- which is not thermal throttling and not batch size, both of which were
+    # blamed first. 32 GB of 64 leaves the OS ample room while holding the model and its KV cache.
+    if args.wired_limit_gb:
+        try:
+            mx.set_wired_limit(int(args.wired_limit_gb * 1024**3))
+            print(f"  wired limit: {args.wired_limit_gb} GB")
+        except Exception as error:                       # the cap is a system setting we cannot raise
+            print(f"  wired limit not applied ({error}); continuing unwired")
 
     os.environ.pop("HF_TOKEN", None)
     slug = args.model.rstrip("/").split("/")[-1].lower().replace(".", "")
