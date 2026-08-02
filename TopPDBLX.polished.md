@@ -54,25 +54,53 @@ It runs as a chain of stages. Each is one command, each writes a manifest record
           │
           │  parse.run_parser  split into clauses, read amounts and units, look each
           ▼                    name up in the reagent lexicon
-   603,459 typed components  ─────────────┐
-          │                               │ 15% the rules cannot read
-          │  assign.classify              ▼
-          ▼                        models.train_slm    a small language model, taught
-   7 precipitant classes             (SmolLM2-360M)    by the rules' own correct output
-   or Unclassified + reason               │
-          │                               │ names it wants but the lexicon lacks
-          │  link.*                       ▼
-          ▼                        parse.curation_queue   grouped into ~10 decisions
-   sequences + MMseqs2 clusters           │               for an expert to accept
-          │                               │
-          │  release.assemble             └──► ontology/synonyms.yaml ──┐
-          ▼                                                            │
-   JSONL · Parquet · CSV · DuckDB · JSON Schema · datasheet   ◄─────────┘
-                                                        the lexicon feeds back
-                                                        into the next parse
+   605,481 typed components ────────────────┐
+          │                                 │ 52,000 records the rules cannot read
+          │  assign.classify                ▼
+          ▼                          ┌─────────────────────────────────────────┐
+   7 precipitant classes             │   THE TEACHING LOOP                     │
+   or Unclassified + reason          │                                         │
+          │                          │   Qwen2.5-32B  ──labels──►  SmolLM2-360M│
+          │  link.*                  │   models.          the      models.     │
+          ▼                          │   teacher_label    student  train_slm   │
+   sequences + MMseqs2 clusters      │        ▲                        │       │
+          │                          │        │                        │       │
+          │                          │        └──── gold_metrics ◄─────┘       │
+          │                          │              scores both against        │
+          │                          │              96 hand-labelled records   │
+          │                          └────────────────┬────────────────────────┘
+          │                                           │ names it wants but
+          │                                           │ the lexicon lacks
+          │                                           ▼
+          │                                    gold_bench · courtroom
+          │                                    an expert, tens of decisions
+          │                                           │
+          │  release.assemble                         ▼
+          ▼                              ontology/synonyms.yaml ──┐
+   JSONL · Parquet · CSV · DuckDB · JSON Schema · datasheet ◄─────┘
+                                                    the lexicon feeds back
+                                                    into the next parse
 ```
 
-The two loops on the right are what makes it improve. The model learns from the text the rules already read correctly, so it costs nothing in hand-labelling; and the names it reaches for but cannot find become the next curation round, so an expert only ever sees decisions the machine could not make alone.
+### 🤗 The teaching loop, and why there are two models
+
+**In plain terms:** a small model is cheap to run over 200,000 records but not clever enough to teach itself. A large model is clever enough to teach but far too slow to run over the whole archive. So the large one reads a few thousand of the hard cases, the small one learns from what it produces, and the small one does the actual work. The expert never labels a corpus: they label 96 records that decide whether any of it worked.
+
+The cycle has three participants and each does the one thing it is best at:
+
+| | Does | Costs | Why it cannot do the others' job |
+|---|---|---|---|
+| **Expert** (`gold_bench`, `courtroom`) | Labels 96 records; answers tens of curation questions | An hour | Cannot label 52,000 records, and should never be asked to |
+| **Teacher** (Qwen2.5-32B, local) | Labels a few thousand residual records | ~40 s/record | Far too slow for the corpus, and 91% precise where the student is 99.6% |
+| **Student** (SmolLM2-360M) | Reads all 52,000 residual records | ~0.1 s/record | Bootstrapped from the rules, so the rules are its ceiling until a teacher lifts it |
+
+**Why a teacher is needed at all.** The student was taught entirely by the rule parser, on records the rules read *confidently*. It therefore never sees an example the rules got wrong, and cannot learn to beat them. Round 06 made that visible: sweeping its checkpoints, fidelity to `rules_v3` climbed to 93.6% while identification on the residual peaked at 2,000 iterations and then fell. Training longer bought a better imitation and a worse reader.
+
+**Why this teacher, when it scores worse than its student.** On the 96 gold records the 32B reaches 91.0% precision and 89.1% recall, against the 360M's 99.6% and 91.5%. It loses. But their recalls are statistically indistinguishable (p = 0.33) and **their errors are different errors**: the teacher finds 18 correct reagents that the rules and the student together miss, and taking neither away drops the misses from 25 to 7 out of 294. It is not a better reader, it is a *differently wrong* one, and that is precisely what makes it useful as a source of labels.
+
+**Why the expert sits at the top of the loop and not inside it.** Nothing else in the chain can tell a model that is silently missing reagents from one that is doing well: every automated measure here is precision-shaped and blind to what was never mentioned. The 96 labelled records are the only thing that can, so they are the yardstick and are never trained on, and every teacher run excludes them by name.
+
+The other loop is unchanged and still pays: names the parser reaches for but cannot find are grouped into a few dozen curation calls, so the expert only ever sees decisions the machine could not make alone, and the lexicon they produce feeds back into the next parse.
 
 **The core of it is about ten lines.** Everything else is provenance, validation and the lexicon:
 
@@ -104,9 +132,11 @@ for deposition in archive:
 | pydantic | Enforces the schema and the chemical invariants on load |
 | polars, pyarrow, duckdb | Tables, joins and the queryable release |
 | MMseqs2 | Sequence clustering at 30%, 50% and 90% identity, to control redundancy |
-| MLX-LM, SmolLM2-360M | Reads the residual the rules cannot, fine-tuned on Apple Silicon |
+| MLX-LM, SmolLM2-360M | The student: reads the residual the rules cannot, fine-tuned on Apple Silicon |
+| MLX, Qwen2.5-32B-Instruct-4bit | The teacher: labels the hard records locally, so the corpus never leaves the machine |
 | Weights & Biases | Training runs, one named run per round |
-| `condition_courtroom_v5.html` | Single-file browser tool for expert curation, no server |
+| `condition_courtroom_v7.html` | Single-file curation and accuracy audit, one condition per screen, no server |
+| `gold_bench_v1.html` | Single-file labeller for the 96 gold records that judge every model round |
 
 **Why the fidelity gate comes first.** Everything downstream is a claim about what a depositor wrote, so the first stage proves the text was fetched intact: every condition string is byte-compared against the mmCIF in the 90 GB archive snapshot, including loop row counts. It agrees on 205,943 entries at 100.0000%. Without that, a parsing statistic would be measuring the API rather than the archive.
 
