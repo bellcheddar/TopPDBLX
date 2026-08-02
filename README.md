@@ -30,7 +30,7 @@ Parse, normalise and curate every crystallisation condition in the Protein Data 
 | Capability | Detail |
 |---|---|
 | **Parses the whole archive** | 199,185 crystallisation records from 198,691 PDB entries, keyed on `(pdb_id, crystal_id)` |
-| **Typed components** | 603,459 reagents with role, concentration, unit, PEG molecular weight, Hofmeister rank and buffer pKa |
+| **Typed components** | 605,481 reagents with role, concentration, unit, PEG molecular weight, Hofmeister rank and buffer pKa |
 | **Separates text from chemistry** | Method notes, screen references and unnamed ligands are labelled `not_a_component`, so they never inflate a failure rate |
 | **Accounts for every record** | Anything not parsed carries one of seven discard codes, with its raw text retained |
 | **Links to sequence** | 184,229 usable records carry the construct sequence, UniProt accessions and cluster ids at 30%, 50% and 90% identity |
@@ -38,6 +38,7 @@ Parse, normalise and curate every crystallisation condition in the Protein Data 
 | **Refuses to guess** | A condition with an unrecognised reagent, no stated amount or a premixed system is Unclassified, with the reason recorded |
 | **Records its own uncertainty** | Inferred units, inferred cryoprotectant roles and pH attribution are flagged, never presented as fact |
 | **Reproducible by stage** | Every stage is one command and writes a manifest of input hashes, tool versions and git state |
+| **Teaches a small model with a large one** | A 32B teacher labels the hard records; a 360M student learns from it and reads all 52,000. Recall 71.4% → 91.5% against hand-labelled truth |
 
 ## 🔄 Workflow
 
@@ -83,6 +84,8 @@ It runs as a chain of stages. Each is one command, each writes a manifest record
 ```
 
 ### The teaching loop, and why there are two models
+
+**Why bother with two models: the teacher is 90x larger and 400x slower.** At 40 s/record a 32B would need 24 days to read the 52,000 residual records the rules cannot; the 360M student does it in under two hours. So the teacher reads ~2,000 of them to produce training labels, and the student does the work — which lifted recall on hand-labelled truth from **71.4% to 91.5%**, worth 59 reagents the rules never find, at a cost of 0.4 points of precision.
 
 **In plain terms:** a small model is cheap to run over 200,000 records but not clever enough to teach itself. A large model is clever enough to teach but far too slow to run over the whole archive. So the large one reads a few thousand of the hard cases, the small one learns from what it produces, and the small one does the actual work. The expert never labels a corpus: they label 96 records that decide whether any of it worked.
 

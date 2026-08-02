@@ -36,7 +36,7 @@
 </tr>
 <tr>
 <td data-label="Capability"><strong>Typed components</strong></td>
-<td data-label="Detail">603,459 reagents with role, concentration, unit, PEG molecular weight, Hofmeister rank and buffer pKa</td>
+<td data-label="Detail">605,481 reagents with role, concentration, unit, PEG molecular weight, Hofmeister rank and buffer pKa</td>
 </tr>
 <tr>
 <td data-label="Capability"><strong>Separates text from chemistry</strong></td>
@@ -65,6 +65,10 @@
 <tr>
 <td data-label="Capability"><strong>Reproducible by stage</strong></td>
 <td data-label="Detail">Every stage is one command and writes a manifest of input hashes, tool versions and git state</td>
+</tr>
+<tr>
+<td data-label="Capability"><strong>Teaches a small model with a large one</strong></td>
+<td data-label="Detail">A 32B teacher labels the hard records; a 360M student learns from it and reads all 52,000. Recall 71.4% → 91.5% against hand-labelled truth</td>
 </tr>
 </tbody>
 </table></div>
@@ -107,6 +111,7 @@
                                                     into the next parse
 </code></pre>
 <h3>🤗 The teaching loop, and why there are two models</h3>
+<p><strong>Why bother with two models: the teacher is 90x larger and 400x slower.</strong> At 40 s/record a 32B would need 24 days to read the 52,000 residual records the rules cannot; the 360M student does it in under two hours. So the teacher reads ~2,000 of them to produce training labels, and the student does the work — which lifted recall on hand-labelled truth from <strong>71.4% to 91.5%</strong>, worth 59 reagents the rules never find, at a cost of 0.4 points of precision.</p>
 <p><strong>In plain terms:</strong> a small model is cheap to run over 200,000 records but not clever enough to teach itself. A large model is clever enough to teach but far too slow to run over the whole archive. So the large one reads a few thousand of the hard cases, the small one learns from what it produces, and the small one does the actual work. The expert never labels a corpus: they label 96 records that decide whether any of it worked.</p>
 <p>The cycle has three participants and each does the one thing it is best at:</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
