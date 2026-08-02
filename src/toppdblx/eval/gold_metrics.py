@@ -142,9 +142,16 @@ def main(argv: Optional[list[str]] = None) -> int:
         precision = 100 * tp / (tp + fp) if tp + fp else 0.0
         recall = 100 * tp / (tp + fn) if tp + fn else 0.0
         f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+        # **F0.5 weights precision twice as heavily as recall**, which is the honest summary for a
+        # released dataset: a missed reagent is recoverable by re-reading the deposition, an
+        # invented one propagates into everything built on the data. F1 treats the two as equal
+        # and so flatters a model that trades precision for recall.
+        beta2 = 0.25
+        fbeta = (((1 + beta2) * precision * recall) / (beta2 * precision + recall)
+                 if beta2 * precision + recall else 0.0)
         return {"label": label, "tp": tp, "fp": fp, "fn": fn,
                 "precision": round(precision, 2), "recall": round(recall, 2),
-                "f1": round(f1, 2),
+                "f1": round(f1, 2), "f0_5": round(fbeta, 2),
                 "precision_ci95": [round(v, 2) for v in wilson(tp, tp + fp)],
                 "recall_ci95": [round(v, 2) for v in wilson(tp, tp + fn)],
                 "misses": misses}
@@ -191,11 +198,11 @@ def main(argv: Optional[list[str]] = None) -> int:
                   f"so their truth is incomplete")
         print(f"\n  {len(truth)} labelled records, {payload['n_gold_reagents']} gold reagents "
               f"({payload['n_gold_reagents']/max(1,len(truth)):.2f} per record)\n")
-        print(f"  {'source':<26}{'precision':>22}{'recall':>22}{'F1':>8}")
+        print(f"  {'source':<26}{'precision':>22}{'recall':>22}{'F1':>8}{'F0.5':>8}")
         for row in reported:
             p, r = row["precision_ci95"], row["recall_ci95"]
             print(f"  {row['label']:<26}{row['precision']:>9.1f}% [{p[0]:.0f},{p[1]:.0f}]"
-                  f"{row['recall']:>10.1f}% [{r[0]:.0f},{r[1]:.0f}]{row['f1']:>8.1f}")
+                  f"{row['recall']:>10.1f}% [{r[0]:.0f},{r[1]:.0f}]{row['f1']:>8.1f}{row['f0_5']:>8.1f}")
         gain = shipped["recall"] - rules_only["recall"]
         print(f"\n  the model adds {gain:+.1f} points of recall, "
               f"{shipped['tp'] - rules_only['tp']} reagents the rules never found")

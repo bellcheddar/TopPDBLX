@@ -268,7 +268,7 @@
 </tr>
 <tr>
 <td data-label="Measure">Parser accuracy</td>
-<td data-label="Value">Against 96 hand-labelled records: <strong>99.6% precision, 91.5% recall</strong> (rules alone: 100.0% / 71.4%)</td>
+<td data-label="Value">Against hand-labelled records: <strong>99.6% precision, 87.4% recall</strong>, F0.5 <strong>96.9</strong> (rules alone: 100.0% / 67.7%)</td>
 </tr>
 <tr>
 <td data-label="Measure">Leak-free splits</td>
@@ -568,6 +568,7 @@
 </tr>
 </tbody>
 </table></div>
+<p>None of those four has any ground truth behind it — they ask whether an answer is <em>defensible</em>, not whether it is <em>right</em>. Precision, recall, F1 and F0.5, defined below, are computed against hand-labelled truth and are the ones that decide anything.</p>
 <p><strong>Identification is the weakest of the four and was quoted alone for too long.</strong> A model reading <code>20% PEG 3350</code> and emitting <code>SODIUM_CHLORIDE</code> scores as identified: the name is real, it is simply not the reagent in front of it. Since the whole purpose of curation is to make names mean something, a measure that cannot tell a real name from the correct one is not measuring the thing that matters.</p>
 <p><strong>Grounding closes that hole and needs no labels.</strong> If the model names a reagent, some spelling of that reagent should appear in the source string. Punctuation and spacing are stripped on both sides, so <code>peg-3350</code>, <code>PEG3350</code> and <code>peg 3,350</code> all match one alias. A failure is either a hallucination or a spelling the lexicon has never seen, and both are worth knowing about, so ungrounded cases are written out for inspection rather than only counted.</p>
 <p><strong>Every one of those four is precision-shaped, and that was the hole.</strong> Each asks whether what the parser <em>said</em> is defensible. None can see a reagent it never mentioned at all, so a parser that reads one component per record and stops scores well on all four. Measured directly: on 4,000 residual records, 67% contain more reagent clauses than the parser emitted components.</p>
@@ -580,26 +581,60 @@
 <th>Precision</th>
 <th>Recall</th>
 <th>F1</th>
-<th>Reagents missed</th>
+<th>F0.5</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td data-label="Source">Rule parser alone</td>
 <td data-label="Precision"><strong>100.0%</strong></td>
-<td data-label="Recall">71.4%</td>
-<td data-label="F1">83.3</td>
-<td data-label="Reagents missed">84</td>
+<td data-label="Recall">67.7%</td>
+<td data-label="F1">80.7</td>
+<td data-label="F0.5">91.3</td>
 </tr>
 <tr>
 <td data-label="Source">Rules + fine-tuned model <em>(shipped)</em></td>
 <td data-label="Precision">99.6%</td>
-<td data-label="Recall"><strong>91.5%</strong></td>
-<td data-label="F1"><strong>95.4</strong></td>
-<td data-label="Reagents missed">25</td>
+<td data-label="Recall"><strong>87.4%</strong></td>
+<td data-label="F1"><strong>93.1</strong></td>
+<td data-label="F0.5"><strong>96.9</strong></td>
 </tr>
 </tbody>
 </table></div>
+<p><strong>What each measure asks, and why there are two summary scores:</strong></p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Measure</th>
+<th>Asks</th>
+<th>Fails when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Measure"><strong>Precision</strong></td>
+<td data-label="Asks">Of the reagents we claim are in this condition, how many really are?</td>
+<td data-label="Fails when">The parser invents chemistry</td>
+</tr>
+<tr>
+<td data-label="Measure"><strong>Recall</strong></td>
+<td data-label="Asks">Of the reagents really in this condition, how many did we find?</td>
+<td data-label="Fails when">The parser misses chemistry</td>
+</tr>
+<tr>
+<td data-label="Measure"><strong>F1</strong></td>
+<td data-label="Asks">One number ranking two parsers, as the harmonic mean of the two above</td>
+<td data-label="Fails when">Used alone: it treats a missed reagent and an invented one as equally bad</td>
+</tr>
+<tr>
+<td data-label="Measure"><strong>F0.5</strong></td>
+<td data-label="Asks">The same, weighting precision twice as heavily as recall</td>
+<td data-label="Fails when">—</td>
+</tr>
+</tbody>
+</table></div>
+<p>The harmonic mean rather than the average, deliberately: it punishes imbalance. A parser at 100% precision and 20% recall averages 60% but scores <strong>33</strong> on F1, because a parser that says almost nothing very carefully is not useful. That is the failure the older metrics could not see.</p>
+<p><strong>F0.5 is the one to read for this project.</strong> F1 weights precision and recall equally and they are not equal here: a missed reagent is recoverable by re-reading the deposition, an invented one propagates into everything built on the data. The two summaries disagree by more than they look — round 06 leads round 08 by 1.0 on F1 and by <strong>2.9</strong> on F0.5.</p>
 <p><strong>This is the number that settles what the model is for.</strong> It adds <strong>+20.1 points of recall</strong> and finds 59 reagents the rules never reach, for 0.4 points of precision. The fidelity metric had made it look like an expensive imitation of <code>rules_v3</code>; against labelled truth it is reading a fifth of the corpus that the rules cannot.</p>
 <p>It also confirmed the shape every audit had gestured at: <strong>precision was never the problem.</strong> One proposed reagent was removed across 96 records; 50 were added.</p>
 <p><strong>For the crystallographer:</strong> 96 records is a small yardstick and its intervals are wide (recall [88, 94]). It measures reagent <em>identity</em>, not concentration or unit. It does not replace the commercial screen cross-reference, where 20,339 conditions match a vendor-published formulation on every concentration, and it does not replace the human audit. What it does is make "did we miss something" answerable at all, which nothing in this project could do before.</p>
@@ -734,6 +769,7 @@
 <th>precision</th>
 <th>recall</th>
 <th>F1</th>
+<th>F0.5</th>
 </tr>
 </thead>
 <tbody>
@@ -742,27 +778,32 @@
 <td data-label="precision">100.0%</td>
 <td data-label="recall">67.7%</td>
 <td data-label="F1">80.7</td>
+<td data-label="F0.5">91.3</td>
 </tr>
 <tr>
 <td data-label=""><strong>round 06</strong></td>
 <td data-label="precision"><strong>99.6%</strong></td>
 <td data-label="recall">87.4%</td>
 <td data-label="F1"><strong>93.1</strong></td>
+<td data-label="F0.5"><strong>96.9</strong></td>
 </tr>
 <tr>
 <td data-label="">round 07 — teacher labels 92.6% precise, 0.23 epochs</td>
 <td data-label="precision">93.6%</td>
 <td data-label="recall"><strong>89.1%</strong></td>
 <td data-label="F1">91.3</td>
+<td data-label="F0.5">92.6</td>
 </tr>
 <tr>
 <td data-label="">round 08 — labels 97.6% precise, 1.06 epochs</td>
 <td data-label="precision">95.3%</td>
 <td data-label="recall"><strong>89.1%</strong></td>
 <td data-label="F1">92.1</td>
+<td data-label="F0.5">94.0</td>
 </tr>
 </tbody>
 </table></div>
+<p>Read on F0.5 — the summary that weights precision twice as heavily, and the right one for a released dataset — round 06 leads by 2.9 points rather than F1's 1.0.</p>
 <p>Round 06 still leads on F1 and holds a 4.3-point precision advantage, so <strong>it remains the shipped model</strong>. But the gap is smaller than first reported, both teacher rounds do gain real recall, and the line of work is <strong>unresolved rather than closed</strong> — an earlier version of this section declared it closed on the strength of the biased measurement.</p>
 <p><strong>The remaining errors are misattribution, not invention.</strong> Of round 08's false positives, <em>none</em> name a reagent absent from the text. They are reagents genuinely present but not part of the crystallisation condition: a protein storage buffer (<code>PROTEIN SOLUTION CONTAINING 50MM HEPES</code>), a soak, a cryo step. That is a far more tractable target than hallucination, and it is a question about <em>roles</em> rather than chemistry.</p>
 <p><strong>Next: agreement gating across two teachers.</strong> The errors are systematic rather than random — 11 of round 08's 14 false positives are the same reagents as round 07's, across independently filtered labels and four times the training. Correlated single-model error is what independent-model agreement filters and what heuristic filters cannot, so a teacher-only find is kept only when a second, architecturally different 32B (Gemma-4-31b, not another Qwen) names the same reagent independently.</p>

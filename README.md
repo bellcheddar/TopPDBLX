@@ -155,7 +155,7 @@ for deposition in archive:
 | Screen-well matches | 45,547 component-set matches, 20,339 agreeing on every concentration |
 | Archive fidelity | **100.0000%** over 205,943 entries against the 90 GB mmCIF snapshot |
 | Condition classes | Seven JCSG Top96 precipitant classes (v0.3.0), **77.1% classified**, 22.9% honestly unclassified |
-| Parser accuracy | Against 96 hand-labelled records: **99.6% precision, 91.5% recall** (rules alone: 100.0% / 71.4%) |
+| Parser accuracy | Against hand-labelled records: **99.6% precision, 87.4% recall**, F0.5 **96.9** (rules alone: 100.0% / 67.7%) |
 | Leak-free splits | 181,007 records, no cluster spanning folds at 30%, 50% or 90% |
 | Tests | 492 passing |
 
@@ -273,6 +273,10 @@ Training data is deduplicated before oversampling: see [Redundancy](#-redundancy
 | **Grounding** | Is each named reagent actually mentioned in the text it was given? | Whether the amount and unit are right |
 | **Fidelity** | On text the rules *can* read, does the model produce the same components? | The residual, which is by definition harder |
 
+None of those four has any ground truth behind it — they ask whether an answer is *defensible*,
+not whether it is *right*. Precision, recall, F1 and F0.5, defined below, are computed against
+hand-labelled truth and are the ones that decide anything.
+
 **Identification is the weakest of the four and was quoted alone for too long.** A model reading `20% PEG 3350` and emitting `SODIUM_CHLORIDE` scores as identified: the name is real, it is simply not the reagent in front of it. Since the whole purpose of curation is to make names mean something, a measure that cannot tell a real name from the correct one is not measuring the thing that matters.
 
 **Grounding closes that hole and needs no labels.** If the model names a reagent, some spelling of that reagent should appear in the source string. Punctuation and spacing are stripped on both sides, so `peg-3350`, `PEG3350` and `peg 3,350` all match one alias. A failure is either a hallucination or a spelling the lexicon has never seen, and both are worth knowing about, so ungrounded cases are written out for inspection rather than only counted.
@@ -283,10 +287,28 @@ Training data is deduplicated before oversampling: see [Redundancy](#-redundancy
 
 96 conditions were hand-labelled by a crystallographer in `app/gold_bench_v1.html`, one per screen, reagent names only. They are the yardstick, never training data, and they are excluded from every teacher run by name.
 
-| Source | Precision | Recall | F1 | Reagents missed |
+| Source | Precision | Recall | F1 | F0.5 |
 |---|---|---|---|---|
-| Rule parser alone | **100.0%** | 71.4% | 83.3 | 84 |
-| Rules + fine-tuned model *(shipped)* | 99.6% | **91.5%** | **95.4** | 25 |
+| Rule parser alone | **100.0%** | 67.7% | 80.7 | 91.3 |
+| Rules + fine-tuned model *(shipped)* | 99.6% | **87.4%** | **93.1** | **96.9** |
+
+**What each measure asks, and why there are two summary scores:**
+
+| Measure | Asks | Fails when |
+|---|---|---|
+| **Precision** | Of the reagents we claim are in this condition, how many really are? | The parser invents chemistry |
+| **Recall** | Of the reagents really in this condition, how many did we find? | The parser misses chemistry |
+| **F1** | One number ranking two parsers, as the harmonic mean of the two above | Used alone: it treats a missed reagent and an invented one as equally bad |
+| **F0.5** | The same, weighting precision twice as heavily as recall | — |
+
+The harmonic mean rather than the average, deliberately: it punishes imbalance. A parser at 100%
+precision and 20% recall averages 60% but scores **33** on F1, because a parser that says almost
+nothing very carefully is not useful. That is the failure the older metrics could not see.
+
+**F0.5 is the one to read for this project.** F1 weights precision and recall equally and they are
+not equal here: a missed reagent is recoverable by re-reading the deposition, an invented one
+propagates into everything built on the data. The two summaries disagree by more than they look —
+round 06 leads round 08 by 1.0 on F1 and by **2.9** on F0.5.
 
 **This is the number that settles what the model is for.** It adds **+20.1 points of recall** and finds 59 reagents the rules never reach, for 0.4 points of precision. The fidelity metric had made it look like an expensive imitation of `rules_v3`; against labelled truth it is reading a fifth of the corpus that the rules cannot.
 
@@ -351,12 +373,15 @@ Lexicon 0.6.0 resolves 18 of the 25 unresolvable labels; the remaining seven are
 artefacts rather than lexicon gaps (`GSMT` is the protein, `POLYAMINES` a class, `BSI100156` a
 compound code), so those records are now excluded from scoring and counted. Re-scored:
 
-| | precision | recall | F1 |
-|---|---|---|---|
-| rules only | 100.0% | 67.7% | 80.7 |
-| **round 06** | **99.6%** | 87.4% | **93.1** |
-| round 07 — teacher labels 92.6% precise, 0.23 epochs | 93.6% | **89.1%** | 91.3 |
-| round 08 — labels 97.6% precise, 1.06 epochs | 95.3% | **89.1%** | 92.1 |
+| | precision | recall | F1 | F0.5 |
+|---|---|---|---|---|
+| rules only | 100.0% | 67.7% | 80.7 | 91.3 |
+| **round 06** | **99.6%** | 87.4% | **93.1** | **96.9** |
+| round 07 — teacher labels 92.6% precise, 0.23 epochs | 93.6% | **89.1%** | 91.3 | 92.6 |
+| round 08 — labels 97.6% precise, 1.06 epochs | 95.3% | **89.1%** | 92.1 | 94.0 |
+
+Read on F0.5 — the summary that weights precision twice as heavily, and the right one for a
+released dataset — round 06 leads by 2.9 points rather than F1's 1.0.
 
 Round 06 still leads on F1 and holds a 4.3-point precision advantage, so **it remains the shipped
 model**. But the gap is smaller than first reported, both teacher rounds do gain real recall, and
