@@ -244,7 +244,7 @@
 </tr>
 <tr>
 <td data-label="Tool"><code>ontology/synonyms.yaml</code></td>
-<td data-label="What it does here">The reagent dictionary: 556 reagents, 1,346 spellings</td>
+<td data-label="What it does here">The reagent dictionary: 561 reagents, 1,362 spellings</td>
 </tr>
 <tr>
 <td data-label="Tool">pydantic</td>
@@ -304,7 +304,7 @@
 </tr>
 <tr>
 <td data-label="Measure">Reagent lexicon</td>
-<td data-label="Value">556 reagents, 1,346 names (v0.6.0)</td>
+<td data-label="Value">561 reagents, 1,362 names (v0.6.1)</td>
 </tr>
 <tr>
 <td data-label="Measure">Linked sequences</td>
@@ -516,8 +516,8 @@
 </tr>
 <tr>
 <td data-label="Round">The 26 ionic liquids from PEG/Ionic Liquid 1 and 2</td>
-<td data-label="Reagents">556</td>
-<td data-label="Names">1,346</td>
+<td data-label="Reagents">561</td>
+<td data-label="Names">1,362</td>
 <td data-label="Component identification"><strong>85.2%</strong> (87.5% on chemistry alone)</td>
 </tr>
 </tbody>
@@ -643,20 +643,21 @@
 <tbody>
 <tr>
 <td data-label="Source">Rule parser alone</td>
-<td data-label="Precision"><strong>100.0%</strong></td>
+<td data-label="Precision">100.0%</td>
 <td data-label="Recall">67.7%</td>
 <td data-label="F1">80.7</td>
 <td data-label="F0.5">91.3</td>
 </tr>
 <tr>
 <td data-label="Source">Rules + fine-tuned model <em>(shipped)</em></td>
-<td data-label="Precision">99.6%</td>
+<td data-label="Precision"><strong>99.6%</strong></td>
 <td data-label="Recall"><strong>87.4%</strong></td>
 <td data-label="F1"><strong>93.1</strong></td>
 <td data-label="F0.5"><strong>96.9</strong></td>
 </tr>
 </tbody>
 </table></div>
+<p><strong>Those precision figures are a property of the sample, not of the parsers.</strong> A second, deliberately contested batch puts the rules at <strong>91.8%</strong> and the model at 92.5% — see <a href="#-the-second-gold-batch-contested-records">the second gold batch</a> below. On a randomly drawn record the parsers are rarely challenged, so they rarely err.</p>
 <p><strong>What each measure asks, and why there are two summary scores:</strong></p>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
@@ -914,6 +915,55 @@
 </ul>
 <p>So the result lands as an <strong>inference-time ensemble</strong>, not a training recipe: run the second teacher only on the teacher-only candidates rather than the corpus, and take what both assert. Whether it ships is a judgement rather than a measurement — F1 says yes, F0.5 says no, and this project has consistently preferred precision.</p>
 <p><strong>A reasoning model needed two harness fixes</strong>, both of which would have failed silently. Gemma-4 emits a <code>&lt;|channel&gt;thought</code> block before answering, so at the 448-token budget tuned for Qwen only 6 of 96 generations ever closed a JSON array; and because it quotes the few-shot examples verbatim while reasoning, the <em>first</em> JSON array in its output is the prompt being thought about rather than the reply. Taking the first array would have scored our own examples back as the teacher's labels and looked entirely plausible.</p>
+<h3>🥊 The second gold batch: contested records</h3>
+<p>The random 96 answered "how good is the pipeline" and could not answer "which source is better", because only 41 of its 91 scored records contained a reagent the sources disputed at all. A second 96, sampled where the teacher and the pipeline <strong>disagree</strong>, in three equal strata — teacher found something extra, pipeline found something extra, both did.</p>
+<p>It produced <strong>32 rejections against the random batch's 1</strong>, which is the precision signal the first set could not supply.</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>source</th>
+<th>precision</th>
+<th>recall</th>
+<th>F1</th>
+<th>F0.5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="source">rules only</td>
+<td data-label="precision">91.8%</td>
+<td data-label="recall">54.9%</td>
+<td data-label="F1">68.7</td>
+<td data-label="F0.5">80.9</td>
+</tr>
+<tr>
+<td data-label="source">rules + student <em>(shipped)</em></td>
+<td data-label="precision">92.5%</td>
+<td data-label="recall">72.8%</td>
+<td data-label="F1">81.5</td>
+<td data-label="F0.5">87.8</td>
+</tr>
+<tr>
+<td data-label="source">rules + 32B teacher</td>
+<td data-label="precision">91.1%</td>
+<td data-label="recall"><strong>85.2%</strong></td>
+<td data-label="F1">88.0</td>
+<td data-label="F0.5"><strong>89.8</strong></td>
+</tr>
+<tr>
+<td data-label="source">union of both</td>
+<td data-label="precision">91.2%</td>
+<td data-label="recall"><strong>96.0%</strong></td>
+<td data-label="F1"><strong>93.5</strong></td>
+<td data-label="F0.5">92.1</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Three corrections come out of it.</strong></p>
+<p><strong>The rules are not 100% precise.</strong> They are <strong>91.8%</strong> here — 16 wrong of 194. The random batch reported 100.0% because it never drew a contested record, and that figure was quoted repeatedly, including in this README and on the published model card.</p>
+<p><strong>The teacher beats the student on recall, decisively.</strong> It finds <strong>75 reagents the student misses against 35 the other way, p = 0.00017</strong> — the first unambiguous result in this line of work — and pays almost nothing for it: 11 extra false positives against 3 avoided, p = 0.057.</p>
+<p><strong>The student's precision advantage largely evaporates</strong>: 92.5% against the teacher's 91.1%, not 99.6% against 91.8%. On a random sample the student looks far more precise mostly because it rarely says anything contestable.</p>
+<p><strong>Both batches are needed, and neither alone is honest.</strong> This one is adversarial by construction, so its absolute numbers do not describe the corpus — 57% of teacher-labelled records are contested, not all of them. The random 96 remains the yardstick for <em>how good is the pipeline</em>. But comparisons between sources are what this batch measures well, and it says the earlier reading — teacher labels buy +2 recall for −4 precision — came from a sample where contested records were too rare for the trade to show its real shape.</p>
 <h2>🔁 Redundancy</h2>
 <p><strong>In plain terms:</strong> the same experiment appears in the archive over and over. Popular proteins are solved hundreds of times, and a successful recipe gets copied. One condition string in this corpus appears <strong>1,784 times</strong>. That sounds harmless, and it quietly corrupts three different things if you let it.</p>
 <div class="emd-table-wrap"><table class="emd-data-table">

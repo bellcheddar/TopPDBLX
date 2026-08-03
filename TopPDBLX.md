@@ -131,7 +131,7 @@ for deposition in archive:
 | RCSB Data GraphQL API | Fetches every deposition, batched and resumable |
 | gemmi | Reads the archive mmCIF for the byte-level fidelity gate |
 | `regex` | Clause splitting, which turned out to be the hard part rather than the chemistry |
-| `ontology/synonyms.yaml` | The reagent dictionary: 556 reagents, 1,346 spellings |
+| `ontology/synonyms.yaml` | The reagent dictionary: 561 reagents, 1,362 spellings |
 | pydantic | Enforces the schema and the chemical invariants on load |
 | polars, pyarrow, duckdb | Tables, joins and the queryable release |
 | MMseqs2 | Sequence clustering at 30%, 50% and 90% identity, to control redundancy |
@@ -150,7 +150,7 @@ for deposition in archive:
 | Records | 199,185 |
 | Usable | **186,263 (93.5%)** |
 | Components | 605,481, **85.3% identified** as a canonical reagent (87.6% excluding text that names no chemistry) |
-| Reagent lexicon | 556 reagents, 1,346 names (v0.6.0) |
+| Reagent lexicon | 561 reagents, 1,362 names (v0.6.1) |
 | Linked sequences | 184,229 across **23,159** distinct 30% identity clusters |
 | Screen-well matches | 45,547 component-set matches, 20,339 agreeing on every concentration |
 | Archive fidelity | **100.0000%** over 205,943 entries against the 90 GB mmCIF snapshot |
@@ -228,7 +228,7 @@ An earlier three-level ontology of 163 binned groups was withdrawn at v0.3.0. It
 | Round 2: 10 grouped decisions, 1,004 names | 502 | 1,265 | 84.5% |
 | Prose stripping (a parser fix, not curation) | 502 | 1,265 | 85.2% |
 | Separating apparatus notes and bare units from reagents | 502 | 1,265 | 85.2% (87.5% on chemistry alone) |
-| The 26 ionic liquids from PEG/Ionic Liquid 1 and 2 | 556 | 1,346 | **85.2%** (87.5% on chemistry alone) |
+| The 26 ionic liquids from PEG/Ionic Liquid 1 and 2 | 561 | 1,362 | **85.2%** (87.5% on chemistry alone) |
 
 **For the crystallographer:** every reagent carries the chemistry the ontology needs, and each field is enforced on load rather than being optional documentation. A `peg` entry must state its molecular weight, a `buffer` must state its pKa, and a `premix` must list its constituents. Those invariants caught three separate attempts to bulk-add entries that could not satisfy them.
 
@@ -289,8 +289,13 @@ hand-labelled truth and are the ones that decide anything.
 
 | Source | Precision | Recall | F1 | F0.5 |
 |---|---|---|---|---|
-| Rule parser alone | **100.0%** | 67.7% | 80.7 | 91.3 |
-| Rules + fine-tuned model *(shipped)* | 99.6% | **87.4%** | **93.1** | **96.9** |
+| Rule parser alone | 100.0% | 67.7% | 80.7 | 91.3 |
+| Rules + fine-tuned model *(shipped)* | **99.6%** | **87.4%** | **93.1** | **96.9** |
+
+**Those precision figures are a property of the sample, not of the parsers.** A second, deliberately
+contested batch puts the rules at **91.8%** and the model at 92.5% — see
+[the second gold batch](#-the-second-gold-batch-contested-records) below. On a randomly drawn record
+the parsers are rarely challenged, so they rarely err.
 
 **What each measure asks, and why there are two summary scores:**
 
@@ -438,6 +443,44 @@ emits a `<|channel>thought` block before answering, so at the 448-token budget t
 while reasoning, the *first* JSON array in its output is the prompt being thought about rather than
 the reply. Taking the first array would have scored our own examples back as the teacher's labels
 and looked entirely plausible.
+
+### 🥊 The second gold batch: contested records
+
+The random 96 answered "how good is the pipeline" and could not answer "which source is better",
+because only 41 of its 91 scored records contained a reagent the sources disputed at all. A second
+96, sampled where the teacher and the pipeline **disagree**, in three equal strata — teacher found
+something extra, pipeline found something extra, both did.
+
+It produced **32 rejections against the random batch's 1**, which is the precision signal the first
+set could not supply.
+
+| source | precision | recall | F1 | F0.5 |
+|---|---|---|---|---|
+| rules only | 91.8% | 54.9% | 68.7 | 80.9 |
+| rules + student *(shipped)* | 92.5% | 72.8% | 81.5 | 87.8 |
+| rules + 32B teacher | 91.1% | **85.2%** | 88.0 | **89.8** |
+| union of both | 91.2% | **96.0%** | **93.5** | 92.1 |
+
+**Three corrections come out of it.**
+
+**The rules are not 100% precise.** They are **91.8%** here — 16 wrong of 194. The random batch
+reported 100.0% because it never drew a contested record, and that figure was quoted repeatedly,
+including in this README and on the published model card.
+
+**The teacher beats the student on recall, decisively.** It finds **75 reagents the student misses
+against 35 the other way, p = 0.00017** — the first unambiguous result in this line of work — and
+pays almost nothing for it: 11 extra false positives against 3 avoided, p = 0.057.
+
+**The student's precision advantage largely evaporates**: 92.5% against the teacher's 91.1%, not
+99.6% against 91.8%. On a random sample the student looks far more precise mostly because it rarely
+says anything contestable.
+
+**Both batches are needed, and neither alone is honest.** This one is adversarial by construction,
+so its absolute numbers do not describe the corpus — 57% of teacher-labelled records are contested,
+not all of them. The random 96 remains the yardstick for *how good is the pipeline*. But comparisons
+between sources are what this batch measures well, and it says the earlier reading — teacher labels
+buy +2 recall for −4 precision — came from a sample where contested records were too rare for the
+trade to show its real shape.
 
 ## 🔁 Redundancy
 

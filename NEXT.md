@@ -3,6 +3,45 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
+## 2026-08-03: the contested gold batch changes the reading
+
+96 records sampled where teacher and pipeline disagree, three equal strata. **32 rejections against
+the random batch's 1** — the precision signal the first set could not supply.
+
+| source | precision | recall | F1 | F0.5 |
+|---|---|---|---|---|
+| rules only | 91.8% | 54.9% | 68.7 | 80.9 |
+| rules + student *(shipped)* | 92.5% | 72.8% | 81.5 | 87.8 |
+| rules + 32B teacher | 91.1% | **85.2%** | 88.0 | **89.8** |
+| union of both | 91.2% | **96.0%** | **93.5** | 92.1 |
+
+**Three corrections.**
+
+1. **The rules are not 100% precise — they are 91.8%**, 16 wrong of 194. The random batch said
+   100.0% because it never drew a contested record. That figure was published in the README and on
+   the model card and has been corrected in both.
+2. **The teacher beats the student on recall decisively**: 75 found against 35 missed, **p =
+   0.00017**. First unambiguous result in this line of work. Precision cost is 11 extra false
+   positives against 3 avoided, p = 0.057.
+3. **The student's precision edge mostly evaporates on contested records**: 92.5% against 91.1%,
+   not 99.6% against 91.8%.
+
+**Neither batch is honest alone.** This one is adversarial by construction and its absolute numbers
+do not describe the corpus (57% of teacher-labelled records are contested, not all). The random 96
+stays the yardstick for *how good is the pipeline*; this one answers *which source is better*, and
+it says the earlier "+2 recall for −4 precision" verdict came from a sample too clean to show the
+trade.
+
+**What this reopens.** The teacher's recall advantage is real and large. Rounds 07 and 08 failed to
+transfer it into the student's weights, and that remains true — but the reason to keep trying is
+now much stronger than it looked, and the inference-time ensemble (union: 96.0% recall) is the
+obvious shape.
+
+Lexicon 0.6.1: NDSB-201, isocitrate, UMP, dicoumarol, xylopentaose added; glycyl-glycine,
+octyl-beta-glucopyranoside and dimethylethylammonium propane sulfonate resolved as aliases. Six
+labels remain unresolvable and are ambiguous abbreviations (L-RHA, PEA, AVA, MG(II)) rather than
+gaps.
+
 ## 2026-08-03: agreement gating measured — works, still short
 
 A teacher-only find is kept only if a second, architecturally different 32B names the same reagent

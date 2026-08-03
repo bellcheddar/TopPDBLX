@@ -1,4 +1,4 @@
-version: 0.6.0
+version: 0.6.1
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -344,6 +344,8 @@ reagents:
   chem_class: detergent
   default_unit: percent_w_v
   aliases:
+  - octyl d-beta-glucopyranoside
+  - n-octyl-beta-d-glucopyranoside
   - b-og
   - beta-og
   - n-octyl-beta-d-glucoside
@@ -3411,6 +3413,7 @@ reagents:
   default_unit: millimolar
   buffer_pka: 8.2
   aliases:
+  - glycyl-glycine
   - glycylglycine
   - gly-gly
   - glygly
@@ -3427,6 +3430,7 @@ reagents:
   chem_class: additive
   default_unit: molar
   aliases:
+  - dimethylethylammonium propane sulfonate
   - ndsb-195
   - ndsb 195
   - dimethylethyl-(3-sulfopropyl)-ammonium
@@ -3508,6 +3512,44 @@ reagents:
   default_unit: millimolar
   aliases:
   - staurosporine
+- canonical_id: NDSB_201
+  display_name: NDSB-201
+  chem_class: additive
+  default_unit: molar
+  aliases:
+  - ndsb-201
+  - ndsb 201
+  - 3-(benzyldimethylammonio)propanesulfonate
+  note: 'A different non-detergent sulfobetaine from NDSB-195: benzyl rather than ethyl.'
+- canonical_id: ISOCITRATE
+  display_name: Isocitrate
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - isocitrate
+  - dl-isocitrate
+  - sodium isocitrate
+- canonical_id: UMP
+  display_name: UMP
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - ump
+  - uridine monophosphate
+  - uridine 5'-monophosphate
+- canonical_id: DICOUMAROL
+  display_name: Dicoumarol
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - dicoumarol
+  - dicumarol
+- canonical_id: XYLOPENTAOSE
+  display_name: Xylopentaose
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - xylopentaose
 - canonical_id: SODIUM_ACETATE
   display_name: Sodium acetate
   chem_class: buffer
