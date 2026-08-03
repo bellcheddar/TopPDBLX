@@ -62,6 +62,13 @@ def main(argv: Optional[list[str]] = None) -> int:
                         default=config.INTERIM_DIR / "slm_components.parquet")
     parser.add_argument("--out", type=Path,
                         default=config.INTERIM_DIR / "gold_questions.json")
+    parser.add_argument("--candidates", type=Path, default=None,
+                        help="a teacher components parquet. Sampling then targets records where "
+                             "the teacher and the pipeline DISAGREE, which is where a labelled "
+                             "record buys the most: the random set is only 9%% informative, since "
+                             "269 of its 294 judgements confirmed something already right")
+    parser.add_argument("--already-labelled", type=Path, default=None,
+                        help="an existing gold set, whose records are never drawn again")
     parser.add_argument("--n", type=int, default=DEFAULT_N)
     parser.add_argument("--seed", type=int, default=41)
     args = parser.parse_args(argv)
@@ -82,23 +89,6 @@ def main(argv: Optional[list[str]] = None) -> int:
         seen.add(text.lower())
         pool.append({**row, "text": text})
 
-    # Three equal length bands, so the long depositions where reagents go missing are not
-    # crowded out by the short ones that dominate the corpus.
-    pool.sort(key=lambda r: len(r["text"]))
-    per_band, chosen = args.n // BANDS, []
-    for band in range(BANDS):
-        lo = band * len(pool) // BANDS
-        hi = (band + 1) * len(pool) // BANDS
-        slice_ = pool[lo:hi]
-        rng.shuffle(slice_)
-        chosen.extend(slice_[:per_band])
-    for row in pool:                      # top up if a band ran short
-        if len(chosen) >= args.n:
-            break
-        if row not in chosen:
-            chosen.append(row)
-    rng.shuffle(chosen)
-
     def proposals(frame: Path, source: str) -> dict[tuple, list[dict[str, Any]]]:
         out: dict[tuple, list[dict[str, Any]]] = {}
         if not frame.exists():
@@ -116,6 +106,63 @@ def main(argv: Optional[list[str]] = None) -> int:
     from_rules = proposals(args.components, "rules")
     from_model = proposals(args.slm_components, "model")
 
+    # **Disagreement sampling, when a teacher's labels are supplied.** Every record then holds at
+    # least one reagent the two sources dispute, so every judgement resolves something. The random
+    # set is only 9% informative -- 269 of its 294 judgements confirmed something already right --
+    # and the questions that remain open are all comparisons between sources.
+    #
+    # The cost is that this sample is not representative, so it cannot give an unbiased *absolute*
+    # precision and does not replace the random set: it is a diagnostic batch beside a yardstick.
+    # Three equal strata, because the three kinds of disagreement ask different questions: did the
+    # teacher find something real, did the student, or are both partly right.
+    teacher = proposals(args.candidates, "teacher") if args.candidates else {}
+    if teacher:
+        already = set()
+        if args.already_labelled and args.already_labelled.exists():
+            already = {(r["pdb_id"], r.get("crystal_id", "1"))
+                       for r in json.loads(args.already_labelled.read_text()).get("records", [])}
+        strata: dict[str, list] = {"both": [], "student_only": [], "teacher_only": []}
+        for row in pool:
+            key = (row["pdb_id"], row["crystal_id"])
+            if key in already or key not in teacher:
+                continue
+            t = {p["name"] for p in teacher[key]}
+            base = {p["name"] for p in from_rules.get(key, []) + from_model.get(key, [])}
+            if t - base and base - t:
+                strata["both"].append(row)
+            elif t - base:
+                strata["teacher_only"].append(row)
+            elif base - t:
+                strata["student_only"].append(row)
+        chosen = []
+        for name in sorted(strata):
+            rng.shuffle(strata[name])
+            chosen.extend(strata[name][:args.n // len(strata)])
+        rng.shuffle(chosen)
+        print("  disagreement strata: " + ", ".join(
+            f"{k} {len(v):,} available" for k, v in sorted(strata.items())))
+    else:
+        chosen = None
+
+    # Three equal length bands, so the long depositions where reagents go missing are not
+    # crowded out by the short ones that dominate the corpus.
+    if chosen is None:
+      pool.sort(key=lambda r: len(r["text"]))
+      per_band, chosen = args.n // BANDS, []
+      for band in range(BANDS):
+        lo = band * len(pool) // BANDS
+        hi = (band + 1) * len(pool) // BANDS
+        slice_ = pool[lo:hi]
+        rng.shuffle(slice_)
+        chosen.extend(slice_[:per_band])
+      for row in pool:                    # top up if a band ran short
+        if len(chosen) >= args.n:
+            break
+        if row not in chosen:
+            chosen.append(row)
+      rng.shuffle(chosen)
+
+
     with Manifest(STAGE, params={"n": args.n, "seed": args.seed, "bands": BANDS}) as m:
         m.add_input(args.residual)
 
@@ -123,7 +170,11 @@ def main(argv: Optional[list[str]] = None) -> int:
         for row in chosen:
             key = (row["pdb_id"], row["crystal_id"])
             merged: dict[str, dict[str, Any]] = {}
-            for item in from_rules.get(key, []) + from_model.get(key, []):
+            # The teacher's candidates are shown too, and deliberately not marked as its own:
+            # labelling "what the 32B said" invites deference to it. Every proposal is judged
+            # against the deposition text alone.
+            for item in (from_rules.get(key, []) + from_model.get(key, [])
+                         + teacher.get(key, [])):
                 merged.setdefault(item["name"], item)
             questions.append({
                 "id": f"gold::{row['pdb_id']}::{row['crystal_id']}",
