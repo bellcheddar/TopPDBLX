@@ -7,7 +7,7 @@ Two artefacts are versioned here, independently:
 
 | File | Version | What it is |
 |------|---------|------------|
-| `synonyms.yaml` | 0.5.1 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
+| `synonyms.yaml` | 0.6.1 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
 | `groups.yaml` | 0.3.0 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
 
 ## groups.yaml
@@ -106,6 +106,48 @@ Known gaps recorded rather than hidden:
   could ever have been assigned to it.
 
 ## synonyms.yaml
+
+### 0.6.1 (2026-08-03)
+
+**561 reagents, 1,362 names.** From the second gold batch, 96 records sampled where the 32B
+teacher and the pipeline disagree rather than at random. Unresolvable gold labels fell from 14 to
+6, and the six that remain are ambiguous abbreviations (`L-RHA`, `PEA`, `AVA`, `MG(II)`) or
+one-off ligands, not gaps.
+
+| New entry | Why |
+|---|---|
+| `NDSB_201` | A different sulfobetaine from `NDSB_195`: benzyl rather than ethyl |
+| `ISOCITRATE` | |
+| `UMP` | |
+| `DICOUMAROL` | |
+| `XYLOPENTAOSE` | |
+
+Three labels turned out to name entries that already existed and became aliases: `glycyl-glycine`
+→ `GLYCYLGLYCINE` (hyphenated, and only the closed spelling was listed), `octyl
+d-beta-glucopyranoside` → `OG`, and `dimethylethylammonium propane sulfonate` →
+`NDSB_195`, which is the same systematic name the 0.6.0 note already recorded, written without
+the locant.
+
+**Aliasing an existing entry is the commoner fix, and the one a gold set is needed to see.** Of
+the eight labels resolved here, three were spellings rather than molecules. An unrecognised
+spelling is invisible to every automated metric in the project: the name simply fails to resolve
+and the component is dropped, which costs recall without costing any measurable precision.
+
+### 0.6.0 (2026-08-02)
+
+**556 reagents, 1,346 names.** From the first gold set — 96 records labelled by hand, the first
+ground truth this project has had. Fourteen new entries, every one of them a reagent a human
+labeller saw in the text and the lexicon had no name for.
+
+`AMPD`, `GLYCYLGLYCINE`, `CALCIUM_NITRATE`, `NDSB_195`, `CYMAL_3`, `NONYL_GLUCOSIDE`,
+`TETRAETHYLAMMONIUM_CHLORIDE`, `ALUMINIUM_FLUORIDE`, `RHODIUM_HEXAMINE`, `CHLOROTRYPTOPHAN_7`,
+`DEOXYGUANOSINE`, `DEOXYCYTIDINE`, `SAH`, `STAUROSPORINE`.
+
+Plus `AMMONIUM_SULFATE` ← `diammonium sulfate`/`diammonium sulphate`, and `GLUTATHIONE` ← `gsh`,
+`gssg`, `gsh/gssg`, the last of which is a redox pair written as one token.
+
+Minor rather than patch because new canonical ids appear: a name that resolved to nothing
+yesterday resolves to a reagent today, and anything counting identified components moves.
 
 ### 0.5.1 (2026-08-02)
 
