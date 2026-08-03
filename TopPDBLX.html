@@ -829,8 +829,8 @@
 <p><strong>This is the number that settles what the model is for.</strong> It adds <strong>+20.1 points of recall</strong> and finds 59 reagents the rules never reach, for 0.4 points of precision. The fidelity metric had made it look like an expensive imitation of <code>rules_v3</code>; against labelled truth it is reading a fifth of the corpus that the rules cannot.</p>
 <p>It also confirmed the shape every audit had gestured at: <strong>precision was never the problem.</strong> One proposed reagent was removed across 96 records; 50 were added.</p>
 <p><strong>For the crystallographer:</strong> 96 records is a small yardstick and its intervals are wide (recall [88, 94]). It measures reagent <em>identity</em>, not concentration or unit. It does not replace the commercial screen cross-reference, where 38,481 conditions match a vendor-published formulation on every concentration, and it does not replace the human audit. What it does is make "did we miss something" answerable at all, which nothing in this project could do before.</p>
-<h3>🤗 What the model has delivered</h3>
-<p>Tracked honestly, including the rounds that delivered nothing. From round 05 onwards these are measured on the <strong>frozen benchmark</strong>, so they are comparable to each other; earlier rounds were scored against a live residual that shrank from the easy end every time curation improved, and are not comparable to anything. Components contributed counts rows that actually reached the dataset.</p>
+<h3>🤗 Every round, and what it delivered</h3>
+<p>All eight rounds ship as LoRA adapters for <code>mlx-community/SmolLM2-360M-Instruct</code>, one directory per round in <strong><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser"><code>Dellboy/toppdblx-residual-parser</code></a></strong>. Each is 33 MB; the base model is not redistributed. Rounds that delivered nothing are listed anyway.</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
 <tr>
@@ -838,148 +838,84 @@
 <th>What changed</th>
 <th>Identification</th>
 <th>Grounding</th>
-<th>Components contributed</th>
-<th>Adapter</th>
+<th>On gold, with the rules</th>
+<th>Components shipped</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td data-label="Round">01</td>
-<td data-label="What changed">Bootstrap distillation, lexicon 0.1.0</td>
-<td data-label="Identification">87.0%</td>
-<td data-label="Grounding">not measured</td>
-<td data-label="Components contributed">0</td>
-<td data-label="Adapter"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01">round01</a></td>
+<td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01">01</a></td>
+<td data-label="What changed">Bootstrap distillation from rule output, lexicon 0.1.0</td>
+<td data-label="Identification">87.0% †</td>
+<td data-label="Grounding">not yet invented</td>
+<td data-label="On gold, with the rules">—</td>
+<td data-label="Components shipped">0</td>
 </tr>
 <tr>
-<td data-label="Round">02</td>
+<td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round02">02</a></td>
 <td data-label="What changed"><code>not_a_component</code> class, confidence gate fixed</td>
-<td data-label="Identification">89.7%</td>
-<td data-label="Grounding">not measured</td>
-<td data-label="Components contributed">0</td>
-<td data-label="Adapter"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round02">round02</a></td>
+<td data-label="Identification">89.7% †</td>
+<td data-label="Grounding">not yet invented</td>
+<td data-label="On gold, with the rules">—</td>
+<td data-label="Components shipped">0</td>
 </tr>
 <tr>
-<td data-label="Round">03</td>
+<td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03">03</a></td>
 <td data-label="What changed">Cosine schedule, dropout, class rebalanced</td>
-<td data-label="Identification">88.4%</td>
-<td data-label="Grounding">not measured</td>
-<td data-label="Components contributed">0</td>
-<td data-label="Adapter"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03">round03</a></td>
+<td data-label="Identification">88.4% †</td>
+<td data-label="Grounding">not yet invented</td>
+<td data-label="On gold, with the rules">—</td>
+<td data-label="Components shipped">0</td>
 </tr>
 <tr>
-<td data-label="Round">04</td>
+<td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04">04</a></td>
 <td data-label="What changed">Retrained on the 502-reagent lexicon</td>
-<td data-label="Identification">abandoned, trained on duplicated data</td>
-<td data-label="Grounding"></td>
-<td data-label="Components contributed">0</td>
-<td data-label="Adapter"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04">round04</a></td>
+<td data-label="Identification"><strong>abandoned</strong> — trained on 36% duplicate rows</td>
+<td data-label="Grounding">—</td>
+<td data-label="On gold, with the rules">—</td>
+<td data-label="Components shipped">0</td>
 </tr>
 <tr>
-<td data-label="Round">05</td>
+<td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05">05</a></td>
 <td data-label="What changed">Deduplicated training set, 95,818 distinct pairs</td>
 <td data-label="Identification">87.58%</td>
 <td data-label="Grounding">93.41%</td>
-<td data-label="Components contributed">0</td>
-<td data-label="Adapter"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05">round05</a></td>
+<td data-label="On gold, with the rules">—</td>
+<td data-label="Components shipped">0</td>
 </tr>
 <tr>
-<td data-label="Round">06</td>
-<td data-label="What changed">Full epoch, LoRA rank 16, 6,856 empty-answer examples</td>
-<td data-label="Identification">90.52% at iter 2,000, 88.99% final</td>
+<td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06"><strong>06</strong></a></td>
+<td data-label="What changed">Full epoch, rank 16, <strong>32 LoRA layers</strong>, 6,856 empty-answer examples</td>
+<td data-label="Identification">88.99% final, 90.52% at iter 2,000</td>
 <td data-label="Grounding">94.36%</td>
-<td data-label="Components contributed"><strong>153,736</strong></td>
-<td data-label="Adapter"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06">round06</a></td>
+<td data-label="On gold, with the rules"><strong>98.2% / 95.2%</strong></td>
+<td data-label="Components shipped"><strong>153,736</strong></td>
 </tr>
 <tr>
-<td data-label="Round">07</td>
-<td data-label="What changed">32B-teacher labels, 92.6% precise, 0.23 epochs</td>
-<td data-label="Identification">measured on gold instead: 93.6% precision, 89.1% recall</td>
-<td data-label="Grounding">—</td>
-<td data-label="Components contributed">0, <strong>regressed</strong></td>
-<td data-label="Adapter"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07">round07</a></td>
+<td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07">07</a></td>
+<td data-label="What changed">32B-teacher labels 92.6% precise, 2,000 iters, <strong>16 LoRA layers</strong></td>
+<td data-label="Identification">not run</td>
+<td data-label="Grounding">not run</td>
+<td data-label="On gold, with the rules">93.6% / 89.1%</td>
+<td data-label="Components shipped">0</td>
 </tr>
 <tr>
-<td data-label="Round">08</td>
-<td data-label="What changed">Same, labels 97.6% precise, 1.06 epochs</td>
-<td data-label="Identification">measured on gold instead: 95.3% precision, 89.1% recall</td>
-<td data-label="Grounding">—</td>
-<td data-label="Components contributed">0, <strong>regressed</strong></td>
-<td data-label="Adapter"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08">round08</a></td>
+<td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08">08</a></td>
+<td data-label="What changed">Teacher labels 97.6% precise, 8,000 iters, <strong>16 LoRA layers</strong></td>
+<td data-label="Identification">not run</td>
+<td data-label="Grounding">not run</td>
+<td data-label="On gold, with the rules">95.3% / 89.1%</td>
+<td data-label="Components shipped">0</td>
 </tr>
 </tbody>
 </table></div>
-<p>Rounds 07 and 08 were never put through the frozen benchmark, and deliberately so: by then the gold set existed, and <code>identification</code> had already given three wrong answers to "how long should this train". They were scored against hand-labelled truth instead, which is the stricter test and the one in the table below.</p>
-<h3>🤗 Models on HuggingFace</h3>
-<p>All rounds ship as LoRA adapters for <code>mlx-community/SmolLM2-360M-Instruct</code>, in one repo with a directory per round: <strong><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser"><code>Dellboy/toppdblx-residual-parser</code></a></strong>. Each is 33 MB; the base model is not redistributed.</p>
-<p>All eight rounds are on the Hub, in round order. Round 06's final adapter is the one to use.</p>
-<div class="emd-table-wrap"><table class="emd-data-table">
-<thead>
-<tr>
-<th>Round</th>
-<th>Model</th>
-<th>What it is</th>
-<th>How well it works</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td data-label="Round">01</td>
-<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01"><code>round01</code></a></td>
-<td data-label="What it is">Bootstrap distillation from rule output, lexicon 0.1.0</td>
-<td data-label="How well it works">87.0% identification, against a live residual — <strong>not comparable to anything</strong></td>
-</tr>
-<tr>
-<td data-label="Round">02</td>
-<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round02"><code>round02</code></a></td>
-<td data-label="What it is"><code>not_a_component</code> class added, confidence gate fixed</td>
-<td data-label="How well it works">89.7%, live residual</td>
-</tr>
-<tr>
-<td data-label="Round">03</td>
-<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03"><code>round03</code></a></td>
-<td data-label="What it is">Cosine schedule, dropout, class rebalanced</td>
-<td data-label="How well it works">88.4%, live residual</td>
-</tr>
-<tr>
-<td data-label="Round">04</td>
-<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04"><code>round04</code></a></td>
-<td data-label="What it is">Retrained on the 502-reagent lexicon</td>
-<td data-label="How well it works"><strong>Abandoned</strong>: trained on 36% duplicate rows. Kept for reproducibility</td>
-</tr>
-<tr>
-<td data-label="Round">05</td>
-<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05"><code>round05</code></a></td>
-<td data-label="What it is">Deduplicated training set, 95,818 distinct pairs</td>
-<td data-label="How well it works">First frozen-benchmark round: 87.58% identification, 93.41% grounding</td>
-</tr>
-<tr>
-<td data-label="Round">06</td>
-<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06"><strong><code>round06/adapters</code></strong></a></td>
-<td data-label="What it is"><strong>The one to use.</strong> Full epoch, LoRA rank 16, 32 layers, 6,000 iterations</td>
-<td data-label="How well it works">With the rules: <strong>98.2% precision, 95.2% recall</strong> on 96 hand-labelled records</td>
-</tr>
-<tr>
-<td data-label="Round">06</td>
-<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06"><code>round06/promoted_checkpoint_2000</code></a></td>
-<td data-label="What it is">The checkpoint a sweep promoted, kept because the disagreement is the point</td>
-<td data-label="How well it works">90.52% identification but <strong>twelve false positives against the final adapter's one</strong> (p = 0.0034)</td>
-</tr>
-<tr>
-<td data-label="Round">07</td>
-<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07"><code>round07</code></a></td>
-<td data-label="What it is">Teacher labels 92.6% precise, 2,000 iterations, <strong>16 LoRA layers</strong></td>
-<td data-label="How well it works">With the rules: 93.6% / 89.1% on gold. <strong>Regressed</strong> — but see the confound below</td>
-</tr>
-<tr>
-<td data-label="Round">08</td>
-<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08"><code>round08</code></a></td>
-<td data-label="What it is">Teacher labels 97.6% precise, 8,000 iterations, <strong>16 LoRA layers</strong></td>
-<td data-label="How well it works">With the rules: 95.3% / 89.1% on gold. <strong>Regressed</strong>, and not shipped</td>
-</tr>
-</tbody>
-</table></div>
-<p><strong>A correction, and the reason the gold set exists.</strong> The frozen-benchmark sweep promoted checkpoint 2,000 over the final adapter on <em>identification</em>, and against hand-labelled truth that was wrong: the checkpoint makes twelve false positives where the final adapter makes one (p = 0.0034). Identification asks only whether an emitted reagent exists in the lexicon, so it cannot see a name that is real, present in the text, and simply not what the depositor meant — the exact failure a checkpoint trained a little too long produces.</p>
+<p>† Scored against a <strong>live residual</strong> that shrank from the easy end every time curation improved, so these three are not comparable to each other or to anything else. From round 05 the benchmark is frozen.</p>
+<p><strong>Three cells need explaining, because each is a real answer rather than a gap.</strong></p>
+<p><strong>"Not yet invented"</strong> is literal. The grounding check — does the reagent the model named actually appear in the text it was given — was written on 2026-07-31; rounds 01 to 03 were trained the day before. Their adapters are still on the Hub and could be re-scored, but the number would sit beside an identification figure measured against a residual that no longer exists, which would look comparable and would not be.</p>
+<p><strong>"Not run"</strong> for rounds 07 and 08 is a decision, not an omission. By then the hand-labelled gold set existed, and <code>identification</code> had already produced three wrong answers to "how long should this train" — it asks only whether an emitted name is <em>in the lexicon</em>, so a model inventing plausible chemistry scores well on it. Those rounds were measured against labelled truth instead, which is the stricter test.</p>
+<p><strong>"0 components shipped"</strong> is literal too: <strong>only round 06 has ever been applied to the corpus.</strong> The column counts rows that reached the released dataset, and every other adapter is a training experiment that was measured and set aside.</p>
+<p><strong>"Regressed" describes rounds 07 and 08 accurately and explains nothing.</strong> They scored below round 06 on gold, which is a fact. What caused it is not established: both ran at <strong>16 LoRA layers</strong> against round 06's 32, because <code>--num-layers</code> was left at its default, so they changed the label source <em>and</em> halved the adaptable capacity in the same experiment. The teacher-label hypothesis has never been tested at matched capacity, and the word "regressed" in this table should be read as "scored worse", not as "distillation does not work".</p>
+<p><strong>Round 06's final adapter is the one to use, and its 2,000-iteration checkpoint is kept beside it because the disagreement is the interesting part.</strong> The frozen-benchmark sweep promoted checkpoint 2,000 over the final adapter on <em>identification</em>, and against hand-labelled truth that was wrong: the checkpoint makes twelve false positives where the final adapter makes one (p = 0.0034). Identification asks only whether an emitted reagent exists in the lexicon, so it cannot see a name that is real, present in the text, and simply not what the depositor meant — the exact failure a checkpoint trained a little too long produces.</p>
 <p><strong>And the released data was never affected</strong>, by accident rather than design. <code>apply_slm</code> accepted <code>--checkpoint</code> and silently ignored it until 2026-08-02, so the 163,353 components shipped on 2026-08-01 came from the final adapter, which is the better model. The flag now works; the notes that said the release used checkpoint 2,000 were wrong and are corrected.</p>
 <h3>Rounds 07 and 08: distillation, and a measurement that was wrong</h3>
 <p>Two attempts to train past the rule parser's ceiling using labels from a local Qwen2.5-32B teacher instead of <code>rules_v3</code>. Both scored worse than round 06 — and then the metric that said so turned out to be biased against them.</p>

@@ -366,47 +366,53 @@ It also confirmed the shape every audit had gestured at: **precision was never t
 
 **For the crystallographer:** 96 records is a small yardstick and its intervals are wide (recall [88, 94]). It measures reagent *identity*, not concentration or unit. It does not replace the commercial screen cross-reference, where 38,481 conditions match a vendor-published formulation on every concentration, and it does not replace the human audit. What it does is make "did we miss something" answerable at all, which nothing in this project could do before.
 
-### 🤗 What the model has delivered
+### 🤗 Every round, and what it delivered
 
-Tracked honestly, including the rounds that delivered nothing. From round 05 onwards these are measured on the **frozen benchmark**, so they are comparable to each other; earlier rounds were scored against a live residual that shrank from the easy end every time curation improved, and are not comparable to anything. Components contributed counts rows that actually reached the dataset.
+All eight rounds ship as LoRA adapters for `mlx-community/SmolLM2-360M-Instruct`, one directory
+per round in **[`Dellboy/toppdblx-residual-parser`](https://huggingface.co/Dellboy/toppdblx-residual-parser)**. Each is 33 MB; the base model is not
+redistributed. Rounds that delivered nothing are listed anyway.
 
-| Round | What changed | Identification | Grounding | Components contributed | Adapter |
+| Round | What changed | Identification | Grounding | On gold, with the rules | Components shipped |
 |---|---|---|---|---|---|
-| 01 | Bootstrap distillation, lexicon 0.1.0 | 87.0% | not measured | 0 | [round01](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01) |
-| 02 | `not_a_component` class, confidence gate fixed | 89.7% | not measured | 0 | [round02](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round02) |
-| 03 | Cosine schedule, dropout, class rebalanced | 88.4% | not measured | 0 | [round03](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03) |
-| 04 | Retrained on the 502-reagent lexicon | abandoned, trained on duplicated data | | 0 | [round04](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04) |
-| 05 | Deduplicated training set, 95,818 distinct pairs | 87.58% | 93.41% | 0 | [round05](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05) |
-| 06 | Full epoch, LoRA rank 16, 6,856 empty-answer examples | 90.52% at iter 2,000, 88.99% final | 94.36% | **153,736** | [round06](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) |
-| 07 | 32B-teacher labels, 92.6% precise, 0.23 epochs | measured on gold instead: 93.6% precision, 89.1% recall | — | 0, **regressed** | [round07](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) |
-| 08 | Same, labels 97.6% precise, 1.06 epochs | measured on gold instead: 95.3% precision, 89.1% recall | — | 0, **regressed** | [round08](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08) |
+| [01](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01) | Bootstrap distillation from rule output, lexicon 0.1.0 | 87.0% † | not yet invented | — | 0 |
+| [02](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round02) | `not_a_component` class, confidence gate fixed | 89.7% † | not yet invented | — | 0 |
+| [03](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03) | Cosine schedule, dropout, class rebalanced | 88.4% † | not yet invented | — | 0 |
+| [04](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04) | Retrained on the 502-reagent lexicon | **abandoned** — trained on 36% duplicate rows | — | — | 0 |
+| [05](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05) | Deduplicated training set, 95,818 distinct pairs | 87.58% | 93.41% | — | 0 |
+| [**06**](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) | Full epoch, rank 16, **32 LoRA layers**, 6,856 empty-answer examples | 88.99% final, 90.52% at iter 2,000 | 94.36% | **98.2% / 95.2%** | **153,736** |
+| [07](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) | 32B-teacher labels 92.6% precise, 2,000 iters, **16 LoRA layers** | not run | not run | 93.6% / 89.1% | 0 |
+| [08](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08) | Teacher labels 97.6% precise, 8,000 iters, **16 LoRA layers** | not run | not run | 95.3% / 89.1% | 0 |
 
-Rounds 07 and 08 were never put through the frozen benchmark, and deliberately so: by then the
-gold set existed, and `identification` had already given three wrong answers to "how long
-should this train". They were scored against hand-labelled truth instead, which is the
-stricter test and the one in the table below.
+† Scored against a **live residual** that shrank from the easy end every time curation improved,
+so these three are not comparable to each other or to anything else. From round 05 the benchmark
+is frozen.
 
-### 🤗 Models on HuggingFace
+**Three cells need explaining, because each is a real answer rather than a gap.**
 
-All rounds ship as LoRA adapters for `mlx-community/SmolLM2-360M-Instruct`, in one repo with a
-directory per round: **[`Dellboy/toppdblx-residual-parser`](https://huggingface.co/Dellboy/toppdblx-residual-parser)**. Each is 33 MB; the base model
-is not redistributed.
+**"Not yet invented"** is literal. The grounding check — does the reagent the model named actually
+appear in the text it was given — was written on 2026-07-31; rounds 01 to 03 were trained the day
+before. Their adapters are still on the Hub and could be re-scored, but the number would sit beside
+an identification figure measured against a residual that no longer exists, which would look
+comparable and would not be.
 
-All eight rounds are on the Hub, in round order. Round 06's final adapter is the one to use.
+**"Not run"** for rounds 07 and 08 is a decision, not an omission. By then the hand-labelled gold
+set existed, and `identification` had already produced three wrong answers to "how long should this
+train" — it asks only whether an emitted name is *in the lexicon*, so a model inventing plausible
+chemistry scores well on it. Those rounds were measured against labelled truth instead, which is
+the stricter test.
 
-| Round | Model | What it is | How well it works |
-|---|---|---|---|
-| 01 | [`round01`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01) | Bootstrap distillation from rule output, lexicon 0.1.0 | 87.0% identification, against a live residual — **not comparable to anything** |
-| 02 | [`round02`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round02) | `not_a_component` class added, confidence gate fixed | 89.7%, live residual |
-| 03 | [`round03`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03) | Cosine schedule, dropout, class rebalanced | 88.4%, live residual |
-| 04 | [`round04`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04) | Retrained on the 502-reagent lexicon | **Abandoned**: trained on 36% duplicate rows. Kept for reproducibility |
-| 05 | [`round05`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05) | Deduplicated training set, 95,818 distinct pairs | First frozen-benchmark round: 87.58% identification, 93.41% grounding |
-| 06 | [**`round06/adapters`**](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) | **The one to use.** Full epoch, LoRA rank 16, 32 layers, 6,000 iterations | With the rules: **98.2% precision, 95.2% recall** on 96 hand-labelled records |
-| 06 | [`round06/promoted_checkpoint_2000`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) | The checkpoint a sweep promoted, kept because the disagreement is the point | 90.52% identification but **twelve false positives against the final adapter's one** (p = 0.0034) |
-| 07 | [`round07`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) | Teacher labels 92.6% precise, 2,000 iterations, **16 LoRA layers** | With the rules: 93.6% / 89.1% on gold. **Regressed** — but see the confound below |
-| 08 | [`round08`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08) | Teacher labels 97.6% precise, 8,000 iterations, **16 LoRA layers** | With the rules: 95.3% / 89.1% on gold. **Regressed**, and not shipped |
+**"0 components shipped"** is literal too: **only round 06 has ever been applied to the corpus.**
+The column counts rows that reached the released dataset, and every other adapter is a training
+experiment that was measured and set aside.
 
-**A correction, and the reason the gold set exists.** The frozen-benchmark sweep promoted
+**"Regressed" describes rounds 07 and 08 accurately and explains nothing.** They scored below round
+06 on gold, which is a fact. What caused it is not established: both ran at **16 LoRA layers**
+against round 06's 32, because `--num-layers` was left at its default, so they changed the label
+source *and* halved the adaptable capacity in the same experiment. The teacher-label hypothesis has
+never been tested at matched capacity, and the word "regressed" in this table should be read as
+"scored worse", not as "distillation does not work".
+
+**Round 06's final adapter is the one to use, and its 2,000-iteration checkpoint is kept beside it because the disagreement is the interesting part.** The frozen-benchmark sweep promoted
 checkpoint 2,000 over the final adapter on *identification*, and against hand-labelled truth that
 was wrong: the checkpoint makes twelve false positives where the final adapter makes one
 (p = 0.0034). Identification asks only whether an emitted reagent exists in the lexicon, so it
