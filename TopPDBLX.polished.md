@@ -374,14 +374,14 @@ redistributed. Rounds that delivered nothing are listed anyway.
 
 | Round | What changed | Identification | Grounding | On gold, with the rules | Components shipped |
 |---|---|---|---|---|---|
-| [01](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01) | Bootstrap distillation from rule output, lexicon 0.1.0 | 87.0% † | not yet invented | — | 0 |
-| [02](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round02) | `not_a_component` class, confidence gate fixed | 89.7% † | not yet invented | — | 0 |
-| [03](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03) | Cosine schedule, dropout, class rebalanced | 88.4% † | not yet invented | — | 0 |
-| [04](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04) | Retrained on the 502-reagent lexicon | **abandoned** — trained on 36% duplicate rows | — | — | 0 |
-| [05](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05) | Deduplicated training set, 95,818 distinct pairs | 87.58% | 93.41% | — | 0 |
+| [01](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01) | Bootstrap distillation from rule output, lexicon 0.1.0 | 87.0% † | not yet invented | — | N/A ‡ |
+| [02](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round02) | `not_a_component` class, confidence gate fixed | 89.7% † | not yet invented | — | N/A ‡ |
+| [03](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03) | Cosine schedule, dropout, class rebalanced | 88.4% † | not yet invented | — | N/A ‡ |
+| [04](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04) | Retrained on the 502-reagent lexicon | **abandoned** — trained on 36% duplicate rows | — | — | N/A ‡ |
+| [05](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05) | Deduplicated training set, 95,818 distinct pairs | 87.58% | 93.41% | — | N/A ‡ |
 | [**06**](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) | Full epoch, rank 16, **32 LoRA layers**, 6,856 empty-answer examples | 88.99% final, 90.52% at iter 2,000 | 94.36% | **98.2% / 95.2%** | **153,736** |
-| [07](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) | 32B-teacher labels 92.6% precise, 2,000 iters, **16 LoRA layers** | not run | not run | 93.6% / 89.1% | 0 |
-| [08](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08) | Teacher labels 97.6% precise, 8,000 iters, **16 LoRA layers** | not run | not run | 95.3% / 89.1% | 0 |
+| [07](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) | 32B-teacher labels 92.6% precise, 2,000 iters, **16 LoRA layers** | not run | not run | 93.6% / 89.1% | N/A ‡ |
+| [08](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08) | Teacher labels 97.6% precise, 8,000 iters, **16 LoRA layers** | not run | not run | 95.3% / 89.1% | N/A ‡ |
 
 † Scored against a **live residual** that shrank from the easy end every time curation improved,
 so these three are not comparable to each other or to anything else. From round 05 the benchmark
@@ -401,9 +401,34 @@ train" — it asks only whether an emitted name is *in the lexicon*, so a model 
 chemistry scores well on it. Those rounds were measured against labelled truth instead, which is
 the stricter test.
 
-**"0 components shipped"** is literal too: **only round 06 has ever been applied to the corpus.**
-The column counts rows that reached the released dataset, and every other adapter is a training
-experiment that was measured and set aside.
+**‡ "N/A" rather than "0", and the difference matters.** The column counts rows that reached the
+released dataset. **Only round 06 has ever been applied to the corpus** — every other adapter
+is a training experiment that was measured and set aside, so it was never *given* the residual
+to read. A zero would say "it ran and found nothing", which is a claim about the model; N/A says
+"it was never asked", which is the truth. Producing a real number for rounds 07 and 08 would
+cost **4.7 hours of generation each** — measured from round 06's own 282-minute run, not
+estimated — and would answer a different question than the column asks.
+
+### 🌙 Round 09, running tonight
+
+The last training round this project will do, and the first clean test of the question rounds 07
+and 08 were meant to answer. Chained in `TONIGHT.sh` so none of it needs watching.
+
+| | |
+|---|---|
+| **Labels** | Every rules label kept, plus ~3,400 teacher-labelled residual rows **added, never substituted** — which is what rounds 07 and 08 got wrong |
+| **Capacity** | **32 LoRA layers**, matching round 06. Rounds 07 and 08 ran at 16 because `--num-layers` was left at its default |
+| **Prompt** | `SYSTEM_V2`, adding the `protein_buffer` and `soak` roles. A round trained on v2 must be *served* with v2 |
+| **Data** | 122,469 rows at lexicon 0.9.2, with 24,040 `protein_buffer` and 16,272 `soak` targets |
+| **Gate** | The build **fails rather than trains** if a single gold record leaks, or if any example would exceed the 1,024-token cap |
+
+It runs in three stages: wait for the 32B to finish labelling the records where the rules and the
+student both found nothing; score rounds 06, 07 and 08 on the frozen benchmark **against tonight's
+lexicon**, so the identification column compares models rather than dictionaries; then train.
+`SCORE_ROUND09.sh` follows in the morning with round 09's own figures, a checkpoint sweep across
+both gold sets, and the components.
+
+**Round 06 stays shipped unless round 09 beats it on F0.5.** The downside is one night.
 
 **"Regressed" describes rounds 07 and 08 accurately and explains nothing.** They scored below round
 06 on gold, which is a fact. What caused it is not established: both ran at **16 LoRA layers**

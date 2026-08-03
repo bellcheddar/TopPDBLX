@@ -849,7 +849,7 @@
 <td data-label="Identification">87.0% †</td>
 <td data-label="Grounding">not yet invented</td>
 <td data-label="On gold, with the rules">—</td>
-<td data-label="Components shipped">0</td>
+<td data-label="Components shipped">N/A ‡</td>
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round02">02</a></td>
@@ -857,7 +857,7 @@
 <td data-label="Identification">89.7% †</td>
 <td data-label="Grounding">not yet invented</td>
 <td data-label="On gold, with the rules">—</td>
-<td data-label="Components shipped">0</td>
+<td data-label="Components shipped">N/A ‡</td>
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03">03</a></td>
@@ -865,7 +865,7 @@
 <td data-label="Identification">88.4% †</td>
 <td data-label="Grounding">not yet invented</td>
 <td data-label="On gold, with the rules">—</td>
-<td data-label="Components shipped">0</td>
+<td data-label="Components shipped">N/A ‡</td>
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04">04</a></td>
@@ -873,7 +873,7 @@
 <td data-label="Identification"><strong>abandoned</strong> — trained on 36% duplicate rows</td>
 <td data-label="Grounding">—</td>
 <td data-label="On gold, with the rules">—</td>
-<td data-label="Components shipped">0</td>
+<td data-label="Components shipped">N/A ‡</td>
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05">05</a></td>
@@ -881,7 +881,7 @@
 <td data-label="Identification">87.58%</td>
 <td data-label="Grounding">93.41%</td>
 <td data-label="On gold, with the rules">—</td>
-<td data-label="Components shipped">0</td>
+<td data-label="Components shipped">N/A ‡</td>
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06"><strong>06</strong></a></td>
@@ -897,7 +897,7 @@
 <td data-label="Identification">not run</td>
 <td data-label="Grounding">not run</td>
 <td data-label="On gold, with the rules">93.6% / 89.1%</td>
-<td data-label="Components shipped">0</td>
+<td data-label="Components shipped">N/A ‡</td>
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08">08</a></td>
@@ -905,7 +905,7 @@
 <td data-label="Identification">not run</td>
 <td data-label="Grounding">not run</td>
 <td data-label="On gold, with the rules">95.3% / 89.1%</td>
-<td data-label="Components shipped">0</td>
+<td data-label="Components shipped">N/A ‡</td>
 </tr>
 </tbody>
 </table></div>
@@ -913,7 +913,41 @@
 <p><strong>Three cells need explaining, because each is a real answer rather than a gap.</strong></p>
 <p><strong>"Not yet invented"</strong> is literal. The grounding check — does the reagent the model named actually appear in the text it was given — was written on 2026-07-31; rounds 01 to 03 were trained the day before. Their adapters are still on the Hub and could be re-scored, but the number would sit beside an identification figure measured against a residual that no longer exists, which would look comparable and would not be.</p>
 <p><strong>"Not run"</strong> for rounds 07 and 08 is a decision, not an omission. By then the hand-labelled gold set existed, and <code>identification</code> had already produced three wrong answers to "how long should this train" — it asks only whether an emitted name is <em>in the lexicon</em>, so a model inventing plausible chemistry scores well on it. Those rounds were measured against labelled truth instead, which is the stricter test.</p>
-<p><strong>"0 components shipped"</strong> is literal too: <strong>only round 06 has ever been applied to the corpus.</strong> The column counts rows that reached the released dataset, and every other adapter is a training experiment that was measured and set aside.</p>
+<p><strong>‡ "N/A" rather than "0", and the difference matters.</strong> The column counts rows that reached the released dataset. <strong>Only round 06 has ever been applied to the corpus</strong> — every other adapter is a training experiment that was measured and set aside, so it was never <em>given</em> the residual to read. A zero would say "it ran and found nothing", which is a claim about the model; N/A says "it was never asked", which is the truth. Producing a real number for rounds 07 and 08 would cost <strong>4.7 hours of generation each</strong> — measured from round 06's own 282-minute run, not estimated — and would answer a different question than the column asks.</p>
+<h3>🌙 Round 09, running tonight</h3>
+<p>The last training round this project will do, and the first clean test of the question rounds 07 and 08 were meant to answer. Chained in <code>TONIGHT.sh</code> so none of it needs watching.</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label=""><strong>Labels</strong></td>
+<td data-label="">Every rules label kept, plus ~3,400 teacher-labelled residual rows <strong>added, never substituted</strong> — which is what rounds 07 and 08 got wrong</td>
+</tr>
+<tr>
+<td data-label=""><strong>Capacity</strong></td>
+<td data-label=""><strong>32 LoRA layers</strong>, matching round 06. Rounds 07 and 08 ran at 16 because <code>--num-layers</code> was left at its default</td>
+</tr>
+<tr>
+<td data-label=""><strong>Prompt</strong></td>
+<td data-label=""><code>SYSTEM_V2</code>, adding the <code>protein_buffer</code> and <code>soak</code> roles. A round trained on v2 must be <em>served</em> with v2</td>
+</tr>
+<tr>
+<td data-label=""><strong>Data</strong></td>
+<td data-label="">122,469 rows at lexicon 0.9.2, with 24,040 <code>protein_buffer</code> and 16,272 <code>soak</code> targets</td>
+</tr>
+<tr>
+<td data-label=""><strong>Gate</strong></td>
+<td data-label="">The build <strong>fails rather than trains</strong> if a single gold record leaks, or if any example would exceed the 1,024-token cap</td>
+</tr>
+</tbody>
+</table></div>
+<p>It runs in three stages: wait for the 32B to finish labelling the records where the rules and the student both found nothing; score rounds 06, 07 and 08 on the frozen benchmark <strong>against tonight's lexicon</strong>, so the identification column compares models rather than dictionaries; then train. <code>SCORE_ROUND09.sh</code> follows in the morning with round 09's own figures, a checkpoint sweep across both gold sets, and the components.</p>
+<p><strong>Round 06 stays shipped unless round 09 beats it on F0.5.</strong> The downside is one night.</p>
 <p><strong>"Regressed" describes rounds 07 and 08 accurately and explains nothing.</strong> They scored below round 06 on gold, which is a fact. What caused it is not established: both ran at <strong>16 LoRA layers</strong> against round 06's 32, because <code>--num-layers</code> was left at its default, so they changed the label source <em>and</em> halved the adaptable capacity in the same experiment. The teacher-label hypothesis has never been tested at matched capacity, and the word "regressed" in this table should be read as "scored worse", not as "distillation does not work".</p>
 <p><strong>Round 06's final adapter is the one to use, and its 2,000-iteration checkpoint is kept beside it because the disagreement is the interesting part.</strong> The frozen-benchmark sweep promoted checkpoint 2,000 over the final adapter on <em>identification</em>, and against hand-labelled truth that was wrong: the checkpoint makes twelve false positives where the final adapter makes one (p = 0.0034). Identification asks only whether an emitted reagent exists in the lexicon, so it cannot see a name that is real, present in the text, and simply not what the depositor meant — the exact failure a checkpoint trained a little too long produces.</p>
 <p><strong>And the released data was never affected</strong>, by accident rather than design. <code>apply_slm</code> accepted <code>--checkpoint</code> and silently ignored it until 2026-08-02, so the 163,353 components shipped on 2026-08-01 came from the final adapter, which is the better model. The flag now works; the notes that said the release used checkpoint 2,000 were wrong and are corrected.</p>

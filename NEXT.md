@@ -3,6 +3,33 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
+## 2026-08-03, 18:40: tonight is chained in `TONIGHT.sh`
+
+Running unattended. Log at `data/interim/slm/tonight.log`.
+
+1. **Wait for the teacher.** Polls for `teacher_components_blank.parquet`, which `teacher_label`
+   writes once at the end — *not* `until ! pgrep -f`, which matches its own command line and never
+   exits. Six-hour deadline.
+2. **Score rounds 06, 07 and 08** on the frozen benchmark at `--limit 500`, against tonight's
+   lexicon, all with prompt v1. ~7 minutes each. This is what makes the identification column
+   comparable: round 06's published 88.99% was measured against 502 reagents and today's lexicon
+   has 499 with 92 ids retired, so the old number and a new one are different measurements.
+3. **`RUN_ROUND09.sh`** — re-parse, rebuild, gold-leak gate, token-length gate, preflight, train
+   at `--num-layers 32`.
+
+**Timing.** The teacher's ETA drifted while this was being set up: it showed 45 minutes at 17:50
+and 3 hours at 18:40, because the average was dragged by a stall earlier in the day. Expect the
+teacher ~21:45, evals to ~22:10, training finishing **~06:10**.
+
+**In the morning:** `SCORE_ROUND09.sh` for round 09's identification and grounding, the checkpoint
+sweep on both gold sets, and — once a checkpoint wins — the components. Round 06 stays shipped
+unless round 09 wins on F0.5.
+
+**Components shipped stays N/A for every round but 06**, deliberately. That column counts rows
+that reached the released dataset and only round 06 was ever applied to the corpus. Generating a
+real number for rounds 07 and 08 costs 4.7 hours of generation each, measured from round 06's own
+282-minute manifest, and answers a different question than the column asks.
+
 ## 2026-08-03: scoring round 09 — `SCORE_ROUND09.sh`
 
 Run it after training. It produces every column the round table needs, and two of them need care.
