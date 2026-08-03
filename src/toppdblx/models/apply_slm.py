@@ -45,7 +45,7 @@ from .. import config
 from ..parse import lexicon as lexicon_module, quantity
 from ..parse.text import normalise, tidy_name
 from ..manifest import Manifest
-from .build_slm_dataset import SYSTEM
+from .build_slm_dataset import PROMPTS, SYSTEM
 from .eval_slm import (BATCH, MAX_TOKENS, _flatten, check, grounded_in_text,
                         load_aliases, load_lexicon)
 
@@ -114,9 +114,12 @@ def main(argv: Optional[list[str]] = None) -> int:
                         help="a gold set or questions payload: apply to only those records. "
                              "Scoring a new round against 96 labelled records takes minutes; "
                              "applying to the whole residual to find out takes hours")
+    parser.add_argument("--system-version", choices=sorted(PROMPTS), default="v1",
+                        help="which system prompt to serve the adapter with. This MUST match the version its training data was built under: v1 for round 06 and earlier, v2 for any round trained after the scope roles. A mismatch does not fail, it quietly answers worse")
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--batch", type=int, default=BATCH)
     args = parser.parse_args(argv)
+    system_prompt = PROMPTS[args.system_version]
 
     config.ensure_dirs()
     from mlx_lm import batch_generate, load
@@ -200,7 +203,7 @@ def main(argv: Optional[list[str]] = None) -> int:
                               unit="batch"):
                     chunk = pending[i:i + args.batch]
                     prompts = [tokenizer.apply_chat_template(
-                        [{"role": "system", "content": SYSTEM},
+                        [{"role": "system", "content": system_prompt},
                          {"role": "user", "content": r["text"]}],
                         add_generation_prompt=True) for r in chunk]
                     result = batch_generate(model, tokenizer, prompts=prompts,

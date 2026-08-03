@@ -46,11 +46,10 @@ STAGE = "models.build_slm_dataset"
 # it is served with. Changing it re-prompts a model that cannot be retrained to match, and the
 # damage would be silent: the model would still answer, slightly worse, with nothing failing.
 #
-# `protein_buffer` and `soak` were added to the role vocabulary in `parse.schema` and to the
-# *teacher's* prompt in `models.teacher_label`, and deliberately not here. The rules cannot
-# produce those roles, so this dataset can never contain one, and listing a role the training
-# targets never use teaches the model only that it is unused. The first student round trained on
-# teacher labels needs its own versioned prompt beside this one, not an edit to this one.
+# `protein_buffer` and `soak` are absent here and present in `SYSTEM_V2` below. When this comment
+# was first written the rules could not produce those roles at all; `parse.scope` changed that the
+# same day, and the dataset now carries 6,800 of them. That is a reason to add a version, not to
+# edit this one — a round trained under v1 must keep being served under v1.
 SYSTEM = (
     "You convert a PDB crystallisation condition string into JSON. "
     "Return only a JSON array. Each element has: role (precipitant, salt, buffer, additive, "
@@ -60,6 +59,28 @@ SYSTEM = (
     "Use not_a_component for text that names no reagent at all: method notes, screen "
     "references, or an unnamed protein, inhibitor or compound."
 )
+
+# **v2 exists because v1 is frozen, not because v1 was wrong.** `SYSTEM` above is the contract a
+# shipped, public adapter was trained and is served under, so it cannot change. This is the
+# version for the first round trained after the rules learned to tell the drop from the protein
+# sample, and the only difference is the two roles that distinction produces.
+#
+# Every round trained on `SYSTEM_V2` data must be *served* with `SYSTEM_V2`. Serving it under v1
+# would not fail, it would answer slightly worse for a reason nothing reports.
+SYSTEM_V2 = (
+    "You convert a PDB crystallisation condition string into JSON. "
+    "Return only a JSON array. Each element has: role (precipitant, salt, buffer, additive, "
+    "cryo, protein_buffer, soak, not_a_component or unknown), name (the canonical reagent, or "
+    "null when the text names no reagent), amount (a number or null) and "
+    "unit (percent_w_v, percent_v_v, molar, millimolar, mg_ml or null). "
+    "Use not_a_component for text that names no reagent at all: method notes, screen "
+    "references, or an unnamed protein, inhibitor or compound. "
+    "Use protein_buffer for a reagent in the protein solution, stock or storage buffer, and "
+    "soak for one a grown crystal was moved into: both name a real reagent the crystal did not "
+    "grow in."
+)
+
+PROMPTS = {"v1": SYSTEM, "v2": SYSTEM_V2}
 
 # A record is a usable training example only if the rules accounted for every component and
 # covered nearly all of the text. Anything less would teach the model the rule parser's mistakes.
@@ -129,10 +150,21 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument("--max-train", type=int, default=None)
     parser.add_argument("--oversample-non-component", type=int, default=8,
                         help="repeat training records carrying a not_a_component label")
+    parser.add_argument("--oversample-scope", type=int, default=8,
+                        help="repeat training records carrying a protein_buffer or soak label. "
+                             "Same argument as the not_a_component oversample and the same "
+                             "arithmetic: the rules find scope roles in 2,641 usable records "
+                             "against ~100,000, so at 1x the model sees the distinction in under "
+                             "3%% of its examples and will not learn a class it barely meets")
+    parser.add_argument("--system-version", choices=sorted(PROMPTS), default="v1",
+                        help="v1 is the frozen prompt the shipped round 06 adapter is served "
+                             "under and must stay the default. v2 adds the protein_buffer and "
+                             "soak roles; a round trained on it must also be SERVED with it")
     args = parser.parse_args(argv)
 
     config.ensure_dirs()
     args.out_dir.mkdir(parents=True, exist_ok=True)
+    system_prompt = PROMPTS[args.system_version]
 
     conditions = pl.read_parquet(args.conditions)
     components = pl.read_parquet(args.components)
@@ -168,7 +200,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             # NON_CRYSTALLISATION_TEXT), so the label costs nothing and is not a guess.
             if row["discard_reason"] in EMPTY_ANSWER_DISCARDS:
                 empty_example = {"messages": [
-                    {"role": "system", "content": SYSTEM},
+                    {"role": "system", "content": system_prompt},
                     {"role": "user", "content": text},
                     {"role": "assistant", "content": target_json(
                         [c for c in parts if c["role"] == "not_a_component"])},
@@ -186,7 +218,7 @@ def main(argv: Optional[list[str]] = None) -> int:
                 # Chat format so --mask-prompt trains on the completion only. Without the mask
                 # the model spends most of its loss learning to echo condition strings back.
                 example = {"messages": [
-                    {"role": "system", "content": SYSTEM},
+                    {"role": "system", "content": system_prompt},
                     {"role": "user", "content": text},
                     {"role": "assistant", "content": target_json(parts)},
                 ]}
@@ -239,6 +271,20 @@ def main(argv: Optional[list[str]] = None) -> int:
                     extra.extend([example] * (args.oversample_non_component - 1))
             bootstrap["train"].extend(extra)
 
+        # Same treatment for the scope roles, and for the same reason the non-component
+        # oversample exists: a class the model meets in under 3% of its examples is a class it
+        # will answer with the majority label instead. These are rarer still.
+        if args.oversample_scope > 1:
+            extra = []
+            for example in bootstrap["train"]:
+                content = example["messages"][2]["content"]
+                if '"protein_buffer"' in content or '"soak"' in content:
+                    extra.extend([example] * (args.oversample_scope - 1))
+            bootstrap["train"].extend(extra)
+            n_scope_examples = len(extra) // max(1, args.oversample_scope - 1)
+        else:
+            n_scope_examples = 0
+
         # Validation is deduplicated too, or the loss is dominated by whichever conditions
         # happen to be popular rather than by how well the model reads.
         seen_valid: set[str] = set()
@@ -273,6 +319,8 @@ def main(argv: Optional[list[str]] = None) -> int:
             "n_train": len(bootstrap["train"]),
             "n_duplicate_inputs_removed": n_duplicates,
             "n_empty_answer_examples": n_empty_answers,
+            "n_scope_examples": n_scope_examples,
+            "system_version": args.system_version,
             "n_valid": len(bootstrap["valid"]),
             "n_residual": len(residual),
             "n_residual_with_unidentified": skipped_unidentified,
@@ -283,7 +331,8 @@ def main(argv: Optional[list[str]] = None) -> int:
         m.note(**stats)
 
         for key, value in stats.items():
-            print(f"  {key:<28} {value:>10,}")
+            shown = f"{value:,}" if isinstance(value, (int, float)) else str(value)
+            print(f"  {key:<28} {shown:>10}")
         print(f"\n  bootstrap labels cost no human time: they are the rule parser's own output")
         print(f"  on records where it was fully confident and identified every component.")
         print(f"  the {len(residual):,} residual records are the target, and the model never")

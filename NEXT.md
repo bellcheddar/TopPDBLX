@@ -3,6 +3,72 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
+## 2026-08-03: round 09 plan, and a confound that invalidates how 07 and 08 were read
+
+### Rounds 07 and 08 changed two variables at once
+
+| round | LoRA layers | rank | iters | labels |
+|---|---|---|---|---|
+| 05 | **32** | 8 | 1,000 | rules |
+| 06 *(shipped)* | **32** | 16 | 6,000 | rules |
+| 07 | **16** | 16 | 2,000 | teacher |
+| 08 | **16** | 16 | 8,000 | teacher |
+
+The base model has 32 layers. Rounds 07 and 08 adapted **half of it**, because
+`DEFAULT_LORA_LAYERS` is 16 and neither run passed `--num-layers`; rounds 05 and 06 passed 32
+explicitly. So the two teacher rounds cut the adaptable capacity in half *and* swapped the label
+source, in the same experiment.
+
+**Every write-up attributes their regression purely to label quality** — this file, the README and
+the published model card all say so, and the "consistent trade of about +2 recall for −4
+precision" is stated as holding "across a 5-point range of label quality and a 4x range of
+training". Neither controlled for depth. **The teacher-label hypothesis has never been tested at
+matched capacity**, and the conclusion that distillation is closed does not follow from these two
+runs. A silent default did this, not a decision.
+
+### Round 09: what is already prepared
+
+Everything below is built and committed; only the launch waits on the GPU.
+
+- **Prompt v2.** `build_slm_dataset.SYSTEM_V2` adds `protein_buffer` and `soak`. `SYSTEM` (v1)
+  is untouched, because it is the contract the public round 06 adapter is served under.
+  `apply_slm` and `eval_slm` both take `--system-version`, defaulting to v1. **A round trained on
+  v2 must be served with v2**; the mismatch does not fail, it quietly answers worse.
+- **Training data rebuilt on v2**: 114,514 rows (was 102,340), all on the new prompt, carrying
+  24,040 `protein_buffer` and 16,272 `soak` targets after oversampling — 10.5% of components.
+  Verified to contain **zero** of the 29 deleted junk reagents as targets.
+- **`--oversample-scope`, default 8**, matching the existing `--oversample-non-component`. Without
+  it the rules find scope roles in 1,584 usable records against 114,514, so the model would meet
+  the distinction in under 3% of examples and answer with the majority label instead.
+
+### Why this round could differ from 07 and 08
+
+Round 08's false positives were **entirely scope errors** — the model card's own words: "None of
+round 08's false positives names a reagent absent from the source text. Every one is a reagent
+genuinely present but not part of the crystallisation condition." That is the exact failure the
+scope roles now give the model a way to express, and it could not before: every option available
+to it was wrong.
+
+### The recipe
+
+Round 06's, at its own capacity, with the fixed data:
+
+    --num-layers 32          matching rounds 05 and 06, not the default 16
+    --lora-rank 16 --lora-dropout 0.05
+    --batch-size 16 --max-seq-length 1024 --mask-prompt
+    --learning-rate 1e-4 cosine to 1e-5, --warmup 50
+    --steps-per-report 10 --steps-per-eval 50      (a whole multiple, never equal)
+    --run-name r1-parse-residual-smollm2-360m-round09   adapter dir the same basename
+    wandb on
+
+6,000 iterations is 0.84 epochs on the new data and took 5.9 h at 32 layers for round 06;
+8,000 is 1.1 epochs and about 7.9 h. Checkpoint every 500 and **sweep on the gold set, never on
+`identification`** — three answers to "how long to train" have come from `identification` and all
+three were wrong.
+
+**Score on both gold sets, 192 records.** The random 96 says how good it is; the contested 96 says
+whether it beats the alternatives. Round 06 stays shipped unless round 09 wins on F0.5.
+
 ## 2026-08-03: the lexicon change moved every published gold figure
 
 `apply_slm` caches its generations, so re-deriving components under lexicon 0.7.0 cost no GPU at

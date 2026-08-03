@@ -47,7 +47,7 @@ from tqdm import tqdm
 
 from .. import config
 from ..manifest import Manifest
-from .build_slm_dataset import SYSTEM
+from .build_slm_dataset import PROMPTS, SYSTEM
 
 STAGE = "models.eval_slm"
 
@@ -254,6 +254,8 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument("--adapter-dir", type=Path, default=None,
                         help="defaults to the highest-numbered run in data/interim/slm/runs")
     parser.add_argument("--model", default="mlx-community/SmolLM2-360M-Instruct")
+    parser.add_argument("--system-version", choices=sorted(PROMPTS), default="v1",
+                        help="which system prompt to serve the adapter with. This MUST match the version its training data was built under: v1 for round 06 and earlier, v2 for any round trained after the scope roles. A mismatch does not fail, it quietly answers worse")
     parser.add_argument("--limit", type=int, default=4000,
                         help="records per set; the residual is 81,803 and a full pass is slow")
     parser.add_argument("--batch", type=int, default=BATCH)
@@ -267,6 +269,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument("--checkpoint", type=int, default=None,
                         help="evaluate the intermediate checkpoint at this iteration")
     args = parser.parse_args(argv)
+    system_prompt = PROMPTS[args.system_version]
 
     config.ensure_dirs()
     if args.adapter_dir is None:
@@ -342,7 +345,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             # it strings fails inside its statistics context manager as a ZeroDivisionError that
             # hides the real TypeError.
             prompts = [tokenizer.apply_chat_template(
-                [{"role": "system", "content": SYSTEM}, {"role": "user", "content": t}],
+                [{"role": "system", "content": system_prompt}, {"role": "user", "content": t}],
                 add_generation_prompt=True) for t in texts]
             out: list[str] = []
             for i in tqdm(range(0, len(prompts), args.batch), desc=label, unit="batch"):
