@@ -1,4 +1,4 @@
-version: 0.9.0
+version: 0.9.1
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -1166,6 +1166,9 @@ reagents:
   - dithiothreitol
   - dl-dithiothreitol
   - 1,4-dithiothreitol
+  - ddt
+  note: ' `ddt` is carried as a depositor typo for DTT: 70 records, and DDT the pesticide would not appear
+    at 5 mM in a crystallisation drop (2G9D: ''100 mM MOPS, 2880 mM Potassium Acetate, 5 mM DDT, pH 7.0'').'
 - canonical_id: DUMP
   display_name: dUMP
   chem_class: additive
@@ -2184,6 +2187,8 @@ reagents:
   - mega8
   - mega 8
   - mega-8
+  - mega8-solution
+  - mega8 solution
 - chem_class: salt
   default_unit: molar
   canonical_id: MERCURY_CHLORIDE
@@ -4200,6 +4205,9 @@ reagents:
   - tris base/ hydrochloric acid
   - tris-so4
   - tris ph 7.5
+  - tris(hydroxymethyl)aminomethane
+  - tris (hydroxymethyl) aminomethane
+  - trishydroxymethylaminomethane
 - canonical_id: TRIS_ACETATE
   display_name: Tris acetate
   chem_class: buffer

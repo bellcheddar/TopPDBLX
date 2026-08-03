@@ -4,8 +4,8 @@ Generated 2026-08-03 by `./run.sh release.datasheet`. Every figure is read
 from the data at generation time, so this file cannot drift from what it describes.
 
 **Schema version** `0.1.0-draft` · **Ontology version** `0.2.0`
-· **Lexicon version** `0.9.0` (499 reagents,
-1543 names)
+· **Lexicon version** `0.9.1` (499 reagents,
+1549 names)
 
 ---
 
@@ -20,8 +20,8 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 2. **Condition frequency reflects screen popularity, not intrinsic success rate.** PEG 3350
    and PEG/Ion dominate because they are in everyone's screens. A condition being common here
    is evidence about what crystallographers tried, not about what works best.
-3. **Reported conditions are often optimised, not screen hits.** Of the 80,581 records
-   whose component set matches a published screen well, only 38,481 agree on every
+3. **Reported conditions are often optimised, not screen hits.** Of the 80,591 records
+   whose component set matches a published screen well, only 38,483 agree on every
    concentration. The rest are flagged `optimised_not_screen`, but it remains a confounder.
 4. **Protein concentration, drop ratio and equilibration volume are usually missing**, and
    they matter. They are captured where present and null otherwise.
@@ -46,8 +46,8 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 | Distinct PDB entries | 198,691 |
 | Usable records | 186,482 (93.6%) |
 | Discarded, with a reason code | 12,703 |
-| Components | 605,494 |
-| Components identified as a canonical reagent | 520,025 (85.9%) |
+| Components | 605,495 |
+| Components identified as a canonical reagent | 520,182 (85.9%) |
 | Records with a linked protein sequence | 195,985 |
 | Distinct 30% identity sequence clusters | 23,868 |
 | Classified into a precipitant class | 143,626 |
@@ -73,10 +73,10 @@ distribution is itself a result.
 
 | Class | Components |
 |-------|-----------|
-| buffer | 165,050 |
+| buffer | 165,099 |
 | salt | 147,274 |
 | peg | 127,286 |
-| additive | 26,704 |
+| additive | 26,812 |
 | organic | 23,347 |
 | polyol | 20,347 |
 | premix | 7,249 |
@@ -91,8 +91,8 @@ value and refuses to guess its meaning.
 
 | Source | Records |
 |--------|---------|
-| buffer | 98,930 |
-| unstated | 87,503 |
+| buffer | 98,963 |
+| unstated | 87,470 |
 | final | 49 |
 
 ---

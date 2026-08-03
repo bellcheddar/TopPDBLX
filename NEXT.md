@@ -3,6 +3,60 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
+## 2026-08-03: end-to-end review before the final training round
+
+A full-pipeline review. Four findings acted on, three deferred with reasons, and a set of stages
+confirmed clean — recorded here because "we checked and it was fine" is worth as much as a bug.
+
+### Fixed
+
+**A teacher parquet is a snapshot of a lexicon, not just of a model.** `teacher_components_2k`
+was written on 2 August and names 14 canonical ids that today's merges removed — `PEG_MME_2K`,
+`PEG_5K_MME`, `COBALT_HEXAMINE`, `HGCL2` and ten more, across 17 rows. Round 09 would have been
+trained to emit reagent ids the pipeline no longer recognises. Regenerating the file needs the
+32B and would have contended with the running job; re-resolving at dataset-build time is cheaper
+**and better**, because twelve of the fourteen are now aliases of the entry they were merged into
+and recover to the right answer rather than being dropped. `_group_components` now canonicalises
+against the live lexicon: **15 re-canonicalised, 2 dropped as unplaceable.**
+
+**The dedup key disagreed with the gold key about what "the same text" means.** Gold exclusion
+normalised with `" ".join(text.split()).lower()`; the train-set dedup twenty lines later keyed on
+the raw string, so **3,114 rows differing only in case or whitespace survived** and were then
+oversampled as independent examples. All four keys now normalise identically. Training set
+123,521 → **120,789** rows: smaller and cleaner.
+
+**A token-length gate in `RUN_ROUND09.sh`.** `train_slm.py` sized `max_seq_length` from
+*characters* ("p99 about 1,050"); the real p99 is 2,197 chars and the true longest example is
+**993 tokens against a 1024 cap** — safe, but 3% of headroom, and tonight's rebuild adds rows
+that measurement never saw. The gate tokenises the longest examples with the real tokenizer and
+**aborts rather than training**, because silent truncation teaches unterminated JSON.
+
+**Three aliases, each verified against the deposition text**: `tris(hydroxymethyl)aminomethane`
+(46 records, the literal IUPAC name for Tris), `ddt` (70 records, a DTT typo — DDT the pesticide
+does not appear at 5 mM in a drop), `mega8-solution` (38 records).
+
+### Deferred, and why
+
+- **Missing-punctuation clause splitting, ≥207 records.** `"11-13% PEG 8000 5-7.5% GLYCEROL 1 MM
+  CUCL2 100 MM SODIUM CACODYLATE"` has no commas at all and becomes one `unknown` blob; 149
+  records share that shape, and 58 more have two reagents adjacent with no separator. All the
+  chemistry is quantified, so this is the **highest-value remaining parser gap**. Deferred because
+  the last splitter change of this kind cost 12,449 spurious components before it was gated, and
+  that needs a full-corpus before/after diff rather than a same-day patch.
+- **More narrative in `role=unknown`**, 180 records across four phrasings. Same
+  pattern-widening risk as above; today already moved 2,416 components this way and the marginal
+  set is smaller and less clear-cut.
+- **`no_amount` at 26,569 (14.2%)** is now the largest Unclassified reason and is **not a bug**:
+  `classify.py` argues it explicitly. Left alone.
+
+### Confirmed clean
+
+Round 09's hyperparameters match round 06's shipped manifest exactly (32 layers, rank 16, dropout
+0.05, batch 16, 1e-4 cosine to 1e-5, warmup 50) — no second silent default beside `--num-layers`.
+`steps_per_eval`/`steps_per_report` at 50/10 is enforced in code, not just convention. Three
+`except Exception` blocks in all of `src/`, each annotated and benign; no bare excepts, no
+TODO/FIXME markers. `ingest/`, `link/` and `release/` had nothing.
+
 ## 2026-08-03: round 09 plan, and a confound that invalidates how 07 and 08 were read
 
 ### Rounds 07 and 08 changed two variables at once

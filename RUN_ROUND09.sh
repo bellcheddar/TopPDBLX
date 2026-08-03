@@ -42,6 +42,31 @@ for name in ('train', 'valid'):
 sys.exit(1 if bad else 0)
 PY
 
+echo "== 4b. gate: nothing may exceed the training sequence length =="
+# A training example longer than --max-seq-length is silently TRUNCATED, which teaches the model
+# to emit unterminated JSON. The docstring in train_slm.py sized this from *characters*; the real
+# question is tokens. Measured 2026-08-03 the longest example was 993 tokens against a 1024 cap:
+# safe, but 3% of headroom, and tonight's rebuild adds rows that were not in that measurement.
+PYTHONPATH=src .venv/bin/python - <<'PY'
+import json, sys
+from transformers import AutoTokenizer
+CAP = 1024
+tok = AutoTokenizer.from_pretrained("HuggingFaceTB/SmolLM2-360M-Instruct")
+worst = 0
+for line in open("data/interim/slm/train.jsonl"):
+    messages = json.loads(line)["messages"]
+    if len(json.dumps(messages)) < 1800:      # cheap filter; only long rows can threaten the cap
+        continue
+    n = len(tok.apply_chat_template(messages, tokenize=True))
+    worst = max(worst, n)
+print(f"   longest training example: {worst} tokens against a cap of {CAP}")
+if worst > CAP:
+    print("   ABORT: examples would be truncated mid-answer")
+    sys.exit(1)
+if worst > CAP * 0.97:
+    print("   WARNING: under 3% headroom")
+PY
+
 echo "== 5. preflight =="
 bash scripts/preflight.sh
 

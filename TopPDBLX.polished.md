@@ -131,7 +131,7 @@ for deposition in archive:
 | RCSB Data GraphQL API | Fetches every deposition, batched and resumable |
 | gemmi | Reads the archive mmCIF for the byte-level fidelity gate |
 | `regex` | Clause splitting, which turned out to be the hard part rather than the chemistry |
-| `ontology/synonyms.yaml` | The reagent dictionary: 499 reagents, 1,543 spellings |
+| `ontology/synonyms.yaml` | The reagent dictionary: 499 reagents, 1,549 spellings |
 | pydantic | Enforces the schema and the chemical invariants on load |
 | polars, pyarrow, duckdb | Tables, joins and the queryable release |
 | MMseqs2 | Sequence clustering at 30%, 50% and 90% identity, to control redundancy |
@@ -150,7 +150,7 @@ for deposition in archive:
 | Records | 199,185 |
 | Usable | **186,263 (93.5%)** |
 | Components | 605,481, **85.3% identified** as a canonical reagent (87.6% excluding text that names no chemistry) |
-| Reagent lexicon | 499 reagents, 1,543 names (v0.9.0) |
+| Reagent lexicon | 499 reagents, 1,549 names (v0.9.1) |
 | Linked sequences | 184,229 across **23,159** distinct 30% identity clusters |
 | Screen-well matches | 80,581 component-set matches, 38,481 agreeing on every concentration |
 | Archive fidelity | **100.0000%** over 205,943 entries against the 90 GB mmCIF snapshot |
@@ -241,7 +241,8 @@ An earlier three-level ontology of 163 binned groups was withdrawn at v0.3.0. It
 | v0.8.5: method text and element abbreviations out of ids, both now tested | 482 | 1,464 | 85.5% |
 | v0.8.6: orphaned buffers restored, DTE separated from DTT | 486 | 1,484 | 85.7% |
 | v0.8.7: AMS and BTPROP; narrative text out of the reagent denominator | 486 | 1,487 | 85.7% (88.3% on chemistry) |
-| v0.9.0: the Morpheus stock table, 15 premixes from the vendor brochure | **499** | **1,543** | **85.9%** (88.4% on chemistry) |
+| v0.9.0: the Morpheus stock table, 15 premixes from the vendor brochure | 499 | 1,543 | 85.9% (88.4% on chemistry) |
+| v0.9.1: Tris IUPAC name, the DDT typo, MEGA8 suffix | **499** | **1,549** | re-parse pending |
 
 **For the crystallographer:** every reagent carries the chemistry the ontology needs, and each field is enforced on load rather than being optional documentation. A `peg` entry must state its molecular weight, a `buffer` must state its pKa, and a `premix` must list its constituents. Those invariants caught three separate attempts to bulk-add entries that could not satisfy them.
 

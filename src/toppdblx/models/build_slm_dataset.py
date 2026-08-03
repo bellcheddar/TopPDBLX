@@ -38,6 +38,8 @@ from tqdm import tqdm
 
 from .. import config
 from ..manifest import Manifest
+from ..parse import lexicon as lexicon_module
+from ..parse.text import normalise, tidy_name
 
 STAGE = "models.build_slm_dataset"
 
@@ -120,20 +122,53 @@ def accounted_for(component: dict[str, Any]) -> bool:
     return bool(component["name_canonical"]) or component["role"] == "not_a_component"
 
 
-def _group_components(frame: "pl.DataFrame") -> dict[tuple, list[dict[str, Any]]]:
-    """Teacher components by record, in emission order, keeping only what the pipeline would."""
+def _group_components(
+    frame: "pl.DataFrame",
+) -> tuple[dict[tuple, list[dict[str, Any]]], int, int]:
+    """Teacher components by record, re-canonicalised against the lexicon as it stands now.
+
+    **A teacher parquet is a snapshot of a lexicon as much as of a model.** `teacher_label`
+    canonicalises its generations against whatever lexicon was loaded when it ran, so a file
+    produced on 2 August names ids that 0.8.x merged away -- `PEG_MME_2K`, `PEG_5K_MME`,
+    `COBALT_HEXAMINE`, `HGCL2` and ten more, across 17 rows. Training on those would teach the
+    model to emit reagent ids the pipeline itself no longer recognises.
+
+    Re-resolving here rather than regenerating the file is cheaper *and* better: twelve of the
+    fourteen orphans are now aliases of the entry they were merged into, so they recover to the
+    right answer instead of being dropped. The two that cannot be placed are discarded, which is
+    the correct treatment of a name the lexicon does not know.
+    """
+    lexicon = lexicon_module.load()
+    known = {r.canonical_id for r in lexicon.reagents}
+    alias_index = lexicon.index()
+
+    def canonicalise(name: Optional[str]) -> Optional[str]:
+        if not name:
+            return None
+        if name in known:
+            return name
+        reagent = alias_index.get(normalise(tidy_name(name.replace("_", " ").lower())))
+        return reagent.canonical_id if reagent else None
+
     out: dict[tuple, list[dict[str, Any]]] = {}
+    remapped = dropped = 0
     cols = ["pdb_id", "crystal_id", "component_index", "role", "name_canonical",
             "concentration", "unit"]
     for row in frame.select(cols).sort("component_index").iter_rows(named=True):
-        if row["role"] != "not_a_component" and not row["name_canonical"]:
-            continue
         if row["role"] == "unknown":
             # `unknown` is the parser's way of saying the lexicon failed, not a target. Nine of
-            # these reached the last build and would have taught the model to emit it.
+            # these reached an earlier build and would have taught the model to emit it.
             continue
+        if row["role"] != "not_a_component":
+            resolved = canonicalise(row["name_canonical"])
+            if resolved is None:
+                dropped += 1
+                continue
+            if resolved != row["name_canonical"]:
+                remapped += 1
+                row = {**row, "name_canonical": resolved}
         out.setdefault((row["pdb_id"], row["crystal_id"]), []).append(row)
-    return out
+    return out, remapped, dropped
 
 
 def target_json(components: list[dict[str, Any]]) -> str:
@@ -324,7 +359,11 @@ def main(argv: Optional[list[str]] = None) -> int:
                     print(f"  teacher source missing, skipped: {path}")
                     continue
                 frame = pl.read_parquet(path)
-                for key, group in _group_components(frame).items():
+                grouped_teacher, remapped, dropped = _group_components(frame)
+                if remapped or dropped:
+                    print(f"  {Path(path).name}: {remapped} names re-canonicalised to the "
+                          f"current lexicon, {dropped} dropped as unplaceable")
+                for key, group in grouped_teacher.items():
                     if key in held or key in seen_keys or key not in by_key:
                         continue
                     if " ".join(by_key[key]["text"].split()).lower() in held_text:
@@ -352,7 +391,11 @@ def main(argv: Optional[list[str]] = None) -> int:
         seen_train: set[str] = set()
         deduplicated = []
         for example in bootstrap["train"]:
-            key = example["messages"][1]["content"]
+            # **Normalised exactly as the gold hold-out key is.** Keying on the raw string let
+            # 3,114 rows (2.2%) that differ only in case or whitespace survive as though they
+            # were independent examples -- and then be oversampled as such. Two keys over the
+            # same field in one function must not disagree about what "the same text" means.
+            key = " ".join(example["messages"][1]["content"].split()).lower()
             if key in seen_train:
                 continue
             seen_train.add(key)
@@ -399,9 +442,11 @@ def main(argv: Optional[list[str]] = None) -> int:
         # with a confidently-parsed one -- and training the same input against two different
         # answers teaches noise, whichever answer is right.
         if teacher_rows:
-            existing = {e["messages"][1]["content"] for e in bootstrap["train"]}
-            existing |= {e["messages"][1]["content"] for e in bootstrap["valid"]}
-            kept = [e for e in teacher_rows if e["messages"][1]["content"] not in existing]
+            def _input_key(example: dict[str, Any]) -> str:
+                return " ".join(example["messages"][1]["content"].split()).lower()
+            existing = ({_input_key(e) for e in bootstrap["train"]}
+                        | {_input_key(e) for e in bootstrap["valid"]})
+            kept = [e for e in teacher_rows if _input_key(e) not in existing]
             n_conflict = len(teacher_rows) - len(kept)
             n_teacher = len(kept)
             bootstrap["train"].extend(kept * max(1, args.oversample_teacher))
@@ -414,8 +459,8 @@ def main(argv: Optional[list[str]] = None) -> int:
         # happen to be popular rather than by how well the model reads.
         seen_valid: set[str] = set()
         bootstrap["valid"] = [e for e in bootstrap["valid"]
-                              if not (e["messages"][1]["content"] in seen_valid
-                                      or seen_valid.add(e["messages"][1]["content"]))]
+                              if not (_input_key(e) in seen_valid
+                                      or seen_valid.add(_input_key(e)))]
 
         if args.max_train:
             bootstrap["train"] = bootstrap["train"][:args.max_train]
