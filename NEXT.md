@@ -3,6 +3,35 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
+## 2026-08-03, 21:25: the teacher run had to be killed and resumed
+
+**It degraded 16x under memory pressure and would not have finished.** Batches went 82 s → 192 →
+245 → **1,332 s**, and the ETA reached 20 hours with 86 batches left. Free memory had collapsed
+from 4.8 GB to **1.05 GB**, with 1.4 GB in the compressor and swapins climbing. No thermal
+warning; this is memory, not heat.
+
+This is the failure `models/teacher_label.py` documents — macOS paging the model's buffers out
+under sustained load — but worse than the 220–577 s/batch it records. The 32 GB wired limit was
+set and held; what ran out was everything else.
+
+**The recovery, which worked and is worth repeating:**
+
+1. Stop the waiting chain *first*, so it cannot act on a half-written state.
+2. `kill` the teacher — **not** `kill -9`. The progress file is appended per batch, so a clean
+   stop loses nothing: 2,168 of 2,779 records were already saved.
+3. Free memory: `bash scripts/preflight.sh`, plus stopping the third-party monitors that had been
+   accumulating. Free pages went 67,219 → 3,128,307, about **1 GB → 48 GB**.
+4. Relaunch with the identical `--records`, `--progress` and `--out`. `teacher_label` reads the
+   progress file and resumes: *"2,779 target records, 2,168 already done, 611 to label"*.
+
+**Back to 115 s/batch**, against 82 before the degradation and 1,332 at its worst. 77 batches
+remain, so about 2.5 hours. Free memory holding at 14.3 GB.
+
+**What to watch.** 1.25 GB of swap is still in use and preflight recommends a reboot for a clean
+slate, which was not practical mid-run. If an 8-hour training run degrades the same way, the same
+recovery applies — `train_slm` also resumes, though note that resuming restarts the iteration
+counter and the LR schedule, so the reported iteration is not the true one.
+
 ## 2026-08-03, 18:40: tonight is chained in `TONIGHT.sh`
 
 Running unattended. Log at `data/interim/slm/tonight.log`.
