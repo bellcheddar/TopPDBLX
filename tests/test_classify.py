@@ -58,12 +58,59 @@ def test_a_buffer_alone_is_unclassified():
 
 # --- the honest refusals -------------------------------------------------------------------
 
-def test_a_mixture_is_unclassified():
-    """Settles spec 6.4. Morpheus and PACT carry an acid mix, an alcohol mix and a buffer system
-    at once, and do not fit a seven-class taxonomy."""
-    label, reason = classify_condition([comp("TACSIMATE", "premix", 10, "percent_v_v",
-                                             premix_id="TACSIMATE")])
+def test_a_premix_with_no_transcribed_composition_is_still_a_mixture():
+    """The original spec 6.4 answer, kept for the case it was written for: with no composition
+    there is nothing to expand into, so refusing is still the honest response."""
+    label, reason = classify_condition([comp("MYSTERY_MIX", "premix", 10, "percent_v_v",
+                                             premix_id="MYSTERY_MIX")])
     assert label == UNCLASSIFIED and reason == "mixture"
+
+
+# --- premixes classify on what they are made of --------------------------------------------
+#
+# Until 2026-08-03 any premix returned Unclassified outright. That was right while a premix was
+# an opaque token and wrong once the compositions were transcribed: 59% of the 6,478 conditions
+# it refused were blocked by a premix whose constituents are **all buffers**, and spec 6.3
+# excludes buffers from naming the class. Those were ordinary conditions declined for their
+# packaging rather than their chemistry.
+
+def test_an_all_buffer_premix_does_not_block_the_condition():
+    """MES/imidazole is a two-component buffer. At 0.1 M it sets the pH, exactly as a
+    single-component buffer does, and must not decide or veto the class."""
+    label, reason = classify_condition([
+        comp("PEG_3350", "peg", 20, "percent_w_v"),
+        comp("MES_IMIDAZOLE", "premix", 0.1, "molar", premix_id="MES_IMIDAZOLE"),
+    ])
+    assert (label, reason) == ("PEG", None)
+
+
+def test_a_precipitant_premix_contributes_its_families():
+    """Morpheus Precipitant Mix 4 is MPD with PEG 1000 and PEG 3350: an organic and two PEGs,
+    which is Organic/PEG and says more than "mixture" ever could."""
+    label, _ = classify_condition([
+        comp("PRECIPITANT_MIX_4", "premix", 37.5, "percent_v_v", premix_id="PRECIPITANT_MIX_4"),
+    ])
+    assert label == "Organic/PEG"
+
+
+def test_a_morpheus_condition_classifies_end_to_end():
+    """0.06 M Divalents, 0.1 M Buffer System 1, 30% v/v Precipitant Mix 1 -- the salts from the
+    divalents, the PEGs from the precipitant mix, and the buffer system contributing nothing."""
+    label, _ = classify_condition([
+        comp("DIVALENTS", "premix", 0.06, "molar", premix_id="DIVALENTS"),
+        comp("BUFFER_SYSTEM_1", "premix", 0.1, "molar", premix_id="BUFFER_SYSTEM_1"),
+        comp("PRECIPITANT_MIX_1", "premix", 30, "percent_v_v", premix_id="PRECIPITANT_MIX_1"),
+    ])
+    assert label == "Salt/PEG"
+
+
+def test_a_premix_precipitant_with_no_amount_is_still_no_amount():
+    """Each constituent inherits the premix's stated amount, so an unquantified premix fails the
+    same test an unquantified precipitant does. It must not become classifiable by expansion."""
+    label, reason = classify_condition([
+        comp("PRECIPITANT_MIX_4", "premix", None, None, premix_id="PRECIPITANT_MIX_4"),
+    ])
+    assert (label, reason) == (UNCLASSIFIED, "no_amount")
 
 
 def test_an_unidentified_reagent_makes_the_whole_condition_unclassified():

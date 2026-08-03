@@ -8,9 +8,46 @@ Two artefacts are versioned here, independently:
 | File | Version | What it is |
 |------|---------|------------|
 | `synonyms.yaml` | 0.9.0 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
-| `groups.yaml` | 0.3.0 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
+| `groups.yaml` | 0.3.1 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
 
 ## groups.yaml
+
+### 0.3.1 (2026-08-03)
+
+**A premix now contributes the chemistry it is made of, instead of refusing the condition.** This
+reverses the premix half of 0.3.0, which settled spec 6.4 by declaring every premixed system
+Unclassified.
+
+That was the right answer while a premix was an opaque token. Lexicon 0.9.0 transcribed the
+Morpheus stock table from the vendor's brochure, and with compositions available the old rule
+became indefensible: **59% of the 6,478 conditions it refused were blocked by a premix whose
+constituents are all buffers** — `MES_IMIDAZOLE`, `PHOSPHATE_CITRATE`, `MIB_BUFFER`, `SPG`,
+`MMT_BUFFER`. Spec 6.3 excludes buffers from naming the class, so a single-component buffer never
+affected classification and a two-component one should not either. Those conditions were being
+declined for their packaging rather than their chemistry.
+
+| | before | after |
+|---|---|---|
+| classified | 143,233 (76.8%) | **149,156 (80.0%)** |
+| Unclassified for `mixture` | 6,478 | **0** |
+| `no_amount` | 26,247 | 26,569 |
+| `no_precipitant` | 9,770 | 9,981 |
+
+The 6,478 resolve as 5,923 newly classified and about 550 falling through to an honest reason
+that has nothing to do with premixes.
+
+**It says more than a class called "Mixture" could.** An eighth class was considered and
+rejected: it would encode how a reagent was packaged as though it were a precipitant family,
+which is a different axis and already carried by `premix_id` and `commercial_screen_match`; it
+would break comparability with the JCSG Top96 taxonomy the seven classes come from; and it would
+discard information now in hand, since Morpheus Precipitant Mix 4 is MPD with PEG 1000 and PEG
+3350 and is therefore genuinely `Organic/PEG`.
+
+**Two things kept.** A premix with no transcribed composition is still Unclassified for
+`mixture`, because there is nothing to expand it into. And each constituent inherits the premix's
+stated amount rather than a share of it: the rule is presence-based with no thresholds, so the
+amount decides only whether a precipitant was quantified at all, and apportioning "30% v/v
+Precipitant Mix 1" between its parts would invent numbers the deposition never stated.
 
 ### 0.3.0 (2026-07-31)
 

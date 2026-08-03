@@ -35,7 +35,7 @@ Parse, normalise and curate every crystallisation condition in the Protein Data 
 | **Accounts for every record** | Anything not parsed carries one of seven discard codes, with its raw text retained |
 | **Links to sequence** | 184,229 usable records carry the construct sequence, UniProt accessions and cluster ids at 30%, 50% and 90% identity |
 | **Cross-references screens** | 434 wells across 9 commercial screens, extracted verbatim from vendor support materials |
-| **Refuses to guess** | A condition with an unrecognised reagent, no stated amount or a premixed system is Unclassified, with the reason recorded |
+| **Refuses to guess** | A condition with an unrecognised reagent or no stated amount is Unclassified, with the reason recorded |
 | **Records its own uncertainty** | Inferred units, inferred cryoprotectant roles and pH attribution are flagged, never presented as fact |
 | **Reproducible by stage** | Every stage is one command and writes a manifest of input hashes, tool versions and git state |
 | **Teaches a small model with a large one** | A 32B teacher labels the hard records; a 360M student learns from it and reads all 52,000. Recall 71.4% → 91.5% against hand-labelled truth |
@@ -120,7 +120,7 @@ for deposition in archive:
     families = {family_of(c) for c in components            # {Organic, PEG, Salt}
                 if c.is_precipitant and c.amount is not None}
 
-    if any(c.is_premix or c.is_unidentified for c in components) or not families:
+    if any(c.is_unidentified for c in components) or not families:
         condition_class = Unclassified(reason)              # an answer, not a failure
     else:
         condition_class = SEVEN_CLASSES[families]
@@ -154,7 +154,7 @@ for deposition in archive:
 | Linked sequences | 184,229 across **23,159** distinct 30% identity clusters |
 | Screen-well matches | 45,547 component-set matches, 20,339 agreeing on every concentration |
 | Archive fidelity | **100.0000%** over 205,943 entries against the 90 GB mmCIF snapshot |
-| Condition classes | Seven JCSG Top96 precipitant classes (v0.3.0), **77.1% classified**, 22.9% honestly unclassified |
+| Condition classes | Seven JCSG Top96 precipitant classes (v0.3.0), **80.0% classified**, 20.0% honestly unclassified |
 | Parser accuracy | Against hand-labelled records: **99.3% precision, 92.5% recall**, F0.5 **97.8** (rules alone: 99.5% / 72.8%) |
 | Leak-free splits | 181,007 records, no cluster spanning folds at 30%, 50% or 90% |
 | Tests | 492 passing |
@@ -205,15 +205,13 @@ Unclassified is a first-class answer with its reason recorded, never a null:
 
 | Reason it cannot be classified | Share |
 |---|---|
-| An unidentified reagent: the lexicon does not recognise a name, so nothing can be asserted | 21.3% |
-| No amount stated for a precipitant: naming PEG without saying how much is not a measured condition | 13.1% |
-
-| No precipitant at all | 3.5% |
-| A premixed system (Morpheus, PACT, Tacsimate) that does not fit a seven-class taxonomy | 2.7% |
+| No amount stated for a precipitant: naming PEG without saying how much is not a measured condition | 14.2% |
+| No precipitant at all | 5.4% |
+| An unidentified reagent: the lexicon does not recognise a name, so nothing can be asserted | 0.4% |
 
 **The second row is a deliberate choice and the expensive one.** Those 24,327 conditions name their precipitant unambiguously and simply never state a concentration: `PEG6000, Sodium Chloride, VAPOR DIFFUSION`. Classifying them as `Salt/PEG` would lift classified coverage from 58.9% to roughly 72% in one line, and the rule that a PEG is a PEG whatever its concentration would arguably support it. They stay Unclassified because a condition with no concentration is not a measured condition, and coverage is not worth buying with a claim the deposition does not make.
 
-The premix decision settles spec 6.4, which had been open since Phase 0. Components stay expanded with their `premix_id`, so nothing is lost and the choice is reversible.
+**Premixes are no longer refused, and that is a reversal.** Spec 6.4 was settled by declaring every premixed system Unclassified, which was right while a premix was an opaque token. Once the vendor compositions were transcribed (lexicon v0.9.0) it stopped being right: 59% of the conditions it refused were blocked by a premix made only of *buffers* — MES/imidazole, phosphate-citrate, MIB, SPG — and a buffer is excluded from naming the class anyway. Those were ordinary conditions declined for their packaging rather than their chemistry. A premix now contributes the chemistry it is made of, so Morpheus Precipitant Mix 4 is MPD with PEG 1000 and PEG 3350, which is `Organic/PEG`. Classified coverage moved 76.8% to **80.0%**. A premix with no transcribed composition is still Unclassified, because there is nothing to expand it into.
 
 An earlier three-level ontology of 163 binned groups was withdrawn at v0.3.0. Its groups were derived by binning the corpus and then having labels retrofitted, which spec 6.1 rejects in its first line, and several were not chemically coherent: median purity across the 41 second-level groups was 49%. The full reasoning is in [`ontology/CHANGELOG.md`](ontology/CHANGELOG.md).
 
@@ -688,7 +686,7 @@ These determine what conclusions the data can support, and are stated in full in
 - [x] Seven-class condition ontology, replacing the withdrawn three-level version
 - [x] Fine-tune SmolLM2 on the parse residual, and strip narrative prose in the parser
 - [x] Classification accuracy audit, two rounds of 96 (spec 6.6): 85.4% rules-derived, 83.3% model-derived, pooled
-- [x] Apply the trained model over the residual: 163,353 components, classified coverage 59.5% to 77.1%
+- [x] Apply the trained model over the residual: 157,939 components, classified coverage 59.5% to 80.0%
 - [x] Gold set of 96 hand-labelled records, and the first precision/recall this project has had
 - [ ] Teacher distillation: label the residual with a local 32B and retrain past the rule parser's ceiling
 - [ ] Add the 25 reagents the gold set named that the lexicon cannot place (CYMAL-3, NDSB-195, GSH/GSSG, ALF4)

@@ -22,10 +22,14 @@ sentence and gives the same answer whoever applies it.
 **Unclassified is a real answer, and a common one.** Anything that cannot be classified honestly
 is left alone rather than forced into a class:
 
-  *mixtures*             Morpheus, PACT and Tacsimate style premixes carry an acid mix, an
-                         alcohol mix and a buffer system at once and do not fit a seven-class
-                         taxonomy. This settles spec 6.4, which asked for the decision to be made
-                         before assignment and never got one.
+  *mixtures*             only where the premix has no transcribed composition. A premix whose
+                         constituents are known contributes their chemistry instead: Morpheus
+                         Precipitant Mix 4 is MPD with PEG 1000 and PEG 3350, so it is
+                         Organic/PEG. Refusing every premix -- spec 6.4's original answer -- was
+                         right while a premix was an opaque token, and wrong once the vendor
+                         compositions were transcribed in lexicon 0.9.0: 59% of the conditions it
+                         refused were blocked by a premix made only of *buffers*, which spec 6.3
+                         excludes from naming the class anyway.
   *unidentified reagents*  a component whose name the lexicon does not recognise could be anything,
                          so the condition it belongs to cannot be classified on the evidence.
   *no amount stated*     a precipitant with no concentration or no unit is not a measured
@@ -47,6 +51,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Optional
 
@@ -54,7 +59,7 @@ import polars as pl
 
 from .. import config
 from ..manifest import Manifest
-from ..parse import schema
+from ..parse import lexicon as lexicon_module, schema
 
 STAGE = "assign.classify"
 
@@ -81,6 +86,22 @@ FAMILY_OF_CHEM_CLASS = {
 # Reasons a condition cannot be classified, reported so the unclassified share is explicable
 # rather than a single opaque bucket.
 REASONS = ("mixture", "unidentified_reagent", "no_amount", "no_precipitant")
+
+
+@lru_cache(maxsize=1)
+def _premix_composition() -> dict[str, tuple[tuple[str, str], ...]]:
+    """`premix_id` -> its constituents as (canonical_id, chem_class).
+
+    Read from the lexicon rather than passed in, because a premix's composition is a property of
+    the reagent and not of the condition being classified.
+    """
+    lexicon = lexicon_module.load()
+    by_id = {r.canonical_id: r for r in lexicon.reagents}
+    return {
+        r.canonical_id: tuple((c, by_id[c].chem_class)
+                              for c in r.premix_components if c in by_id)
+        for r in lexicon.reagents if r.premix_components
+    }
 
 
 def classify_condition(components: list[dict[str, Any]]) -> tuple[str, Optional[str]]:
@@ -123,8 +144,37 @@ def classify_condition(components: list[dict[str, Any]]) -> tuple[str, Optional[
         if role in schema.OUT_OF_SCOPE_ROLES:
             continue
 
-        if component.get("premix_id"):
-            return UNCLASSIFIED, "mixture"
+        # **A premix contributes the chemistry it is made of.** This used to return Unclassified
+        # outright, which was right when a premix was an opaque token and wrong once the
+        # compositions were transcribed: 59% of the conditions it refused were blocked by a
+        # premix whose constituents are *all buffers* -- MES/imidazole, phosphate-citrate, MIB,
+        # SPG -- and spec 6.3 excludes buffers from naming the class. Those are ordinary
+        # conditions that happen to use a two-component buffer, and the old rule declined them
+        # for the packaging rather than the chemistry.
+        #
+        # Expanding instead of refusing classifies 4,529 of the 6,478, and into real precipitant
+        # families rather than a catch-all: Morpheus Precipitant Mix 4 is MPD with PEG 1000 and
+        # PEG 3350, which is Organic/PEG and says more than "mixture" ever could.
+        #
+        # **Each constituent inherits the premix's stated amount.** The rule is presence-based
+        # with no thresholds, so the amount decides only whether a precipitant was quantified at
+        # all, and "30% v/v Precipitant Mix 1" quantifies every part of it. Apportioning the
+        # percentage between constituents would invent numbers the deposition never stated.
+        premix = component.get("premix_id")
+        if premix:
+            parts = _premix_composition().get(premix)
+            if not parts:
+                # No transcribed composition, so there is nothing to expand it into. The old
+                # answer is still the honest one.
+                return UNCLASSIFIED, "mixture"
+            for _, chem_class in parts:
+                family = FAMILY_OF_CHEM_CLASS.get(chem_class)
+                if family is None:
+                    continue
+                if component.get("concentration") is None or not component.get("unit"):
+                    return UNCLASSIFIED, "no_amount"
+                families.add(family)
+            continue
 
         name = component.get("name_canonical")
         if not name:

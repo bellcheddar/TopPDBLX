@@ -112,7 +112,7 @@
 </tr>
 <tr>
 <td data-label="Capability"><strong>Refuses to guess</strong></td>
-<td data-label="Detail">A condition with an unrecognised reagent, no stated amount or a premixed system is Unclassified, with the reason recorded</td>
+<td data-label="Detail">A condition with an unrecognised reagent or no stated amount is Unclassified, with the reason recorded</td>
 </tr>
 <tr>
 <td data-label="Capability"><strong>Records its own uncertainty</strong></td>
@@ -217,7 +217,7 @@
     families = {family_of(c) for c in components            # {Organic, PEG, Salt}
                 if c.is_precipitant and c.amount is not None}
 
-    if any(c.is_premix or c.is_unidentified for c in components) or not families:
+    if any(c.is_unidentified for c in components) or not families:
         condition_class = Unclassified(reason)              # an answer, not a failure
     else:
         condition_class = SEVEN_CLASSES[families]
@@ -320,7 +320,7 @@
 </tr>
 <tr>
 <td data-label="Measure">Condition classes</td>
-<td data-label="Value">Seven JCSG Top96 precipitant classes (v0.3.0), <strong>77.1% classified</strong>, 22.9% honestly unclassified</td>
+<td data-label="Value">Seven JCSG Top96 precipitant classes (v0.3.0), <strong>80.0% classified</strong>, 20.0% honestly unclassified</td>
 </tr>
 <tr>
 <td data-label="Measure">Parser accuracy</td>
@@ -458,19 +458,21 @@
 </thead>
 <tbody>
 <tr>
-<td data-label="Reason it cannot be classified">An unidentified reagent: the lexicon does not recognise a name, so nothing can be asserted</td>
-<td data-label="Share">21.3%</td>
+<td data-label="Reason it cannot be classified">No amount stated for a precipitant: naming PEG without saying how much is not a measured condition</td>
+<td data-label="Share">14.2%</td>
 </tr>
 <tr>
-<td data-label="Reason it cannot be classified">No amount stated for a precipitant: naming PEG without saying how much is not a measured condition</td>
-<td data-label="Share">13.1%</td>
+<td data-label="Reason it cannot be classified">No precipitant at all</td>
+<td data-label="Share">5.4%</td>
+</tr>
+<tr>
+<td data-label="Reason it cannot be classified">An unidentified reagent: the lexicon does not recognise a name, so nothing can be asserted</td>
+<td data-label="Share">0.4%</td>
 </tr>
 </tbody>
 </table></div>
-<p>| No precipitant at all | 3.5% |
-| A premixed system (Morpheus, PACT, Tacsimate) that does not fit a seven-class taxonomy | 2.7% |</p>
 <p><strong>The second row is a deliberate choice and the expensive one.</strong> Those 24,327 conditions name their precipitant unambiguously and simply never state a concentration: <code>PEG6000, Sodium Chloride, VAPOR DIFFUSION</code>. Classifying them as <code>Salt/PEG</code> would lift classified coverage from 58.9% to roughly 72% in one line, and the rule that a PEG is a PEG whatever its concentration would arguably support it. They stay Unclassified because a condition with no concentration is not a measured condition, and coverage is not worth buying with a claim the deposition does not make.</p>
-<p>The premix decision settles spec 6.4, which had been open since Phase 0. Components stay expanded with their <code>premix_id</code>, so nothing is lost and the choice is reversible.</p>
+<p><strong>Premixes are no longer refused, and that is a reversal.</strong> Spec 6.4 was settled by declaring every premixed system Unclassified, which was right while a premix was an opaque token. Once the vendor compositions were transcribed (lexicon v0.9.0) it stopped being right: 59% of the conditions it refused were blocked by a premix made only of <em>buffers</em> — MES/imidazole, phosphate-citrate, MIB, SPG — and a buffer is excluded from naming the class anyway. Those were ordinary conditions declined for their packaging rather than their chemistry. A premix now contributes the chemistry it is made of, so Morpheus Precipitant Mix 4 is MPD with PEG 1000 and PEG 3350, which is <code>Organic/PEG</code>. Classified coverage moved 76.8% to <strong>80.0%</strong>. A premix with no transcribed composition is still Unclassified, because there is nothing to expand it into.</p>
 <p>An earlier three-level ontology of 163 binned groups was withdrawn at v0.3.0. Its groups were derived by binning the corpus and then having labels retrofitted, which spec 6.1 rejects in its first line, and several were not chemically coherent: median purity across the 41 second-level groups was 49%. The full reasoning is in <a href="ontology/CHANGELOG.md"><code>ontology/CHANGELOG.md</code></a>.</p>
 <h2>⚗️ Reagent classes</h2>
 <p><strong>In plain terms:</strong> depositors write the same chemical a dozen different ways. "PEG 3350", "peg3350", "polyethylene glycol 3350" and "PEG 3,350" are one substance. The lexicon is the dictionary that maps every spelling onto one canonical name, and it is what makes the whole database queryable.</p>
@@ -1464,7 +1466,7 @@ LIMIT 10;
 <li><span class="emd-check">&#9989;</span> Seven-class condition ontology, replacing the withdrawn three-level version</li>
 <li><span class="emd-check">&#9989;</span> Fine-tune SmolLM2 on the parse residual, and strip narrative prose in the parser</li>
 <li><span class="emd-check">&#9989;</span> Classification accuracy audit, two rounds of 96 (spec 6.6): 85.4% rules-derived, 83.3% model-derived, pooled</li>
-<li><span class="emd-check">&#9989;</span> Apply the trained model over the residual: 163,353 components, classified coverage 59.5% to 77.1%</li>
+<li><span class="emd-check">&#9989;</span> Apply the trained model over the residual: 157,939 components, classified coverage 59.5% to 80.0%</li>
 <li><span class="emd-check">&#9989;</span> Gold set of 96 hand-labelled records, and the first precision/recall this project has had</li>
 <li><span class="emd-check">&#11036;</span> Teacher distillation: label the residual with a local 32B and retrain past the rule parser's ceiling</li>
 <li><span class="emd-check">&#11036;</span> Add the 25 reagents the gold set named that the lexicon cannot place (CYMAL-3, NDSB-195, GSH/GSSG, ALF4)</li>
