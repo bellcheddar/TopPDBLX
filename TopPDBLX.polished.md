@@ -374,14 +374,20 @@ redistributed. Rounds that delivered nothing are listed anyway.
 
 | Round | What changed | Identification | Grounding | On gold, with the rules | Components shipped |
 |---|---|---|---|---|---|
-| [01](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01) | Bootstrap distillation from rule output, lexicon 0.1.0 | 87.0% † | not yet invented | — | N/A ‡ |
-| [02](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round02) | `not_a_component` class, confidence gate fixed | 89.7% † | not yet invented | — | N/A ‡ |
-| [03](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03) | Cosine schedule, dropout, class rebalanced | 88.4% † | not yet invented | — | N/A ‡ |
-| [04](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04) | Retrained on the 502-reagent lexicon | **abandoned** — trained on 36% duplicate rows | — | — | N/A ‡ |
-| [05](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05) | Deduplicated training set, 95,818 distinct pairs | 87.58% | 93.41% | — | N/A ‡ |
-| [**06**](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) | Full epoch, rank 16, **32 LoRA layers**, 6,856 empty-answer examples | 88.99% final, 90.52% at iter 2,000 | 94.36% | **98.2% / 95.2%** | **153,736** |
-| [07](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) | 32B-teacher labels 92.6% precise, 2,000 iters, **16 LoRA layers** | not run | not run | 93.6% / 89.1% | N/A ‡ |
-| [08](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08) | Teacher labels 97.6% precise, 8,000 iters, **16 LoRA layers** | not run | not run | 95.3% / 89.1% | N/A ‡ |
+| [01](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01) | Bootstrap distillation from rule output, lexicon 0.1.0.<br>3,000 iters × batch 16 = 48k examples · 32 layers · rank 8 · dropout 0 · **constant** LR 1e-4 | 87.0% † | not yet invented | — | N/A ‡ |
+| [02](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round02) | `not_a_component` class added, confidence gate fixed.<br>1,200 × 16 = 19k · 32 layers · rank 8 · dropout 0 · constant LR 1e-4 | 89.7% † | not yet invented | — | N/A ‡ |
+| [03](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03) | Class rebalanced; **cosine decay and dropout introduced**.<br>1,000 × **32** = 32k · 32 layers · rank 8 · dropout 0.05 · cosine 1e-4→1e-5 | 88.4% † | not yet invented | — | N/A ‡ |
+| [04](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04) | Retrained on the 502-reagent lexicon.<br>1,000 × 16 = 16k · 32 layers · rank 8 · cosine 1e-4→1e-5 | **abandoned** — trained on 36% duplicate rows | — | — | N/A ‡ |
+| [05](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05) | Deduplicated training set, 95,818 distinct pairs.<br>1,000 × 16 = 16k ≈ **0.17 epochs** · 32 layers · rank 8 · cosine 1e-4→1e-5 | 87.58% | 93.41% | — | N/A ‡ |
+| [**06**](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) | Full epoch, **rank 16**, 6,856 empty-answer examples.<br>6,000 × 16 = 96k ≈ **0.94 epochs** · **32 layers** · rank 16 · dropout 0.05 · cosine 1e-4→1e-5 | 88.99% final, 90.52% at iter 2,000 | 94.36% | **98.2% / 95.2%** | **153,736** |
+| [07](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) | 32B-teacher labels **replacing** rules labels, 92.6% precise.<br>2,000 × 16 = 32k ≈ **0.23 epochs** · **16 layers** · rank 16 · cosine 1e-4→1e-5 | not run | not run | 93.6% / 89.1% | N/A ‡ |
+| [08](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08) | Same idea, labels filtered to 97.6% precise, trained 4× longer.<br>8,000 × 16 = 128k ≈ **1.06 epochs** · **16 layers** · rank 16 · cosine 1e-4→1e-5 | not run | not run | 95.3% / 89.1% | N/A ‡ |
+| **09** | *Running tonight.* Teacher labels **added, not substituted**; scope roles; prompt v2; lexicon 0.9.2.<br>8,000 × 16 = 128k ≈ **1.04 epochs** · **32 layers** · rank 16 · dropout 0.05 · cosine 1e-4→1e-5 · warmup 50 | pending | pending | pending | pending |
+
+Every round: `--mask-prompt` (loss on the completion only), `max_seq_length` 1024, LoRA scale 20,
+base `mlx-community/SmolLM2-360M-Instruct` on an M1 Max. Epochs are given only where the training
+set size at the time is recorded; `iters × batch` is exact for every round and is the honest
+comparison.
 
 † Scored against a **live residual** that shrank from the easy end every time curation improved,
 so these three are not comparable to each other or to anything else. From round 05 the benchmark

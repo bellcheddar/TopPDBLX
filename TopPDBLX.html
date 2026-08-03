@@ -845,7 +845,7 @@
 <tbody>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01">01</a></td>
-<td data-label="What changed">Bootstrap distillation from rule output, lexicon 0.1.0</td>
+<td data-label="What changed">Bootstrap distillation from rule output, lexicon 0.1.0.<br>3,000 iters × batch 16 = 48k examples · 32 layers · rank 8 · dropout 0 · <strong>constant</strong> LR 1e-4</td>
 <td data-label="Identification">87.0% †</td>
 <td data-label="Grounding">not yet invented</td>
 <td data-label="On gold, with the rules">—</td>
@@ -853,7 +853,7 @@
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round02">02</a></td>
-<td data-label="What changed"><code>not_a_component</code> class, confidence gate fixed</td>
+<td data-label="What changed"><code>not_a_component</code> class added, confidence gate fixed.<br>1,200 × 16 = 19k · 32 layers · rank 8 · dropout 0 · constant LR 1e-4</td>
 <td data-label="Identification">89.7% †</td>
 <td data-label="Grounding">not yet invented</td>
 <td data-label="On gold, with the rules">—</td>
@@ -861,7 +861,7 @@
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03">03</a></td>
-<td data-label="What changed">Cosine schedule, dropout, class rebalanced</td>
+<td data-label="What changed">Class rebalanced; <strong>cosine decay and dropout introduced</strong>.<br>1,000 × <strong>32</strong> = 32k · 32 layers · rank 8 · dropout 0.05 · cosine 1e-4→1e-5</td>
 <td data-label="Identification">88.4% †</td>
 <td data-label="Grounding">not yet invented</td>
 <td data-label="On gold, with the rules">—</td>
@@ -869,7 +869,7 @@
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04">04</a></td>
-<td data-label="What changed">Retrained on the 502-reagent lexicon</td>
+<td data-label="What changed">Retrained on the 502-reagent lexicon.<br>1,000 × 16 = 16k · 32 layers · rank 8 · cosine 1e-4→1e-5</td>
 <td data-label="Identification"><strong>abandoned</strong> — trained on 36% duplicate rows</td>
 <td data-label="Grounding">—</td>
 <td data-label="On gold, with the rules">—</td>
@@ -877,7 +877,7 @@
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05">05</a></td>
-<td data-label="What changed">Deduplicated training set, 95,818 distinct pairs</td>
+<td data-label="What changed">Deduplicated training set, 95,818 distinct pairs.<br>1,000 × 16 = 16k ≈ <strong>0.17 epochs</strong> · 32 layers · rank 8 · cosine 1e-4→1e-5</td>
 <td data-label="Identification">87.58%</td>
 <td data-label="Grounding">93.41%</td>
 <td data-label="On gold, with the rules">—</td>
@@ -885,7 +885,7 @@
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06"><strong>06</strong></a></td>
-<td data-label="What changed">Full epoch, rank 16, <strong>32 LoRA layers</strong>, 6,856 empty-answer examples</td>
+<td data-label="What changed">Full epoch, <strong>rank 16</strong>, 6,856 empty-answer examples.<br>6,000 × 16 = 96k ≈ <strong>0.94 epochs</strong> · <strong>32 layers</strong> · rank 16 · dropout 0.05 · cosine 1e-4→1e-5</td>
 <td data-label="Identification">88.99% final, 90.52% at iter 2,000</td>
 <td data-label="Grounding">94.36%</td>
 <td data-label="On gold, with the rules"><strong>98.2% / 95.2%</strong></td>
@@ -893,7 +893,7 @@
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07">07</a></td>
-<td data-label="What changed">32B-teacher labels 92.6% precise, 2,000 iters, <strong>16 LoRA layers</strong></td>
+<td data-label="What changed">32B-teacher labels <strong>replacing</strong> rules labels, 92.6% precise.<br>2,000 × 16 = 32k ≈ <strong>0.23 epochs</strong> · <strong>16 layers</strong> · rank 16 · cosine 1e-4→1e-5</td>
 <td data-label="Identification">not run</td>
 <td data-label="Grounding">not run</td>
 <td data-label="On gold, with the rules">93.6% / 89.1%</td>
@@ -901,14 +901,23 @@
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08">08</a></td>
-<td data-label="What changed">Teacher labels 97.6% precise, 8,000 iters, <strong>16 LoRA layers</strong></td>
+<td data-label="What changed">Same idea, labels filtered to 97.6% precise, trained 4× longer.<br>8,000 × 16 = 128k ≈ <strong>1.06 epochs</strong> · <strong>16 layers</strong> · rank 16 · cosine 1e-4→1e-5</td>
 <td data-label="Identification">not run</td>
 <td data-label="Grounding">not run</td>
 <td data-label="On gold, with the rules">95.3% / 89.1%</td>
 <td data-label="Components shipped">N/A ‡</td>
 </tr>
+<tr>
+<td data-label="Round"><strong>09</strong></td>
+<td data-label="What changed"><em>Running tonight.</em> Teacher labels <strong>added, not substituted</strong>; scope roles; prompt v2; lexicon 0.9.2.<br>8,000 × 16 = 128k ≈ <strong>1.04 epochs</strong> · <strong>32 layers</strong> · rank 16 · dropout 0.05 · cosine 1e-4→1e-5 · warmup 50</td>
+<td data-label="Identification">pending</td>
+<td data-label="Grounding">pending</td>
+<td data-label="On gold, with the rules">pending</td>
+<td data-label="Components shipped">pending</td>
+</tr>
 </tbody>
 </table></div>
+<p>Every round: <code>--mask-prompt</code> (loss on the completion only), <code>max_seq_length</code> 1024, LoRA scale 20, base <code>mlx-community/SmolLM2-360M-Instruct</code> on an M1 Max. Epochs are given only where the training set size at the time is recorded; <code>iters × batch</code> is exact for every round and is the honest comparison.</p>
 <p>† Scored against a <strong>live residual</strong> that shrank from the easy end every time curation improved, so these three are not comparable to each other or to anything else. From round 05 the benchmark is frozen.</p>
 <p><strong>Three cells need explaining, because each is a real answer rather than a gap.</strong></p>
 <p><strong>"Not yet invented"</strong> is literal. The grounding check — does the reagent the model named actually appear in the text it was given — was written on 2026-07-31; rounds 01 to 03 were trained the day before. Their adapters are still on the Hub and could be re-scored, but the number would sit beside an identification figure measured against a residual that no longer exists, which would look comparable and would not be.</p>
