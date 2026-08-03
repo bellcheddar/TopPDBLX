@@ -7,7 +7,7 @@ Two artefacts are versioned here, independently:
 
 | File | Version | What it is |
 |------|---------|------------|
-| `synonyms.yaml` | 0.7.0 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
+| `synonyms.yaml` | 0.8.0 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
 | `groups.yaml` | 0.3.0 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
 
 ## groups.yaml
@@ -106,6 +106,45 @@ Known gaps recorded rather than hidden:
   could ever have been assigned to it.
 
 ## synonyms.yaml
+
+### 0.8.0 (2026-08-03)
+
+**557 reagents, 1,467 names.** PEG monomethyl ether was fragmented across up to **seven canonical
+ids per molecular weight**, every one carrying the same `peg_mw`:
+
+| molecular weight | canonical entry | duplicates | components split off |
+|---|---|---|---|
+| 2000 | `PEG_MME_2000` (3,442) | 8 | 339 |
+| 5000 | `PEG_MME_5000` (1,739) | 9 | 367 |
+| 550 | `PEG_MME_550` (2,037) | 2 | 97 |
+| 350 | `PEG_MME_350` (95) | 1 | 62 |
+
+`MONOMETHYLETHER_PEG_2000`, `MONOMETHYL_ETHER_PEG_2000`, `PEG_2000_MONOMETHYLETHER`,
+`PEG_2000_MONOMETHYL_ETHER`, `PEG_MONOMETHYLETHER_2000`, `PEG_MONOMETHYL_ETHER_2000`, `PEGMME2K`
+and `PEG_MME_2K` are one molecule written eight ways. 20 duplicate entries merged, 20 spellings
+folded in as aliases.
+
+**Two harms, and the second is the one that mattered tonight.** Anyone querying PEG MME 2000 got
+3,442 components instead of ~3,780, a 9% undercount. But the training targets were teaching the
+model *eight different canonical ids for one reagent*, which is precisely the thing a model
+emitting canonical ids must not learn. This was found while preparing round 09 and fixed before
+it trained.
+
+Same failure as the systematic-name duplicates merged in 0.7.0 — `MES` had four entries — and
+found the same way, by grouping ids that share a property no two distinct molecules can share. In
+0.7.0 that was a chemical name; here it is `peg_mw`.
+
+**Two clause artefacts dropped:** `PEG_MME_550_PEG20000` names two reagents and
+`PEG_MME_500_20` has a concentration in it. Neither is a molecule.
+
+**Five entries added** from the blank-record teacher output, each verified against its deposition
+text: `AMMONIUM_CACODYLATE`, `PYRIDINE`, `XYLOBIOSE`, `LEVULINIC_ACID`, `COPPER_ACETATE`. Plus
+`methane pentanediol` on `MPD` and the bracketed spelling of ADA's systematic name.
+
+**Punctuation-insensitive matching was measured and rejected.** Stripping all punctuation before
+lookup would resolve 487 further model components, but it also maps `ETHYLENE_GLYCOL_PEG_8000` to
+`PEG_8000` (losing half a Morpheus mix) and `PEG_3350_0` to `PEG_33500`. The gain is real and the
+errors are silent, so the spellings worth having are added explicitly instead.
 
 ### 0.7.0 (2026-08-03)
 

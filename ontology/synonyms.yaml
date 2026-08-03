@@ -1,4 +1,4 @@
-version: 0.7.0
+version: 0.8.0
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -39,6 +39,8 @@ reagents:
   - ada buffer
   - n-(2-acetamido)iminodiacetic acid
   - n-[-acetamido]-2-iminodiacetic acid
+  - n-[2-acetamido]-2-iminodiacetic acid
+  - n-2-acetamido-2-iminodiacetic acid
 - chem_class: additive
   default_unit: millimolar
   canonical_id: ADENOSINE
@@ -114,6 +116,13 @@ reagents:
   display_name: Ammonium bromide
   aliases:
   - ammonium bromide
+- canonical_id: AMMONIUM_CACODYLATE
+  display_name: Ammonium cacodylate
+  chem_class: buffer
+  default_unit: millimolar
+  aliases:
+  - ammonium cacodylate
+  buffer_pka: 6.3
 - canonical_id: AMMONIUM_CHLORIDE
   display_name: Ammonium chloride
   chem_class: salt
@@ -368,6 +377,7 @@ reagents:
   - beta-octylglucoside
   - octyl-beta-d-glucopyranoside
   - n-octyl glucoside
+  - n-octyl-b-d-glucopyranoside
 - canonical_id: BICINE
   display_name: Bicine
   chem_class: buffer
@@ -775,6 +785,15 @@ reagents:
   display_name: Concentrated dtt
   aliases:
   - concentrated dtt
+- canonical_id: COPPER_ACETATE
+  display_name: Copper(II) acetate
+  chem_class: salt
+  default_unit: millimolar
+  aliases:
+  - copper acetate
+  - cupric acetate
+  - copper(ii) acetate
+  - cu(oac)2
 - chem_class: salt
   default_unit: molar
   canonical_id: COPPER_CHLORIDE
@@ -1841,6 +1860,13 @@ reagents:
   display_name: Ldao
   aliases:
   - ldao
+- canonical_id: LEVULINIC_ACID
+  display_name: Levulinic acid
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - levulinic acid
+  - laevulinic acid
 - chem_class: salt
   default_unit: molar
   canonical_id: LIBR
@@ -2253,30 +2279,6 @@ reagents:
   display_name: Mnso4
   aliases:
   - mnso4
-- chem_class: peg
-  peg_mw: 2000
-  default_unit: percent_w_v
-  is_mme: true
-  canonical_id: MONOMETHYLETHER_PEG_2000
-  display_name: Monomethylether peg 2000
-  aliases:
-  - monomethylether peg 2000
-- chem_class: peg
-  peg_mw: 2000
-  default_unit: percent_w_v
-  is_mme: true
-  canonical_id: MONOMETHYL_ETHER_PEG_2000
-  display_name: Monomethyl ether peg 2000
-  aliases:
-  - monomethyl ether peg 2000
-- chem_class: peg
-  peg_mw: 5000
-  default_unit: percent_w_v
-  is_mme: true
-  canonical_id: MONOMETHYL_ETHER_PEG_5000
-  display_name: Monomethyl ether peg 5000
-  aliases:
-  - monomethyl ether peg 5000
 - canonical_id: MONOOLEIN
   display_name: Monoolein
   chem_class: organic
@@ -2321,6 +2323,8 @@ reagents:
   - 2-methyl-2,4-pentandiol
   - mpd (2-methyl-2,4-pentanediol)
   - methyl-pentanediol
+  - methane pentanediol
+  - 2-methyl-2,4-pentane-diol
 - chem_class: polyol
   default_unit: percent_v_v
   canonical_id: MPD_2
@@ -2594,30 +2598,6 @@ reagents:
   display_name: P8k
   aliases:
   - p8k
-- chem_class: peg
-  peg_mw: 5000
-  default_unit: percent_w_v
-  is_mme: true
-  canonical_id: PEG5K_MME
-  display_name: Peg5k mme
-  aliases:
-  - peg5k mme
-- chem_class: peg
-  peg_mw: 2000
-  default_unit: percent_w_v
-  is_mme: true
-  canonical_id: PEGMME2K
-  display_name: Pegmme2k
-  aliases:
-  - pegmme2k
-- chem_class: peg
-  peg_mw: 5000
-  default_unit: percent_w_v
-  is_mme: true
-  canonical_id: PEGMME_5K
-  display_name: Pegmme 5k
-  aliases:
-  - pegmme 5k
 - canonical_id: PEG_1000
   display_name: PEG 1000
   chem_class: peg
@@ -2732,22 +2712,6 @@ reagents:
   display_name: Peg 20000 (10%)
   aliases:
   - peg 20000 (10%)
-- chem_class: peg
-  peg_mw: 2000
-  default_unit: percent_w_v
-  is_mme: true
-  canonical_id: PEG_2000_MONOMETHYLETHER
-  display_name: Peg 2000 monomethylether
-  aliases:
-  - peg 2000 monomethylether
-- chem_class: peg
-  peg_mw: 2000
-  default_unit: percent_w_v
-  is_mme: true
-  canonical_id: PEG_2000_MONOMETHYL_ETHER
-  display_name: Peg 2000 monomethyl ether
-  aliases:
-  - peg 2000 monomethyl ether
 - chem_class: peg
   peg_mw: 20000
   default_unit: percent_w_v
@@ -2870,14 +2834,6 @@ reagents:
   aliases:
   - peg 35000
 - chem_class: peg
-  peg_mw: 350
-  default_unit: percent_v_v
-  is_mme: true
-  canonical_id: PEG_350_MONOMETHYL_ETHER
-  display_name: Peg 350 monomethyl ether
-  aliases:
-  - peg 350 monomethyl ether
-- chem_class: peg
   peg_mw: 3550
   default_unit: percent_w_v
   canonical_id: PEG_3550
@@ -2934,38 +2890,6 @@ reagents:
   - peg5000
   - peg 5k
   - mpeg 5k
-- chem_class: peg
-  peg_mw: 5000
-  default_unit: percent_w_v
-  is_mme: true
-  canonical_id: PEG_5000_MONOMETHYLETHER
-  display_name: Peg 5000 monomethylether
-  aliases:
-  - peg 5000 monomethylether
-- chem_class: peg
-  peg_mw: 5000
-  default_unit: percent_w_v
-  is_mme: true
-  canonical_id: PEG_5000_MONOMETHYL_ETHER
-  display_name: Peg 5000 monomethyl ether
-  aliases:
-  - peg 5000 monomethyl ether
-- chem_class: peg
-  peg_mw: 550
-  default_unit: percent_v_v
-  is_mme: true
-  canonical_id: PEG_550_MONOMETHYL_ETHER
-  display_name: Peg 550 monomethyl ether
-  aliases:
-  - peg 550 monomethyl ether
-- chem_class: peg
-  peg_mw: 5000
-  default_unit: percent_w_v
-  is_mme: true
-  canonical_id: PEG_5K_MME
-  display_name: Peg 5k mme
-  aliases:
-  - peg 5k mme
 - canonical_id: PEG_600
   display_name: PEG 600
   chem_class: peg
@@ -3053,6 +2977,14 @@ reagents:
   - peg2k mme
   - mmepeg 2000
   - mepeg 2000
+  - monomethylether peg 2000
+  - monomethyl ether peg 2000
+  - pegmme2k
+  - peg 2000 monomethylether
+  - peg 2000 monomethyl ether
+  - peg mme 2k
+  - peg monomethylether 2000
+  - peg monomethyl ether 2000
 - canonical_id: PEG_MME_20000
   display_name: PEG MME 20000
   chem_class: peg
@@ -3063,14 +2995,6 @@ reagents:
   - polyethylene glycol monomethyl ether 20000
   peg_mw: 20000
   is_mme: true
-- chem_class: peg
-  peg_mw: 2000
-  default_unit: percent_w_v
-  is_mme: true
-  canonical_id: PEG_MME_2K
-  display_name: Peg mme 2k
-  aliases:
-  - peg mme 2k
 - chem_class: peg
   peg_mw: 3350
   default_unit: percent_w_v
@@ -3087,6 +3011,7 @@ reagents:
   display_name: Peg mme 350
   aliases:
   - peg mme 350
+  - peg 350 monomethyl ether
 - canonical_id: PEG_MME_500
   display_name: PEG MME 500
   chem_class: peg
@@ -3120,14 +3045,15 @@ reagents:
   - polyethylene glycol 5000 monomethyl ether
   - mepeg 5000
   - polyethylene glycol methyl ether 5000
-- chem_class: peg
-  peg_mw: 500
-  default_unit: percent_v_v
-  is_mme: true
-  canonical_id: PEG_MME_500_20
-  display_name: Peg mme 500 (20%)
-  aliases:
-  - peg mme 500 (20%)
+  - monomethyl ether peg 5000
+  - peg5k mme
+  - pegmme 5k
+  - peg 5000 monomethylether
+  - peg 5000 monomethyl ether
+  - peg 5k mme
+  - peg mme 5k
+  - peg monomethylether 5000
+  - peg monomethyl ether 5000
 - canonical_id: PEG_MME_550
   display_name: PEG MME 550
   chem_class: peg
@@ -3144,22 +3070,8 @@ reagents:
   - pegmme 550
   - peg-mme 550
   - peg mme550
-- chem_class: peg
-  peg_mw: 550
-  default_unit: percent_v_v
-  is_mme: true
-  canonical_id: PEG_MME_550_PEG20000
-  display_name: Peg mme 550/peg20000
-  aliases:
-  - peg mme 550/peg20000
-- chem_class: peg
-  peg_mw: 5000
-  default_unit: percent_w_v
-  is_mme: true
-  canonical_id: PEG_MME_5K
-  display_name: Peg mme 5k
-  aliases:
-  - peg mme 5k
+  - peg 550 monomethyl ether
+  - peg monomethyl ether 550
 - chem_class: peg
   peg_mw: 750
   default_unit: percent_w_v
@@ -3168,46 +3080,6 @@ reagents:
   display_name: Peg mme 750
   aliases:
   - peg mme 750
-- chem_class: peg
-  peg_mw: 2000
-  default_unit: percent_w_v
-  is_mme: true
-  canonical_id: PEG_MONOMETHYLETHER_2000
-  display_name: Peg monomethylether 2000
-  aliases:
-  - peg monomethylether 2000
-- chem_class: peg
-  peg_mw: 5000
-  default_unit: percent_w_v
-  is_mme: true
-  canonical_id: PEG_MONOMETHYLETHER_5000
-  display_name: Peg monomethylether 5000
-  aliases:
-  - peg monomethylether 5000
-- chem_class: peg
-  peg_mw: 2000
-  default_unit: percent_w_v
-  is_mme: true
-  canonical_id: PEG_MONOMETHYL_ETHER_2000
-  display_name: Peg monomethyl ether 2000
-  aliases:
-  - peg monomethyl ether 2000
-- chem_class: peg
-  peg_mw: 5000
-  default_unit: percent_w_v
-  is_mme: true
-  canonical_id: PEG_MONOMETHYL_ETHER_5000
-  display_name: Peg monomethyl ether 5000
-  aliases:
-  - peg monomethyl ether 5000
-- chem_class: peg
-  peg_mw: 550
-  default_unit: percent_v_v
-  is_mme: true
-  canonical_id: PEG_MONOMETHYL_ETHER_550
-  display_name: Peg monomethyl ether 550
-  aliases:
-  - peg monomethyl ether 550
 - canonical_id: PEG_SMEAR_BROAD
   display_name: PEG Smear Broad
   chem_class: other
@@ -3712,6 +3584,12 @@ reagents:
   aliases:
   - putrescine
   - 1,4-diaminobutane
+- canonical_id: PYRIDINE
+  display_name: Pyridine
+  chem_class: organic
+  default_unit: percent_v_v
+  aliases:
+  - pyridine
 - chem_class: additive
   default_unit: millimolar
   canonical_id: PYRUVATE
@@ -4575,6 +4453,12 @@ reagents:
   chem_class: polyol
   default_unit: percent_w_v
   aliases: []
+- canonical_id: XYLOBIOSE
+  display_name: Xylobiose
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - xylobiose
 - canonical_id: XYLOPENTAOSE
   display_name: Xylopentaose
   chem_class: additive

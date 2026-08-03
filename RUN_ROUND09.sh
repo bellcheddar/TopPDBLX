@@ -14,6 +14,10 @@ echo "== 2. convert the blank-record labels =="
     --progress data/interim/slm/teacher_progress_blank.jsonl \
     --out data/interim/teacher_components_blank.parquet
 
+echo "== 2b. re-parse: lexicon 0.8.0 de-fragmented PEG MME, so targets must be rebuilt =="
+./run.sh parse.run_parser
+./run.sh assign.classify --slm-components data/interim/slm_components.parquet
+
 echo "== 3. rebuild training data: rules + BOTH teacher sources, gold held out =="
 ./run.sh models.build_slm_dataset --system-version v2 \
   --teacher-components data/interim/teacher_components_2k.parquet \

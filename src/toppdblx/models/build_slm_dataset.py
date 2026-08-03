@@ -128,6 +128,10 @@ def _group_components(frame: "pl.DataFrame") -> dict[tuple, list[dict[str, Any]]
     for row in frame.select(cols).sort("component_index").iter_rows(named=True):
         if row["role"] != "not_a_component" and not row["name_canonical"]:
             continue
+        if row["role"] == "unknown":
+            # `unknown` is the parser's way of saying the lexicon failed, not a target. Nine of
+            # these reached the last build and would have taught the model to emit it.
+            continue
         out.setdefault((row["pdb_id"], row["crystal_id"]), []).append(row)
     return out
 
@@ -301,6 +305,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         # Filtered on exactly the guards `apply_slm` applies to model output, because a label the
         # pipeline would refuse to keep is not a label worth training on.
         n_teacher = 0
+        teacher_rows: list[dict[str, Any]] = []
         if args.teacher_components:
             # **Held out by text as well as by key, and the key alone is not enough.** This
             # corpus repeats itself: the same condition string is deposited under many different
@@ -313,7 +318,6 @@ def main(argv: Optional[list[str]] = None) -> int:
             # hole opens only when teacher-labelled residual text is added, which is new here.
             held = held_keys
             by_key = {(r["pdb_id"], r["crystal_id"]): r for r in residual}
-            teacher_rows: list[dict[str, Any]] = []
             seen_keys: set[tuple] = set()
             for path in args.teacher_components:
                 if not Path(path).exists():
@@ -334,11 +338,6 @@ def main(argv: Optional[list[str]] = None) -> int:
                         {"role": "assistant", "content": target_json(group)},
                     ]})
             n_teacher = len(teacher_rows)
-            bootstrap["train"].extend(teacher_rows * max(1, args.oversample_teacher))
-            print(f"  teacher rows: {n_teacher:,} distinct, "
-                  f"{n_teacher * max(1, args.oversample_teacher):,} after "
-                  f"{args.oversample_teacher}x oversampling, "
-                  f"{len(held):,} gold records held out")
 
         # **Deduplicate before training.** The corpus repeats itself heavily: 45.7% of rows
         # shared an input with another row, and one condition ("protein in 25mM Tris/HCl pH 7.5
@@ -384,6 +383,32 @@ def main(argv: Optional[list[str]] = None) -> int:
             n_scope_examples = len(extra) // max(1, args.oversample_scope - 1)
         else:
             n_scope_examples = 0
+
+        # **Teacher rows are added here, after dedup and after the other oversamplers, and the
+        # ordering is the whole point.**
+        #
+        # Appended before dedup they were collapsed straight back to one copy each, so
+        # `--oversample-teacher` did nothing at all. Worse, the `not_a_component` oversampler runs
+        # after dedup and 29.8% of teacher targets carry that label against 2.7% of the rules
+        # corpus, so nearly every teacher row was silently multiplied 8x instead of the 4x asked
+        # for. Two multipliers compounding on the noisiest rows in the set is the opposite of the
+        # intent, which was to keep the teacher's 3.7% invention rate on a short leash.
+        #
+        # They are also dropped where their text already appears with a rules label. The same
+        # condition string is deposited under many entries, so a residual record can share text
+        # with a confidently-parsed one -- and training the same input against two different
+        # answers teaches noise, whichever answer is right.
+        if teacher_rows:
+            existing = {e["messages"][1]["content"] for e in bootstrap["train"]}
+            existing |= {e["messages"][1]["content"] for e in bootstrap["valid"]}
+            kept = [e for e in teacher_rows if e["messages"][1]["content"] not in existing]
+            n_conflict = len(teacher_rows) - len(kept)
+            n_teacher = len(kept)
+            bootstrap["train"].extend(kept * max(1, args.oversample_teacher))
+            print(f"  teacher rows: {n_teacher:,} distinct x{args.oversample_teacher} = "
+                  f"{n_teacher * max(1, args.oversample_teacher):,} rows"
+                  + (f"; {n_conflict:,} dropped for clashing with a rules label"
+                     if n_conflict else ""))
 
         # Validation is deduplicated too, or the loss is dominated by whichever conditions
         # happen to be popular rather than by how well the model reads.
