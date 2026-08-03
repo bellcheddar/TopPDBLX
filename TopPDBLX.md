@@ -30,7 +30,7 @@ Parse, normalise and curate every crystallisation condition in the Protein Data 
 | Capability | Detail |
 |---|---|
 | **Parses the whole archive** | 199,185 crystallisation records from 198,691 PDB entries, keyed on `(pdb_id, crystal_id)` |
-| **Typed components** | 605,481 reagents with role, concentration, unit, PEG molecular weight, Hofmeister rank and buffer pKa |
+| **Typed components** | 610,076 reagents with role, concentration, unit, PEG molecular weight, Hofmeister rank and buffer pKa |
 | **Separates text from chemistry** | Method notes, screen references and unnamed ligands are labelled `not_a_component`, so they never inflate a failure rate |
 | **Accounts for every record** | Anything not parsed carries one of seven discard codes, with its raw text retained |
 | **Links to sequence** | 184,229 usable records carry the construct sequence, UniProt accessions and cluster ids at 30%, 50% and 90% identity |
@@ -38,7 +38,33 @@ Parse, normalise and curate every crystallisation condition in the Protein Data 
 | **Refuses to guess** | A condition with an unrecognised reagent or no stated amount is Unclassified, with the reason recorded |
 | **Records its own uncertainty** | Inferred units, inferred cryoprotectant roles and pH attribution are flagged, never presented as fact |
 | **Reproducible by stage** | Every stage is one command and writes a manifest of input hashes, tool versions and git state |
-| **Teaches a small model with a large one** | A 32B teacher labels the hard records; a 360M student learns from it and reads all 52,000. Recall 71.4% → 91.5% against hand-labelled truth |
+| **Teaches a small model with a large one** | A 32B teacher labels the hard records; a 360M student learns from it and reads all 47,845. Recall 79.6% → 95.2% against hand-labelled truth |
+
+## 📖 The words on this page
+
+Crystallography and machine learning each bring their own vocabulary, and this page uses both.
+Everything here is defined where it first matters, but this is the short version.
+
+| Term | What it means here |
+|---|---|
+| **Crystallisation condition** | The recipe a protein was crystallised from: a few reagents, their concentrations, and a pH. This project parses about 200,000 of them |
+| **Deposition text** | What the scientist actually typed into the PDB, free-hand, in no agreed format. The raw material |
+| **Precipitant** | The reagent doing the work — it pulls the protein out of solution. Usually a PEG, a salt or an organic |
+| **Drop / reservoir** | The two halves of a vapour-diffusion experiment. The drop holds protein plus condition; the reservoir pulls water out of it |
+| **Mother liquor** | The solution a crystal grew in and sits in |
+| **Cryoprotectant** | Added *after* growth to stop ice forming when the crystal is frozen. Real chemistry, but it did not crystallise anything |
+| **Premix** | A vendor mixture sold as one bottle — Morpheus "Divalents", Tacsimate — that is really several reagents |
+| **PEG** | Polyethylene glycol, the commonest precipitant. The number is its molecular weight, not an amount: "PEG 3350" is a size |
+| **Hofmeister rank** | An ordering of salts by how strongly they push proteins out of solution |
+| | |
+| **Lexicon** | The dictionary mapping every spelling a depositor might use onto one **canonical id**. `peg3350`, `PEG 3,350` and `polyethylene glycol 3350` all become `PEG_3350` |
+| **Canonical id** | The single name this project uses for a reagent, in `UPPER_SNAKE_CASE` |
+| **The residual** | The records the rule parser could **not** read. This is what the language model is for, and it is never trained on them |
+| **The gold set** | 96 records labelled by hand, twice over. The only ground truth here, used to measure and never to train |
+| **LoRA** | A way of fine-tuning a model by training a small adapter rather than all its weights. Ours is 33 MB against a 360 M-parameter base |
+| **Distillation** | Training a small model on a larger one's output. Here a 32-billion-parameter *teacher* labels text for a 360-million-parameter *student* |
+| **Grounding** | Checking that a reagent the model named actually appears in the text it was given. Catches invention, which no accuracy score can |
+| **Identification** | Whether an emitted name exists in the lexicon. A weaker test than grounding, and it has misled this project three times |
 
 ## 🔄 Workflow
 
@@ -50,13 +76,14 @@ It runs as a chain of stages. Each is one command, each writes a manifest record
    RCSB PDB archive
           │
           │  ingest.*          fetch every deposition over GraphQL, then byte-compare
-          ▼                    the text against the archive mmCIF: 100.0000% agreement
+          ▼                    the text against the archive mmCIF: 100% agreement
    199,185 condition strings
           │
           │  parse.run_parser  split into clauses, read amounts and units, look each
           ▼                    name up in the reagent lexicon
-   605,481 typed components ────────────────┐
-          │                                 │ 52,000 records the rules cannot read
+   610,076 typed components ────────────────┐
+          │  parse.scope     tells the drop │ 47,845 records the rules cannot read
+          │  from the protein sample and a  │
           │  assign.classify                ▼
           ▼                          ┌─────────────────────────────────────────┐
    7 precipitant classes             │   THE TEACHING LOOP                     │
@@ -85,7 +112,7 @@ It runs as a chain of stages. Each is one command, each writes a manifest record
 
 ### The teaching loop, and why there are two models
 
-**Why bother with two models: the teacher is 90x larger and 400x slower.** At 40 s/record a 32B would need 24 days to read the 52,000 residual records the rules cannot; the 360M student does it in under two hours. So the teacher reads ~2,000 of them to produce training labels, and the student does the work — which lifted recall on hand-labelled truth from **71.4% to 91.5%**, worth 59 reagents the rules never find, at a cost of 0.4 points of precision.
+**Why bother with two models: the teacher is 90x larger and 400x slower.** At 40 s/record a 32B would need 22 days to read the 47,845 residual records the rules cannot; the 360M student does it in under two hours. So the teacher reads ~2,000 of them to produce training labels, and the student does the work — which lifted recall on hand-labelled truth from **79.6% to 95.2%**, worth 46 reagents the rules never find, at a cost of 0.1 points of precision.
 
 **In plain terms:** a small model is cheap to run over 200,000 records but not clever enough to teach itself. A large model is clever enough to teach but far too slow to run over the whole archive. So the large one reads a few thousand of the hard cases, the small one learns from what it produces, and the small one does the actual work. The expert never labels a corpus: they label 96 records that decide whether any of it worked.
 
@@ -93,9 +120,9 @@ The cycle has three participants and each does the one thing it is best at:
 
 | | Does | Costs | Why it cannot do the others' job |
 |---|---|---|---|
-| **Expert** (`gold_bench`, `courtroom`) | Labels 96 records; answers tens of curation questions | An hour | Cannot label 52,000 records, and should never be asked to |
+| **Expert** (`gold_bench`, `courtroom`) | Labels 96 records; answers tens of curation questions | An hour | Cannot label 47,845 records, and should never be asked to |
 | **Teacher** (Qwen2.5-32B, local) | Labels a few thousand residual records | ~40 s/record | Far too slow for the corpus, and 91% precise where the student is 99.6% |
-| **Student** (SmolLM2-360M) | Reads all 52,000 residual records | ~0.1 s/record | Bootstrapped from the rules, so the rules are its ceiling until a teacher lifts it |
+| **Student** (SmolLM2-360M) | Reads all 47,845 residual records | ~0.1 s/record | Bootstrapped from the rules, so the rules are its ceiling until a teacher lifts it |
 
 **Why a teacher is needed at all.** The student was taught entirely by the rule parser, on records the rules read *confidently*. It therefore never sees an example the rules got wrong, and cannot learn to beat them. Round 06 made that visible: sweeping its checkpoints, fidelity to `rules_v3` climbed to 93.6% while identification on the residual peaked at 2,000 iterations and then fell. Read at the time as *training longer buys a better imitation and a worse reader* — and the direction of that reading did not survive contact with labelled truth, which prefers the 6,000-iteration adapter. What the divergence shows is that the two metrics measure different things, not which checkpoint to keep.
 
@@ -141,19 +168,19 @@ for deposition in archive:
 | `condition_courtroom_v7.html` | Single-file curation and accuracy audit, one condition per screen, no server |
 | `gold_bench_v1.html` | Single-file labeller for the 96 gold records that judge every model round |
 
-**Why the fidelity gate comes first.** Everything downstream is a claim about what a depositor wrote, so the first stage proves the text was fetched intact: every condition string is byte-compared against the mmCIF in the 90 GB archive snapshot, including loop row counts. It agrees on 205,943 entries at 100.0000%. Without that, a parsing statistic would be measuring the API rather than the archive.
+**Why the fidelity gate comes first.** Everything downstream is a claim about what a depositor wrote, so the first stage proves the text was fetched intact: every condition string is byte-compared against the mmCIF in the 90 GB archive snapshot, including loop row counts. It agrees on all 205,943 entries, at 100%. Without that, a parsing statistic would be measuring the API rather than the archive.
 
 ## 📊 Results
 
 | Measure | Value |
 |---|---|
 | Records | 199,185 |
-| Usable | **186,263 (93.5%)** |
-| Components | 605,481, **85.3% identified** as a canonical reagent (87.6% excluding text that names no chemistry) |
+| Usable | **188,039 (94.4%)** |
+| Components | 610,076, **86.5% identified** as a canonical reagent (89.0% excluding text that names no chemistry) |
 | Reagent lexicon | 499 reagents, 1,583 names (v0.9.2) |
 | Linked sequences | 184,229 across **23,159** distinct 30% identity clusters |
 | Screen-well matches | 81,802 component-set matches, 39,219 agreeing on every concentration |
-| Archive fidelity | **100.0000%** over 205,943 entries against the 90 GB mmCIF snapshot |
+| Archive fidelity | **100%** over 205,943 entries against the 90 GB mmCIF snapshot |
 | Condition classes | Seven JCSG Top96 precipitant classes (v0.3.1), **80.2% classified**, 19.8% honestly unclassified |
 | Parser accuracy | Against hand-labelled records: **98.2% precision, 95.2% recall**, F0.5 **97.6** (rules alone: 98.3% / 79.6%) |
 | Leak-free splits | 181,007 records, no cluster spanning folds at 30%, 50% or 90% |
@@ -189,15 +216,18 @@ There are seven buckets, plus an eighth for conditions that cannot be sorted hon
 
 | Class | Conditions | Share |
 |---|---|---|
-| Unclassified | 75,413 | 40.5% |
-| Salt/PEG | 46,309 | 24.9% |
-| PEG | 21,543 | 11.6% |
-| Salt | 19,516 | 10.5% |
-| Organic/PEG/Salt | 7,173 | 3.9% |
-| Organic/PEG | 7,095 | 3.8% |
-| Organic/Salt | 6,380 | 3.4% |
-| Organic | 2,751 | 1.5% |
-| **Classified** | **110,767** | **59.5%** |
+| Salt/PEG | 59,601 | 31.7% |
+| Unclassified | 37,208 | 19.8% |
+| PEG | 28,623 | 15.2% |
+| Salt | 27,922 | 14.8% |
+| Organic/PEG/Salt | 11,220 | 6.0% |
+| Organic/PEG | 9,629 | 5.1% |
+| Organic/Salt | 9,498 | 5.1% |
+| Organic | 4,338 | 2.3% |
+| **Classified** | **150,831** | **80.2%** |
+
+The rules alone reach 59.5%. The rest is the model reading records no regular expression could,
+plus premixes now classified on what they are made of rather than refused.
 
 **For the crystallographer:** the seven classes are the JCSG Top96 precipitant classes, which are the non-empty subsets of {Organic, PEG, Salt}. Classification is by presence with no thresholds: a PEG is a PEG whatever its molecular weight and concentration, a salt is a salt whatever its chemistry and concentration. Buffers are excluded, since at 0.1 M a buffer sets the pH rather than precipitating anything (spec 6.3), and the pH is carried separately.
 
@@ -211,7 +241,7 @@ Unclassified is a first-class answer with its reason recorded, never a null:
 
 **The second row is a deliberate choice and the expensive one.** Those 24,327 conditions name their precipitant unambiguously and simply never state a concentration: `PEG6000, Sodium Chloride, VAPOR DIFFUSION`. Classifying them as `Salt/PEG` would lift classified coverage from 58.9% to roughly 72% in one line, and the rule that a PEG is a PEG whatever its concentration would arguably support it. They stay Unclassified because a condition with no concentration is not a measured condition, and coverage is not worth buying with a claim the deposition does not make.
 
-**Premixes are no longer refused, and that is a reversal.** Spec 6.4 was settled by declaring every premixed system Unclassified, which was right while a premix was an opaque token. Once the vendor compositions were transcribed (lexicon v0.9.0) it stopped being right: 59% of the conditions it refused were blocked by a premix made only of *buffers* — MES/imidazole, phosphate-citrate, MIB, SPG — and a buffer is excluded from naming the class anyway. Those were ordinary conditions declined for their packaging rather than their chemistry. A premix now contributes the chemistry it is made of, so Morpheus Precipitant Mix 4 is MPD with PEG 1000 and PEG 3350, which is `Organic/PEG`. Classified coverage moved 76.8% to **80.0%**. A premix with no transcribed composition is still Unclassified, because there is nothing to expand it into.
+**Premixes are no longer refused, and that is a reversal.** Spec 6.4 was settled by declaring every premixed system Unclassified, which was right while a premix was an opaque token. Once the vendor compositions were transcribed (lexicon v0.9.0) it stopped being right: 59% of the conditions it refused were blocked by a premix made only of *buffers* — MES/imidazole, phosphate-citrate, MIB, SPG — and a buffer is excluded from naming the class anyway. Those were ordinary conditions declined for their packaging rather than their chemistry. A premix now contributes the chemistry it is made of, so Morpheus Precipitant Mix 4 is MPD with PEG 1000 and PEG 3350, which is `Organic/PEG`. Classified coverage moved 76.8% to **80.2%**. A premix with no transcribed composition is still Unclassified, because there is nothing to expand it into.
 
 An earlier three-level ontology of 163 binned groups was withdrawn at v0.3.0. Its groups were derived by binning the corpus and then having labels retrofitted, which spec 6.1 rejects in its first line, and several were not chemically coherent: median purity across the 41 second-level groups was 49%. The full reasoning is in [`ontology/CHANGELOG.md`](ontology/CHANGELOG.md).
 
@@ -255,9 +285,9 @@ An earlier three-level ontology of 163 binned groups was withdrawn at v0.3.0. It
 | buffer | 36 | pKa, since buffer identity collapses to the pH it sets |
 | organic | 33 | alcohols and small organics reported v/v |
 | polyol | 28 | glycerol, sugars and sugar alcohols |
-| detergent | 16 | |
+| detergent | 16 | CYMAL-6, DDM, LDAO, beta-octyl glucoside: reported w/v, and rarely the precipitant |
 | premix | 9 | constituent ids for Tacsimate, Morpheus and similar |
-| other | 6 | |
+| other | 6 | vendor mixtures with no single molecular weight, such as PEG Smear Broad |
 
 Two rounds of curation and one parser fix took identification from 79.1% to 85.2%. The marginal return has since fallen to roughly 15 components per decision, so further rounds are no longer the best use of expert time.
 
@@ -319,7 +349,7 @@ the parsers are rarely challenged, so they rarely err.
 | **Precision** | Of the reagents we claim are in this condition, how many really are? | The parser invents chemistry |
 | **Recall** | Of the reagents really in this condition, how many did we find? | The parser misses chemistry |
 | **F1** | One number ranking two parsers, as the harmonic mean of the two above | Used alone: it treats a missed reagent and an invented one as equally bad |
-| **F0.5** | The same, weighting precision twice as heavily as recall | — |
+| **F0.5** | The same, weighting precision twice as heavily as recall | The recall half is under-weighted: a parser that reads only the easy half of every condition can still score well, so it is read beside recall and never instead of it |
 
 The harmonic mean rather than the average, deliberately: it punishes imbalance. A parser at 100%
 precision and 20% recall averages 60% but scores **33** on F1, because a parser that says almost
@@ -347,9 +377,14 @@ Tracked honestly, including the rounds that delivered nothing. From round 05 onw
 | 03 | Cosine schedule, dropout, class rebalanced | 88.4% | not measured | 0 | [round03](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03) |
 | 04 | Retrained on the 502-reagent lexicon | abandoned, trained on duplicated data | | 0 | [round04](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04) |
 | 05 | Deduplicated training set, 95,818 distinct pairs | 87.58% | 93.41% | 0 | [round05](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05) |
-| 06 | Full epoch, LoRA rank 16, 6,856 empty-answer examples | 90.52% at iter 2,000, 88.99% final | 94.36% | **163,419** | [round06](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) |
-| 07 | 32B-teacher labels, 92.6% precise, 0.23 epochs | not run | not run | 0, **regressed** | [round07](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) |
-| 08 | Same, labels 97.6% precise, 1.06 epochs | not run | not run | 0, **regressed** | [round08](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08) |
+| 06 | Full epoch, LoRA rank 16, 6,856 empty-answer examples | 90.52% at iter 2,000, 88.99% final | 94.36% | **153,736** | [round06](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) |
+| 07 | 32B-teacher labels, 92.6% precise, 0.23 epochs | measured on gold instead: 93.6% precision, 89.1% recall | — | 0, **regressed** | [round07](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) |
+| 08 | Same, labels 97.6% precise, 1.06 epochs | measured on gold instead: 95.3% precision, 89.1% recall | — | 0, **regressed** | [round08](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08) |
+
+Rounds 07 and 08 were never put through the frozen benchmark, and deliberately so: by then the
+gold set existed, and `identification` had already given three wrong answers to "how long
+should this train". They were scored against hand-labelled truth instead, which is the
+stricter test and the one in the table below.
 
 ### 🤗 Models on HuggingFace
 
@@ -362,6 +397,8 @@ is not redistributed.
 | [**`round06/promoted_checkpoint_2000`**](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) | 06 | **The one to use.** The peak checkpoint, not the final adapter | With the rules: **99.6% precision, 91.5% recall** on 96 hand-labelled records. Alone on the frozen benchmark: 90.52% identification, 94.36% grounding |
 | [`round06/adapters`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) | 06 | The 6,000-iteration endpoint | 88.99% identification: **worse than the checkpoint it passed through at 2,000**, which is the distillation ceiling in one number |
 | [`round05`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05) | 05 | First round on the frozen benchmark | 87.58% identification, 93.41% grounding |
+| [`round08`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08) | 08 | Teacher labels, 97.6% precise, 8,000 iterations | With the rules: 95.3% / 89.1% on gold. **Regressed** on precision against round 06 and was not shipped |
+| [`round07`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) | 07 | Teacher labels, 92.6% precise, 2,000 iterations | With the rules: 93.6% / 89.1% on gold. **Regressed**; see the confound below |
 | [`round01`–`round04`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01) | 01–04 | History, kept for reproducibility | Scored against a live residual that shrank as curation improved, so **not comparable to anything**; round 04 was trained on 36% duplicate rows and abandoned |
 
 **A correction, and the reason the gold set exists.** The frozen-benchmark sweep promoted
@@ -455,8 +492,21 @@ about half the misattribution, not all of it.
 
 Two further findings:
 
-- **Gemma is the better teacher**, at 96.3% / 87.8% against Qwen's 91.8% / 84.3%. It was chosen for
-  independence and turned out simply stronger.
+- **Gemma is *not* the better teacher, and an earlier version of this section said it was.**
+  That claim compared a *rules + Gemma* row against a Qwen figure measured on a different set
+  of records. Scored like for like — the 79 gold records both models answered and whose
+  labels resolve — Qwen wins on precision at identical recall:
+
+  | | precision | recall | F1 | F0.5 | false positives |
+  |---|---|---|---|---|---|
+  | Gemma-4-31b | 89.7% | 87.9% | 88.8 | 89.4 | 24 |
+  | **Qwen2.5-32B** | **93.3%** | 87.9% | **90.5** | **92.2** | **15** |
+
+  Both find exactly the same reagents (210 true positives, 29 misses each); Gemma simply
+  asserts nine more things that are not there. It is also the less reliable harness: 82 of
+  96 generations parsed against Qwen's 96 of 96, because its reasoning block eats the token
+  budget. Gemma was chosen for **architectural independence**, which is what the agreement
+  gate needs and which it delivers — not for being stronger.
 - **It is still too noisy to train on.** The surviving additions are 13 correct against 10 wrong,
   a 43% error rate on the new signal, and round 08 established that this student absorbs label
   noise rather than averaging it out.
@@ -684,14 +734,21 @@ These determine what conclusions the data can support, and are stated in full in
 - [x] Assemble the release in five formats, with a generated datasheet
 - [x] Settle licensing: CC-BY-4.0 data, MIT code
 - [x] Complete the 90 GB archive snapshot and run the full-scale fidelity check
-- [x] Reagent lexicon: two curation rounds plus the ionic liquids, 147 to 526 reagents
+- [x] Reagent lexicon: two curation rounds plus the ionic liquids, 147 to 526 reagents (499 today, after merging what was never distinct)
 - [x] Seven-class condition ontology, replacing the withdrawn three-level version
 - [x] Fine-tune SmolLM2 on the parse residual, and strip narrative prose in the parser
 - [x] Classification accuracy audit, two rounds of 96 (spec 6.6): 85.4% rules-derived, 83.3% model-derived, pooled
-- [x] Apply the trained model over the residual: 157,939 components, classified coverage 59.5% to 80.0%
+- [x] Apply the trained model over the residual: 153,736 components, classified coverage 59.5% to 80.2%
 - [x] Gold set of 96 hand-labelled records, and the first precision/recall this project has had
+- [x] Second gold set of 96, sampled where the pipeline and the teacher disagree
+- [x] Add the reagents the gold sets named that the lexicon could not place
+- [x] Tell the drop from the protein sample: `protein_buffer` and `soak` roles, 6,800 components
+- [x] De-duplicate the lexicon: PEG MME was seven canonical ids per molecular weight; 36 merged, five invariants now tested
+- [x] Remove the aliases naming a *different* molecule — barium/yttrium, CAPS/CHAPS, DTT/DTE and four more
+- [x] Transcribe the Morpheus stock table from the vendor brochure: 15 premixes with real compositions
+- [x] Classify premixes on their constituents rather than refusing them: coverage 76.8% to 80.2%
+- [x] Split reagents written with no separator at all: +7,553 identified components, nothing lost
 - [ ] Teacher distillation: label the residual with a local 32B and retrain past the rule parser's ceiling
-- [ ] Add the 25 reagents the gold set named that the lexicon cannot place (CYMAL-3, NDSB-195, GSH/GSSG, ALF4)
 - [ ] Supply pKa values for 59 buffers, or fix the clause splitter that produced them
 - [ ] Publish to Zenodo for a citable DOI, and mirror on HuggingFace Datasets
 - [ ] Browser front end (an exploration tool, not a predictor)

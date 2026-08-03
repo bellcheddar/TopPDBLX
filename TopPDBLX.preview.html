@@ -92,7 +92,7 @@
 </tr>
 <tr>
 <td data-label="Capability"><strong>Typed components</strong></td>
-<td data-label="Detail">605,481 reagents with role, concentration, unit, PEG molecular weight, Hofmeister rank and buffer pKa</td>
+<td data-label="Detail">610,076 reagents with role, concentration, unit, PEG molecular weight, Hofmeister rank and buffer pKa</td>
 </tr>
 <tr>
 <td data-label="Capability"><strong>Separates text from chemistry</strong></td>
@@ -124,7 +124,91 @@
 </tr>
 <tr>
 <td data-label="Capability"><strong>Teaches a small model with a large one</strong></td>
-<td data-label="Detail">A 32B teacher labels the hard records; a 360M student learns from it and reads all 52,000. Recall 71.4% → 91.5% against hand-labelled truth</td>
+<td data-label="Detail">A 32B teacher labels the hard records; a 360M student learns from it and reads all 47,845. Recall 79.6% → 95.2% against hand-labelled truth</td>
+</tr>
+</tbody>
+</table></div>
+<h2>📖 The words on this page</h2>
+<p>Crystallography and machine learning each bring their own vocabulary, and this page uses both. Everything here is defined where it first matters, but this is the short version.</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Term</th>
+<th>What it means here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Term"><strong>Crystallisation condition</strong></td>
+<td data-label="What it means here">The recipe a protein was crystallised from: a few reagents, their concentrations, and a pH. This project parses about 200,000 of them</td>
+</tr>
+<tr>
+<td data-label="Term"><strong>Deposition text</strong></td>
+<td data-label="What it means here">What the scientist actually typed into the PDB, free-hand, in no agreed format. The raw material</td>
+</tr>
+<tr>
+<td data-label="Term"><strong>Precipitant</strong></td>
+<td data-label="What it means here">The reagent doing the work — it pulls the protein out of solution. Usually a PEG, a salt or an organic</td>
+</tr>
+<tr>
+<td data-label="Term"><strong>Drop / reservoir</strong></td>
+<td data-label="What it means here">The two halves of a vapour-diffusion experiment. The drop holds protein plus condition; the reservoir pulls water out of it</td>
+</tr>
+<tr>
+<td data-label="Term"><strong>Mother liquor</strong></td>
+<td data-label="What it means here">The solution a crystal grew in and sits in</td>
+</tr>
+<tr>
+<td data-label="Term"><strong>Cryoprotectant</strong></td>
+<td data-label="What it means here">Added <em>after</em> growth to stop ice forming when the crystal is frozen. Real chemistry, but it did not crystallise anything</td>
+</tr>
+<tr>
+<td data-label="Term"><strong>Premix</strong></td>
+<td data-label="What it means here">A vendor mixture sold as one bottle — Morpheus "Divalents", Tacsimate — that is really several reagents</td>
+</tr>
+<tr>
+<td data-label="Term"><strong>PEG</strong></td>
+<td data-label="What it means here">Polyethylene glycol, the commonest precipitant. The number is its molecular weight, not an amount: "PEG 3350" is a size</td>
+</tr>
+<tr>
+<td data-label="Term"><strong>Hofmeister rank</strong></td>
+<td data-label="What it means here">An ordering of salts by how strongly they push proteins out of solution</td>
+</tr>
+<tr>
+<td data-label="Term"></td>
+<td data-label="What it means here"></td>
+</tr>
+<tr>
+<td data-label="Term"><strong>Lexicon</strong></td>
+<td data-label="What it means here">The dictionary mapping every spelling a depositor might use onto one <strong>canonical id</strong>. <code>peg3350</code>, <code>PEG 3,350</code> and <code>polyethylene glycol 3350</code> all become <code>PEG_3350</code></td>
+</tr>
+<tr>
+<td data-label="Term"><strong>Canonical id</strong></td>
+<td data-label="What it means here">The single name this project uses for a reagent, in <code>UPPER_SNAKE_CASE</code></td>
+</tr>
+<tr>
+<td data-label="Term"><strong>The residual</strong></td>
+<td data-label="What it means here">The records the rule parser could <strong>not</strong> read. This is what the language model is for, and it is never trained on them</td>
+</tr>
+<tr>
+<td data-label="Term"><strong>The gold set</strong></td>
+<td data-label="What it means here">96 records labelled by hand, twice over. The only ground truth here, used to measure and never to train</td>
+</tr>
+<tr>
+<td data-label="Term"><strong>LoRA</strong></td>
+<td data-label="What it means here">A way of fine-tuning a model by training a small adapter rather than all its weights. Ours is 33 MB against a 360 M-parameter base</td>
+</tr>
+<tr>
+<td data-label="Term"><strong>Distillation</strong></td>
+<td data-label="What it means here">Training a small model on a larger one's output. Here a 32-billion-parameter <em>teacher</em> labels text for a 360-million-parameter <em>student</em></td>
+</tr>
+<tr>
+<td data-label="Term"><strong>Grounding</strong></td>
+<td data-label="What it means here">Checking that a reagent the model named actually appears in the text it was given. Catches invention, which no accuracy score can</td>
+</tr>
+<tr>
+<td data-label="Term"><strong>Identification</strong></td>
+<td data-label="What it means here">Whether an emitted name exists in the lexicon. A weaker test than grounding, and it has misled this project three times</td>
 </tr>
 </tbody>
 </table></div>
@@ -134,13 +218,14 @@
 <pre><code class="language-text">   RCSB PDB archive
           │
           │  ingest.*          fetch every deposition over GraphQL, then byte-compare
-          ▼                    the text against the archive mmCIF: 100.0000% agreement
+          ▼                    the text against the archive mmCIF: 100% agreement
    199,185 condition strings
           │
           │  parse.run_parser  split into clauses, read amounts and units, look each
           ▼                    name up in the reagent lexicon
-   605,481 typed components ────────────────┐
-          │                                 │ 52,000 records the rules cannot read
+   610,076 typed components ────────────────┐
+          │  parse.scope     tells the drop │ 47,845 records the rules cannot read
+          │  from the protein sample and a  │
           │  assign.classify                ▼
           ▼                          ┌─────────────────────────────────────────┐
    7 precipitant classes             │   THE TEACHING LOOP                     │
@@ -167,7 +252,7 @@
                                                     into the next parse
 </code></pre>
 <h3>🤗 The teaching loop, and why there are two models</h3>
-<p><strong>Why bother with two models: the teacher is 90x larger and 400x slower.</strong> At 40 s/record a 32B would need 24 days to read the 52,000 residual records the rules cannot; the 360M student does it in under two hours. So the teacher reads ~2,000 of them to produce training labels, and the student does the work — which lifted recall on hand-labelled truth from <strong>71.4% to 91.5%</strong>, worth 59 reagents the rules never find, at a cost of 0.4 points of precision.</p>
+<p><strong>Why bother with two models: the teacher is 90x larger and 400x slower.</strong> At 40 s/record a 32B would need 22 days to read the 47,845 residual records the rules cannot; the 360M student does it in under two hours. So the teacher reads ~2,000 of them to produce training labels, and the student does the work — which lifted recall on hand-labelled truth from <strong>79.6% to 95.2%</strong>, worth 46 reagents the rules never find, at a cost of 0.1 points of precision.</p>
 <p><strong>In plain terms:</strong> a small model is cheap to run over 200,000 records but not clever enough to teach itself. A large model is clever enough to teach but far too slow to run over the whole archive. So the large one reads a few thousand of the hard cases, the small one learns from what it produces, and the small one does the actual work. The expert never labels a corpus: they label 96 records that decide whether any of it worked.</p>
 <p>The cycle has three participants and each does the one thing it is best at:</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
@@ -184,7 +269,7 @@
 <td data-label=""><strong>Expert</strong> (<code>gold_bench</code>, <code>courtroom</code>)</td>
 <td data-label="Does">Labels 96 records; answers tens of curation questions</td>
 <td data-label="Costs">An hour</td>
-<td data-label="Why it cannot do the others&#x27; job">Cannot label 52,000 records, and should never be asked to</td>
+<td data-label="Why it cannot do the others&#x27; job">Cannot label 47,845 records, and should never be asked to</td>
 </tr>
 <tr>
 <td data-label=""><strong>Teacher</strong> (Qwen2.5-32B, local)</td>
@@ -194,7 +279,7 @@
 </tr>
 <tr>
 <td data-label=""><strong>Student</strong> (SmolLM2-360M)</td>
-<td data-label="Does">Reads all 52,000 residual records</td>
+<td data-label="Does">Reads all 47,845 residual records</td>
 <td data-label="Costs">~0.1 s/record</td>
 <td data-label="Why it cannot do the others&#x27; job">Bootstrapped from the rules, so the rules are its ceiling until a teacher lifts it</td>
 </tr>
@@ -280,7 +365,7 @@
 </tr>
 </tbody>
 </table></div>
-<p><strong>Why the fidelity gate comes first.</strong> Everything downstream is a claim about what a depositor wrote, so the first stage proves the text was fetched intact: every condition string is byte-compared against the mmCIF in the 90 GB archive snapshot, including loop row counts. It agrees on 205,943 entries at 100.0000%. Without that, a parsing statistic would be measuring the API rather than the archive.</p>
+<p><strong>Why the fidelity gate comes first.</strong> Everything downstream is a claim about what a depositor wrote, so the first stage proves the text was fetched intact: every condition string is byte-compared against the mmCIF in the 90 GB archive snapshot, including loop row counts. It agrees on all 205,943 entries, at 100%. Without that, a parsing statistic would be measuring the API rather than the archive.</p>
 <h2>📊 Results</h2>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
@@ -296,11 +381,11 @@
 </tr>
 <tr>
 <td data-label="Measure">Usable</td>
-<td data-label="Value"><strong>186,263 (93.5%)</strong></td>
+<td data-label="Value"><strong>188,039 (94.4%)</strong></td>
 </tr>
 <tr>
 <td data-label="Measure">Components</td>
-<td data-label="Value">605,481, <strong>85.3% identified</strong> as a canonical reagent (87.6% excluding text that names no chemistry)</td>
+<td data-label="Value">610,076, <strong>86.5% identified</strong> as a canonical reagent (89.0% excluding text that names no chemistry)</td>
 </tr>
 <tr>
 <td data-label="Measure">Reagent lexicon</td>
@@ -316,7 +401,7 @@
 </tr>
 <tr>
 <td data-label="Measure">Archive fidelity</td>
-<td data-label="Value"><strong>100.0000%</strong> over 205,943 entries against the 90 GB mmCIF snapshot</td>
+<td data-label="Value"><strong>100%</strong> over 205,943 entries against the 90 GB mmCIF snapshot</td>
 </tr>
 <tr>
 <td data-label="Measure">Condition classes</td>
@@ -401,52 +486,53 @@
 </thead>
 <tbody>
 <tr>
-<td data-label="Class">Unclassified</td>
-<td data-label="Conditions">75,413</td>
-<td data-label="Share">40.5%</td>
+<td data-label="Class">Salt/PEG</td>
+<td data-label="Conditions">59,601</td>
+<td data-label="Share">31.7%</td>
 </tr>
 <tr>
-<td data-label="Class">Salt/PEG</td>
-<td data-label="Conditions">46,309</td>
-<td data-label="Share">24.9%</td>
+<td data-label="Class">Unclassified</td>
+<td data-label="Conditions">37,208</td>
+<td data-label="Share">19.8%</td>
 </tr>
 <tr>
 <td data-label="Class">PEG</td>
-<td data-label="Conditions">21,543</td>
-<td data-label="Share">11.6%</td>
+<td data-label="Conditions">28,623</td>
+<td data-label="Share">15.2%</td>
 </tr>
 <tr>
 <td data-label="Class">Salt</td>
-<td data-label="Conditions">19,516</td>
-<td data-label="Share">10.5%</td>
+<td data-label="Conditions">27,922</td>
+<td data-label="Share">14.8%</td>
 </tr>
 <tr>
 <td data-label="Class">Organic/PEG/Salt</td>
-<td data-label="Conditions">7,173</td>
-<td data-label="Share">3.9%</td>
+<td data-label="Conditions">11,220</td>
+<td data-label="Share">6.0%</td>
 </tr>
 <tr>
 <td data-label="Class">Organic/PEG</td>
-<td data-label="Conditions">7,095</td>
-<td data-label="Share">3.8%</td>
+<td data-label="Conditions">9,629</td>
+<td data-label="Share">5.1%</td>
 </tr>
 <tr>
 <td data-label="Class">Organic/Salt</td>
-<td data-label="Conditions">6,380</td>
-<td data-label="Share">3.4%</td>
+<td data-label="Conditions">9,498</td>
+<td data-label="Share">5.1%</td>
 </tr>
 <tr>
 <td data-label="Class">Organic</td>
-<td data-label="Conditions">2,751</td>
-<td data-label="Share">1.5%</td>
+<td data-label="Conditions">4,338</td>
+<td data-label="Share">2.3%</td>
 </tr>
 <tr>
 <td data-label="Class"><strong>Classified</strong></td>
-<td data-label="Conditions"><strong>110,767</strong></td>
-<td data-label="Share"><strong>59.5%</strong></td>
+<td data-label="Conditions"><strong>150,831</strong></td>
+<td data-label="Share"><strong>80.2%</strong></td>
 </tr>
 </tbody>
 </table></div>
+<p>The rules alone reach 59.5%. The rest is the model reading records no regular expression could, plus premixes now classified on what they are made of rather than refused.</p>
 <p><strong>For the crystallographer:</strong> the seven classes are the JCSG Top96 precipitant classes, which are the non-empty subsets of {Organic, PEG, Salt}. Classification is by presence with no thresholds: a PEG is a PEG whatever its molecular weight and concentration, a salt is a salt whatever its chemistry and concentration. Buffers are excluded, since at 0.1 M a buffer sets the pH rather than precipitating anything (spec 6.3), and the pH is carried separately.</p>
 <p>Unclassified is a first-class answer with its reason recorded, never a null:</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
@@ -472,7 +558,7 @@
 </tbody>
 </table></div>
 <p><strong>The second row is a deliberate choice and the expensive one.</strong> Those 24,327 conditions name their precipitant unambiguously and simply never state a concentration: <code>PEG6000, Sodium Chloride, VAPOR DIFFUSION</code>. Classifying them as <code>Salt/PEG</code> would lift classified coverage from 58.9% to roughly 72% in one line, and the rule that a PEG is a PEG whatever its concentration would arguably support it. They stay Unclassified because a condition with no concentration is not a measured condition, and coverage is not worth buying with a claim the deposition does not make.</p>
-<p><strong>Premixes are no longer refused, and that is a reversal.</strong> Spec 6.4 was settled by declaring every premixed system Unclassified, which was right while a premix was an opaque token. Once the vendor compositions were transcribed (lexicon v0.9.0) it stopped being right: 59% of the conditions it refused were blocked by a premix made only of <em>buffers</em> — MES/imidazole, phosphate-citrate, MIB, SPG — and a buffer is excluded from naming the class anyway. Those were ordinary conditions declined for their packaging rather than their chemistry. A premix now contributes the chemistry it is made of, so Morpheus Precipitant Mix 4 is MPD with PEG 1000 and PEG 3350, which is <code>Organic/PEG</code>. Classified coverage moved 76.8% to <strong>80.0%</strong>. A premix with no transcribed composition is still Unclassified, because there is nothing to expand it into.</p>
+<p><strong>Premixes are no longer refused, and that is a reversal.</strong> Spec 6.4 was settled by declaring every premixed system Unclassified, which was right while a premix was an opaque token. Once the vendor compositions were transcribed (lexicon v0.9.0) it stopped being right: 59% of the conditions it refused were blocked by a premix made only of <em>buffers</em> — MES/imidazole, phosphate-citrate, MIB, SPG — and a buffer is excluded from naming the class anyway. Those were ordinary conditions declined for their packaging rather than their chemistry. A premix now contributes the chemistry it is made of, so Morpheus Precipitant Mix 4 is MPD with PEG 1000 and PEG 3350, which is <code>Organic/PEG</code>. Classified coverage moved 76.8% to <strong>80.2%</strong>. A premix with no transcribed composition is still Unclassified, because there is nothing to expand it into.</p>
 <p>An earlier three-level ontology of 163 binned groups was withdrawn at v0.3.0. Its groups were derived by binning the corpus and then having labels retrofitted, which spec 6.1 rejects in its first line, and several were not chemically coherent: median purity across the 41 second-level groups was 49%. The full reasoning is in <a href="ontology/CHANGELOG.md"><code>ontology/CHANGELOG.md</code></a>.</p>
 <h2>⚗️ Reagent classes</h2>
 <p><strong>In plain terms:</strong> depositors write the same chemical a dozen different ways. "PEG 3350", "peg3350", "polyethylene glycol 3350" and "PEG 3,350" are one substance. The lexicon is the dictionary that maps every spelling onto one canonical name, and it is what makes the whole database queryable.</p>
@@ -669,7 +755,7 @@
 <tr>
 <td data-label="Chemical class">detergent</td>
 <td data-label="Entries">16</td>
-<td data-label="What it carries"></td>
+<td data-label="What it carries">CYMAL-6, DDM, LDAO, beta-octyl glucoside: reported w/v, and rarely the precipitant</td>
 </tr>
 <tr>
 <td data-label="Chemical class">premix</td>
@@ -679,7 +765,7 @@
 <tr>
 <td data-label="Chemical class">other</td>
 <td data-label="Entries">6</td>
-<td data-label="What it carries"></td>
+<td data-label="What it carries">vendor mixtures with no single molecular weight, such as PEG Smear Broad</td>
 </tr>
 </tbody>
 </table></div>
@@ -790,7 +876,7 @@
 <tr>
 <td data-label="Measure"><strong>F0.5</strong></td>
 <td data-label="Asks">The same, weighting precision twice as heavily as recall</td>
-<td data-label="Fails when">—</td>
+<td data-label="Fails when">The recall half is under-weighted: a parser that reads only the easy half of every condition can still score well, so it is read beside recall and never instead of it</td>
 </tr>
 </tbody>
 </table></div>
@@ -858,27 +944,28 @@
 <td data-label="What changed">Full epoch, LoRA rank 16, 6,856 empty-answer examples</td>
 <td data-label="Identification">90.52% at iter 2,000, 88.99% final</td>
 <td data-label="Grounding">94.36%</td>
-<td data-label="Components contributed"><strong>163,419</strong></td>
+<td data-label="Components contributed"><strong>153,736</strong></td>
 <td data-label="Adapter"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06">round06</a></td>
 </tr>
 <tr>
 <td data-label="Round">07</td>
 <td data-label="What changed">32B-teacher labels, 92.6% precise, 0.23 epochs</td>
-<td data-label="Identification">not run</td>
-<td data-label="Grounding">not run</td>
+<td data-label="Identification">measured on gold instead: 93.6% precision, 89.1% recall</td>
+<td data-label="Grounding">—</td>
 <td data-label="Components contributed">0, <strong>regressed</strong></td>
 <td data-label="Adapter"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07">round07</a></td>
 </tr>
 <tr>
 <td data-label="Round">08</td>
 <td data-label="What changed">Same, labels 97.6% precise, 1.06 epochs</td>
-<td data-label="Identification">not run</td>
-<td data-label="Grounding">not run</td>
+<td data-label="Identification">measured on gold instead: 95.3% precision, 89.1% recall</td>
+<td data-label="Grounding">—</td>
 <td data-label="Components contributed">0, <strong>regressed</strong></td>
 <td data-label="Adapter"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08">round08</a></td>
 </tr>
 </tbody>
 </table></div>
+<p>Rounds 07 and 08 were never put through the frozen benchmark, and deliberately so: by then the gold set existed, and <code>identification</code> had already given three wrong answers to "how long should this train". They were scored against hand-labelled truth instead, which is the stricter test and the one in the table below.</p>
 <h3>🤗 Models on HuggingFace</h3>
 <p>All rounds ship as LoRA adapters for <code>mlx-community/SmolLM2-360M-Instruct</code>, in one repo with a directory per round: <strong><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser"><code>Dellboy/toppdblx-residual-parser</code></a></strong>. Each is 33 MB; the base model is not redistributed.</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
@@ -908,6 +995,18 @@
 <td data-label="Round">05</td>
 <td data-label="What it is">First round on the frozen benchmark</td>
 <td data-label="How well it works">87.58% identification, 93.41% grounding</td>
+</tr>
+<tr>
+<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08"><code>round08</code></a></td>
+<td data-label="Round">08</td>
+<td data-label="What it is">Teacher labels, 97.6% precise, 8,000 iterations</td>
+<td data-label="How well it works">With the rules: 95.3% / 89.1% on gold. <strong>Regressed</strong> on precision against round 06 and was not shipped</td>
+</tr>
+<tr>
+<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07"><code>round07</code></a></td>
+<td data-label="Round">07</td>
+<td data-label="What it is">Teacher labels, 92.6% precise, 2,000 iterations</td>
+<td data-label="How well it works">With the rules: 93.6% / 89.1% on gold. <strong>Regressed</strong>; see the confound below</td>
 </tr>
 <tr>
 <td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01"><code>round01</code>–<code>round04</code></a></td>
@@ -1030,9 +1129,40 @@ is kept internally consistent at the version it was run. The current shipped fig
 <p><strong>It still does not clear the bar.</strong> On F0.5, the summary that matches how a released dataset is actually used, round 06 leads 96.9 to 95.2, and on raw precision 99.6% to 96.1%. Agreement removes about half the misattribution, not all of it.</p>
 <p>Two further findings:</p>
 <ul>
-<li><strong>Gemma is the better teacher</strong>, at 96.3% / 87.8% against Qwen's 91.8% / 84.3%. It was chosen for independence and turned out simply stronger.</li>
-<li><strong>It is still too noisy to train on.</strong> The surviving additions are 13 correct against 10 wrong, a 43% error rate on the new signal, and round 08 established that this student absorbs label noise rather than averaging it out.</li>
+<li><strong>Gemma is <em>not</em> the better teacher, and an earlier version of this section said it was.</strong> That claim compared a <em>rules + Gemma</em> row against a Qwen figure measured on a different set of records. Scored like for like — the 79 gold records both models answered and whose labels resolve — Qwen wins on precision at identical recall:</li>
 </ul>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th></th>
+<th>precision</th>
+<th>recall</th>
+<th>F1</th>
+<th>F0.5</th>
+<th>false positives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="">Gemma-4-31b</td>
+<td data-label="precision">89.7%</td>
+<td data-label="recall">87.9%</td>
+<td data-label="F1">88.8</td>
+<td data-label="F0.5">89.4</td>
+<td data-label="false positives">24</td>
+</tr>
+<tr>
+<td data-label=""><strong>Qwen2.5-32B</strong></td>
+<td data-label="precision"><strong>93.3%</strong></td>
+<td data-label="recall">87.9%</td>
+<td data-label="F1"><strong>90.5</strong></td>
+<td data-label="F0.5"><strong>92.2</strong></td>
+<td data-label="false positives"><strong>15</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>Both find exactly the same reagents (210 true positives, 29 misses each); Gemma simply asserts nine more things that are not there. It is also the less reliable harness: 82 of 96 generations parsed against Qwen's 96 of 96, because its reasoning block eats the token budget. Gemma was chosen for <strong>architectural independence</strong>, which is what the agreement gate needs and which it delivers — not for being stronger.
+- <strong>It is still too noisy to train on.</strong> The surviving additions are 13 correct against 10 wrong, a 43% error rate on the new signal, and round 08 established that this student absorbs label noise rather than averaging it out.</p>
 <p>So the result lands as an <strong>inference-time ensemble</strong>, not a training recipe: run the second teacher only on the teacher-only candidates rather than the corpus, and take what both assert. Whether it ships is a judgement rather than a measurement — F1 says yes, F0.5 says no, and this project has consistently preferred precision.</p>
 <p><strong>A reasoning model needed two harness fixes</strong>, both of which would have failed silently. Gemma-4 emits a <code>&lt;|channel&gt;thought</code> block before answering, so at the 448-token budget tuned for Qwen only 6 of 96 generations ever closed a JSON array; and because it quotes the few-shot examples verbatim while reasoning, the <em>first</em> JSON array in its output is the prompt being thought about rather than the reply. Taking the first array would have scored our own examples back as the teacher's labels and looked entirely plausible.</p>
 <h3>🥊 The second gold batch: contested records</h3>
@@ -1474,14 +1604,21 @@ LIMIT 10;
 <li><span class="emd-check">&#9989;</span> Assemble the release in five formats, with a generated datasheet</li>
 <li><span class="emd-check">&#9989;</span> Settle licensing: CC-BY-4.0 data, MIT code</li>
 <li><span class="emd-check">&#9989;</span> Complete the 90 GB archive snapshot and run the full-scale fidelity check</li>
-<li><span class="emd-check">&#9989;</span> Reagent lexicon: two curation rounds plus the ionic liquids, 147 to 526 reagents</li>
+<li><span class="emd-check">&#9989;</span> Reagent lexicon: two curation rounds plus the ionic liquids, 147 to 526 reagents (499 today, after merging what was never distinct)</li>
 <li><span class="emd-check">&#9989;</span> Seven-class condition ontology, replacing the withdrawn three-level version</li>
 <li><span class="emd-check">&#9989;</span> Fine-tune SmolLM2 on the parse residual, and strip narrative prose in the parser</li>
 <li><span class="emd-check">&#9989;</span> Classification accuracy audit, two rounds of 96 (spec 6.6): 85.4% rules-derived, 83.3% model-derived, pooled</li>
-<li><span class="emd-check">&#9989;</span> Apply the trained model over the residual: 157,939 components, classified coverage 59.5% to 80.0%</li>
+<li><span class="emd-check">&#9989;</span> Apply the trained model over the residual: 153,736 components, classified coverage 59.5% to 80.2%</li>
 <li><span class="emd-check">&#9989;</span> Gold set of 96 hand-labelled records, and the first precision/recall this project has had</li>
+<li><span class="emd-check">&#9989;</span> Second gold set of 96, sampled where the pipeline and the teacher disagree</li>
+<li><span class="emd-check">&#9989;</span> Add the reagents the gold sets named that the lexicon could not place</li>
+<li><span class="emd-check">&#9989;</span> Tell the drop from the protein sample: <code>protein_buffer</code> and <code>soak</code> roles, 6,800 components</li>
+<li><span class="emd-check">&#9989;</span> De-duplicate the lexicon: PEG MME was seven canonical ids per molecular weight; 36 merged, five invariants now tested</li>
+<li><span class="emd-check">&#9989;</span> Remove the aliases naming a <em>different</em> molecule — barium/yttrium, CAPS/CHAPS, DTT/DTE and four more</li>
+<li><span class="emd-check">&#9989;</span> Transcribe the Morpheus stock table from the vendor brochure: 15 premixes with real compositions</li>
+<li><span class="emd-check">&#9989;</span> Classify premixes on their constituents rather than refusing them: coverage 76.8% to 80.2%</li>
+<li><span class="emd-check">&#9989;</span> Split reagents written with no separator at all: +7,553 identified components, nothing lost</li>
 <li><span class="emd-check">&#11036;</span> Teacher distillation: label the residual with a local 32B and retrain past the rule parser's ceiling</li>
-<li><span class="emd-check">&#11036;</span> Add the 25 reagents the gold set named that the lexicon cannot place (CYMAL-3, NDSB-195, GSH/GSSG, ALF4)</li>
 <li><span class="emd-check">&#11036;</span> Supply pKa values for 59 buffers, or fix the clause splitter that produced them</li>
 <li><span class="emd-check">&#11036;</span> Publish to Zenodo for a citable DOI, and mirror on HuggingFace Datasets</li>
 <li><span class="emd-check">&#11036;</span> Browser front end (an exploration tool, not a predictor)</li>
