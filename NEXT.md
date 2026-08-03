@@ -48,23 +48,27 @@ Two silent failures, both worth not repeating:
   while reasoning, so the first array in its output is the prompt. Parsing it would have scored our
   own examples back as the teacher's labels, and looked entirely plausible doing it.
 
-## Closed 2026-08-02: teacher distillation, after two rounds
+## 2026-08-02: rounds 07 and 08, and the numbers that were wrong
 
-Both attempts to train past the rule parser's ceiling with 32B-teacher labels failed, and the
-second was a clean test of the first's excuses.
+Both attempts to train past the rule parser's ceiling with 32B-teacher labels scored worse than
+round 06, and the second was a clean test of the first's excuses. **The figures below are the
+corrected ones** — the originals were produced by a gold set that scored correct answers as false
+positives on five records whose labels the lexicon could not resolve, a bias favouring whichever
+model says least. This section said "closed" on the strength of those.
 
 | | round 06 final | round 07 | round 08 |
 |---|---|---|---|
 | Labels | rule parser | teacher, 92.6% precise | teacher, 97.6% precise |
 | Rules epochs | 0.94 | 0.23 | 1.06 |
-| Precision / recall | **99.6% / 91.5%** | 92.3% / 93.9% | 94.5% / 93.2% |
-| False positives | **1** | 23 | 16 |
+| Precision / recall | **99.6% / 87.4%** | 93.6% / 89.1% | 95.3% / 89.1% |
+| F1 / F0.5 | **93.1 / 96.9** | 91.3 / 92.6 | 92.1 / 94.0 |
 
 Round 08 swept on the gold set at 1,000 / 2,000 / 4,000 / 6,000 / 8,000 iterations: F1 93.0–93.9,
 **flat**. Paired against round 06: recall +13/−8 (p = 0.38), false positives 1 → 16 (p = 0.0003).
 
-**Consistent trade: +2 recall for −5 precision**, across a 5-point range of label quality and a 4x
-range of training. Not worth it for a released dataset.
+**Consistent trade: about +2 recall for −4 precision**, across a 5-point range of label quality and
+a 4x range of training. Not worth it for a released dataset, and unchanged in direction by the
+correction — only in size.
 
 **Round 06's final adapter stays shipped.** All rounds are public at
 [`Dellboy/toppdblx-residual-parser`](https://huggingface.co/Dellboy/toppdblx-residual-parser),
