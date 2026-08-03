@@ -1,4 +1,4 @@
-version: 0.8.5
+version: 0.8.6
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -382,6 +382,9 @@ reagents:
   - bicine/naoh
   - bicine buffer
   - bicine-csoh
+  - sodium bicine
+  - na-bicine
+  - nabicine
 - canonical_id: BIS_TRIS
   display_name: Bis-Tris
   chem_class: buffer
@@ -591,6 +594,14 @@ reagents:
   aliases:
   - caps-naoh
   - caps/sodium hydroxide
+- canonical_id: CAPSO
+  display_name: CAPSO
+  chem_class: buffer
+  default_unit: millimolar
+  aliases:
+  - capso
+  - 3-(cyclohexylamino)-2-hydroxy-1-propanesulfonic acid
+  buffer_pka: 9.6
 - chem_class: additive
   default_unit: millimolar
   canonical_id: CARBOXYLIC_ACIDS
@@ -640,6 +651,13 @@ reagents:
   - cesium sulfate
   - caesium sulfate
   - cs2so4
+- canonical_id: CHAPS
+  display_name: CHAPS
+  chem_class: detergent
+  default_unit: percent_w_v
+  aliases:
+  - chaps
+  - 3-[(3-cholamidopropyl)dimethylammonio]-1-propanesulfonate
 - chem_class: detergent
   default_unit: percent_w_v
   canonical_id: CHAPSO
@@ -899,6 +917,7 @@ reagents:
   aliases:
   - diammonium citrate
   - diammonium hydrogen citrate
+  - di-ammonium hydrogen citrate
 - chem_class: salt
   default_unit: molar
   canonical_id: DIAMMONIUM_HYDROGEN_PHOSPHATE
@@ -937,6 +956,7 @@ reagents:
   aliases:
   - diethylene glycol
   - diethyleneglycol
+  - deg
 - chem_class: additive
   default_unit: millimolar
   canonical_id: DIHYDROOROTATE
@@ -1044,6 +1064,14 @@ reagents:
   - dimethyl sulfoxide
   - dimethylsulfoxide
   - dimethyl sulphoxide
+- canonical_id: DTE
+  display_name: Dithioerythritol
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - dte
+  - dithioerythritol
+  - dl-dithioerythritol
 - canonical_id: DTT
   display_name: DTT
   chem_class: additive
@@ -1052,7 +1080,6 @@ reagents:
   - dithiothreitol
   - dl-dithiothreitol
   - 1,4-dithiothreitol
-  - dithioerythritol
 - canonical_id: DUMP
   display_name: dUMP
   chem_class: additive
@@ -2162,6 +2189,14 @@ reagents:
   - sodium mops
   - mops-na
   - mops buffer
+- canonical_id: MOPSO
+  display_name: MOPSO
+  chem_class: buffer
+  default_unit: millimolar
+  aliases:
+  - mopso
+  - 3-morpholino-2-hydroxypropanesulfonic acid
+  buffer_pka: 6.9
 - canonical_id: MOPS_HEPES
   display_name: MOPS/HEPES
   chem_class: premix
@@ -3117,6 +3152,9 @@ reagents:
   aliases:
   - potassium phosphate buffer
   - potassium phosphate solution
+  - kpi
+  - k-pi
+  - kphosphate
   note: The buffer system. Split on the same basis as the sodium salts, so the released data is not inconsistent
     between the two counter-ions.
 - canonical_id: POTASSIUM_SODIUM_TARTRATE
@@ -3338,6 +3376,8 @@ reagents:
   - sodium actetate
   - sodium acetate:hcl
   - ch3coona
+  - acona
+  - ac ona
 - chem_class: salt
   default_unit: molar
   canonical_id: SODIUM_ACETATE_ACETIC_ACID
@@ -3428,6 +3468,9 @@ reagents:
   - tris-sodium citrate
   - sodiumcitrate
   - m tri-sodium citrate
+  - na3citrate
+  - na3 citrate
+  - trisodium citrate dihydrate
   note: Citrate is triprotic (3.13, 4.76, 6.40). The middle pKa is recorded; crystallisation citrate buffers
     are typically used between pH 4 and 6.
 - canonical_id: SODIUM_DIHYDROGEN_PHOSPHATE

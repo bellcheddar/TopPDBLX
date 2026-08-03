@@ -4,8 +4,8 @@ Generated 2026-08-03 by `./run.sh release.datasheet`. Every figure is read
 from the data at generation time, so this file cannot drift from what it describes.
 
 **Schema version** `0.1.0-draft` · **Ontology version** `0.2.0`
-· **Lexicon version** `0.8.5` (482 reagents,
-1464 names)
+· **Lexicon version** `0.8.6` (486 reagents,
+1484 names)
 
 ---
 
@@ -44,10 +44,10 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 |---------|-------|
 | Records (one per `pdb_id` + `crystal_id`) | 199,185 |
 | Distinct PDB entries | 198,691 |
-| Usable records | 186,215 (93.5%) |
-| Discarded, with a reason code | 12,970 |
+| Usable records | 186,246 (93.5%) |
+| Discarded, with a reason code | 12,939 |
 | Components | 605,491 |
-| Components identified as a canonical reagent | 517,935 (85.5%) |
+| Components identified as a canonical reagent | 518,727 (85.7%) |
 | Records with a linked protein sequence | 195,985 |
 | Distinct 30% identity sequence clusters | 23,868 |
 | Classified into a precipitant class | 143,626 |
@@ -61,7 +61,7 @@ distribution is itself a result.
 
 | Reason | Records | Share |
 |--------|---------|-------|
-| `NO_REAGENT_MATCH` | 5,682 | 2.85% |
+| `NO_REAGENT_MATCH` | 5,651 | 2.84% |
 | `TOO_SHORT` | 4,369 | 2.19% |
 | `METHOD_ONLY` | 2,500 | 1.26% |
 | `UNPARSEABLE_RESIDUAL` | 147 | 0.07% |
@@ -73,15 +73,15 @@ distribution is itself a result.
 
 | Class | Components |
 |-------|-----------|
-| buffer | 164,495 |
-| salt | 147,149 |
+| buffer | 165,010 |
+| salt | 147,228 |
 | peg | 127,286 |
-| additive | 26,771 |
+| additive | 26,827 |
 | organic | 23,347 |
-| polyol | 20,297 |
+| polyol | 20,347 |
 | premix | 5,914 |
+| detergent | 1,428 |
 | other | 1,340 |
-| detergent | 1,336 |
 
 ### How pH was attributed
 
@@ -91,8 +91,8 @@ value and refuses to guess its meaning.
 
 | Source | Records |
 |--------|---------|
-| buffer | 98,524 |
-| unstated | 87,642 |
+| buffer | 98,870 |
+| unstated | 87,327 |
 | final | 49 |
 
 ---

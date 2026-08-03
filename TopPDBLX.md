@@ -131,7 +131,7 @@ for deposition in archive:
 | RCSB Data GraphQL API | Fetches every deposition, batched and resumable |
 | gemmi | Reads the archive mmCIF for the byte-level fidelity gate |
 | `regex` | Clause splitting, which turned out to be the hard part rather than the chemistry |
-| `ontology/synonyms.yaml` | The reagent dictionary: 482 reagents, 1,464 spellings |
+| `ontology/synonyms.yaml` | The reagent dictionary: 486 reagents, 1,484 spellings |
 | pydantic | Enforces the schema and the chemical invariants on load |
 | polars, pyarrow, duckdb | Tables, joins and the queryable release |
 | MMseqs2 | Sequence clustering at 30%, 50% and 90% identity, to control redundancy |
@@ -150,7 +150,7 @@ for deposition in archive:
 | Records | 199,185 |
 | Usable | **186,263 (93.5%)** |
 | Components | 605,481, **85.3% identified** as a canonical reagent (87.6% excluding text that names no chemistry) |
-| Reagent lexicon | 482 reagents, 1,464 names (v0.8.5) |
+| Reagent lexicon | 486 reagents, 1,484 names (v0.8.6) |
 | Linked sequences | 184,229 across **23,159** distinct 30% identity clusters |
 | Screen-well matches | 45,547 component-set matches, 20,339 agreeing on every concentration |
 | Archive fidelity | **100.0000%** over 205,943 entries against the 90 GB mmCIF snapshot |
@@ -240,7 +240,8 @@ An earlier three-level ontology of 163 binned groups was withdrawn at v0.3.0. It
 | v0.8.2: leaked amount and method words merged onto their reagents | 509 | 1,462 | — |
 | v0.8.3: Marc's review — formula ids renamed to names, 3 wrong aliases removed | 485 | 1,461 | — |
 | v0.8.4: swept for aliases naming a different molecule — 4 more, now tested | 488 | 1,466 | — |
-| v0.8.5: method text and element abbreviations out of ids, both now tested | **482** | **1,464** | re-parse pending |
+| v0.8.5: method text and element abbreviations out of ids, both now tested | 482 | 1,464 | 85.5% |
+| v0.8.6: orphaned buffers restored, DTE separated from DTT | **486** | **1,484** | re-parse pending |
 
 **For the crystallographer:** every reagent carries the chemistry the ontology needs, and each field is enforced on load rather than being optional documentation. A `peg` entry must state its molecular weight, a `buffer` must state its pKa, and a `premix` must list its constituents. Those invariants caught three separate attempts to bulk-add entries that could not satisfy them.
 

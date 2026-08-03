@@ -7,7 +7,7 @@ Two artefacts are versioned here, independently:
 
 | File | Version | What it is |
 |------|---------|------------|
-| `synonyms.yaml` | 0.8.5 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
+| `synonyms.yaml` | 0.8.6 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
 | `groups.yaml` | 0.3.0 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
 
 ## groups.yaml
@@ -106,6 +106,36 @@ Known gaps recorded rather than hidden:
   could ever have been assigned to it.
 
 ## synonyms.yaml
+
+### 0.8.6 (2026-08-03)
+
+**486 reagents, 1,484 names.** Repairs a regression this afternoon's own fix created, and adds
+the head of the unidentified list.
+
+**0.8.4 stripped `chaps` and `capso` from `CAPS` and `mopso` from `MOPS` as aliases naming a
+different molecule, which was right, and then did not give those molecules an entry — which was
+not.** 245 components stopped resolving. `CHAPS`, `CAPSO` and `MOPSO` now exist. Removing a wrong
+alias without rehoming the reagent trades a wrong answer for no answer, and 0.8.4 got that right
+for praseodymium, cobalt and NAG while missing it here.
+
+**A sixth wrong alias, caught by the validator.** Adding `DTE` collided with `DTT`, which claimed
+`dithioerythritol`. Dithiothreitol and dithioerythritol are **diastereomers** — different
+molecules, both used as reducing agents in this corpus. Separated. This one is organic, so the
+metal-and-anion test added in 0.8.4 cannot see it; only the uniqueness validator could.
+
+**Aliases for the head of the unidentified list**, each a spelling of something already present:
+`na3citrate` → `SODIUM_CITRATE`; `di-ammonium hydrogen citrate` → `DIAMMONIUM_CITRATE`; `acona`
+(AcONa) → `SODIUM_ACETATE`; `sodium bicine` → `BICINE`; `deg` → `DIETHYLENE_GLYCOL`; `kpi` (KPi)
+→ `POTASSIUM_PHOSPHATE`.
+
+**Identification 85.5% → 85.7%**, and `unidentified_reagent` as a blocking reason falls 821 → 776.
+
+**The rest of that list is not worth curating.** 30,978 distinct unidentified spellings, and the
+top 200 cover only 13.4% of occurrences. What remains in the head is either genuinely ambiguous
+(`peg`, `propanediol`, `phosphate` with no qualifier), a vendor stock the screens work would
+resolve better (`NPS`, `divalents`), or method text the non-component classifier should be
+catching rather than the lexicon (`results`, `days`, `vapor`, `hanging`, `if needed`) — roughly
+600 components of that last kind, which is a parser fix and not a curation one.
 
 ### 0.8.5 (2026-08-03)
 
