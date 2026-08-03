@@ -7,7 +7,7 @@ Two artefacts are versioned here, independently:
 
 | File | Version | What it is |
 |------|---------|------------|
-| `synonyms.yaml` | 0.8.0 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
+| `synonyms.yaml` | 0.8.1 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
 | `groups.yaml` | 0.3.0 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
 
 ## groups.yaml
@@ -106,6 +106,43 @@ Known gaps recorded rather than hidden:
   could ever have been assigned to it.
 
 ## synonyms.yaml
+
+### 0.8.1 (2026-08-03)
+
+**517 reagents, 1,463 names.** The PEG monomethyl ether merge in 0.8.0 fixed one instance of a
+general fault, so this looks for the rest of it mechanically. **36 duplicate ids merged into 18
+canonical entries**, and four more clause artefacts dropped.
+
+Five tests, each asserting that no two canonical ids can collide under a normalisation that
+cannot change what a molecule is:
+
+| test | what it catches |
+|---|---|
+| identical token multiset | `PEG_2000_MONOMETHYL_ETHER` / `MONOMETHYL_ETHER_PEG_2000` — word order |
+| identical flattened id | `PEGMME2K` / `PEG_MME_2K`, `PEG_20_000` / `PEG_20000` — punctuation |
+| tokens minus hydration and unit words | `PEG_3350_W_V` / `PEG_3350` — the splitter leaking a unit |
+| same `peg_mw` and `is_mme` | the whole monomethyl ether family, in one query |
+| identical display name | `LI_SULFATE` / `LI_SULFATE_2` |
+
+Merged: `NH4ACETATE`, `NH4_ACETATE`, `NH4_ACETATE_2` → `AMMONIUM_ACETATE`; `LI_SULFATE`,
+`LI_SULFATE_2` → `LITHIUM_SULFATE`; `COBALT_HEXAMINE`, `HEXAMMINECOBALT_CHLORIDE`,
+`HEXAMMINE_COBALT_CHLORIDE` → `COBALT_HEXAMMINE`; `PEG_20_000` → `PEG_20000`; `PEG_10_000` →
+`PEG_10000`; `POLYETHYLENE_GLYCOL_4K` → `PEG_4000`; `POLYETHYLENE_GLYCOL_8K` → `PEG_8000`; and
+the `W_V`, `WT_VOL`, `PERCENT` and `SATURATED` variants of PEG 3350, 6000, 8000 and 400 onto
+their real entries.
+
+**Merged rather than deleted, deliberately.** `W_V_PEG3350` really does name PEG 3350 — the
+splitter leaked the unit into the name — so deleting it would discard a correct identification
+to punish a parser bug. Only ids naming *two or more* reagents were dropped:
+`MPD_PEG1000_PEG3350`, `PEG_3350_0_1M_CACODYLATE`, `TRIS_HCL_24_PEG3350`, `UL_16_PEG3350`.
+
+**Two chemistry errors fell out of the same sweep.** `PEG_1_5K` carried `peg_mw` **5000**, which
+is why it grouped with PEG 5000; PEG 1.5K is PEG 1500, and it is now merged there. `PEG_33500`
+claimed a molecular weight no vendor sells and is PEG 3350 with a trailing zero.
+
+**Why it matters beyond tidiness.** Found while preparing round 09. A model trained to emit
+canonical ids was being shown eight ids for one polymer, which is the one thing such a model must
+not learn. The invariant is now tested, so a future entry cannot reopen it silently.
 
 ### 0.8.0 (2026-08-03)
 

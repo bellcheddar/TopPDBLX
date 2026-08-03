@@ -1,4 +1,4 @@
-version: 0.8.0
+version: 0.8.1
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -110,6 +110,9 @@ reagents:
   - ammonium acetat
   - ammoniuma acetate
   - nh4ch3coo
+  - nh4acetate
+  - nh4 acetate
+  - nh4-acetate
 - chem_class: salt
   default_unit: molar
   canonical_id: AMMONIUM_BROMIDE
@@ -759,12 +762,6 @@ reagents:
   - cobaltous chloride
 - chem_class: additive
   default_unit: millimolar
-  canonical_id: COBALT_HEXAMINE
-  display_name: Cobalt hexamine
-  aliases:
-  - cobalt hexamine
-- chem_class: additive
-  default_unit: millimolar
   canonical_id: COBALT_HEXAMMINE
   display_name: Cobalt hexammine
   aliases:
@@ -772,6 +769,9 @@ reagents:
   - coh18n6
   - hexamine cobalt
   - hexammine cobalt
+  - cobalt hexamine
+  - hexamminecobalt chloride
+  - hexammine cobalt chloride
 - canonical_id: COENZYME_A
   display_name: Coenzyme A
   chem_class: additive
@@ -1407,11 +1407,6 @@ reagents:
   aliases:
   - guanidine hydrochloride
   - guanidine hcl
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: GUANIDINE_HCL_2
-  display_name: Guanidine-hcl
-  aliases:
   - guanidine-hcl
 - chem_class: salt
   default_unit: molar
@@ -1527,18 +1522,6 @@ reagents:
   display_name: Hexamine cobalt chloride
   aliases:
   - hexamine cobalt chloride
-- chem_class: salt
-  default_unit: molar
-  canonical_id: HEXAMMINECOBALT_CHLORIDE
-  display_name: Hexamminecobalt chloride
-  aliases:
-  - hexamminecobalt chloride
-- chem_class: salt
-  default_unit: molar
-  canonical_id: HEXAMMINE_COBALT_CHLORIDE
-  display_name: Hexammine cobalt chloride
-  aliases:
-  - hexammine cobalt chloride
 - canonical_id: HEXANEDIOL_16
   display_name: 1,6-Hexanediol
   chem_class: organic
@@ -1591,18 +1574,13 @@ reagents:
   - hydrochloric acid
 - chem_class: additive
   default_unit: millimolar
-  canonical_id: HYDROXYETHYLDISULFIDE_2
-  display_name: 2-hydroxyethyldisulfide
-  aliases:
-  - 2-hydroxyethyldisulfide
-- chem_class: additive
-  default_unit: millimolar
   canonical_id: HYDROXYETHYL_DISULFIDE_2
   display_name: 2-hydroxyethyl disulfide
   aliases:
   - 2-hydroxyethyl disulfide
   - hydroxyethyl disulfide
   - 2-hyrdoxyethyl disulfide
+  - 2-hydroxyethyldisulfide
 - canonical_id: HYDROXYMERCURYBENZOATE
   display_name: 4-Hydroxymercurybenzoate
   chem_class: additive
@@ -1830,17 +1808,11 @@ reagents:
 - chem_class: peg
   peg_mw: 2003
   default_unit: percent_w_v
-  canonical_id: JEFFAMINE_ED2003
-  display_name: Jeffamine ed2003
-  aliases:
-  - jeffamine ed2003
-- chem_class: peg
-  peg_mw: 2003
-  default_unit: percent_w_v
   canonical_id: JEFFAMINE_ED_2003
   display_name: Jeffamine ed-2003
   aliases:
   - jeffamine ed-2003
+  - jeffamine ed2003
 - canonical_id: JEFFAMINE_M600
   display_name: Jeffamine M-600
   chem_class: other
@@ -1923,17 +1895,7 @@ reagents:
   - lithium sulfate monohydrate
   - litium sulfate
   - lithiumsulfate
-- chem_class: salt
-  default_unit: molar
-  canonical_id: LI_SULFATE
-  display_name: Li sulfate
-  aliases:
   - li sulfate
-- chem_class: salt
-  default_unit: molar
-  canonical_id: LI_SULFATE_2
-  display_name: Li-sulfate
-  aliases:
   - li-sulfate
 - chem_class: additive
   default_unit: millimolar
@@ -2343,13 +2305,6 @@ reagents:
   display_name: Mpd_p1k_p3350
   aliases:
   - mpd_p1k_p3350
-- chem_class: peg
-  peg_mw: 1000
-  default_unit: percent_w_v
-  canonical_id: MPD_PEG1000_PEG3350
-  display_name: Mpd/peg1000/peg3350
-  aliases:
-  - mpd/peg1000/peg3350
 - canonical_id: MTA
   display_name: MTA
   chem_class: additive
@@ -2370,20 +2325,6 @@ reagents:
   display_name: ~1.7 m ammonium sulphate
   aliases:
   - ~1.7 m ammonium sulphate
-- chem_class: peg
-  peg_mw: 8000
-  default_unit: percent_w_v
-  canonical_id: M_V_PEG8000
-  display_name: (m/v) peg8000
-  aliases:
-  - (m/v) peg8000
-- chem_class: peg
-  peg_mw: 6000
-  default_unit: percent_w_v
-  canonical_id: M_V_PEG_6000
-  display_name: (m/v) peg 6000
-  aliases:
-  - (m/v) peg 6000
 - chem_class: additive
   default_unit: millimolar
   canonical_id: NA2HPO4_CITRIC_ACID
@@ -2481,24 +2422,6 @@ reagents:
   aliases:
   - ndsb-256
   - ndsb 256
-- chem_class: salt
-  default_unit: molar
-  canonical_id: NH4ACETATE
-  display_name: Nh4acetate
-  aliases:
-  - nh4acetate
-- chem_class: salt
-  default_unit: molar
-  canonical_id: NH4_ACETATE
-  display_name: Nh4 acetate
-  aliases:
-  - nh4 acetate
-- chem_class: salt
-  default_unit: molar
-  canonical_id: NH4_ACETATE_2
-  display_name: Nh4-acetate
-  aliases:
-  - nh4-acetate
 - canonical_id: NICKEL_CHLORIDE
   display_name: Nickel chloride
   chem_class: salt
@@ -2610,6 +2533,7 @@ reagents:
   - peg 1k
   - peg1k
   - peg1000h
+  - peg 1000 (2%)
 - canonical_id: PEG_10000
   display_name: PEG 10000
   chem_class: peg
@@ -2621,19 +2545,6 @@ reagents:
   - peg10000
   - peg 10k
   - peg10k
-- chem_class: peg
-  peg_mw: 1000
-  default_unit: percent_w_v
-  canonical_id: PEG_1000_2
-  display_name: Peg 1000 (2%)
-  aliases:
-  - peg 1000 (2%)
-- chem_class: peg
-  peg_mw: 10000
-  default_unit: percent_w_v
-  canonical_id: PEG_10_000
-  display_name: Peg 10 000
-  aliases:
   - peg 10 000
 - chem_class: peg
   peg_mw: 12000
@@ -2658,6 +2569,7 @@ reagents:
   - peg 1500
   - polyethylene glycol 1500
   - peg1500
+  - peg 1.5k
 - chem_class: peg
   peg_mw: 1550
   default_unit: percent_w_v
@@ -2665,13 +2577,6 @@ reagents:
   display_name: Peg 1550
   aliases:
   - peg 1550
-- chem_class: peg
-  peg_mw: 5000
-  default_unit: percent_w_v
-  canonical_id: PEG_1_5K
-  display_name: Peg 1.5k
-  aliases:
-  - peg 1.5k
 - canonical_id: PEG_200
   display_name: PEG 200
   chem_class: peg
@@ -2705,20 +2610,8 @@ reagents:
   - peg 20k
   - peg20k
   - peg-20k
-- chem_class: peg
-  peg_mw: 20000
-  default_unit: percent_w_v
-  canonical_id: PEG_20000_10
-  display_name: Peg 20000 (10%)
-  aliases:
-  - peg 20000 (10%)
-- chem_class: peg
-  peg_mw: 20000
-  default_unit: percent_w_v
-  canonical_id: PEG_20_000
-  display_name: Peg 20 000
-  aliases:
   - peg 20 000
+  - peg 20000 (10%)
 - canonical_id: PEG_300
   display_name: PEG 300
   chem_class: peg
@@ -2739,12 +2632,6 @@ reagents:
   - peg3000
   - peg 3k
   - peg3k
-- chem_class: peg
-  peg_mw: 3000
-  default_unit: percent_w_v
-  canonical_id: PEG_3000_M_V
-  display_name: Peg 3000 (m/v)
-  aliases:
   - peg 3000 (m/v)
 - chem_class: peg
   peg_mw: 335
@@ -2772,34 +2659,14 @@ reagents:
   - peg 3.350
   - ) peg3350
   - peg 3350]
-- chem_class: peg
-  peg_mw: 33500
-  default_unit: percent_w_v
-  canonical_id: PEG_33500
-  display_name: Peg 33500
-  aliases:
-  - peg 33500
-- chem_class: peg
-  peg_mw: 33500
-  default_unit: percent_w_v
-  canonical_id: PEG_3350_0_1M_CACODYLATE
-  display_name: Peg 3350 0.1m cacodylate
-  aliases:
-  - peg 3350 0.1m cacodylate
-- chem_class: peg
-  peg_mw: 3350
-  default_unit: percent_w_v
-  canonical_id: PEG_3350_2
-  display_name: Peg 3350 (2%)
-  aliases:
-  - peg 3350 (2%)
-- chem_class: peg
-  peg_mw: 3350
-  default_unit: percent_w_v
-  canonical_id: PEG_3350_W_V
-  display_name: Peg 3350 w/v
-  aliases:
   - peg 3350 w/v
+  - '[w/v] peg 3350'
+  - w/v peg3350
+  - (wt/vol) peg 3350
+  - (weight/vol) peg3350
+  - percent peg 3350
+  - peg 3350 (2%)
+  - peg 33500
 - canonical_id: PEG_3400
   display_name: PEG 3400
   chem_class: peg
@@ -2850,6 +2717,7 @@ reagents:
   - polyethylene glycol 400
   - peg400
   - peg-400
+  - peg 400 (24% )
   note: Below about 600 a PEG behaves as an organic precipitant rather than a polymer, and is usually
     reported v/v. Spec 6.3 requires this distinction be preserved.
 - canonical_id: PEG_4000
@@ -2865,13 +2733,7 @@ reagents:
   - peg4k
   - poly(ethylene glycol) 4000
   - polyethyleneglycol 4000
-- chem_class: peg
-  peg_mw: 400
-  default_unit: percent_v_v
-  canonical_id: PEG_400_24
-  display_name: Peg 400 (24% )
-  aliases:
-  - peg 400 (24% )
+  - polyethylene glycol 4k
 - chem_class: peg
   peg_mw: 4450
   default_unit: percent_w_v
@@ -2910,20 +2772,10 @@ reagents:
   - peg6000
   - peg 6k
   - peg6k
-- chem_class: peg
-  peg_mw: 6000
-  default_unit: percent_w_v
-  canonical_id: PEG_6000_16
-  display_name: 16% peg 6000
-  aliases:
-  - 16% peg 6000
-- chem_class: peg
-  peg_mw: 6000
-  default_unit: percent_w_v
-  canonical_id: PEG_6000_W_V
-  display_name: Peg 6000 w/v
-  aliases:
   - peg 6000 w/v
+  - (m/v) peg 6000
+  - 16% peg 6000
+  - saturated peg 6000
 - chem_class: peg
   peg_mw: 800
   default_unit: percent_w_v
@@ -2945,6 +2797,8 @@ reagents:
   - poly(ethylene glycol) 8000
   - ethylene glycol/peg 8000
   - peg 8000 (
+  - (m/v) peg8000
+  - polyethylene glycol 8k
 - chem_class: peg
   peg_mw: 200
   default_unit: percent_v_v
@@ -3161,11 +3015,6 @@ reagents:
   display_name: Pentaerythritol propoxylate (5/4 po/oh)
   aliases:
   - pentaerythritol propoxylate (5/4 po/oh)
-- chem_class: polyol
-  default_unit: percent_v_v
-  canonical_id: PENTAERYTHRITOL_PROPOXYLATE_PO_OH_5_4
-  display_name: Pentaerythritol propoxylate po/oh 5/4
-  aliases:
   - pentaerythritol propoxylate po/oh 5/4
 - canonical_id: PENTAETHYLENE_GLYCOL
   display_name: Pentaethylene glycol
@@ -3186,13 +3035,6 @@ reagents:
   display_name: 1,5-pentanediol
   aliases:
   - 1,5-pentanediol
-- chem_class: peg
-  peg_mw: 3350
-  default_unit: percent_w_v
-  canonical_id: PERCENT_PEG_3350
-  display_name: Percent peg 3350
-  aliases:
-  - percent peg 3350
 - canonical_id: PGA_LM
   display_name: PGA-LM
   chem_class: additive
@@ -3277,25 +3119,6 @@ reagents:
   display_name: Polyacrylic acid 5100
   aliases:
   - polyacrylic acid 5100
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: POLYACRYLIC_ACID_5100_SODIUM_SALT
-  display_name: Polyacrylic acid 5100 sodium salt
-  aliases:
-  - polyacrylic acid 5100 sodium salt
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: POLYACRYLIC_ACID_SODIUM_SALT_5100
-  display_name: Polyacrylic acid sodium salt 5100
-  aliases:
-  - polyacrylic acid sodium salt 5100
-- chem_class: peg
-  peg_mw: 4000
-  default_unit: percent_w_v
-  canonical_id: POLYETHYLENE_GLYCOL_4K
-  display_name: Polyethylene glycol 4k
-  aliases:
-  - polyethylene glycol 4k
 - chem_class: peg
   peg_mw: 550
   default_unit: percent_v_v
@@ -3303,13 +3126,6 @@ reagents:
   display_name: Polyethylene glycol 550
   aliases:
   - polyethylene glycol 550
-- chem_class: peg
-  peg_mw: 8000
-  default_unit: percent_w_v
-  canonical_id: POLYETHYLENE_GLYCOL_8K
-  display_name: Polyethylene glycol 8k
-  aliases:
-  - polyethylene glycol 8k
 - canonical_id: POLYPROPYLENE_GLYCOL
   display_name: Polypropylene glycol
   chem_class: organic
@@ -3356,6 +3172,8 @@ reagents:
   display_name: Poly(acrylic acid sodium salt) 5100
   aliases:
   - poly(acrylic acid sodium salt) 5100
+  - polyacrylic acid sodium salt 5100
+  - polyacrylic acid 5100 sodium salt
 - canonical_id: POTASSIUM_ACETATE
   display_name: Potassium acetate
   chem_class: salt
@@ -3648,13 +3466,6 @@ reagents:
   display_name: Saturated ammonium sulphate
   aliases:
   - saturated ammonium sulphate
-- chem_class: peg
-  peg_mw: 6000
-  default_unit: percent_w_v
-  canonical_id: SATURATED_PEG_6000
-  display_name: Saturated peg 6000
-  aliases:
-  - saturated peg 6000
 - canonical_id: SDS
   display_name: SDS
   chem_class: detergent
@@ -4338,13 +4149,6 @@ reagents:
   - bicine/trizma
   - bicine-tris
   note: Mixed buffer system. Added from the 2026-07-29 audit, 220 components.
-- chem_class: peg
-  peg_mw: 3350
-  default_unit: percent_w_v
-  canonical_id: TRIS_HCL_24_PEG3350
-  display_name: Tris hcl 24 % peg3350
-  aliases:
-  - tris hcl 24 % peg3350
 - chem_class: detergent
   default_unit: percent_w_v
   canonical_id: TRITON_X_100
@@ -4375,13 +4179,6 @@ reagents:
   aliases:
   - udao
   - undecyldimethylamine oxide
-- chem_class: peg
-  peg_mw: 3350
-  default_unit: percent_w_v
-  canonical_id: UL_16_PEG3350
-  display_name: Ul 16% peg3350
-  aliases:
-  - ul 16% peg3350
 - canonical_id: UMP
   display_name: UMP
   chem_class: additive
@@ -4420,34 +4217,6 @@ reagents:
   display_name: Water/acetonitrile
   aliases:
   - water/acetonitrile
-- chem_class: peg
-  peg_mw: 3350
-  default_unit: percent_w_v
-  canonical_id: WEIGHT_VOL_PEG3350
-  display_name: (weight/vol) peg3350
-  aliases:
-  - (weight/vol) peg3350
-- chem_class: peg
-  peg_mw: 3350
-  default_unit: percent_w_v
-  canonical_id: WT_VOL_PEG_3350
-  display_name: (wt/vol) peg 3350
-  aliases:
-  - (wt/vol) peg 3350
-- chem_class: peg
-  peg_mw: 3350
-  default_unit: percent_w_v
-  canonical_id: W_V_PEG3350
-  display_name: W/v peg3350
-  aliases:
-  - w/v peg3350
-- chem_class: peg
-  peg_mw: 3350
-  default_unit: percent_w_v
-  canonical_id: W_V_PEG_3350
-  display_name: '[w/v] peg 3350'
-  aliases:
-  - '[w/v] peg 3350'
 - canonical_id: XYLITOL
   display_name: Xylitol
   chem_class: polyol
