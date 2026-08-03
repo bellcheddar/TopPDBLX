@@ -23,3 +23,7 @@ adapters/
 # be swept into a commit.
 *.jsonl.session
 scratch/
+
+# generated review artefacts
+LEXICON_REVIEW.csv
+LEXICON_SUSPECTS.md

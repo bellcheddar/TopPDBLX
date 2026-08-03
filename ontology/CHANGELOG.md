@@ -7,7 +7,7 @@ Two artefacts are versioned here, independently:
 
 | File | Version | What it is |
 |------|---------|------------|
-| `synonyms.yaml` | 0.8.1 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
+| `synonyms.yaml` | 0.8.2 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
 | `groups.yaml` | 0.3.0 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
 
 ## groups.yaml
@@ -106,6 +106,40 @@ Known gaps recorded rather than hidden:
   could ever have been assigned to it.
 
 ## synonyms.yaml
+
+### 0.8.2 (2026-08-03)
+
+**509 reagents, 1,462 names.** The last class the spelling tests cannot reach: a real reagent name
+with an **amount or method word left attached** by the clause splitter. Found by scanning every
+canonical id for a token that describes a quantity, a vessel or a procedure rather than a
+molecule.
+
+| merged | into | components |
+|---|---|---|
+| `SATURATED_AMMONIUM_SULPHATE`, `M_AMMONIUM_SULPHATE_1_7` | `AMMONIUM_SULFATE` | 61 |
+| `VOL_VOL_GLYCEROL`, `CRYOPROTECTED_WITH_20_GLYCEROL` | `GLYCEROL` | 43 |
+| `MG_CHLORIDE` | `MAGNESIUM_CHLORIDE` | 44 |
+| `METHANOL_WATER_IN_RESERVOIR` | `METHANOL` | 71 |
+| `BES_BUFFER` | `BES` | 95 |
+
+`MG_ACETATE_5_MM_TCEP` dropped: it names two reagents, so no single id can be right.
+
+**`MIB_BUFFER` and `MMT_BUFFER` are kept deliberately.** The scan flags them for containing
+"buffer", but MIB (malonate / imidazole / borate) and MMT (DL-malic acid / MES / Tris) are
+Molecular Dimensions buffer *systems* whose product name includes the word. 1,177 components
+between them, and merging them into anything would be wrong.
+
+**Fuzzy name matching was tried and mostly rejected.** Comparing every same-class pair by string
+similarity produced 489 candidates, and requiring the digit sequences to agree — because numbers
+are the chemistry, PEG 400 is not PEG 4000 — still left 120, nearly all false: `HEPES` against
+`MES`, `BIS_TRIS` against `TRIS`. Chemical names share morphemes, so similarity is a weak signal.
+It surfaced exactly one real fault, `SATURATED_AMMONIUM_SULPHATE`, and that one generalised into
+the mechanical scan above, which found nine more with no false positives.
+
+**What is left is beyond a script.** Two entries naming the same molecule in entirely different
+words — `MPD` and `2-methyl-2,4-pentanediol` were one such pair — cannot be found by normalising
+strings. `LEXICON_REVIEW.csv` ships all 509 entries with component counts and aliases, sorted by
+class then name, for exactly that review.
 
 ### 0.8.1 (2026-08-03)
 

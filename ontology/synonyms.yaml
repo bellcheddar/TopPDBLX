@@ -1,4 +1,4 @@
-version: 0.8.1
+version: 0.8.2
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -215,6 +215,8 @@ reagents:
   - mg sulfate
   - ammounium sulfate
   - amonium sulphate
+  - saturated ammonium sulphate
+  - ~1.7 m ammonium sulphate
 - canonical_id: AMMONIUM_TARTRATE
   display_name: Ammonium tartrate
   chem_class: salt
@@ -329,11 +331,6 @@ reagents:
   display_name: Bes
   aliases:
   - bes
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: BES_BUFFER
-  display_name: Bes buffer
-  aliases:
   - bes buffer
 - chem_class: additive
   default_unit: millimolar
@@ -806,12 +803,6 @@ reagents:
   display_name: Copper sulfate
   aliases:
   - copper sulfate
-- chem_class: polyol
-  default_unit: percent_v_v
-  canonical_id: CRYOPROTECTED_WITH_20_GLYCEROL
-  display_name: Cryoprotected with 20% glycerol
-  aliases:
-  - cryoprotected with 20% glycerol
 - canonical_id: CTAB
   display_name: CTAB
   chem_class: detergent
@@ -1334,6 +1325,8 @@ reagents:
   - glyerol
   - glcyerol
   - glicerol
+  - (vol/vol) glycerol
+  - cryoprotected with 20% glycerol
   note: Dual use. Only about 2% of entries name a cryoprotectant explicitly, and a third of glycerol values
     in the corpus exceed 15%, which is precipitant scale. The parser sets cryo_evidence to explicit or
     inferred; only explicit cryo is dropped from the screen-matching fingerprint.
@@ -2016,6 +2009,7 @@ reagents:
   - mgcl2.6h2o
   - magnesium cloride
   - mg2cl
+  - mg chloride
 - chem_class: salt
   default_unit: molar
   canonical_id: MAGNESIUM_CHLORIDE_MAGNESIUM_SULFATE_1_1
@@ -2169,11 +2163,6 @@ reagents:
   aliases:
   - meoh
   - methyl alcohol
-- chem_class: organic
-  default_unit: percent_v_v
-  canonical_id: METHANOL_WATER_IN_RESERVOIR
-  display_name: Methanol/water in reservoir
-  aliases:
   - methanol/water in reservoir
 - chem_class: additive
   default_unit: millimolar
@@ -2187,18 +2176,6 @@ reagents:
   display_name: Methyl mercuric acetate
   aliases:
   - methyl mercuric acetate
-- chem_class: salt
-  default_unit: molar
-  canonical_id: MG_ACETATE_5_MM_TCEP
-  display_name: Mg acetate 5 mm tcep
-  aliases:
-  - mg acetate 5 mm tcep
-- chem_class: salt
-  default_unit: molar
-  canonical_id: MG_CHLORIDE
-  display_name: Mg chloride
-  aliases:
-  - mg chloride
 - canonical_id: MIB_BUFFER
   display_name: MIB buffer
   chem_class: premix
@@ -2319,12 +2296,6 @@ reagents:
   display_name: Myo-inositol
   aliases:
   - myo-inositol
-- chem_class: salt
-  default_unit: molar
-  canonical_id: M_AMMONIUM_SULPHATE_1_7
-  display_name: ~1.7 m ammonium sulphate
-  aliases:
-  - ~1.7 m ammonium sulphate
 - chem_class: additive
   default_unit: millimolar
   canonical_id: NA2HPO4_CITRIC_ACID
@@ -3460,12 +3431,6 @@ reagents:
   display_name: Sarcosine
   aliases:
   - sarcosine
-- chem_class: salt
-  default_unit: molar
-  canonical_id: SATURATED_AMMONIUM_SULPHATE
-  display_name: Saturated ammonium sulphate
-  aliases:
-  - saturated ammonium sulphate
 - canonical_id: SDS
   display_name: SDS
   chem_class: detergent
@@ -4199,12 +4164,6 @@ reagents:
   display_name: Utp
   aliases:
   - utp
-- chem_class: polyol
-  default_unit: percent_v_v
-  canonical_id: VOL_VOL_GLYCEROL
-  display_name: (vol/vol) glycerol
-  aliases:
-  - (vol/vol) glycerol
 - chem_class: additive
   default_unit: millimolar
   canonical_id: WATER
