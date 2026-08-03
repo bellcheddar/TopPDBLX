@@ -23,7 +23,7 @@ from typing import Optional
 
 import regex as re
 
-from . import quantity
+from . import quantity, scope
 from .lexicon import Lexicon, Reagent
 # Aliased: `.text` already exports a `classify` for a different job (condition-level text kind).
 from .noncomponent import classify as classify_non_component
@@ -271,7 +271,13 @@ class RuleParser:
         previous_was_buffer = False
         ph_follows_buffer = False
 
+        # Passages that describe the protein sample or a soak rather than the drop. Empty for
+        # almost every deposition; see `parse.scope` for why this is a span and not a blocklist.
+        scope_ranges = scope.spans(raw_details)
+        cursor = scope.Cursor(raw_details)
+
         for clause, bracket_depth in clauses_detailed(raw_details, self._head_is_reagent):
+            clause_scope = scope.role_at(cursor.locate(clause), scope_ranges)
             # Inside an unclosed bracket AND carrying no amount: the constituent list of the
             # reagent that opened it. "PEG Smear Broad (PEG 400, PEG 600, ...)" is one
             # reagent, and splitting it produced nine phantom PEGs.
@@ -298,6 +304,31 @@ class RuleParser:
                     clause, explicit_here)
                 if implausible:
                     flags.append("implausible_concentration")
+
+                # **The reagent is kept, only its scope is corrected.** A protein storage buffer
+                # is read exactly as before -- name, amount, unit, all of it -- and the role
+                # records that the crystal did not grow in it. Dropping the component instead
+                # would lose a correct reading and leave the record looking as though the parser
+                # had failed on text it understood perfectly.
+                #
+                # Overrides whatever chemistry role was assigned, including `cryo`: a glycerol in
+                # a storage buffer is not a cryoprotectant either. Never overrides
+                # `not_a_component`, which is a stronger statement -- there was no reagent at all
+                # -- and would be weakened by claiming the non-reagent belongs to a buffer.
+                #
+                # **Only when the reagent identified, and this is a guard against flattering the
+                # metrics.** An unidentified clause inside a scope span is still a reagent the
+                # lexicon failed on, and marking it out-of-scope would quietly move it out of the
+                # identification denominator: the corpus would score better for parsing worse.
+                # It costs a little precision -- a genuinely out-of-scope unidentified reagent
+                # keeps `unknown` -- and that is the right way round, because `unknown` overstates
+                # nothing while a false `protein_buffer` hides a real failure.
+                if clause_scope and component.name_canonical is not None:
+                    component = component.model_copy(
+                        update={"role": clause_scope, "cryo_evidence": None})
+                    flags.append(f"scope_{clause_scope}")
+                    buffer_ph = None            # a storage buffer's pH is not the drop's
+
                 components.append(component)
                 if buffer_ph:
                     buffer_phs.append(buffer_ph)
@@ -306,8 +337,19 @@ class RuleParser:
                 previous_was_buffer = component.role == "buffer"
 
             elif kind == "ph":
+                # A pH inside a protein section belongs to the storage buffer, not the drop.
+                # Leaving `standalone_ph` unset routes the record to `ph_source = unstated`,
+                # which is the honest answer when the only stated pH was measured on something
+                # else.
+                #
+                # **Protein sections only, deliberately not soaks.** A protein section is always
+                # followed by condition text, so there is somewhere better for the pH to come
+                # from. A soak span runs to the end of the deposition and therefore swallows the
+                # trailing `pH 5.5, VAPOR DIFFUSION, temperature 293K` block that the deposition
+                # system appends -- which describes the record, not the soak. 2IH1 lost a correct
+                # pH that way before this was narrowed.
                 match = _PH_VALUE.search(clause)
-                if match:
+                if match and clause_scope != "protein_buffer":
                     low = float(match.group(1))
                     high = float(match.group(2)) if match.group(2) else None
                     standalone_ph = (low, high)

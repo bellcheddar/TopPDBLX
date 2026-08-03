@@ -73,6 +73,48 @@ the qualifier split off, so removing it would have cost correct readings; and 63
 `2,4-pentanediol` hits are all `2-methyl-2,4-pentanediol`, which is MPD. **Checking the text
 changed two of four decisions.**
 
+### Scope spans in the rule parser — built, measured, not yet applied to the data
+
+The teacher's scope errors turned out to be the *rules'* scope errors too, and the rules run over
+the whole corpus rather than the residual. `parse.scope` finds passages that describe the protein
+sample or a soak rather than the drop, and `rules` gives components inside them `protein_buffer`
+or `soak`.
+
+| | |
+|---|---|
+| records with a scope span | 5,695 |
+| records whose parse changes | 2,727 |
+| components re-scoped | 6,759 — 4,143 `protein_buffer`, 2,616 `soak` |
+| **pH corrected to the condition's own value** | **343** |
+| pH withdrawn as the storage buffer's | 563 |
+| **control records (no span) that change** | **0 of 5,000** |
+
+The head of the re-scoped list is a storage buffer and nothing like a screen — sodium chloride
+806, Tris 546, DTT 399, sodium azide 195, TCEP 147. Sodium azide is the tell: it is a
+preservative, so its presence in a crystallisation condition is nearly a contradiction.
+
+**Design decisions worth not relitigating.** The reagent is kept and only its role changes, so no
+correct reading is thrown away. A span needs *both* a protein marker and a following condition
+marker — a deposition that is only a protein buffer is left alone, because with nothing to
+contrast against the literal reading is the safe one. The role is applied only to components that
+**identified**, so an unrecognised reagent inside a span stays `unknown` and remains in the
+identification denominator: otherwise the corpus would score better for parsing worse. Only
+protein sections withdraw a pH, never soaks, because a soak span runs to end-of-text and swallows
+the `pH 5.5, VAPOR DIFFUSION, temperature 293K` block the deposition system appends.
+
+**Two bugs found by looking at withdrawn pH values rather than at the totals.** `Cursor.locate`
+searched the original text with clauses the splitter had already lowercased, so on an upper-case
+deposition every lookup failed silently and fell back to a stale offset — on 2WWJ that put the
+*reservoir's* citrate inside the protein span and discarded the condition's real pH of 5.5.
+Nothing raised; the count merely looked plausible. And the first version withdrew pH from soak
+spans too, which cost 2IH1 a correct value. Both are now covered by tests.
+
+**Not yet applied.** The parser is changed but `parsed_components.parquet` and everything
+downstream still hold the old readings. Re-run `parse.run_parser` → `assign.classify` → release
+once the GPU is free; doing it now would contend for CPU with the teacher job. Expect coverage to
+move slightly *down*, because removing a buffer or salt from a record can leave it with no
+precipitant — that is the correct direction and should not be read as a regression.
+
 ### The titrant pattern, now seen in three places
 
 `CAPS/ Sodium hydroxide`, `BICINE/Tris base`, `MOPS/HEPES-Na` — the second half is the titrant of
