@@ -7,7 +7,7 @@ Two artefacts are versioned here, independently:
 
 | File | Version | What it is |
 |------|---------|------------|
-| `synonyms.yaml` | 0.8.7 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
+| `synonyms.yaml` | 0.9.0 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
 | `groups.yaml` | 0.3.0 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
 
 ## groups.yaml
@@ -106,6 +106,53 @@ Known gaps recorded rather than hidden:
   could ever have been assigned to it.
 
 ## synonyms.yaml
+
+### 0.9.0 (2026-08-03)
+
+**499 reagents, 1,543 names.** The Morpheus stock table, transcribed from Tables 2, 3 and 4 of
+the vendor's own brochure (`data/raw/screens/MD1-47.pdf`), closing the "Morpheus stocks are
+unexpanded" gap that has been in `NEXT.md` since 2026-07-31.
+
+Minor rather than patch: 13 new premixes plus two promotions change what a name resolves to.
+
+| stock | composition, per the brochure |
+|---|---|
+| `DIVALENTS` | 0.3 M magnesium chloride; 0.3 M calcium chloride |
+| `HALOGENS` | 0.3 M each sodium fluoride, bromide, iodide |
+| `NPS` | 0.3 M each sodium nitrate, disodium hydrogen phosphate, ammonium sulfate |
+| `ALCOHOLS_MIX` | 0.2 M each of six alcohols |
+| `ETHYLENE_GLYCOLS_MIX` | 0.3 M each of di-, tri-, tetra-, penta-ethylene glycol |
+| `MONOSACCHARIDES_MIX` | 0.2 M each of six sugars |
+| `AMINO_ACIDS_MIX` | 0.2 M each of five amino acids |
+| `CARBOXYLIC_ACID_MIX` | 0.2 M each of five organic acid salts |
+| `BUFFER_SYSTEM_1/2/3` | imidazole+MES pH 6.5; HEPES+MOPS pH 7.5; Tris+BICINE pH 8.5 |
+| `PRECIPITANT_MIX_1..4` | the four PEG/cryo-agent pairs |
+
+`CARBOXYLIC_ACID_MIX` and `AMINO_ACIDS_MIX` already existed as plain additives with no
+constituents; they are the same stocks, so they were promoted rather than duplicated.
+
+**The old vendor mix names are aliases**, which is where several unidentified names came from:
+`EDO_P8K` is Precipitant Mix 2, `GOL_P4K` is Mix 3, `MPD_P1K_P3350` is Mix 4, and
+`P550MME_P20K`/`P500MME_P20K` are both Mix 1 — the brochure records that PEG 550 MME was
+discontinued and replaced by PEG 500 MME, so depositions use both.
+
+**Table 1 of the same brochure was read and rejected as a source.** It lists PDB ligands against
+a chemical class, which looks exactly like a stock table, but the PDF's text layer has slipped
+its columns: it maps glycerol to amino acids, iodide to alcohols, isopropanol to monosaccharides
+and potassium to carboxylic acids. Tables 2 to 4 state the compositions directly and extract
+cleanly, so those were used instead.
+
+**Result, stated plainly.** 1,335 components across 871 records now identify where they did not,
+and identification moves 85.7% to 85.9% (88.4% on chemistry alone). **It bought no training
+rows** — 123,535 to 123,521, flat — because those records generally carry other unidentified
+components too, so they still fail the all-components-accounted-for gate. And it **costs 205
+records their class**: a condition naming a premix is Unclassified with reason `mixture`, which
+is the position `groups.yaml` 0.3.0 set deliberately, because a premixed system carrying an acid
+mix, an alcohol mix and a buffer system at once does not fit a seven-class taxonomy. Previously
+those names hit the screen-reference rule, were discarded as non-chemistry, and the record was
+classified on whatever was left — which was a more flattering answer arrived at by ignoring a
+reagent. Coverage 77.0% to 76.8%; the constituents are all expanded and the decision is
+reversible.
 
 ### 0.8.7 (2026-08-03)
 

@@ -1,4 +1,4 @@
-version: 0.8.7
+version: 0.9.0
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -59,6 +59,23 @@ reagents:
   display_name: Alanine
   aliases:
   - alanine
+- canonical_id: ALCOHOLS_MIX
+  display_name: Alcohols (Morpheus)
+  chem_class: premix
+  default_unit: molar
+  premix_components:
+  - HEXANEDIOL_16
+  - BUTANOL_1
+  - PROPANEDIOL_12
+  - ISOPROPANOL
+  - BUTANEDIOL_14
+  - PROPANEDIOL_13
+  aliases:
+  - alcohols
+  - alcohol mix
+  - alcohols mix
+  note: Morpheus brochure MD1-46/47, Table 2, transcribed from the vendor's own published composition
+    rather than inferred from the conditions. 0.2 M each of six alcohols.
 - chem_class: additive
   default_unit: millimolar
   canonical_id: ALPHA_KETOGLUTARATE
@@ -92,12 +109,21 @@ reagents:
   display_name: Amino acids
   aliases:
   - amino acids
-- chem_class: additive
-  default_unit: millimolar
+- chem_class: premix
+  default_unit: molar
   canonical_id: AMINO_ACIDS_MIX
   display_name: Amino acids mix
   aliases:
   - amino acids mix
+  - amino acid mix
+  premix_components:
+  - DL_GLUTAMIC_ACID
+  - DL_ALANINE
+  - GLYCINE
+  - DL_LYSINE
+  - DL_SERINE
+  note: 'Morpheus brochure MD1-46/47, Table 2: 0.2 M each of DL-glutamic acid monohydrate, DL-alanine,
+    glycine, DL-lysine monohydrochloride and DL-serine.'
 - canonical_id: AMMONIUM_ACETATE
   display_name: Ammonium acetate
   chem_class: salt
@@ -442,6 +468,42 @@ reagents:
   display_name: 8-bromoadenosine
   aliases:
   - 8-bromoadenosine
+- canonical_id: BUFFER_SYSTEM_1
+  display_name: Buffer System 1 (Morpheus)
+  chem_class: premix
+  default_unit: molar
+  premix_components:
+  - IMIDAZOLE
+  - MES
+  aliases:
+  - buffer system 1
+  - buffer system1
+  - buffer sys 1
+  note: 'Morpheus brochure Table 3: 1.0 M, pH 6.5, imidazole and MES monohydrate (acid).'
+- canonical_id: BUFFER_SYSTEM_2
+  display_name: Buffer System 2 (Morpheus)
+  chem_class: premix
+  default_unit: molar
+  premix_components:
+  - HEPES
+  - MOPS
+  aliases:
+  - buffer system 2
+  - buffer system2
+  - buffer sys 2
+  note: 'Morpheus brochure Table 3: 1.0 M, pH 7.5, sodium HEPES and MOPS (acid).'
+- canonical_id: BUFFER_SYSTEM_3
+  display_name: Buffer System 3 (Morpheus)
+  chem_class: premix
+  default_unit: molar
+  premix_components:
+  - TRIS
+  - BICINE
+  aliases:
+  - buffer system 3
+  - buffer system3
+  - buffer sys 3
+  note: 'Morpheus brochure Table 3: 1.0 M, pH 8.5, Tris (base) and BICINE.'
 - canonical_id: BUTANEDIOL_12
   display_name: 1,2-Butanediol
   chem_class: organic
@@ -611,13 +673,21 @@ reagents:
   display_name: Carboxylic acids
   aliases:
   - carboxylic acids
-- chem_class: additive
-  default_unit: millimolar
+- chem_class: premix
+  default_unit: molar
   canonical_id: CARBOXYLIC_ACID_MIX
   display_name: Carboxylic acid mix
   aliases:
   - carboxylic acid mix
   - carboxylic acids mix
+  premix_components:
+  - SODIUM_FORMATE
+  - AMMONIUM_ACETATE
+  - SODIUM_CITRATE
+  - POTASSIUM_SODIUM_TARTRATE
+  - SODIUM_OXAMATE
+  note: Morpheus brochure MD1-46/47, Table 2, transcribed from the vendor's own published composition
+    rather than inferred from the conditions. 0.2 M each of five organic acid salts.
 - canonical_id: CDP
   display_name: CDP
   chem_class: additive
@@ -1017,6 +1087,19 @@ reagents:
   display_name: Dithionite
   aliases:
   - dithionite
+- canonical_id: DIVALENTS
+  display_name: Divalents (Morpheus)
+  chem_class: premix
+  default_unit: molar
+  premix_components:
+  - MAGNESIUM_CHLORIDE
+  - CALCIUM_CHLORIDE
+  aliases:
+  - divalents
+  - divalent cations
+  - divalent cation mix
+  note: Morpheus brochure MD1-46/47, Table 2, transcribed from the vendor's own published composition
+    rather than inferred from the conditions. 0.3 M each.
 - chem_class: additive
   default_unit: millimolar
   canonical_id: DL_ALANINE
@@ -1101,6 +1184,7 @@ reagents:
   display_name: D-mannose
   aliases:
   - d-mannose
+  - mannose
 - chem_class: additive
   default_unit: millimolar
   canonical_id: D_XYLOSE
@@ -1198,6 +1282,20 @@ reagents:
     oligomers, not spellings of the monomer: 129, 119 and 133 records name them. "hexylene glycol" (30
     records) moved to MPD at the same time, being another name for 2-methyl-2,4-pentanediol, and "1,2-butanediol"
     (19) to its own entry.'
+- canonical_id: ETHYLENE_GLYCOLS_MIX
+  display_name: Ethylene glycols (Morpheus)
+  chem_class: premix
+  default_unit: molar
+  premix_components:
+  - DIETHYLENE_GLYCOL
+  - TRIETHYLENE_GLYCOL
+  - TETRAETHYLENE_GLYCOL
+  - PENTAETHYLENE_GLYCOL
+  aliases:
+  - ethyleneglycols
+  - ethylene glycol mix
+  note: Morpheus brochure MD1-46/47, Table 2, transcribed from the vendor's own published composition
+    rather than inferred from the conditions. 0.3 M each.
 - chem_class: salt
   default_unit: molar
   canonical_id: ETHYL_ACETATE
@@ -1404,6 +1502,19 @@ reagents:
   display_name: Guanidinium chloride
   aliases:
   - guanidinium chloride
+- canonical_id: HALOGENS
+  display_name: Halogens (Morpheus)
+  chem_class: premix
+  default_unit: molar
+  premix_components:
+  - SODIUM_FLUORIDE
+  - SODIUM_BROMIDE
+  - SODIUM_IODIDE
+  aliases:
+  - halogens
+  - halogen mix
+  note: Morpheus brochure MD1-46/47, Table 2, transcribed from the vendor's own published composition
+    rather than inferred from the conditions. 0.3 M each.
 - canonical_id: HEGA_10
   display_name: HEGA-10
   chem_class: detergent
@@ -1884,6 +1995,7 @@ reagents:
   display_name: L-fucose
   aliases:
   - l-fucose
+  - fucose
 - chem_class: additive
   default_unit: millimolar
   canonical_id: L_GLUTAMATE
@@ -2182,6 +2294,23 @@ reagents:
   default_unit: percent_w_v
   aliases:
   - monoolein
+- canonical_id: MONOSACCHARIDES_MIX
+  display_name: Monosaccharides (Morpheus)
+  chem_class: premix
+  default_unit: molar
+  premix_components:
+  - GLUCOSE
+  - D_MANNOSE
+  - GALACTOSE
+  - L_FUCOSE
+  - XYLOSE
+  - N_ACETYL_GLUCOSAMINE
+  aliases:
+  - monosaccharides
+  - monosaccharide mix
+  - monosaccharides mix
+  note: Morpheus brochure MD1-46/47, Table 2, transcribed from the vendor's own published composition
+    rather than inferred from the conditions. 0.2 M each of six sugars.
 - canonical_id: MOPS
   display_name: MOPS
   chem_class: buffer
@@ -2350,6 +2479,20 @@ reagents:
   - nonylglucoside
   - nonyl glucoside
   - n-nonyl-beta-d-glucoside
+- canonical_id: NPS
+  display_name: NPS (Morpheus)
+  chem_class: premix
+  default_unit: molar
+  premix_components:
+  - SODIUM_NITRATE
+  - DISODIUM_HYDROGEN_PHOSPHATE
+  - AMMONIUM_SULFATE
+  aliases:
+  - nps
+  - nitrate phosphate sulfate
+  - nitrate phosphate sulphate
+  note: Morpheus brochure MD1-46/47, Table 2, transcribed from the vendor's own published composition
+    rather than inferred from the conditions. Nitrate/phosphate/sulfate, 0.3 M each.
 - canonical_id: N_ACETYL_GLUCOSAMINE
   display_name: N-Acetyl-D-glucosamine
   chem_class: additive
@@ -3222,6 +3365,59 @@ reagents:
   - praseodymium acetate
   - pr(iii) acetate
   - praseodymium(iii) acetate
+- canonical_id: PRECIPITANT_MIX_1
+  display_name: Precipitant Mix 1 (Morpheus)
+  chem_class: premix
+  default_unit: percent_v_v
+  premix_components:
+  - PEG_MME_500
+  - PEG_20000
+  aliases:
+  - precipitant mix 1
+  - precipitant mix1
+  - p500mme_p20k
+  - p550mme_p20k
+  - peg 500 mme peg 20000
+  note: 'Morpheus brochure Table 4: 40% v/v PEG 500 MME, 20% w/v PEG 20000. The brochure notes the original
+    PEG 550 MME was discontinued and replaced by PEG 500 MME, so depositions use both old-style names.'
+- canonical_id: PRECIPITANT_MIX_2
+  display_name: Precipitant Mix 2 (Morpheus)
+  chem_class: premix
+  default_unit: percent_v_v
+  premix_components:
+  - ETHYLENE_GLYCOL
+  - PEG_8000
+  aliases:
+  - precipitant mix 2
+  - precipitant mix2
+  - edo_p8k
+  - edo p8k
+  note: 'Morpheus brochure Table 4: 40% v/v ethylene glycol, 20% w/v PEG 8000.'
+- canonical_id: PRECIPITANT_MIX_3
+  display_name: Precipitant Mix 3 (Morpheus)
+  chem_class: premix
+  default_unit: percent_v_v
+  premix_components:
+  - GLYCEROL
+  - PEG_4000
+  aliases:
+  - precipitant mix 3
+  - precipitant mix3
+  - gol p4k
+  note: 'Morpheus brochure Table 4: 40% v/v glycerol, 20% w/v PEG 4000.'
+- canonical_id: PRECIPITANT_MIX_4
+  display_name: Precipitant Mix 4 (Morpheus)
+  chem_class: premix
+  default_unit: percent_v_v
+  premix_components:
+  - MPD
+  - PEG_1000
+  - PEG_3350
+  aliases:
+  - precipitant mix 4
+  - precipitant mix4
+  - mpd p1k p3350
+  note: 'Morpheus brochure Table 4: 25% v/v MPD, 25% PEG 1000, 25% w/v PEG 3350.'
 - canonical_id: PROLINE
   display_name: L-Proline
   chem_class: additive
