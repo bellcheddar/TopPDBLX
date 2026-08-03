@@ -174,6 +174,10 @@ def main(argv: Optional[list[str]] = None) -> int:
                              "yardstick is how a yardstick stops measuring anything")
     parser.add_argument("--seed", type=int, default=41)
     parser.add_argument("--limit", type=int, default=None)
+    parser.add_argument("--max-tokens", type=int, default=MAX_TOKENS,
+                        help="448 suits a model that answers directly. A reasoning model needs "
+                             "several times that: Gemma-4-31b spends its whole budget thinking "
+                             "and only 6 of 96 generations ever closed a JSON array")
     parser.add_argument("--batch", type=int, default=BATCH)
     parser.add_argument("--wired-limit-gb", type=float, default=32.0,
                         help="hold this much GPU memory resident. 0 disables it")
@@ -213,6 +217,34 @@ def main(argv: Optional[list[str]] = None) -> int:
     # teacher guessed our internal spelling, which is not the question being asked of it.
     lex_full = lexicon_module.load()
     alias_index, by_id = lex_full.index(), lex_full.by_id()
+
+    def last_json_array(text: str) -> str:
+        """The final top-level JSON array in a generation, or the text unchanged.
+
+        **Reasoning models answer after thinking, and the thinking contains JSON too.** Gemma-4
+        emits a `<|channel>thought` block that quotes the few-shot examples verbatim before
+        producing its own answer, so the *first* array in the string is an example being reasoned
+        about and the last is the reply. Parsing the whole string fails outright, and parsing the
+        first array silently scores the prompt back.
+        """
+        depth = start = 0
+        spans = []
+        for i, ch in enumerate(text):
+            if ch == "[":
+                if depth == 0:
+                    start = i
+                depth += 1
+            elif ch == "]" and depth:
+                depth -= 1
+                if depth == 0:
+                    spans.append(text[start:i + 1])
+        for candidate in reversed(spans):
+            try:
+                if isinstance(json.loads(candidate), list):
+                    return candidate
+            except ValueError:
+                continue
+        return text
 
     def tidy_generation(text: str) -> str:
         """Repair the two things this teacher gets wrong about the *schema*, not the chemistry.
@@ -288,7 +320,7 @@ def main(argv: Optional[list[str]] = None) -> int:
                          {"role": "user", "content": r["text"]}],
                         add_generation_prompt=True) for r in chunk]
                     result = batch_generate(model, tokenizer, prompts=prompts,
-                                            max_tokens=MAX_TOKENS, sampler=sampler,
+                                            max_tokens=args.max_tokens, sampler=sampler,
                                             verbose=False)
                     for record, text in zip(chunk, result.texts):
                         handle.write(json.dumps({
@@ -308,7 +340,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             key = (row["pdb_id"], row["crystal_id"])
             if wanted is not None and key not in wanted:
                 continue
-            scored = check(tidy_generation(row["generated"]), lexicon)
+            scored = check(tidy_generation(last_json_array(row["generated"])), lexicon)
             if not scored["valid"]:
                 invalid += 1
                 continue

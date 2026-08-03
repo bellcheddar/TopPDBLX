@@ -394,12 +394,50 @@ crystallisation condition: a protein storage buffer (`PROTEIN SOLUTION CONTAININ
 soak, a cryo step. That is a far more tractable target than hallucination, and it is a question
 about *roles* rather than chemistry.
 
-**Next: agreement gating across two teachers.** The errors are systematic rather than random —
-11 of round 08's 14 false positives are the same reagents as round 07's, across independently
-filtered labels and four times the training. Correlated single-model error is what independent-model
-agreement filters and what heuristic filters cannot, so a teacher-only find is kept only when a
-second, architecturally different 32B (Gemma-4-31b, not another Qwen) names the same reagent
-independently.
+### Agreement gating across two teachers
+
+The errors are systematic rather than random — 11 of round 08's 14 false positives are the same
+reagents as round 07's, across independently filtered labels and four times the training.
+Correlated single-model error is what independent-model agreement removes and what heuristic
+filters cannot, so a teacher-only find is kept only when a second, architecturally different 32B
+names the same reagent unprompted. Gemma-4-31b, not another Qwen: `chem_sage` is Qwen2-based and
+would share the first teacher's failure modes.
+
+| | precision | recall | F1 | F0.5 |
+|---|---|---|---|---|
+| rules + student *(round 06, shipped)* | **99.6%** | 87.4% | 93.1 | **96.9** |
+| rules + Gemma alone | 96.3% | 87.8% | 91.8 | 94.4 |
+| + every Qwen find | 92.2% | **92.9%** | 92.5 | 92.4 |
+| **+ only where Qwen and Gemma agree** | 96.1% | 91.8% | **93.9** | 95.2 |
+
+**The mechanism works.** Requiring two independent teachers to agree keeps **13 of the 16 correct
+finds** while cutting the wrong ones **from 22 to 10**, which lifts precision on the combined
+output from 92.2% to 96.1% for 1.1 points of recall. That is the best **F1** measured anywhere in
+this project — 93.9 against the shipped model's 93.1, with 4.4 more points of recall.
+
+**It still does not clear the bar.** On F0.5, the summary that matches how a released dataset is
+actually used, round 06 leads 96.9 to 95.2, and on raw precision 99.6% to 96.1%. Agreement removes
+about half the misattribution, not all of it.
+
+Two further findings:
+
+- **Gemma is the better teacher**, at 96.3% / 87.8% against Qwen's 91.8% / 84.3%. It was chosen for
+  independence and turned out simply stronger.
+- **It is still too noisy to train on.** The surviving additions are 13 correct against 10 wrong,
+  a 43% error rate on the new signal, and round 08 established that this student absorbs label
+  noise rather than averaging it out.
+
+So the result lands as an **inference-time ensemble**, not a training recipe: run the second
+teacher only on the teacher-only candidates rather than the corpus, and take what both assert.
+Whether it ships is a judgement rather than a measurement — F1 says yes, F0.5 says no, and this
+project has consistently preferred precision.
+
+**A reasoning model needed two harness fixes**, both of which would have failed silently. Gemma-4
+emits a `<|channel>thought` block before answering, so at the 448-token budget tuned for Qwen only
+6 of 96 generations ever closed a JSON array; and because it quotes the few-shot examples verbatim
+while reasoning, the *first* JSON array in its output is the prompt being thought about rather than
+the reply. Taking the first array would have scored our own examples back as the teacher's labels
+and looked entirely plausible.
 
 ## 🔁 Redundancy
 

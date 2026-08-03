@@ -806,7 +806,58 @@
 <p>Read on F0.5 — the summary that weights precision twice as heavily, and the right one for a released dataset — round 06 leads by 2.9 points rather than F1's 1.0.</p>
 <p>Round 06 still leads on F1 and holds a 4.3-point precision advantage, so <strong>it remains the shipped model</strong>. But the gap is smaller than first reported, both teacher rounds do gain real recall, and the line of work is <strong>unresolved rather than closed</strong> — an earlier version of this section declared it closed on the strength of the biased measurement.</p>
 <p><strong>The remaining errors are misattribution, not invention.</strong> Of round 08's false positives, <em>none</em> name a reagent absent from the text. They are reagents genuinely present but not part of the crystallisation condition: a protein storage buffer (<code>PROTEIN SOLUTION CONTAINING 50MM HEPES</code>), a soak, a cryo step. That is a far more tractable target than hallucination, and it is a question about <em>roles</em> rather than chemistry.</p>
-<p><strong>Next: agreement gating across two teachers.</strong> The errors are systematic rather than random — 11 of round 08's 14 false positives are the same reagents as round 07's, across independently filtered labels and four times the training. Correlated single-model error is what independent-model agreement filters and what heuristic filters cannot, so a teacher-only find is kept only when a second, architecturally different 32B (Gemma-4-31b, not another Qwen) names the same reagent independently.</p>
+<h3>Agreement gating across two teachers</h3>
+<p>The errors are systematic rather than random — 11 of round 08's 14 false positives are the same reagents as round 07's, across independently filtered labels and four times the training. Correlated single-model error is what independent-model agreement removes and what heuristic filters cannot, so a teacher-only find is kept only when a second, architecturally different 32B names the same reagent unprompted. Gemma-4-31b, not another Qwen: <code>chem_sage</code> is Qwen2-based and would share the first teacher's failure modes.</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th></th>
+<th>precision</th>
+<th>recall</th>
+<th>F1</th>
+<th>F0.5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="">rules + student <em>(round 06, shipped)</em></td>
+<td data-label="precision"><strong>99.6%</strong></td>
+<td data-label="recall">87.4%</td>
+<td data-label="F1">93.1</td>
+<td data-label="F0.5"><strong>96.9</strong></td>
+</tr>
+<tr>
+<td data-label="">rules + Gemma alone</td>
+<td data-label="precision">96.3%</td>
+<td data-label="recall">87.8%</td>
+<td data-label="F1">91.8</td>
+<td data-label="F0.5">94.4</td>
+</tr>
+<tr>
+<td data-label="">+ every Qwen find</td>
+<td data-label="precision">92.2%</td>
+<td data-label="recall"><strong>92.9%</strong></td>
+<td data-label="F1">92.5</td>
+<td data-label="F0.5">92.4</td>
+</tr>
+<tr>
+<td data-label=""><strong>+ only where Qwen and Gemma agree</strong></td>
+<td data-label="precision">96.1%</td>
+<td data-label="recall">91.8%</td>
+<td data-label="F1"><strong>93.9</strong></td>
+<td data-label="F0.5">95.2</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>The mechanism works.</strong> Requiring two independent teachers to agree keeps <strong>13 of the 16 correct finds</strong> while cutting the wrong ones <strong>from 22 to 10</strong>, which lifts precision on the combined output from 92.2% to 96.1% for 1.1 points of recall. That is the best <strong>F1</strong> measured anywhere in this project — 93.9 against the shipped model's 93.1, with 4.4 more points of recall.</p>
+<p><strong>It still does not clear the bar.</strong> On F0.5, the summary that matches how a released dataset is actually used, round 06 leads 96.9 to 95.2, and on raw precision 99.6% to 96.1%. Agreement removes about half the misattribution, not all of it.</p>
+<p>Two further findings:</p>
+<ul>
+<li><strong>Gemma is the better teacher</strong>, at 96.3% / 87.8% against Qwen's 91.8% / 84.3%. It was chosen for independence and turned out simply stronger.</li>
+<li><strong>It is still too noisy to train on.</strong> The surviving additions are 13 correct against 10 wrong, a 43% error rate on the new signal, and round 08 established that this student absorbs label noise rather than averaging it out.</li>
+</ul>
+<p>So the result lands as an <strong>inference-time ensemble</strong>, not a training recipe: run the second teacher only on the teacher-only candidates rather than the corpus, and take what both assert. Whether it ships is a judgement rather than a measurement — F1 says yes, F0.5 says no, and this project has consistently preferred precision.</p>
+<p><strong>A reasoning model needed two harness fixes</strong>, both of which would have failed silently. Gemma-4 emits a <code>&lt;|channel&gt;thought</code> block before answering, so at the 448-token budget tuned for Qwen only 6 of 96 generations ever closed a JSON array; and because it quotes the few-shot examples verbatim while reasoning, the <em>first</em> JSON array in its output is the prompt being thought about rather than the reply. Taking the first array would have scored our own examples back as the teacher's labels and looked entirely plausible.</p>
 <h2>🔁 Redundancy</h2>
 <p><strong>In plain terms:</strong> the same experiment appears in the archive over and over. Popular proteins are solved hundreds of times, and a successful recipe gets copied. One condition string in this corpus appears <strong>1,784 times</strong>. That sounds harmless, and it quietly corrupts three different things if you let it.</p>
 <div class="emd-table-wrap"><table class="emd-data-table">

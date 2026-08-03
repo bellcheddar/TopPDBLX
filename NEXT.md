@@ -3,6 +3,51 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
+## 2026-08-03: agreement gating measured — works, still short
+
+A teacher-only find is kept only if a second, architecturally different 32B names the same reagent
+independently. Gemma-4-31b, because `chem_sage` is Qwen2-based and would share the first teacher's
+failure modes.
+
+| | precision | recall | F1 | F0.5 |
+|---|---|---|---|---|
+| rules + student *(shipped)* | **99.6%** | 87.4% | 93.1 | **96.9** |
+| rules + Gemma alone | 96.3% | 87.8% | 91.8 | 94.4 |
+| + every Qwen find | 92.2% | **92.9%** | 92.5 | 92.4 |
+| **+ only where both agree** | 96.1% | 91.8% | **93.9** | 95.2 |
+
+Keeps 13 of 16 correct finds, cuts the wrong ones 22 → 10. Best F1 in the project; **still behind
+on F0.5 and on precision**, which are the numbers that have decided everything else here.
+
+**Where it leaves the direction.** As a *training* recipe it is dead: the surviving additions are
+13 correct to 10 wrong, and round 08 proved this student absorbs label noise rather than averaging
+it. As an *inference-time ensemble* it is live and cheap — run the second teacher only on the
+teacher-only candidates, a few hundred records, not the corpus.
+
+**Gemma is the better teacher** (96.3/87.8 against Qwen's 91.8/84.3), which was not the reason it
+was picked.
+
+### If picking this up again
+
+1. **Three-way agreement.** Qwen3-32B is cached and untried. Two teachers cut the wrong additions
+   by 55%; a third may reach the precision bar, at ~100 s/record on the candidate subset only.
+2. **The role question, not the chemistry question.** Every surviving error is a reagent that *is*
+   in the text but belongs to a protein buffer, a soak or a cryo step. That is a labelling
+   distinction the schema already has (`role`) and nobody has trained against.
+3. **A disagreement-sampled second gold set.** The current 96 is 9% informative; recall differences
+   keep landing at p = 0.26–0.38, so real effects read as noise.
+
+### Reasoning models need a different harness
+
+Two silent failures, both worth not repeating:
+
+- **Token budgets do not transfer between models.** 448 was measured on Qwen's output distribution.
+  Gemma-4 spends its budget thinking: 6 of 96 generations closed a JSON array. It needs ~2,048 and
+  runs at 102 s/record against Qwen's 40.
+- **Take the *last* JSON array, never the first.** Gemma quotes the few-shot examples verbatim
+  while reasoning, so the first array in its output is the prompt. Parsing it would have scored our
+  own examples back as the teacher's labels, and looked entirely plausible doing it.
+
 ## Closed 2026-08-02: teacher distillation, after two rounds
 
 Both attempts to train past the rule parser's ceiling with 32B-teacher labels failed, and the
