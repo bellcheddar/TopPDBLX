@@ -4,8 +4,8 @@ Generated 2026-08-03 by `./run.sh release.datasheet`. Every figure is read
 from the data at generation time, so this file cannot drift from what it describes.
 
 **Schema version** `0.1.0-draft` · **Ontology version** `0.2.0`
-· **Lexicon version** `0.9.1` (499 reagents,
-1549 names)
+· **Lexicon version** `0.9.2` (499 reagents,
+1583 names)
 
 ---
 
@@ -20,8 +20,8 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 2. **Condition frequency reflects screen popularity, not intrinsic success rate.** PEG 3350
    and PEG/Ion dominate because they are in everyone's screens. A condition being common here
    is evidence about what crystallographers tried, not about what works best.
-3. **Reported conditions are often optimised, not screen hits.** Of the 80,591 records
-   whose component set matches a published screen well, only 38,483 agree on every
+3. **Reported conditions are often optimised, not screen hits.** Of the 81,802 records
+   whose component set matches a published screen well, only 39,219 agree on every
    concentration. The rest are flagged `optimised_not_screen`, but it remains a confounder.
 4. **Protein concentration, drop ratio and equilibration volume are usually missing**, and
    they matter. They are captured where present and null otherwise.
@@ -44,10 +44,10 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 |---------|-------|
 | Records (one per `pdb_id` + `crystal_id`) | 199,185 |
 | Distinct PDB entries | 198,691 |
-| Usable records | 186,482 (93.6%) |
-| Discarded, with a reason code | 12,703 |
-| Components | 605,495 |
-| Components identified as a canonical reagent | 520,182 (85.9%) |
+| Usable records | 188,039 (94.4%) |
+| Discarded, with a reason code | 11,146 |
+| Components | 610,076 |
+| Components identified as a canonical reagent | 527,735 (86.5%) |
 | Records with a linked protein sequence | 195,985 |
 | Distinct 30% identity sequence clusters | 23,868 |
 | Classified into a precipitant class | 143,626 |
@@ -61,27 +61,27 @@ distribution is itself a result.
 
 | Reason | Records | Share |
 |--------|---------|-------|
-| `NO_REAGENT_MATCH` | 5,452 | 2.74% |
 | `TOO_SHORT` | 4,369 | 2.19% |
-| `METHOD_ONLY` | 2,476 | 1.24% |
-| `UNPARSEABLE_RESIDUAL` | 134 | 0.07% |
+| `NO_REAGENT_MATCH` | 3,934 | 1.98% |
+| `METHOD_ONLY` | 2,454 | 1.23% |
+| `UNPARSEABLE_RESIDUAL` | 122 | 0.06% |
 | `REFERENCE_ONLY` | 103 | 0.05% |
 | `EMPTY` | 91 | 0.05% |
-| `NON_CRYSTALLISATION_TEXT` | 78 | 0.04% |
+| `NON_CRYSTALLISATION_TEXT` | 73 | 0.04% |
 
 ### Identified components by chemical class
 
 | Class | Components |
 |-------|-----------|
-| buffer | 165,099 |
-| salt | 147,274 |
-| peg | 127,286 |
-| additive | 26,812 |
-| organic | 23,347 |
-| polyol | 20,347 |
-| premix | 7,249 |
-| detergent | 1,428 |
-| other | 1,340 |
+| buffer | 167,281 |
+| salt | 149,723 |
+| peg | 128,938 |
+| additive | 27,228 |
+| organic | 23,593 |
+| polyol | 20,798 |
+| premix | 7,346 |
+| detergent | 1,474 |
+| other | 1,354 |
 
 ### How pH was attributed
 
@@ -91,8 +91,8 @@ value and refuses to guess its meaning.
 
 | Source | Records |
 |--------|---------|
-| buffer | 98,963 |
-| unstated | 87,470 |
+| buffer | 100,156 |
+| unstated | 87,834 |
 | final | 49 |
 
 ---

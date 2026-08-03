@@ -9,9 +9,13 @@ from __future__ import annotations
 
 import pytest
 
+from toppdblx.parse import lexicon as lexicon_module
+from toppdblx.parse.rules import RuleParser
+
 from toppdblx.parse.text import (
     classify,
     clauses,
+    clauses_detailed,
     is_noise,
     normalise,
     split_trailing_ph,
@@ -260,3 +264,54 @@ def test_a_bare_molecular_weight_before_mme_regains_its_peg(clause, name):
 
 def test_an_explicit_peg_mme_is_unaffected():
     assert strip_quantity("5% peg mme 5000") == "peg mme 5000"
+
+
+# Missing-separator splitting, 2026-08-03. 5QNI writes
+# "11-13% PEG 8000 5-7.5% GLYCEROL 1 MM CUCL2 100 MM SODIUM CACODYLATE" with no commas at all,
+# and 8P93 writes "2.2M ammonium phosphate 0.1M TrisHCl". `_SPLIT` has nothing to break on, so
+# four fully quantified reagents became one clause that identified to nothing. 3,603 clauses in
+# the corpus are like this.
+
+def _split(text):
+    lexicon = lexicon_module.load()
+    parser = RuleParser(lexicon)
+    return [c for c, _ in clauses_detailed(text, parser._head_is_reagent)]
+
+
+def test_reagents_jammed_together_with_no_separator_are_split():
+    assert _split("11-13% PEG 8000 5-7.5% GLYCEROL 1 MM CUCL2 100 MM SODIUM CACODYLATE") == [
+        "11-13% peg 8000", "5-7.5% glycerol", "1 mm cucl2", "100 mm sodium cacodylate"]
+
+
+def test_a_comma_followed_by_a_digit_still_splits_when_a_unit_follows():
+    """`_SPLIT` protects "peg 6,000" by refusing to break on a comma before a digit, which also
+    left "20 mm tris,1 mm edta" whole."""
+    assert _split("2.2M ammonium phosphate 0.1M TrisHCl") == [
+        "2.2m ammonium phosphate", "0.1m trishcl"]
+
+
+@pytest.mark.parametrize("text", [
+    "1.5m to 1.8m nacl",          # one range written with two quantities
+    "12% to 20% peg 1450",
+    "20% - 30% 2-methyl-2,4-pentanediol",
+])
+def test_a_range_is_not_two_components(text):
+    """1,066 clauses are ranges of this shape. Splitting any of them invents a reagent from the
+    upper bound and leaves a fragment behind."""
+    assert _split(text) == [text]
+
+
+@pytest.mark.parametrize("text", [
+    "20% peg 3350",               # a single quantified reagent
+    "peg 3350 20%",               # the amount trails its reagent; splitting would orphan it
+    "1,6-hexanediol 10%",         # the digits are locants, not a quantity
+    "0.1 m tris ph 8.5",          # a pH is not a unit
+    "30% peg 20,000",             # a molecular weight with a comma
+])
+def test_nothing_else_is_split(text):
+    assert _split(text) == [text]
+
+
+def test_a_bare_number_after_a_reagent_is_a_molecular_weight_not_a_new_component():
+    """The unit is what marks a new component. "PEG 8000" must never become "PEG" + "8000"."""
+    assert _split("20% peg 8000 0.1 m hepes") == ["20% peg 8000", "0.1 m hepes"]

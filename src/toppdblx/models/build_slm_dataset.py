@@ -277,8 +277,15 @@ def main(argv: Optional[list[str]] = None) -> int:
             if not text:
                 continue
             key = (row["pdb_id"], row["crystal_id"])
-            if key in held_keys or " ".join(text.split()).lower() in held_text:
-                continue                      # the yardstick is never a training example
+            # **Held out of training, but NOT out of the residual**, and the difference is the
+            # whole point of the gold set. `continue`-ing here skipped the record before it
+            # reached either branch, so all 192 gold records vanished from `residual.jsonl` --
+            # which is the list `apply_slm` reads. The model then had nothing to say about them
+            # and `eval.gold_metrics` scored "rules + model" identically to "rules only",
+            # reporting a 13-point recall collapse that was entirely an artefact of this line.
+            #
+            # The yardstick must never be *trained* on and must always be *read*.
+            held_out = key in held_keys or " ".join(text.split()).lower() in held_text
             parts = grouped.get(key, [])
             fold = row["fold_30"] or "train"
 
@@ -287,7 +294,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             # allowed, and it duly invented one: given the text "pH 3.3" it emitted TRIS. These
             # come from discards the rules judged confidently (TOO_SHORT, METHOD_ONLY,
             # NON_CRYSTALLISATION_TEXT), so the label costs nothing and is not a guess.
-            if row["discard_reason"] in EMPTY_ANSWER_DISCARDS:
+            if row["discard_reason"] in EMPTY_ANSWER_DISCARDS and not held_out:
                 empty_example = {"messages": [
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": text},
@@ -298,7 +305,8 @@ def main(argv: Optional[list[str]] = None) -> int:
                 n_empty_answers += 1
                 continue
 
-            confident = (row["discard_reason"] is None
+            confident = (not held_out
+                         and row["discard_reason"] is None
                          and row["parse_confidence"] >= CONFIDENT
                          and parts
                          and all(accounted_for(c) for c in parts))

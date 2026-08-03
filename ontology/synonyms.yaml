@@ -1,4 +1,4 @@
-version: 0.9.1
+version: 0.9.2
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -41,6 +41,8 @@ reagents:
   - n-[-acetamido]-2-iminodiacetic acid
   - n-[2-acetamido]-2-iminodiacetic acid
   - n-2-acetamido-2-iminodiacetic acid
+  - n 2 acetamido iminodiacetic acid
+  - n acetamido 2 iminodiacetic acid
 - chem_class: additive
   default_unit: millimolar
   canonical_id: ADENOSINE
@@ -140,6 +142,7 @@ reagents:
   - nh4 acetate
   - nh4-acetate
   - ch3coonh4
+  - nh4 acetate 2
 - chem_class: salt
   default_unit: molar
   canonical_id: AMMONIUM_BROMIDE
@@ -245,6 +248,7 @@ reagents:
   - saturated ammonium sulphate
   - ~1.7 m ammonium sulphate
   - ams
+  - m ammonium sulphate 1 7
 - canonical_id: AMMONIUM_TARTRATE
   display_name: Ammonium tartrate
   chem_class: salt
@@ -381,6 +385,7 @@ reagents:
   - beta-mercapto ethanol
   - 2-mercapto ethanol
   - beta-mercaptoethanol at 298k
+  - beta mercaptoethanol at 298k
 - canonical_id: BETA_OG
   display_name: beta-octyl glucoside
   chem_class: detergent
@@ -936,6 +941,7 @@ reagents:
   - dodecyl-maltoside
   - n-dodecyl-b-d-maltoside
   - n-dodecyl-beta-d-maltoside
+  - n dodecyl beta d maltoside
 - chem_class: detergent
   default_unit: percent_w_v
   canonical_id: DECYLMALTOSIDE
@@ -943,6 +949,7 @@ reagents:
   aliases:
   - decylmaltoside
   - n-decyl-beta-d-maltoside
+  - n decyl beta d maltoside
 - canonical_id: DEOXYCYTIDINE
   display_name: Deoxycytidine
   chem_class: additive
@@ -1431,6 +1438,8 @@ reagents:
   - (vol/vol) glycerol
   - cryoprotected with 20% glycerol
   - glycerol for cryoprotection
+  - cryoprotected with 20 glycerol
+  - vol vol glycerol
   note: Dual use. Only about 2% of entries name a cryoprotectant explicitly, and a third of glycerol values
     in the corpus exceed 15%, which is precipitant scale. The parser sets cryo_evidence to explicit or
     inferred; only explicit cryo is dropped from the screen-matching fingerprint.
@@ -1499,6 +1508,7 @@ reagents:
   - guanidine hydrochloride
   - guanidine hcl
   - guanidine-hcl
+  - guanidine hcl 2
 - chem_class: salt
   default_unit: molar
   canonical_id: GUANIDINIUM_CHLORIDE
@@ -1565,6 +1575,7 @@ reagents:
   - hepes ph 7.0
   - hepes (7.5)
   - 4-(2-hydroxyethyl)-1-piperazineethanesulfonic acid
+  - hydroxyethyl 1 piperazineethanesulfonic acid 4 2
 - chem_class: buffer
   buffer_pka: 8.0
   default_unit: molar
@@ -1656,6 +1667,7 @@ reagents:
   - hydroxyethyl disulfide
   - 2-hyrdoxyethyl disulfide
   - 2-hydroxyethyldisulfide
+  - hydroxyethyldisulfide 2
 - canonical_id: HYDROXYMERCURYBENZOATE
   display_name: 4-Hydroxymercurybenzoate
   chem_class: additive
@@ -1966,6 +1978,7 @@ reagents:
   - lithiumsulfate
   - li sulfate
   - li-sulfate
+  - li sulfate 2
 - chem_class: additive
   default_unit: millimolar
   canonical_id: LYSINE
@@ -2224,6 +2237,10 @@ reagents:
   - 2-(n-morpholino)ethanesulfonic acid
   - 2-(n-morpholino) ethanesulfonic acid
   - 2-morpholinoethanesulfonic acid
+  - morpholinoethanesulfonic acid 2
+  - n morpholino ethanesulfonic acid
+  - n morpholino ethanesulfonic acid 2
+  - n morpholino ethanesulfonic acid 2 2
 - canonical_id: MES_IMIDAZOLE
   display_name: MES/imidazole
   chem_class: premix
@@ -2245,6 +2262,7 @@ reagents:
   - meoh
   - methyl alcohol
   - methanol/water in reservoir
+  - methanol water in reservoir
 - chem_class: additive
   default_unit: millimolar
   canonical_id: METHYL_2_AMINOETHANE_SULFONATE
@@ -2568,6 +2586,7 @@ reagents:
   - peg1k
   - peg1000h
   - peg 1000 (2%)
+  - peg 1000 2
 - canonical_id: PEG_10000
   display_name: PEG 10000
   chem_class: peg
@@ -2604,6 +2623,7 @@ reagents:
   - polyethylene glycol 1500
   - peg1500
   - peg 1.5k
+  - peg 1 5k
 - chem_class: peg
   peg_mw: 1550
   default_unit: percent_w_v
@@ -2646,6 +2666,7 @@ reagents:
   - peg-20k
   - peg 20 000
   - peg 20000 (10%)
+  - peg 20000 10
 - canonical_id: PEG_300
   display_name: PEG 300
   chem_class: peg
@@ -2667,6 +2688,7 @@ reagents:
   - peg 3k
   - peg3k
   - peg 3000 (m/v)
+  - peg 3000 m v
 - chem_class: peg
   peg_mw: 335
   default_unit: percent_v_v
@@ -2701,6 +2723,12 @@ reagents:
   - percent peg 3350
   - peg 3350 (2%)
   - peg 33500
+  - peg 3350 2
+  - peg 3350 w v
+  - weight vol peg3350
+  - wt vol peg 3350
+  - w v peg3350
+  - w v peg 3350
 - canonical_id: PEG_3400
   display_name: PEG 3400
   chem_class: peg
@@ -2752,6 +2780,7 @@ reagents:
   - peg400
   - peg-400
   - peg 400 (24% )
+  - peg 400 24
   note: Below about 600 a PEG behaves as an organic precipitant rather than a polymer, and is usually
     reported v/v. Spec 6.3 requires this distinction be preserved.
 - canonical_id: PEG_4000
@@ -2810,6 +2839,9 @@ reagents:
   - (m/v) peg 6000
   - 16% peg 6000
   - saturated peg 6000
+  - m v peg 6000
+  - peg 6000 16
+  - peg 6000 w v
 - chem_class: peg
   peg_mw: 800
   default_unit: percent_w_v
@@ -2834,6 +2866,7 @@ reagents:
   - (m/v) peg8000
   - polyethylene glycol 8k
   - p8k
+  - m v peg8000
 - chem_class: peg
   peg_mw: 200
   default_unit: percent_v_v
@@ -3051,6 +3084,7 @@ reagents:
   aliases:
   - pentaerythritol propoxylate (5/4 po/oh)
   - pentaerythritol propoxylate po/oh 5/4
+  - pentaerythritol propoxylate po oh 5 4
 - canonical_id: PENTAETHYLENE_GLYCOL
   display_name: Pentaethylene glycol
   chem_class: polyol

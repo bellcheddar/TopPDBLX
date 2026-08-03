@@ -240,6 +240,75 @@ def trim_unmatched_parens(text: str) -> str:
     return text
 
 
+# **Two components jammed together with no separator at all.** 5QNI writes
+# "11-13% PEG 8000 5-7.5% GLYCEROL 1 MM CUCL2 100 MM SODIUM CACODYLATE" without a single comma,
+# and 8P93 writes "2.2M ammonium phosphate 0.1M TrisHCl". `_SPLIT` has nothing to break on, so
+# the whole string becomes one clause, identifies to nothing, and four quantified reagents are
+# lost. 3,603 clauses across the corpus are like this.
+#
+# A quantity that carries a *unit* is what starts a new component. A bare number does not:
+# "PEG 8000" is a molecular weight, "pH 8.5" is a pH and "1,6-hexanediol" is a pair of locants,
+# and splitting on any of those would destroy a reagent name rather than recover one.
+_UNIT_QUANTITY = re.compile(
+    r"(?<![\w.])\d+(?:[.,]\d+)?(?:\s*-\s*\d+(?:[.,]\d+)?)?\s*"
+    # Longest alternative first. `m` would otherwise match the first half of `mm`,
+    # leaving a stray `m` and putting the split in the wrong place.
+    r"(?:%|percent\b|mg\s*/\s*ml\b|mg\b|mm\b|um\b|µm\b|μm\b|nm\b|w\s*/\s*v\b|v\s*/\s*v\b|m\b)",
+    re.IGNORECASE)
+
+# "1.5 M to 1.8 M NaCl" is one range written with two quantities, not two components. If nothing
+# but a connective separates them, the second continues the first. 1,066 clauses are ranges of
+# this shape and every one would have become an invented reagent.
+_RANGE_CONNECTIVE = re.compile(
+    r"^[\s\-–—]*(?:to|or|and|up\s+to|upto|through|until|approx\w*|about|ca\.?|~|final)?"
+    r"[\s\-–—]*$", re.IGNORECASE)
+
+
+def _split_missing_separator(
+    clause: str, is_reagent: "Callable[[str], bool] | None",
+) -> list[str]:
+    """Break a clause where a second quantified reagent begins with no separator before it.
+
+    **Gated on the caller's lexicon, exactly as `_split_off_setup_prose` is, and for the same
+    reason.** The head before the break must identify as a real reagent. Without that gate the
+    rule fires on 4,971 further clauses whose heads are not reagents at all, and the previous
+    change of this kind -- truncating on trailing setup prose -- produced 12,449 spurious
+    components before it was gated the same way.
+
+    Returns the clause unchanged when there is nothing to split, which is the overwhelming
+    majority of the corpus.
+    """
+    if is_reagent is None:
+        return [clause]
+    matches = list(_UNIT_QUANTITY.finditer(clause))
+    if len(matches) < 2 or matches[0].start() > 2:
+        # No leading quantity means any later one probably belongs to the reagent named first:
+        # "PEG 3350 20%" is one component, and splitting it would strip its own amount away.
+        return [clause]
+
+    pieces: list[str] = []
+    start = 0
+    previous_end = matches[0].end()
+    for match in matches[1:]:
+        if _RANGE_CONNECTIVE.match(clause[previous_end:match.start()]):
+            previous_end = match.end()
+            continue
+        if not re.match(r"\s*[a-z]", clause[match.end():match.end() + 3]):
+            previous_end = match.end()
+            continue
+        head = strip_quantity(clause[start:match.start()]).strip(" ,;:")
+        if not head or is_noise(head) or not is_reagent(head):
+            previous_end = match.end()
+            continue
+        pieces.append(clause[start:match.start()].strip(" ,;:"))
+        start = match.start()
+        previous_end = match.end()
+    if not pieces:
+        return [clause]
+    pieces.append(clause[start:].strip(" ,;:"))
+    return [p for p in pieces if p]
+
+
 def clauses_detailed(
     text: str, is_reagent: "Callable[[str], bool] | None" = None,
 ) -> list[tuple[str, int]]:
@@ -278,7 +347,9 @@ def clauses_detailed(
         # keep the head. 7O5Q and 7NRJ both lost their butanol this way, found by the
         # 2026-08-01 audit. The prose itself is dropped rather than emitted as a clause of its
         # own: it was never a component, and emitting it made one.
-        out.append((_split_off_setup_prose(cleaned, is_reagent), entry_depth))
+        trimmed = _split_off_setup_prose(cleaned, is_reagent)
+        for piece in _split_missing_separator(trimmed, is_reagent):
+            out.append((piece, entry_depth))
     return out
 
 

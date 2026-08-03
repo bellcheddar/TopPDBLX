@@ -188,7 +188,7 @@
 </tr>
 <tr>
 <td data-label="Tool"><code>ontology/synonyms.yaml</code></td>
-<td data-label="What it does here">The reagent dictionary: 499 reagents, 1,549 spellings</td>
+<td data-label="What it does here">The reagent dictionary: 499 reagents, 1,583 spellings</td>
 </tr>
 <tr>
 <td data-label="Tool">pydantic</td>
@@ -248,7 +248,7 @@
 </tr>
 <tr>
 <td data-label="Measure">Reagent lexicon</td>
-<td data-label="Value">499 reagents, 1,549 names (v0.9.1)</td>
+<td data-label="Value">499 reagents, 1,583 names (v0.9.2)</td>
 </tr>
 <tr>
 <td data-label="Measure">Linked sequences</td>
@@ -256,7 +256,7 @@
 </tr>
 <tr>
 <td data-label="Measure">Screen-well matches</td>
-<td data-label="Value">80,581 component-set matches, 38,481 agreeing on every concentration</td>
+<td data-label="Value">81,802 component-set matches, 39,219 agreeing on every concentration</td>
 </tr>
 <tr>
 <td data-label="Measure">Archive fidelity</td>
@@ -264,11 +264,11 @@
 </tr>
 <tr>
 <td data-label="Measure">Condition classes</td>
-<td data-label="Value">Seven JCSG Top96 precipitant classes (v0.3.0), <strong>80.0% classified</strong>, 20.0% honestly unclassified</td>
+<td data-label="Value">Seven JCSG Top96 precipitant classes (v0.3.1), <strong>80.2% classified</strong>, 19.8% honestly unclassified</td>
 </tr>
 <tr>
 <td data-label="Measure">Parser accuracy</td>
-<td data-label="Value">Against hand-labelled records: <strong>99.3% precision, 92.5% recall</strong>, F0.5 <strong>97.8</strong> (rules alone: 99.5% / 72.8%)</td>
+<td data-label="Value">Against hand-labelled records: <strong>98.2% precision, 95.2% recall</strong>, F0.5 <strong>97.6</strong> (rules alone: 98.3% / 79.6%)</td>
 </tr>
 <tr>
 <td data-label="Measure">Leak-free splits</td>
@@ -282,7 +282,7 @@
 </table></div>
 <p>The project brief anticipated a rule-based parser plateauing near 75%. It reaches 93.5%, because most of the difficulty in this corpus turned out to be clause splitting rather than chemistry: newlines, double spaces, <code>in</code>, spaced slashes and stray brackets all separate components, and handling them properly recovered far more than chasing reagent names did.</p>
 <h3>Two denominators, both reported</h3>
-<p>16,971 of the "unidentified" components contain no chemistry at all: method notes (<code>streak seeded</code>), screen references (<code>hampton research index screen</code>), unnamed ligands (<code>protein</code>, <code>inhibitor</code>) and bare splitter fragments (<code>na</code>). No lexicon entry can ever match them, so counting them as reagents the parser failed to identify measures an artefact rather than the parser. They carry the role <code>not_a_component</code> with an auditable reason, and both denominators are published: <strong>85.9%</strong> over every component, <strong>88.4%</strong> over those that actually name a substance.</p>
+<p>16,971 of the "unidentified" components contain no chemistry at all: method notes (<code>streak seeded</code>), screen references (<code>hampton research index screen</code>), unnamed ligands (<code>protein</code>, <code>inhibitor</code>) and bare splitter fragments (<code>na</code>). No lexicon entry can ever match them, so counting them as reagents the parser failed to identify measures an artefact rather than the parser. They carry the role <code>not_a_component</code> with an auditable reason, and both denominators are published: <strong>86.5%</strong> over every component, <strong>89.0%</strong> over those that actually name a substance.</p>
 <h3>Why records are discarded</h3>
 <p>Every X-ray record is accounted for: it either parsed or carries exactly one reason code.</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
@@ -558,9 +558,15 @@
 </tr>
 <tr>
 <td data-label="Round">v0.9.1: Tris IUPAC name, the DDT typo, MEGA8 suffix</td>
+<td data-label="Reagents">499</td>
+<td data-label="Names">1,549</td>
+<td data-label="Component identification">—</td>
+</tr>
+<tr>
+<td data-label="Round">v0.9.2: every pre-merge canonical id resolves again</td>
 <td data-label="Reagents"><strong>499</strong></td>
-<td data-label="Names"><strong>1,549</strong></td>
-<td data-label="Component identification">re-parse pending</td>
+<td data-label="Names"><strong>1,583</strong></td>
+<td data-label="Component identification"><strong>86.5%</strong> (89.0% on chemistry)</td>
 </tr>
 </tbody>
 </table></div>
@@ -685,21 +691,21 @@
 <tbody>
 <tr>
 <td data-label="Source">Rule parser alone</td>
-<td data-label="Precision">99.5%</td>
-<td data-label="Recall">72.8%</td>
-<td data-label="F1">84.1</td>
-<td data-label="F0.5">92.7</td>
+<td data-label="Precision">98.3%</td>
+<td data-label="Recall">79.6%</td>
+<td data-label="F1">88.0</td>
+<td data-label="F0.5">93.9</td>
 </tr>
 <tr>
 <td data-label="Source">Rules + fine-tuned model <em>(shipped)</em></td>
-<td data-label="Precision"><strong>99.3%</strong></td>
-<td data-label="Recall"><strong>92.5%</strong></td>
-<td data-label="F1"><strong>95.8</strong></td>
-<td data-label="F0.5"><strong>97.8</strong></td>
+<td data-label="Precision"><strong>98.2%</strong></td>
+<td data-label="Recall"><strong>95.2%</strong></td>
+<td data-label="F1"><strong>96.7</strong></td>
+<td data-label="F0.5"><strong>97.6</strong></td>
 </tr>
 </tbody>
 </table></div>
-<p><strong>Those precision figures are a property of the sample, not of the parsers.</strong> A second, deliberately contested batch puts the rules at <strong>92.0%</strong> and the model at 92.7% — see <a href="#-the-second-gold-batch-contested-records">the second gold batch</a> below. On a randomly drawn record the parsers are rarely challenged, so they rarely err.</p>
+<p><strong>Those precision figures are a property of the sample, not of the parsers.</strong> A second, deliberately contested batch puts the rules at <strong>91.5%</strong> and the model at 92.2% — see <a href="#-the-second-gold-batch-contested-records">the second gold batch</a> below. On a randomly drawn record the parsers are rarely challenged, so they rarely err.</p>
 <p><strong>What each measure asks, and why there are two summary scores:</strong></p>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
@@ -989,45 +995,45 @@ is kept internally consistent at the version it was run. The current shipped fig
 <tbody>
 <tr>
 <td data-label="source">rules only</td>
-<td data-label="precision">92.0%</td>
-<td data-label="recall">56.5%</td>
-<td data-label="F1">70.0</td>
-<td data-label="F0.5">81.7</td>
+<td data-label="precision">91.5%</td>
+<td data-label="recall">60.2%</td>
+<td data-label="F1">72.7</td>
+<td data-label="F0.5">82.9</td>
 </tr>
 <tr>
 <td data-label="source">rules + student <em>(shipped)</em></td>
-<td data-label="precision">92.7%</td>
-<td data-label="recall">74.1%</td>
-<td data-label="F1">82.3</td>
-<td data-label="F0.5">88.2</td>
+<td data-label="precision">92.2%</td>
+<td data-label="recall">76.7%</td>
+<td data-label="F1">83.7</td>
+<td data-label="F0.5">88.6</td>
 </tr>
 <tr>
 <td data-label="source">rules + 32B teacher</td>
-<td data-label="precision">91.2%</td>
-<td data-label="recall"><strong>86.7%</strong></td>
+<td data-label="precision">90.7%</td>
+<td data-label="recall"><strong>87.3%</strong></td>
 <td data-label="F1">88.9</td>
-<td data-label="F0.5"><strong>90.3</strong></td>
+<td data-label="F0.5"><strong>90.0</strong></td>
 </tr>
 <tr>
 <td data-label="source">union of both</td>
-<td data-label="precision">91.3%</td>
-<td data-label="recall"><strong>97.2%</strong></td>
-<td data-label="F1"><strong>94.2</strong></td>
-<td data-label="F0.5">92.4</td>
+<td data-label="precision">90.8%</td>
+<td data-label="recall"><strong>97.5%</strong></td>
+<td data-label="F1"><strong>94.0</strong></td>
+<td data-label="F0.5">92.0</td>
 </tr>
 <tr>
 <td data-label="source">rules + only where both agree</td>
-<td data-label="precision"><strong>92.8%</strong></td>
-<td data-label="recall">63.6%</td>
-<td data-label="F1">75.5</td>
-<td data-label="F0.5">85.0</td>
+<td data-label="precision"><strong>92.2%</strong></td>
+<td data-label="recall">66.5%</td>
+<td data-label="F1">77.3</td>
+<td data-label="F0.5">85.6</td>
 </tr>
 </tbody>
 </table></div>
 <p><strong>Three corrections come out of it.</strong></p>
-<p><strong>The rules are not 100% precise.</strong> They are <strong>92.0%</strong> here. The random batch reported 100.0% because it never drew a contested record, and that figure was quoted repeatedly, including in this README and on the published model card.</p>
+<p><strong>The rules are not 100% precise.</strong> They are <strong>91.5%</strong> here. The random batch reported 100.0% because it never drew a contested record, and that figure was quoted repeatedly, including in this README and on the published model card.</p>
 <p><strong>The teacher beats the student on recall, decisively.</strong> It finds <strong>75 reagents the student misses against 35 the other way, p = 0.00017</strong> — the first unambiguous result in this line of work — and pays almost nothing for it: 11 extra false positives against 3 avoided, p = 0.057.</p>
-<p><strong>The student's precision advantage largely evaporates</strong>: 92.7% against the teacher's 91.2%, not 99.3% against 92.0%. On a random sample the student looks far more precise mostly because it rarely says anything contestable.</p>
+<p><strong>The student's precision advantage largely evaporates</strong>: 92.2% against the teacher's 90.7%, not 98.2% against 91.5%. On a random sample the student looks far more precise mostly because it rarely says anything contestable.</p>
 <p><strong>Both batches are needed, and neither alone is honest.</strong> This one is adversarial by construction, so its absolute numbers do not describe the corpus — 57% of teacher-labelled records are contested, not all of them. The random 96 remains the yardstick for <em>how good is the pipeline</em>. But comparisons between sources are what this batch measures well, and it says the earlier reading — teacher labels buy +2 recall for −4 precision — came from a sample where contested records were too rare for the trade to show its real shape.</p>
 <h2>🔁 Redundancy</h2>
 <p><strong>In plain terms:</strong> the same experiment appears in the archive over and over. Popular proteins are solved hundreds of times, and a successful recipe gets copied. One condition string in this corpus appears <strong>1,784 times</strong>. That sounds harmless, and it quietly corrupts three different things if you let it.</p>

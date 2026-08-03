@@ -144,6 +144,28 @@ Known gaps recorded rather than hidden:
 
 ## synonyms.yaml
 
+### 0.9.2 (2026-08-03)
+
+**499 reagents, 1,583 names.** Every canonical id merged away since 0.7.0 now resolves again, as
+an alias of the entry it was merged into. 34 ids restored.
+
+**Merging folded in display names and aliases but never the old canonical id itself**, so
+anything holding a pre-merge id was orphaned — including the gold sets, which store the id the
+labeller was shown. Four gold labels became unresolvable (`M_V_PEG8000`,
+`CRYOPROTECTED_WITH_20_GLYCEROL`, `VOL_VOL_GLYCEROL`, plus one more), and `eval.gold_metrics`
+**excludes** a record whose truth it cannot fully resolve — so the yardstick silently shrank from
+91 scored records to 90, and from 90 to 88. Restoring the ids restores both.
+
+The 33 ids left deliberately unresolvable are the prose fragments and multi-reagent names deleted
+in 0.7.0 and 0.8.x — `WELL_3_DROP_CRYSTALLIZATION_PLATE`, `MPD_PEG1000_PEG3350`. Those never
+named one reagent and should not resolve to one.
+
+### 0.9.1 (2026-08-03)
+
+`tris(hydroxymethyl)aminomethane` on `TRIS` (46 records, the literal IUPAC name), `ddt` on `DTT`
+(70 records, a depositor typo — DDT the pesticide does not appear at 5 mM in a drop), and
+`mega8-solution` on `MEGA8` (38 records).
+
 ### 0.9.0 (2026-08-03)
 
 **499 reagents, 1,543 names.** The Morpheus stock table, transcribed from Tables 2, 3 and 4 of

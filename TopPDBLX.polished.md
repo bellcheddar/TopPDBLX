@@ -131,7 +131,7 @@ for deposition in archive:
 | RCSB Data GraphQL API | Fetches every deposition, batched and resumable |
 | gemmi | Reads the archive mmCIF for the byte-level fidelity gate |
 | `regex` | Clause splitting, which turned out to be the hard part rather than the chemistry |
-| `ontology/synonyms.yaml` | The reagent dictionary: 499 reagents, 1,549 spellings |
+| `ontology/synonyms.yaml` | The reagent dictionary: 499 reagents, 1,583 spellings |
 | pydantic | Enforces the schema and the chemical invariants on load |
 | polars, pyarrow, duckdb | Tables, joins and the queryable release |
 | MMseqs2 | Sequence clustering at 30%, 50% and 90% identity, to control redundancy |
@@ -150,12 +150,12 @@ for deposition in archive:
 | Records | 199,185 |
 | Usable | **186,263 (93.5%)** |
 | Components | 605,481, **85.3% identified** as a canonical reagent (87.6% excluding text that names no chemistry) |
-| Reagent lexicon | 499 reagents, 1,549 names (v0.9.1) |
+| Reagent lexicon | 499 reagents, 1,583 names (v0.9.2) |
 | Linked sequences | 184,229 across **23,159** distinct 30% identity clusters |
-| Screen-well matches | 80,581 component-set matches, 38,481 agreeing on every concentration |
+| Screen-well matches | 81,802 component-set matches, 39,219 agreeing on every concentration |
 | Archive fidelity | **100.0000%** over 205,943 entries against the 90 GB mmCIF snapshot |
-| Condition classes | Seven JCSG Top96 precipitant classes (v0.3.0), **80.0% classified**, 20.0% honestly unclassified |
-| Parser accuracy | Against hand-labelled records: **99.3% precision, 92.5% recall**, F0.5 **97.8** (rules alone: 99.5% / 72.8%) |
+| Condition classes | Seven JCSG Top96 precipitant classes (v0.3.1), **80.2% classified**, 19.8% honestly unclassified |
+| Parser accuracy | Against hand-labelled records: **98.2% precision, 95.2% recall**, F0.5 **97.6** (rules alone: 98.3% / 79.6%) |
 | Leak-free splits | 181,007 records, no cluster spanning folds at 30%, 50% or 90% |
 | Tests | 492 passing |
 
@@ -163,7 +163,7 @@ The project brief anticipated a rule-based parser plateauing near 75%. It reache
 
 ### Two denominators, both reported
 
-16,971 of the "unidentified" components contain no chemistry at all: method notes (`streak seeded`), screen references (`hampton research index screen`), unnamed ligands (`protein`, `inhibitor`) and bare splitter fragments (`na`). No lexicon entry can ever match them, so counting them as reagents the parser failed to identify measures an artefact rather than the parser. They carry the role `not_a_component` with an auditable reason, and both denominators are published: **85.9%** over every component, **88.4%** over those that actually name a substance.
+16,971 of the "unidentified" components contain no chemistry at all: method notes (`streak seeded`), screen references (`hampton research index screen`), unnamed ligands (`protein`, `inhibitor`) and bare splitter fragments (`na`). No lexicon entry can ever match them, so counting them as reagents the parser failed to identify measures an artefact rather than the parser. They carry the role `not_a_component` with an auditable reason, and both denominators are published: **86.5%** over every component, **89.0%** over those that actually name a substance.
 
 ### Why records are discarded
 
@@ -242,7 +242,8 @@ An earlier three-level ontology of 163 binned groups was withdrawn at v0.3.0. It
 | v0.8.6: orphaned buffers restored, DTE separated from DTT | 486 | 1,484 | 85.7% |
 | v0.8.7: AMS and BTPROP; narrative text out of the reagent denominator | 486 | 1,487 | 85.7% (88.3% on chemistry) |
 | v0.9.0: the Morpheus stock table, 15 premixes from the vendor brochure | 499 | 1,543 | 85.9% (88.4% on chemistry) |
-| v0.9.1: Tris IUPAC name, the DDT typo, MEGA8 suffix | **499** | **1,549** | re-parse pending |
+| v0.9.1: Tris IUPAC name, the DDT typo, MEGA8 suffix | 499 | 1,549 | — |
+| v0.9.2: every pre-merge canonical id resolves again | **499** | **1,583** | **86.5%** (89.0% on chemistry) |
 
 **For the crystallographer:** every reagent carries the chemistry the ontology needs, and each field is enforced on load rather than being optional documentation. A `peg` entry must state its molecular weight, a `buffer` must state its pKa, and a `premix` must list its constituents. Those invariants caught three separate attempts to bulk-add entries that could not satisfy them.
 
@@ -303,11 +304,11 @@ hand-labelled truth and are the ones that decide anything.
 
 | Source | Precision | Recall | F1 | F0.5 |
 |---|---|---|---|---|
-| Rule parser alone | 99.5% | 72.8% | 84.1 | 92.7 |
-| Rules + fine-tuned model *(shipped)* | **99.3%** | **92.5%** | **95.8** | **97.8** |
+| Rule parser alone | 98.3% | 79.6% | 88.0 | 93.9 |
+| Rules + fine-tuned model *(shipped)* | **98.2%** | **95.2%** | **96.7** | **97.6** |
 
 **Those precision figures are a property of the sample, not of the parsers.** A second, deliberately
-contested batch puts the rules at **92.0%** and the model at 92.7% — see
+contested batch puts the rules at **91.5%** and the model at 92.2% — see
 [the second gold batch](#-the-second-gold-batch-contested-records) below. On a randomly drawn record
 the parsers are rarely challenged, so they rarely err.
 
@@ -484,15 +485,15 @@ set could not supply.
 
 | source | precision | recall | F1 | F0.5 |
 |---|---|---|---|---|
-| rules only | 92.0% | 56.5% | 70.0 | 81.7 |
-| rules + student *(shipped)* | 92.7% | 74.1% | 82.3 | 88.2 |
-| rules + 32B teacher | 91.2% | **86.7%** | 88.9 | **90.3** |
-| union of both | 91.3% | **97.2%** | **94.2** | 92.4 |
-| rules + only where both agree | **92.8%** | 63.6% | 75.5 | 85.0 |
+| rules only | 91.5% | 60.2% | 72.7 | 82.9 |
+| rules + student *(shipped)* | 92.2% | 76.7% | 83.7 | 88.6 |
+| rules + 32B teacher | 90.7% | **87.3%** | 88.9 | **90.0** |
+| union of both | 90.8% | **97.5%** | **94.0** | 92.0 |
+| rules + only where both agree | **92.2%** | 66.5% | 77.3 | 85.6 |
 
 **Three corrections come out of it.**
 
-**The rules are not 100% precise.** They are **92.0%** here. The random batch
+**The rules are not 100% precise.** They are **91.5%** here. The random batch
 reported 100.0% because it never drew a contested record, and that figure was quoted repeatedly,
 including in this README and on the published model card.
 
@@ -500,8 +501,8 @@ including in this README and on the published model card.
 against 35 the other way, p = 0.00017** — the first unambiguous result in this line of work — and
 pays almost nothing for it: 11 extra false positives against 3 avoided, p = 0.057.
 
-**The student's precision advantage largely evaporates**: 92.7% against the teacher's 91.2%, not
-99.3% against 92.0%. On a random sample the student looks far more precise mostly because it rarely
+**The student's precision advantage largely evaporates**: 92.2% against the teacher's 90.7%, not
+98.2% against 91.5%. On a random sample the student looks far more precise mostly because it rarely
 says anything contestable.
 
 **Both batches are needed, and neither alone is honest.** This one is adversarial by construction,
