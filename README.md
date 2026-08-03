@@ -392,14 +392,19 @@ All rounds ship as LoRA adapters for `mlx-community/SmolLM2-360M-Instruct`, in o
 directory per round: **[`Dellboy/toppdblx-residual-parser`](https://huggingface.co/Dellboy/toppdblx-residual-parser)**. Each is 33 MB; the base model
 is not redistributed.
 
-| Model | Round | What it is | How well it works |
+All eight rounds are on the Hub, in round order. Round 06's final adapter is the one to use.
+
+| Round | Model | What it is | How well it works |
 |---|---|---|---|
-| [**`round06/promoted_checkpoint_2000`**](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) | 06 | **The one to use.** The peak checkpoint, not the final adapter | With the rules: **99.6% precision, 91.5% recall** on 96 hand-labelled records. Alone on the frozen benchmark: 90.52% identification, 94.36% grounding |
-| [`round06/adapters`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) | 06 | The 6,000-iteration endpoint | 88.99% identification: **worse than the checkpoint it passed through at 2,000**, which is the distillation ceiling in one number |
-| [`round05`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05) | 05 | First round on the frozen benchmark | 87.58% identification, 93.41% grounding |
-| [`round08`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08) | 08 | Teacher labels, 97.6% precise, 8,000 iterations | With the rules: 95.3% / 89.1% on gold. **Regressed** on precision against round 06 and was not shipped |
-| [`round07`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) | 07 | Teacher labels, 92.6% precise, 2,000 iterations | With the rules: 93.6% / 89.1% on gold. **Regressed**; see the confound below |
-| [`round01`–`round04`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01) | 01–04 | History, kept for reproducibility | Scored against a live residual that shrank as curation improved, so **not comparable to anything**; round 04 was trained on 36% duplicate rows and abandoned |
+| 01 | [`round01`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01) | Bootstrap distillation from rule output, lexicon 0.1.0 | 87.0% identification, against a live residual — **not comparable to anything** |
+| 02 | [`round02`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round02) | `not_a_component` class added, confidence gate fixed | 89.7%, live residual |
+| 03 | [`round03`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03) | Cosine schedule, dropout, class rebalanced | 88.4%, live residual |
+| 04 | [`round04`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04) | Retrained on the 502-reagent lexicon | **Abandoned**: trained on 36% duplicate rows. Kept for reproducibility |
+| 05 | [`round05`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05) | Deduplicated training set, 95,818 distinct pairs | First frozen-benchmark round: 87.58% identification, 93.41% grounding |
+| 06 | [**`round06/adapters`**](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) | **The one to use.** Full epoch, LoRA rank 16, 32 layers, 6,000 iterations | With the rules: **98.2% precision, 95.2% recall** on 96 hand-labelled records |
+| 06 | [`round06/promoted_checkpoint_2000`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) | The checkpoint a sweep promoted, kept because the disagreement is the point | 90.52% identification but **twelve false positives against the final adapter's one** (p = 0.0034) |
+| 07 | [`round07`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) | Teacher labels 92.6% precise, 2,000 iterations, **16 LoRA layers** | With the rules: 93.6% / 89.1% on gold. **Regressed** — but see the confound below |
+| 08 | [`round08`](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08) | Teacher labels 97.6% precise, 8,000 iterations, **16 LoRA layers** | With the rules: 95.3% / 89.1% on gold. **Regressed**, and not shipped |
 
 **A correction, and the reason the gold set exists.** The frozen-benchmark sweep promoted
 checkpoint 2,000 over the final adapter on *identification*, and against hand-labelled truth that

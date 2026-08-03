@@ -912,51 +912,70 @@
 <p>Rounds 07 and 08 were never put through the frozen benchmark, and deliberately so: by then the gold set existed, and <code>identification</code> had already given three wrong answers to "how long should this train". They were scored against hand-labelled truth instead, which is the stricter test and the one in the table below.</p>
 <h3>🤗 Models on HuggingFace</h3>
 <p>All rounds ship as LoRA adapters for <code>mlx-community/SmolLM2-360M-Instruct</code>, in one repo with a directory per round: <strong><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser"><code>Dellboy/toppdblx-residual-parser</code></a></strong>. Each is 33 MB; the base model is not redistributed.</p>
+<p>All eight rounds are on the Hub, in round order. Round 06's final adapter is the one to use.</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
 <tr>
-<th>Model</th>
 <th>Round</th>
+<th>Model</th>
 <th>What it is</th>
 <th>How well it works</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06"><strong><code>round06/promoted_checkpoint_2000</code></strong></a></td>
-<td data-label="Round">06</td>
-<td data-label="What it is"><strong>The one to use.</strong> The peak checkpoint, not the final adapter</td>
-<td data-label="How well it works">With the rules: <strong>99.6% precision, 91.5% recall</strong> on 96 hand-labelled records. Alone on the frozen benchmark: 90.52% identification, 94.36% grounding</td>
+<td data-label="Round">01</td>
+<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01"><code>round01</code></a></td>
+<td data-label="What it is">Bootstrap distillation from rule output, lexicon 0.1.0</td>
+<td data-label="How well it works">87.0% identification, against a live residual — <strong>not comparable to anything</strong></td>
 </tr>
 <tr>
-<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06"><code>round06/adapters</code></a></td>
-<td data-label="Round">06</td>
-<td data-label="What it is">The 6,000-iteration endpoint</td>
-<td data-label="How well it works">88.99% identification: <strong>worse than the checkpoint it passed through at 2,000</strong>, which is the distillation ceiling in one number</td>
+<td data-label="Round">02</td>
+<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round02"><code>round02</code></a></td>
+<td data-label="What it is"><code>not_a_component</code> class added, confidence gate fixed</td>
+<td data-label="How well it works">89.7%, live residual</td>
 </tr>
 <tr>
-<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05"><code>round05</code></a></td>
+<td data-label="Round">03</td>
+<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03"><code>round03</code></a></td>
+<td data-label="What it is">Cosine schedule, dropout, class rebalanced</td>
+<td data-label="How well it works">88.4%, live residual</td>
+</tr>
+<tr>
+<td data-label="Round">04</td>
+<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04"><code>round04</code></a></td>
+<td data-label="What it is">Retrained on the 502-reagent lexicon</td>
+<td data-label="How well it works"><strong>Abandoned</strong>: trained on 36% duplicate rows. Kept for reproducibility</td>
+</tr>
+<tr>
 <td data-label="Round">05</td>
-<td data-label="What it is">First round on the frozen benchmark</td>
-<td data-label="How well it works">87.58% identification, 93.41% grounding</td>
+<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05"><code>round05</code></a></td>
+<td data-label="What it is">Deduplicated training set, 95,818 distinct pairs</td>
+<td data-label="How well it works">First frozen-benchmark round: 87.58% identification, 93.41% grounding</td>
 </tr>
 <tr>
-<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08"><code>round08</code></a></td>
-<td data-label="Round">08</td>
-<td data-label="What it is">Teacher labels, 97.6% precise, 8,000 iterations</td>
-<td data-label="How well it works">With the rules: 95.3% / 89.1% on gold. <strong>Regressed</strong> on precision against round 06 and was not shipped</td>
+<td data-label="Round">06</td>
+<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06"><strong><code>round06/adapters</code></strong></a></td>
+<td data-label="What it is"><strong>The one to use.</strong> Full epoch, LoRA rank 16, 32 layers, 6,000 iterations</td>
+<td data-label="How well it works">With the rules: <strong>98.2% precision, 95.2% recall</strong> on 96 hand-labelled records</td>
 </tr>
 <tr>
-<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07"><code>round07</code></a></td>
+<td data-label="Round">06</td>
+<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06"><code>round06/promoted_checkpoint_2000</code></a></td>
+<td data-label="What it is">The checkpoint a sweep promoted, kept because the disagreement is the point</td>
+<td data-label="How well it works">90.52% identification but <strong>twelve false positives against the final adapter's one</strong> (p = 0.0034)</td>
+</tr>
+<tr>
 <td data-label="Round">07</td>
-<td data-label="What it is">Teacher labels, 92.6% precise, 2,000 iterations</td>
-<td data-label="How well it works">With the rules: 93.6% / 89.1% on gold. <strong>Regressed</strong>; see the confound below</td>
+<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07"><code>round07</code></a></td>
+<td data-label="What it is">Teacher labels 92.6% precise, 2,000 iterations, <strong>16 LoRA layers</strong></td>
+<td data-label="How well it works">With the rules: 93.6% / 89.1% on gold. <strong>Regressed</strong> — but see the confound below</td>
 </tr>
 <tr>
-<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01"><code>round01</code>–<code>round04</code></a></td>
-<td data-label="Round">01–04</td>
-<td data-label="What it is">History, kept for reproducibility</td>
-<td data-label="How well it works">Scored against a live residual that shrank as curation improved, so <strong>not comparable to anything</strong>; round 04 was trained on 36% duplicate rows and abandoned</td>
+<td data-label="Round">08</td>
+<td data-label="Model"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08"><code>round08</code></a></td>
+<td data-label="What it is">Teacher labels 97.6% precise, 8,000 iterations, <strong>16 LoRA layers</strong></td>
+<td data-label="How well it works">With the rules: 95.3% / 89.1% on gold. <strong>Regressed</strong>, and not shipped</td>
 </tr>
 </tbody>
 </table></div>
