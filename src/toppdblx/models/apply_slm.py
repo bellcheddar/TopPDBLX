@@ -42,7 +42,8 @@ import polars as pl
 from tqdm import tqdm
 
 from .. import config
-from ..parse import quantity
+from ..parse import lexicon as lexicon_module, quantity
+from ..parse.text import normalise, tidy_name
 from ..manifest import Manifest
 from .build_slm_dataset import SYSTEM
 from .eval_slm import (BATCH, MAX_TOKENS, _flatten, check, grounded_in_text,
@@ -149,6 +150,21 @@ def main(argv: Optional[list[str]] = None) -> int:
         lexicon_by_id[reagent["canonical_id"]] = reagent
     lexicon = set(lexicon_by_id)
     aliases = load_aliases()
+    alias_index = lexicon_module.load().index()
+
+    def canonicalise(name: Optional[str]) -> Optional[str]:
+        """A generated reagent name to a canonical id, or None if the lexicon cannot place it.
+
+        Deliberately identical to `teacher_label.canonicalise`, because the two stages write the
+        same schema and a name accepted by one and refused by the other would make teacher and
+        student incomparable on the measurement that decides between them.
+        """
+        if not name or not isinstance(name, str):
+            return None
+        if name in lexicon:
+            return name
+        reagent = alias_index.get(normalise(tidy_name(name.replace("_", " ").lower())))
+        return reagent.canonical_id if reagent else None
 
     residual = [json.loads(l) for l in
                 (args.data_dir / "residual.jsonl").read_text().splitlines() if l.strip()]
@@ -201,6 +217,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         kept = dropped_invalid = dropped_unknown = dropped_ungrounded = 0
         dropped_implausible = 0
         rescued_typos = 0
+        rescued_aliases = 0
         text_by_key = {(r["pdb_id"], r["crystal_id"]): r["text"] for r in residual}
         for line in args.progress.read_text().splitlines():
             if not line.strip():
@@ -218,10 +235,22 @@ def main(argv: Optional[list[str]] = None) -> int:
                 implausible = quantity.is_implausible(item.get("amount"), item.get("unit"))
                 if implausible:
                     dropped_implausible += 1
-                if role != "not_a_component" and name not in lexicon:
-                    # A name the lexicon does not know is a hallucination, not a discovery.
-                    dropped_unknown += 1
-                    continue
+                # **Mapped onto the lexicon, not required to have memorised its spelling.**
+                # `teacher_label` has argued this since it was written and this stage never got
+                # it: the model emits `PVP`, `TDP`, `MERCAPTOETHANOL` and `COH18N6`, every one a
+                # reagent the lexicon knows under an alias, and matching canonical ids alone
+                # threw 658 correct readings away for spelling. That measures whether the model
+                # guessed our internal identifier, which is not the question being asked of it.
+                if role != "not_a_component":
+                    resolved = canonicalise(name)
+                    if resolved is None:
+                        # A name the lexicon cannot place at all is a hallucination, not a
+                        # discovery.
+                        dropped_unknown += 1
+                        continue
+                    if resolved != name:
+                        rescued_aliases += 1
+                    name = resolved
 
                 # The grounding guard. A named reagent must be traceable to the text it was read
                 # from, exactly or as a near miss. Without this the run would write inventions
@@ -274,6 +303,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             "n_components": frame.height,
             "n_dropped_invalid_json": dropped_invalid,
             "n_dropped_unknown_name": dropped_unknown,
+            "n_resolved_via_alias": rescued_aliases,
             "n_dropped_ungrounded": dropped_ungrounded,
             "n_kept_as_typo_correction": rescued_typos,
             "n_amounts_dropped_implausible": dropped_implausible,
@@ -283,6 +313,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         print(f"  components emitted          {frame.height:,}")
         print(f"  dropped, invalid JSON       {dropped_invalid:,}")
         print(f"  dropped, name not in lexicon {dropped_unknown:,}")
+        print(f"  resolved via an alias        {rescued_aliases:,}")
         print(f"  dropped, not in the text     {dropped_ungrounded:,}   inventions")
         print(f"  kept as a typo correction    {rescued_typos:,}   read through a misspelling")
         print(f"\n  {args.out}")

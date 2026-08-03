@@ -155,7 +155,7 @@ for deposition in archive:
 | Screen-well matches | 45,547 component-set matches, 20,339 agreeing on every concentration |
 | Archive fidelity | **100.0000%** over 205,943 entries against the 90 GB mmCIF snapshot |
 | Condition classes | Seven JCSG Top96 precipitant classes (v0.3.0), **77.1% classified**, 22.9% honestly unclassified |
-| Parser accuracy | Against hand-labelled records: **99.6% precision, 87.4% recall**, F0.5 **96.9** (rules alone: 100.0% / 67.7%) |
+| Parser accuracy | Against hand-labelled records: **99.3% precision, 92.5% recall**, F0.5 **97.8** (rules alone: 99.5% / 72.8%) |
 | Leak-free splits | 181,007 records, no cluster spanning folds at 30%, 50% or 90% |
 | Tests | 492 passing |
 
@@ -295,11 +295,11 @@ hand-labelled truth and are the ones that decide anything.
 
 | Source | Precision | Recall | F1 | F0.5 |
 |---|---|---|---|---|
-| Rule parser alone | 100.0% | 67.7% | 80.7 | 91.3 |
-| Rules + fine-tuned model *(shipped)* | **99.6%** | **87.4%** | **93.1** | **96.9** |
+| Rule parser alone | 99.5% | 72.8% | 84.1 | 92.7 |
+| Rules + fine-tuned model *(shipped)* | **99.3%** | **92.5%** | **95.8** | **97.8** |
 
 **Those precision figures are a property of the sample, not of the parsers.** A second, deliberately
-contested batch puts the rules at **91.8%** and the model at 92.5% — see
+contested batch puts the rules at **92.0%** and the model at 92.7% — see
 [the second gold batch](#-the-second-gold-batch-contested-records) below. On a randomly drawn record
 the parsers are rarely challenged, so they rarely err.
 
@@ -391,6 +391,13 @@ compound code), so those records are now excluded from scoring and counted. Re-s
 | round 07 — teacher labels 92.6% precise, 0.23 epochs | 93.6% | **89.1%** | 91.3 | 92.6 |
 | round 08 — labels 97.6% precise, 1.06 epochs | 95.3% | **89.1%** | 92.1 | 94.0 |
 
+> **Measured at lexicon 0.6.x, and left there deliberately.** Every row was scored before
+> lexicon 0.7.0, which added 42 reagents and taught `apply_slm` to resolve aliases — worth
+> about +5 points of recall to any row containing the student. Re-scoring round 06 alone
+> would make it beat rounds 07 and 08 on a change none of them received, so the comparison
+> is kept internally consistent at the version it was run. The current shipped figures are
+> [above](#-the-gold-set-precision-and-recall-against-labelled-truth).
+
 Read on F0.5 — the summary that weights precision twice as heavily, and the right one for a
 released dataset — round 06 leads by 2.9 points rather than F1's 1.0.
 
@@ -420,6 +427,13 @@ would share the first teacher's failure modes.
 | rules + Gemma alone | 96.3% | 87.8% | 91.8 | 94.4 |
 | + every Qwen find | 92.2% | **92.9%** | 92.5 | 92.4 |
 | **+ only where Qwen and Gemma agree** | 96.1% | 91.8% | **93.9** | 95.2 |
+
+> **Measured at lexicon 0.6.x, and left there deliberately.** Every row was scored before
+> lexicon 0.7.0, which added 42 reagents and taught `apply_slm` to resolve aliases — worth
+> about +5 points of recall to any row containing the student. Re-scoring round 06 alone
+> would make it beat rounds 07 and 08 on a change none of them received, so the comparison
+> is kept internally consistent at the version it was run. The current shipped figures are
+> [above](#-the-gold-set-precision-and-recall-against-labelled-truth).
 
 **The mechanism works.** Requiring two independent teachers to agree keeps **13 of the 16 correct
 finds** while cutting the wrong ones **from 22 to 10**, which lifts precision on the combined
@@ -462,14 +476,15 @@ set could not supply.
 
 | source | precision | recall | F1 | F0.5 |
 |---|---|---|---|---|
-| rules only | 91.8% | 54.9% | 68.7 | 80.9 |
-| rules + student *(shipped)* | 92.5% | 72.8% | 81.5 | 87.8 |
-| rules + 32B teacher | 91.1% | **85.2%** | 88.0 | **89.8** |
-| union of both | 91.2% | **96.0%** | **93.5** | 92.1 |
+| rules only | 92.0% | 56.5% | 70.0 | 81.7 |
+| rules + student *(shipped)* | 92.7% | 74.1% | 82.3 | 88.2 |
+| rules + 32B teacher | 91.2% | **86.7%** | 88.9 | **90.3** |
+| union of both | 91.3% | **97.2%** | **94.2** | 92.4 |
+| rules + only where both agree | **92.8%** | 63.6% | 75.5 | 85.0 |
 
 **Three corrections come out of it.**
 
-**The rules are not 100% precise.** They are **91.8%** here — 16 wrong of 194. The random batch
+**The rules are not 100% precise.** They are **92.0%** here. The random batch
 reported 100.0% because it never drew a contested record, and that figure was quoted repeatedly,
 including in this README and on the published model card.
 
@@ -477,8 +492,8 @@ including in this README and on the published model card.
 against 35 the other way, p = 0.00017** — the first unambiguous result in this line of work — and
 pays almost nothing for it: 11 extra false positives against 3 avoided, p = 0.057.
 
-**The student's precision advantage largely evaporates**: 92.5% against the teacher's 91.1%, not
-99.6% against 91.8%. On a random sample the student looks far more precise mostly because it rarely
+**The student's precision advantage largely evaporates**: 92.7% against the teacher's 91.2%, not
+99.3% against 92.0%. On a random sample the student looks far more precise mostly because it rarely
 says anything contestable.
 
 **Both batches are needed, and neither alone is honest.** This one is adversarial by construction,

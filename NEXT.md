@@ -3,6 +3,55 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
+## 2026-08-03: the lexicon change moved every published gold figure
+
+`apply_slm` caches its generations, so re-deriving components under lexicon 0.7.0 cost no GPU at
+all — and it exposed a second, older bug beside it.
+
+**`apply_slm` matched canonical ids exactly while `teacher_label` resolved aliases.** The student
+emits `PVP`, `TDP`, `MERCAPTOETHANOL`, `COH18N6` — every one a reagent the lexicon knows under
+another name — and 658 correct readings were being thrown away for spelling. `teacher_label` has
+carried the argument against exactly this since it was written; this stage never got it. The two
+now share an identical `canonicalise`, which also matters because a name one stage accepts and the
+other refuses would make teacher and student incomparable on the measurement that decides between
+them.
+
+    model components   146,324 -> 147,799   (+1,475)
+      from lexicon 0.7.0 entries          +1,351 gained, -161 lost to the deleted fakes
+      from alias resolution                 +661
+    classified                              77.0% (unchanged)
+    unidentified_reagent                      761 -> 749
+
+**Both gold sets re-scored, and every headline number moved.**
+
+| random 96 | precision | recall | F1 | F0.5 |
+|---|---|---|---|---|
+| rules only | 99.5% (was 100.0) | 72.8% (was 67.7) | 84.1 | 92.7 |
+| rules + student *(shipped)* | 99.3% (was 99.6) | **92.5% (was 87.4)** | 95.8 | **97.8 (was 96.9)** |
+
+| contested 96 | precision | recall | F1 | F0.5 |
+|---|---|---|---|---|
+| rules only | 92.0% | 56.5% | 70.0 | 81.7 |
+| rules + student *(shipped)* | 92.7% | 74.1% | 82.3 | 88.2 |
+| rules + 32B teacher | 91.2% | 86.7% | 88.9 | 90.3 |
+| union of both | 91.3% | **97.2%** | **94.2** | 92.4 |
+| rules + only where both agree | **92.8%** | 63.6% | 75.5 | 85.0 |
+
+**+5.1 points of student recall on the random batch for a lexicon edit and a fifteen-line
+change.** Rules precision drops from a reported 100.0% to 99.5% because a reagent that now
+resolves can now also be wrong — the earlier figure was partly an artefact of names that failed
+to resolve never being scored at all.
+
+**The six unresolvable gold labels did not move**, and remain the ambiguous abbreviations already
+documented: `L-RHA`, `PEA`, `AVA`, `MG(II)`, and two one-off ligands. They are not lexicon gaps.
+
+**The round 06/07/08 and Gemma comparison tables were deliberately left at lexicon 0.6.x** and now
+carry a note saying so. Re-scoring round 06 alone would make it beat rounds 07 and 08 on a change
+none of them received; the comparison is only meaningful held at one version.
+
+**Anything quoting a gold figure from before 2026-08-03 is stale**, including the HuggingFace
+model card, which has not been updated for this and should be.
+
 ## 2026-08-03: scope roles, and two claims in this file that were wrong
 
 ### Running now

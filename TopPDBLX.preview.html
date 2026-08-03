@@ -324,7 +324,7 @@
 </tr>
 <tr>
 <td data-label="Measure">Parser accuracy</td>
-<td data-label="Value">Against hand-labelled records: <strong>99.6% precision, 87.4% recall</strong>, F0.5 <strong>96.9</strong> (rules alone: 100.0% / 67.7%)</td>
+<td data-label="Value">Against hand-labelled records: <strong>99.3% precision, 92.5% recall</strong>, F0.5 <strong>97.8</strong> (rules alone: 99.5% / 72.8%)</td>
 </tr>
 <tr>
 <td data-label="Measure">Leak-free splits</td>
@@ -679,21 +679,21 @@
 <tbody>
 <tr>
 <td data-label="Source">Rule parser alone</td>
-<td data-label="Precision">100.0%</td>
-<td data-label="Recall">67.7%</td>
-<td data-label="F1">80.7</td>
-<td data-label="F0.5">91.3</td>
+<td data-label="Precision">99.5%</td>
+<td data-label="Recall">72.8%</td>
+<td data-label="F1">84.1</td>
+<td data-label="F0.5">92.7</td>
 </tr>
 <tr>
 <td data-label="Source">Rules + fine-tuned model <em>(shipped)</em></td>
-<td data-label="Precision"><strong>99.6%</strong></td>
-<td data-label="Recall"><strong>87.4%</strong></td>
-<td data-label="F1"><strong>93.1</strong></td>
-<td data-label="F0.5"><strong>96.9</strong></td>
+<td data-label="Precision"><strong>99.3%</strong></td>
+<td data-label="Recall"><strong>92.5%</strong></td>
+<td data-label="F1"><strong>95.8</strong></td>
+<td data-label="F0.5"><strong>97.8</strong></td>
 </tr>
 </tbody>
 </table></div>
-<p><strong>Those precision figures are a property of the sample, not of the parsers.</strong> A second, deliberately contested batch puts the rules at <strong>91.8%</strong> and the model at 92.5% — see <a href="#-the-second-gold-batch-contested-records">the second gold batch</a> below. On a randomly drawn record the parsers are rarely challenged, so they rarely err.</p>
+<p><strong>Those precision figures are a property of the sample, not of the parsers.</strong> A second, deliberately contested batch puts the rules at <strong>92.0%</strong> and the model at 92.7% — see <a href="#-the-second-gold-batch-contested-records">the second gold batch</a> below. On a randomly drawn record the parsers are rarely challenged, so they rarely err.</p>
 <p><strong>What each measure asks, and why there are two summary scores:</strong></p>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
@@ -896,6 +896,14 @@
 </tr>
 </tbody>
 </table></div>
+<blockquote>
+<p><strong>Measured at lexicon 0.6.x, and left there deliberately.</strong> Every row was scored before
+lexicon 0.7.0, which added 42 reagents and taught <code>apply_slm</code> to resolve aliases — worth
+about +5 points of recall to any row containing the student. Re-scoring round 06 alone
+would make it beat rounds 07 and 08 on a change none of them received, so the comparison
+is kept internally consistent at the version it was run. The current shipped figures are
+<a href="#-the-gold-set-precision-and-recall-against-labelled-truth">above</a>.</p>
+</blockquote>
 <p>Read on F0.5 — the summary that weights precision twice as heavily, and the right one for a released dataset — round 06 leads by 2.9 points rather than F1's 1.0.</p>
 <p>Round 06 still leads on F1 and holds a 4.3-point precision advantage, so <strong>it remains the shipped model</strong>. But the gap is smaller than first reported, both teacher rounds do gain real recall, and the line of work is <strong>unresolved rather than closed</strong> — an earlier version of this section declared it closed on the strength of the biased measurement.</p>
 <p><strong>The remaining errors are misattribution, not invention.</strong> Of round 08's false positives, <em>none</em> name a reagent absent from the text. They are reagents genuinely present but not part of the crystallisation condition: a protein storage buffer (<code>PROTEIN SOLUTION CONTAINING 50MM HEPES</code>), a soak, a cryo step. That is a far more tractable target than hallucination, and it is a question about <em>roles</em> rather than chemistry.</p>
@@ -942,6 +950,14 @@
 </tr>
 </tbody>
 </table></div>
+<blockquote>
+<p><strong>Measured at lexicon 0.6.x, and left there deliberately.</strong> Every row was scored before
+lexicon 0.7.0, which added 42 reagents and taught <code>apply_slm</code> to resolve aliases — worth
+about +5 points of recall to any row containing the student. Re-scoring round 06 alone
+would make it beat rounds 07 and 08 on a change none of them received, so the comparison
+is kept internally consistent at the version it was run. The current shipped figures are
+<a href="#-the-gold-set-precision-and-recall-against-labelled-truth">above</a>.</p>
+</blockquote>
 <p><strong>The mechanism works.</strong> Requiring two independent teachers to agree keeps <strong>13 of the 16 correct finds</strong> while cutting the wrong ones <strong>from 22 to 10</strong>, which lifts precision on the combined output from 92.2% to 96.1% for 1.1 points of recall. That is the best <strong>F1</strong> measured anywhere in this project — 93.9 against the shipped model's 93.1, with 4.4 more points of recall.</p>
 <p><strong>It still does not clear the bar.</strong> On F0.5, the summary that matches how a released dataset is actually used, round 06 leads 96.9 to 95.2, and on raw precision 99.6% to 96.1%. Agreement removes about half the misattribution, not all of it.</p>
 <p>Two further findings:</p>
@@ -967,38 +983,45 @@
 <tbody>
 <tr>
 <td data-label="source">rules only</td>
-<td data-label="precision">91.8%</td>
-<td data-label="recall">54.9%</td>
-<td data-label="F1">68.7</td>
-<td data-label="F0.5">80.9</td>
+<td data-label="precision">92.0%</td>
+<td data-label="recall">56.5%</td>
+<td data-label="F1">70.0</td>
+<td data-label="F0.5">81.7</td>
 </tr>
 <tr>
 <td data-label="source">rules + student <em>(shipped)</em></td>
-<td data-label="precision">92.5%</td>
-<td data-label="recall">72.8%</td>
-<td data-label="F1">81.5</td>
-<td data-label="F0.5">87.8</td>
+<td data-label="precision">92.7%</td>
+<td data-label="recall">74.1%</td>
+<td data-label="F1">82.3</td>
+<td data-label="F0.5">88.2</td>
 </tr>
 <tr>
 <td data-label="source">rules + 32B teacher</td>
-<td data-label="precision">91.1%</td>
-<td data-label="recall"><strong>85.2%</strong></td>
-<td data-label="F1">88.0</td>
-<td data-label="F0.5"><strong>89.8</strong></td>
+<td data-label="precision">91.2%</td>
+<td data-label="recall"><strong>86.7%</strong></td>
+<td data-label="F1">88.9</td>
+<td data-label="F0.5"><strong>90.3</strong></td>
 </tr>
 <tr>
 <td data-label="source">union of both</td>
-<td data-label="precision">91.2%</td>
-<td data-label="recall"><strong>96.0%</strong></td>
-<td data-label="F1"><strong>93.5</strong></td>
-<td data-label="F0.5">92.1</td>
+<td data-label="precision">91.3%</td>
+<td data-label="recall"><strong>97.2%</strong></td>
+<td data-label="F1"><strong>94.2</strong></td>
+<td data-label="F0.5">92.4</td>
+</tr>
+<tr>
+<td data-label="source">rules + only where both agree</td>
+<td data-label="precision"><strong>92.8%</strong></td>
+<td data-label="recall">63.6%</td>
+<td data-label="F1">75.5</td>
+<td data-label="F0.5">85.0</td>
 </tr>
 </tbody>
 </table></div>
 <p><strong>Three corrections come out of it.</strong></p>
-<p><strong>The rules are not 100% precise.</strong> They are <strong>91.8%</strong> here — 16 wrong of 194. The random batch reported 100.0% because it never drew a contested record, and that figure was quoted repeatedly, including in this README and on the published model card.</p>
+<p><strong>The rules are not 100% precise.</strong> They are <strong>92.0%</strong> here. The random batch reported 100.0% because it never drew a contested record, and that figure was quoted repeatedly, including in this README and on the published model card.</p>
 <p><strong>The teacher beats the student on recall, decisively.</strong> It finds <strong>75 reagents the student misses against 35 the other way, p = 0.00017</strong> — the first unambiguous result in this line of work — and pays almost nothing for it: 11 extra false positives against 3 avoided, p = 0.057.</p>
-<p><strong>The student's precision advantage largely evaporates</strong>: 92.5% against the teacher's 91.1%, not 99.6% against 91.8%. On a random sample the student looks far more precise mostly because it rarely says anything contestable.</p>
+<p><strong>The student's precision advantage largely evaporates</strong>: 92.7% against the teacher's 91.2%, not 99.3% against 92.0%. On a random sample the student looks far more precise mostly because it rarely says anything contestable.</p>
 <p><strong>Both batches are needed, and neither alone is honest.</strong> This one is adversarial by construction, so its absolute numbers do not describe the corpus — 57% of teacher-labelled records are contested, not all of them. The random 96 remains the yardstick for <em>how good is the pipeline</em>. But comparisons between sources are what this batch measures well, and it says the earlier reading — teacher labels buy +2 recall for −4 precision — came from a sample where contested records were too rare for the trade to show its real shape.</p>
 <h2>🔁 Redundancy</h2>
 <p><strong>In plain terms:</strong> the same experiment appears in the archive over and over. Popular proteins are solved hundreds of times, and a successful recipe gets copied. One condition string in this corpus appears <strong>1,784 times</strong>. That sounds harmless, and it quietly corrupts three different things if you let it.</p>
