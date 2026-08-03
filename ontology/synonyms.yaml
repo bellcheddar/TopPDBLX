@@ -1,4 +1,4 @@
-version: 0.8.2
+version: 0.8.3
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -59,18 +59,18 @@ reagents:
   display_name: Alanine
   aliases:
   - alanine
-- chem_class: salt
-  default_unit: molar
-  canonical_id: ALCL3
-  display_name: Alcl3
-  aliases:
-  - alcl3
 - chem_class: additive
   default_unit: millimolar
   canonical_id: ALPHA_KETOGLUTARATE
   display_name: Alpha-ketoglutarate
   aliases:
   - alpha-ketoglutarate
+- chem_class: salt
+  default_unit: molar
+  canonical_id: ALUMINIUM_CHLORIDE
+  display_name: Aluminium chloride
+  aliases:
+  - alcl3
 - canonical_id: ALUMINIUM_FLUORIDE
   display_name: Aluminium fluoride
   chem_class: salt
@@ -113,6 +113,7 @@ reagents:
   - nh4acetate
   - nh4 acetate
   - nh4-acetate
+  - ch3coonh4
 - chem_class: salt
   default_unit: molar
   canonical_id: AMMONIUM_BROMIDE
@@ -301,13 +302,6 @@ reagents:
   - barium chloride
   - bacl2.2h2o
   - barium chloride dihydrate
-  - yttrium chloride
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: BECL2
-  display_name: Becl2
-  aliases:
-  - becl2
 - canonical_id: BENZAMIDINE
   display_name: Benzamidine
   chem_class: additive
@@ -325,6 +319,12 @@ reagents:
   aliases:
   - benzyltriethylammonium chloride
   note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- chem_class: additive
+  default_unit: millimolar
+  canonical_id: BERYLLIUM_CHLORIDE
+  display_name: Beryllium chloride
+  aliases:
+  - becl2
 - chem_class: additive
   default_unit: millimolar
   canonical_id: BES
@@ -547,12 +547,6 @@ reagents:
   aliases:
   - cadmium sulphate
   - cdso4
-- chem_class: salt
-  default_unit: molar
-  canonical_id: CADMIUM_SULFATE_12_20MM
-  display_name: Cadmium sulfate(12-20mm)
-  aliases:
-  - cadmium sulfate(12-20mm)
 - canonical_id: CALCIUM_ACETATE
   display_name: Calcium acetate
   chem_class: salt
@@ -601,8 +595,6 @@ reagents:
   default_unit: molar
   aliases:
   - caps-naoh
-  - chaps
-  - capso
   - caps/sodium hydroxide
 - chem_class: additive
   default_unit: millimolar
@@ -612,16 +604,11 @@ reagents:
   - carboxylic acids
 - chem_class: additive
   default_unit: millimolar
-  canonical_id: CARBOXYLIC_ACIDS_MIX
-  display_name: Carboxylic acids mix
-  aliases:
-  - carboxylic acids mix
-- chem_class: additive
-  default_unit: millimolar
   canonical_id: CARBOXYLIC_ACID_MIX
   display_name: Carboxylic acid mix
   aliases:
   - carboxylic acid mix
+  - carboxylic acids mix
 - canonical_id: CDP
   display_name: CDP
   chem_class: additive
@@ -658,18 +645,6 @@ reagents:
   - cesium sulfate
   - caesium sulfate
   - cs2so4
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: CH3COONA
-  display_name: Ch3coona
-  aliases:
-  - ch3coona
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: CH3COONH4
-  display_name: Ch3coonh4
-  aliases:
-  - ch3coonh4
 - chem_class: detergent
   default_unit: percent_w_v
   canonical_id: CHAPSO
@@ -769,6 +744,8 @@ reagents:
   - cobalt hexamine
   - hexamminecobalt chloride
   - hexammine cobalt chloride
+  - hexaamminecobalt chloride
+  - hexamine cobalt chloride
 - canonical_id: COENZYME_A
   display_name: Coenzyme A
   chem_class: additive
@@ -797,12 +774,14 @@ reagents:
   display_name: Copper chloride
   aliases:
   - copper chloride
+  - cucl2
 - chem_class: salt
   default_unit: molar
   canonical_id: COPPER_SULFATE
   display_name: Copper sulfate
   aliases:
   - copper sulfate
+  - cuso4
 - canonical_id: CTAB
   display_name: CTAB
   chem_class: detergent
@@ -816,18 +795,6 @@ reagents:
   display_name: Ctp
   aliases:
   - ctp
-- chem_class: salt
-  default_unit: molar
-  canonical_id: CUCL2
-  display_name: Cucl2
-  aliases:
-  - cucl2
-- chem_class: salt
-  default_unit: molar
-  canonical_id: CUSO4
-  display_name: Cuso4
-  aliases:
-  - cuso4
 - canonical_id: CYMAL_3
   display_name: CYMAL-3
   chem_class: detergent
@@ -868,18 +835,20 @@ reagents:
 - chem_class: detergent
   default_unit: percent_w_v
   canonical_id: DDM
-  display_name: Ddm
+  display_name: n-Dodecyl-beta-D-maltoside
   aliases:
   - ddm
   - dodecyl maltoside
   - dodecyl-maltoside
   - n-dodecyl-b-d-maltoside
+  - n-dodecyl-beta-d-maltoside
 - chem_class: detergent
   default_unit: percent_w_v
   canonical_id: DECYLMALTOSIDE
-  display_name: Decylmaltoside
+  display_name: n-Decyl-beta-D-maltoside
   aliases:
   - decylmaltoside
+  - n-decyl-beta-d-maltoside
 - canonical_id: DEOXYCYTIDINE
   display_name: Deoxycytidine
   chem_class: additive
@@ -1250,6 +1219,12 @@ reagents:
   - fructose
 - chem_class: additive
   default_unit: millimolar
+  canonical_id: GADOLINIUM_CHLORIDE
+  display_name: Gadolinium(III) chloride
+  aliases:
+  - gdcl3
+- chem_class: additive
+  default_unit: millimolar
   canonical_id: GALACTOSE
   display_name: Galactose
   aliases:
@@ -1260,12 +1235,6 @@ reagents:
   display_name: Gamma-butyrolactone
   aliases:
   - gamma-butyrolactone
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: GDCL3
-  display_name: Gdcl3
-  aliases:
-  - gdcl3
 - chem_class: additive
   default_unit: millimolar
   canonical_id: GDP
@@ -1407,18 +1376,6 @@ reagents:
   display_name: Guanidinium chloride
   aliases:
   - guanidinium chloride
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: H2O
-  display_name: H2o
-  aliases:
-  - h2o
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: HCL
-  display_name: Hcl
-  aliases:
-  - hcl
 - canonical_id: HEGA_10
   display_name: HEGA-10
   chem_class: detergent
@@ -1497,24 +1454,12 @@ reagents:
   display_name: Heptane triol
   aliases:
   - heptane triol
-- chem_class: salt
-  default_unit: molar
-  canonical_id: HEXAAMMINECOBALT_CHLORIDE
-  display_name: Hexaamminecobalt chloride
-  aliases:
-  - hexaamminecobalt chloride
 - chem_class: organic
   default_unit: percent_v_v
   canonical_id: HEXAFLUORO_2_PROPANOL_111333
   display_name: 1,1,1,3,3,3-hexafluoro-2-propanol
   aliases:
   - 1,1,1,3,3,3-hexafluoro-2-propanol
-- chem_class: salt
-  default_unit: molar
-  canonical_id: HEXAMINE_COBALT_CHLORIDE
-  display_name: Hexamine cobalt chloride
-  aliases:
-  - hexamine cobalt chloride
 - canonical_id: HEXANEDIOL_16
   display_name: 1,6-Hexanediol
   chem_class: organic
@@ -1546,12 +1491,6 @@ reagents:
   display_name: 1,2,6-hexanetriol
   aliases:
   - 1,2,6-hexanetriol
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: HGCL2
-  display_name: Hgcl2
-  aliases:
-  - hgcl2
 - chem_class: buffer
   buffer_pka: 4.55
   default_unit: molar
@@ -1565,6 +1504,7 @@ reagents:
   display_name: Hydrochloric acid
   aliases:
   - hydrochloric acid
+  - hcl
 - chem_class: additive
   default_unit: millimolar
   canonical_id: HYDROXYETHYL_DISULFIDE_2
@@ -1832,12 +1772,6 @@ reagents:
   aliases:
   - levulinic acid
   - laevulinic acid
-- chem_class: salt
-  default_unit: molar
-  canonical_id: LIBR
-  display_name: Libr
-  aliases:
-  - libr
 - canonical_id: LITHIUM_ACETATE
   display_name: Lithium acetate
   chem_class: salt
@@ -1846,6 +1780,12 @@ reagents:
   aliases:
   - li acetate
   - lioac
+- chem_class: salt
+  default_unit: molar
+  canonical_id: LITHIUM_BROMIDE
+  display_name: Lithium bromide
+  aliases:
+  - libr
 - canonical_id: LITHIUM_CHLORIDE
   display_name: Lithium chloride
   chem_class: salt
@@ -2101,6 +2041,7 @@ reagents:
   display_name: Manganese sulfate
   aliases:
   - manganese sulfate
+  - mnso4
 - chem_class: additive
   default_unit: millimolar
   canonical_id: MEGA8
@@ -2115,6 +2056,7 @@ reagents:
   display_name: Mercury chloride
   aliases:
   - mercury chloride
+  - hgcl2
 - canonical_id: MES
   display_name: MES
   chem_class: buffer
@@ -2212,12 +2154,6 @@ reagents:
   - malic acid mes tris
   - dl-malic acid mes tris
   note: DL-malic acid / MES / Tris in a 1:2:2 molar ratio, used across pH 4 to 9.
-- chem_class: salt
-  default_unit: molar
-  canonical_id: MNSO4
-  display_name: Mnso4
-  aliases:
-  - mnso4
 - canonical_id: MONOOLEIN
   display_name: Monoolein
   chem_class: organic
@@ -2232,7 +2168,6 @@ reagents:
   aliases:
   - mops-naoh
   - sodium mops
-  - mopso
   - mops-na
   - mops buffer
 - canonical_id: MOPS_HEPES
@@ -2302,12 +2237,6 @@ reagents:
   display_name: Na2hpo4:citric acid
   aliases:
   - na2hpo4:citric acid
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: NA2SO3
-  display_name: Na2so3
-  aliases:
-  - na2so3
 - canonical_id: NAD
   display_name: NAD
   chem_class: additive
@@ -2342,24 +2271,6 @@ reagents:
   display_name: Nadph
   aliases:
   - nadph
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: NAHCO3
-  display_name: Nahco3
-  aliases:
-  - nahco3
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: NAKPO4
-  display_name: Nakpo4
-  aliases:
-  - nakpo4
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: NAOH
-  display_name: Naoh
-  aliases:
-  - naoh
 - chem_class: salt
   default_unit: molar
   canonical_id: NA_THIOCYANATE
@@ -2405,18 +2316,13 @@ reagents:
   display_name: Nickel sulfate
   aliases:
   - nickel sulfate
+  - niso4
 - chem_class: additive
   default_unit: millimolar
   canonical_id: NICOTINAMIDE
   display_name: Nicotinamide
   aliases:
   - nicotinamide
-- chem_class: salt
-  default_unit: molar
-  canonical_id: NISO4
-  display_name: Niso4
-  aliases:
-  - niso4
 - canonical_id: NONYL_GLUCOSIDE
   display_name: Nonyl glucoside
   chem_class: detergent
@@ -2431,24 +2337,12 @@ reagents:
   display_name: N-bog
   aliases:
   - n-bog
-- chem_class: detergent
-  default_unit: percent_w_v
-  canonical_id: N_DECYL_BETA_D_MALTOSIDE
-  display_name: N-decyl-beta-d-maltoside
-  aliases:
-  - n-decyl-beta-d-maltoside
 - chem_class: additive
   default_unit: millimolar
   canonical_id: N_DIMETHYLDECYLAMINE_N_OXIDE
   display_name: N-dimethyldecylamine-n-oxide
   aliases:
   - n-dimethyldecylamine-n-oxide
-- chem_class: detergent
-  default_unit: percent_w_v
-  canonical_id: N_DODECYL_BETA_D_MALTOSIDE
-  display_name: N-dodecyl-beta-d-maltoside
-  aliases:
-  - n-dodecyl-beta-d-maltoside
 - chem_class: detergent
   default_unit: percent_w_v
   canonical_id: N_DODECYL_N
@@ -2486,12 +2380,6 @@ reagents:
   display_name: Oxonate
   aliases:
   - oxonate
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: P8K
-  display_name: P8k
-  aliases:
-  - p8k
 - canonical_id: PEG_1000
   display_name: PEG 1000
   chem_class: peg
@@ -2770,6 +2658,7 @@ reagents:
   - peg 8000 (
   - (m/v) peg8000
   - polyethylene glycol 8k
+  - p8k
 - chem_class: peg
   peg_mw: 200
   default_unit: percent_v_v
@@ -3131,11 +3020,6 @@ reagents:
   - pvp
   - pvp k15
   - pvp k-15
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: POLYVINYLPYRROLIDONE_K15
-  display_name: Polyvinylpyrrolidone k15
-  aliases:
   - polyvinylpyrrolidone k15
 - chem_class: additive
   default_unit: millimolar
@@ -3385,18 +3269,6 @@ reagents:
   display_name: Pyruvate
   aliases:
   - pyruvate
-- chem_class: salt
-  default_unit: molar
-  canonical_id: RBCL
-  display_name: Rbcl
-  aliases:
-  - rbcl
-- chem_class: organic
-  default_unit: percent_v_v
-  canonical_id: RECONSTITUTED_IN_DMSO
-  display_name: Reconstituted in dmso
-  aliases:
-  - reconstituted in dmso
 - canonical_id: RHODIUM_HEXAMINE
   display_name: Rhodium(III) hexammine
   chem_class: salt
@@ -3411,6 +3283,7 @@ reagents:
   display_name: Rubidium chloride
   aliases:
   - rubidium chloride
+  - rbcl
 - canonical_id: SAH
   display_name: S-adenosylhomocysteine
   chem_class: additive
@@ -3474,6 +3347,7 @@ reagents:
   - na-ac
   - sodium actetate
   - sodium acetate:hcl
+  - ch3coona
 - chem_class: salt
   default_unit: molar
   canonical_id: SODIUM_ACETATE_ACETIC_ACID
@@ -3494,6 +3368,7 @@ reagents:
   display_name: Sodium bicarbonate
   aliases:
   - sodium bicarbonate
+  - nahco3
 - canonical_id: SODIUM_BROMIDE
   display_name: Sodium bromide
   chem_class: salt
@@ -3617,6 +3492,7 @@ reagents:
   display_name: Sodium hydroxide
   aliases:
   - sodium hydroxide
+  - naoh
 - canonical_id: SODIUM_IODIDE
   display_name: Sodium iodide
   chem_class: salt
@@ -3737,6 +3613,7 @@ reagents:
   - na/k phospate
   - na-k phosphate
   - na/k phosphate buffer
+  - nakpo4
 - canonical_id: SODIUM_PYROPHOSPHATE
   display_name: Sodium pyrophosphate
   chem_class: salt
@@ -3775,6 +3652,7 @@ reagents:
   aliases:
   - sodium sulfite
   - sodium sulphite
+  - na2so3
   note: Was an alias of SODIUM_SULFATE until 2026-08-02. Sulfite and sulfate differ by an oxygen and by
     Hofmeister behaviour. 23 records.
 - canonical_id: SODIUM_TARTRATE
@@ -4170,6 +4048,7 @@ reagents:
   display_name: Water
   aliases:
   - water
+  - h2o
 - chem_class: organic
   default_unit: percent_v_v
   canonical_id: WATER_ACETONITRILE
@@ -4199,24 +4078,21 @@ reagents:
   display_name: Xylose
   aliases:
   - xylose
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: YBCL3
-  display_name: Ybcl3
-  aliases:
-  - ybcl3
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: YCL3
-  display_name: Ycl3
-  aliases:
-  - ycl3
 - chem_class: salt
   default_unit: molar
   canonical_id: YTTERBIUM_CHLORIDE
   display_name: Ytterbium chloride
   aliases:
   - ytterbium chloride
+  - ybcl3
+- chem_class: additive
+  default_unit: millimolar
+  canonical_id: YTTRIUM_CHLORIDE
+  display_name: Yttrium(III) chloride
+  aliases:
+  - ycl3
+  - yttrium chloride
+  - yttrium(iii) chloride
 - canonical_id: ZINC_ACETATE
   display_name: Zinc acetate
   chem_class: salt

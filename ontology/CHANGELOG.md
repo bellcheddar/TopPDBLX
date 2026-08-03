@@ -7,7 +7,7 @@ Two artefacts are versioned here, independently:
 
 | File | Version | What it is |
 |------|---------|------------|
-| `synonyms.yaml` | 0.8.2 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
+| `synonyms.yaml` | 0.8.3 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
 | `groups.yaml` | 0.3.0 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
 
 ## groups.yaml
@@ -106,6 +106,47 @@ Known gaps recorded rather than hidden:
   could ever have been assigned to it.
 
 ## synonyms.yaml
+
+### 0.8.3 (2026-08-03)
+
+**485 reagents, 1,461 names.** Marc's review of `LEXICON_REVIEW.csv`, plus the general rule it
+established, plus three alias errors that surfaced while applying it.
+
+**Nine merges from the review**, all confirmed against the entries before applying:
+`CARBOXYLIC_ACIDS_MIX` → `CARBOXYLIC_ACID_MIX` (a plural); `P8K` → `PEG_8000` (the Morpheus
+spelling); `POLYVINYLPYRROLIDONE_K15` → `POLYVINYLPYRROLIDONE`; `CUCL2` → `COPPER_CHLORIDE`;
+`CUSO4` → `COPPER_SULFATE`; `HEXAAMMINECOBALT_CHLORIDE` and `HEXAMINE_COBALT_CHLORIDE` →
+`COBALT_HEXAMMINE`; `MNSO4` → `MANGANESE_SULFATE`; `NISO4` → `NICKEL_SULFATE`. Dropped:
+`RECONSTITUTED_IN_DMSO` and `CADMIUM_SULFATE_12_20MM`.
+
+**One item was corrected rather than applied.** The review asked to combine
+`N_DECYL_BETA_D_MALTOSIDE` with `N_DODECYL_BETA_D_MALTOSIDE`. Those are different detergents —
+decyl is C10, dodecyl is C12, DM and DDM — and merging them would have repeated the 0.5.0 fault
+of aliasing one molecule to another. But the observation was right that this family was
+duplicated: `N_DECYL_BETA_D_MALTOSIDE` duplicated `DECYLMALTOSIDE`, and
+`N_DODECYL_BETA_D_MALTOSIDE` duplicated `DDM`. Merged along the correct axis, and the two
+survivors now carry chemical display names rather than abbreviations.
+
+**"Use the name, not the formula" is now applied throughout.** `HCL`, `NAOH`, `CH3COONA`,
+`CH3COONH4`, `NAKPO4`, `NA2SO3`, `NAHCO3`, `H2O`, `HGCL2`, `RBCL` and `YBCL3` duplicated
+name-based entries and were folded into them. `GDCL3`, `YCL3`, `BECL2`, `ALCL3` and `LIBR` had no
+name-based entry and were renamed in place — `GADOLINIUM_CHLORIDE`, `YTTRIUM_CHLORIDE`,
+`BERYLLIUM_CHLORIDE`, `ALUMINIUM_CHLORIDE`, `LITHIUM_BROMIDE` — with the formula kept as an alias,
+which is the right way round: the formula is a spelling, the name is the identity.
+
+**Three aliases named a different molecule**, the fault class of 0.5.0, found while scanning the
+formula-shaped ids:
+
+| entry | alias removed | why |
+|---|---|---|
+| `CAPS` | `chaps` | CHAPS is a zwitterionic detergent, not a buffer |
+| `CAPS` | `capso` | CAPSO differs by a hydroxyl |
+| `MOPS` | `mopso` | MOPSO differs by a hydroxyl |
+
+**And the uniqueness validator caught a fourth.** Renaming `YCL3` to `YTTRIUM_CHLORIDE` collided
+with an alias `yttrium chloride` sitting on **`BARIUM_CHLORIDE`**. Barium is not yttrium. It had
+resolved silently since it was added, which is exactly why that validator exists — this is the
+fifth separate edit it has caught.
 
 ### 0.8.2 (2026-08-03)
 
