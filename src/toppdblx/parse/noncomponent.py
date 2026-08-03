@@ -68,7 +68,19 @@ _METHOD_ONLY = re.compile(
     r"^(?:batch|vapou?r diffusion|hanging drop|sitting drop|microbatch|micro[- ]batch|"
     r"dialysis|free interface diffusion|counter[- ]?diffusion|lcp|"
     r"lipidic cubic phase|in meso|under oil|oil|seeding|streak seeding|"
-    r"cryo|cryoprotectant|cryoprotection|frozen|flash[- ]?(?:cooled|frozen))$", re.I)
+    r"cryo|cryoprotectant|cryoprotection|frozen|flash[- ]?(?:cooled|frozen)|"
+    # **Single words the splitter tears out of a method phrase.** "VAPOR DIFFUSION, HANGING
+    # DROP" is split on the comma and then again on the space, leaving "vapor", "diffusion",
+    # "hanging" and "sitting" standing alone as if each were a reagent. 273 components.
+    r"vapou?r|diffusion|hanging|sitting|drop|wells?|plates?|"
+    # Narrative left in the details field, which several depositors treat as free text.
+    r"results?|discussion(?: for this structure)?|conclusions?|respectively|then|"
+    r"grown|crystalli[sz]ed|solubili[sz]ed|dissolved|purified|concentrated|"
+    r"anaerobic(?:ally)?|aerobic(?:ally)?|no buffer|if needed|as needed|if necessary|"
+    r"batch crystalli[sz]ation|direct cryo|cryoprotected|prior to data collection|"
+    r"several conditions resulted in crystals|"
+    # A duration is not a substance. "1-2 days", "overnight", "48 hours".
+    r"(?:[\d.\-\s]*)?(?:days?|hours?|hrs?|minutes?|mins?|weeks?|months?|overnight))$", re.I)
 
 # Unnamed protein, ligand or macromolecule. The depositor named a role, not a substance, so
 # there is nothing to look up. Anchored to the whole clause: "inhibitor" alone is unnamable,
@@ -78,7 +90,13 @@ _UNNAMED = re.compile(
     r"substrate|substrates|peptide|peptides|complex|enzyme|antibody|antibodies|fab|fab fragment|"
     r"dna|rna|nucleic acid|oligonucleotide|nucleotide|cofactor|cofactors|"
     r"analog|analogue|derivative|sample|solution|mixture|reagent|additive|"
-    r"macromolecule|substrate analog(?:ue)?|product|metabolite)$", re.I)
+    r"macromolecule|substrate analog(?:ue)?|product|metabolite|"
+    # **A role in the condition, not a substance in it.** "precipitant" and "crystallant" name
+    # whatever did the precipitating without saying what it was, and "buffer" alone names no
+    # buffer. No lexicon entry can ever match any of them. 231 components.
+    r"precipitant|precipitating agent|crystallant|crystallizing agent|crystallising agent|"
+    r"buffer|protein buffer|peptidic ligand|small molecule|heavy atom|"
+    r"cryo ?protectant|cryo ?protective agent)$", re.I)
 
 # A reference to a commercial screen or an internal condition number rather than a composition.
 _SCREEN_REF = re.compile(

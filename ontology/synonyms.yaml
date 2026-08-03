@@ -1,4 +1,4 @@
-version: 0.8.6
+version: 0.8.7
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -218,6 +218,7 @@ reagents:
   - amonium sulphate
   - saturated ammonium sulphate
   - ~1.7 m ammonium sulphate
+  - ams
 - canonical_id: AMMONIUM_TARTRATE
   display_name: Ammonium tartrate
   chem_class: salt
@@ -422,6 +423,8 @@ reagents:
   - bistris-propane
   - bis-tris propane buffer
   - bis-trispropane
+  - btprop
+  - bt propane
   note: Diprotic, pKa 6.8 and 9.0. The lower value is recorded here; the pH banding in the assignment
     step should use the reported pH, not the pKa.
 - canonical_id: BORIC_ACID

@@ -4,8 +4,8 @@ Generated 2026-08-03 by `./run.sh release.datasheet`. Every figure is read
 from the data at generation time, so this file cannot drift from what it describes.
 
 **Schema version** `0.1.0-draft` · **Ontology version** `0.2.0`
-· **Lexicon version** `0.8.6` (486 reagents,
-1484 names)
+· **Lexicon version** `0.8.7` (486 reagents,
+1487 names)
 
 ---
 
@@ -44,10 +44,10 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 |---------|-------|
 | Records (one per `pdb_id` + `crystal_id`) | 199,185 |
 | Distinct PDB entries | 198,691 |
-| Usable records | 186,246 (93.5%) |
-| Discarded, with a reason code | 12,939 |
+| Usable records | 186,264 (93.5%) |
+| Discarded, with a reason code | 12,921 |
 | Components | 605,491 |
-| Components identified as a canonical reagent | 518,727 (85.7%) |
+| Components identified as a canonical reagent | 518,813 (85.7%) |
 | Records with a linked protein sequence | 195,985 |
 | Distinct 30% identity sequence clusters | 23,868 |
 | Classified into a precipitant class | 143,626 |
@@ -61,10 +61,10 @@ distribution is itself a result.
 
 | Reason | Records | Share |
 |--------|---------|-------|
-| `NO_REAGENT_MATCH` | 5,651 | 2.84% |
+| `NO_REAGENT_MATCH` | 5,638 | 2.83% |
 | `TOO_SHORT` | 4,369 | 2.19% |
-| `METHOD_ONLY` | 2,500 | 1.26% |
-| `UNPARSEABLE_RESIDUAL` | 147 | 0.07% |
+| `METHOD_ONLY` | 2,508 | 1.26% |
+| `UNPARSEABLE_RESIDUAL` | 134 | 0.07% |
 | `REFERENCE_ONLY` | 103 | 0.05% |
 | `EMPTY` | 91 | 0.05% |
 | `NON_CRYSTALLISATION_TEXT` | 78 | 0.04% |
@@ -73,8 +73,8 @@ distribution is itself a result.
 
 | Class | Components |
 |-------|-----------|
-| buffer | 165,010 |
-| salt | 147,228 |
+| buffer | 165,050 |
+| salt | 147,274 |
 | peg | 127,286 |
 | additive | 26,827 |
 | organic | 23,347 |
@@ -91,8 +91,8 @@ value and refuses to guess its meaning.
 
 | Source | Records |
 |--------|---------|
-| buffer | 98,870 |
-| unstated | 87,327 |
+| buffer | 98,901 |
+| unstated | 87,314 |
 | final | 49 |
 
 ---

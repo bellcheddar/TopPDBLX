@@ -137,3 +137,58 @@ def test_the_new_patterns_do_not_swallow_real_reagents(name):
     real reagent silently disappears rather than showing up as unidentified. `mega 8` is the
     sharpest test: it looks like an apparatus note and is a detergent."""
     assert classify(name) is None
+
+
+# Narrative and split method phrases, 2026-08-03. Ranking the 71,194 unidentified components
+# showed ~2,400 that are not chemistry and were being scored as reagents the parser failed to
+# identify: single words torn out of "VAPOR DIFFUSION, HANGING DROP" by the splitter, free text
+# some depositors leave in the details field, durations, and roles rather than substances.
+
+@pytest.mark.parametrize("clause", [
+    "vapor", "vapour", "diffusion", "hanging", "sitting", "drop", "well", "plate",
+])
+def test_a_word_torn_out_of_a_method_phrase_is_method_text(clause):
+    """The splitter breaks "VAPOR DIFFUSION, HANGING DROP" on the comma and again on the space,
+    leaving each word standing alone as though it were a reagent."""
+    assert classify(clause) == "method_text"
+
+
+@pytest.mark.parametrize("clause", [
+    "results", "discussion for this structure", "respectively", "then", "anaerobic",
+    "if needed", "no buffer", "prior to data collection", "batch crystallization",
+    "several conditions resulted in crystals", "grown", "crystallized", "solubilized",
+])
+def test_narrative_left_in_the_details_field_is_method_text(clause):
+    assert classify(clause) == "method_text"
+
+
+@pytest.mark.parametrize("clause", ["days", "2 days", "overnight", "48 hours", "1-2 days"])
+def test_a_duration_is_not_a_substance(clause):
+    assert classify(clause) == "method_text"
+
+
+@pytest.mark.parametrize("clause", [
+    "precipitant", "crystallant", "buffer", "protein buffer", "peptidic ligand",
+    "crystallizing agent", "heavy atom",
+])
+def test_a_role_is_not_a_substance(clause):
+    """The depositor named what it did, not what it was. No lexicon entry can ever match."""
+    assert classify(clause) == "unnamed_macromolecule"
+
+
+@pytest.mark.parametrize("clause", [
+    # Vendor stock mixtures. Real reagents with real compositions, and the Morpheus stock table
+    # can expand them -- so they must NOT be swallowed as method text.
+    "divalents", "divalent cations", "monosaccharides", "alcohols", "halogens", "nps",
+    # Reagents whose names collide with the prose above.
+    "sodium acetate", "peg 3350", "glycerol", "tris", "mpd", "dtt",
+])
+def test_real_reagents_and_vendor_stocks_survive(clause):
+    assert classify(clause) is None
+
+
+def test_no_anchored_rule_fires_on_a_clause_carrying_a_quantity_that_names_a_reagent():
+    """A concentration is strong evidence a substance is being named. The anchored rules
+    deliberately ignore `has_quantity`, so they must never match a real reagent name."""
+    for clause in ("0.1 M sodium acetate", "20% peg 3350", "1 mM dtt", "2.5 M ammonium sulfate"):
+        assert classify(clause, has_quantity=True) is None

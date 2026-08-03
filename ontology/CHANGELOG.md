@@ -7,7 +7,7 @@ Two artefacts are versioned here, independently:
 
 | File | Version | What it is |
 |------|---------|------------|
-| `synonyms.yaml` | 0.8.6 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
+| `synonyms.yaml` | 0.8.7 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
 | `groups.yaml` | 0.3.0 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
 
 ## groups.yaml
@@ -106,6 +106,15 @@ Known gaps recorded rather than hidden:
   could ever have been assigned to it.
 
 ## synonyms.yaml
+
+### 0.8.7 (2026-08-03)
+
+**486 reagents, 1,487 names.** Two abbreviations from the head of the unidentified list that are
+plainly real: `ams` → `AMMONIUM_SULFATE` (46 components) and `btprop` → `BIS_TRIS_PROPANE` (38).
+
+Shipped alongside a `parse.noncomponent` change rather than a lexicon one, because the rest of
+that list was narrative rather than chemistry. See the commit for the 2,416 components moved out
+of the reagent denominator.
 
 ### 0.8.6 (2026-08-03)
 
