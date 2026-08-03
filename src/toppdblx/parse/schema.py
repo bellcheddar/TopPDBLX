@@ -31,8 +31,24 @@ from .. import config
 # inhibitor), and must be excluded from that denominator: no lexicon entry could ever match it,
 # so scoring it as a failure to identify measures an artefact rather than the parser. Measured at
 # 10,206 components, worth 1.36 points of apparent identification.
+# `protein_buffer` and `soak` are scope, not chemistry, and the distinction is the one the role
+# vocabulary was missing. A reagent in a protein storage buffer or a post-growth soak *is* really
+# there and *is* correctly named, so `not_a_component` is a lie about it and every chemistry role
+# is a lie about what it did: the crystal did not grow in it. Without somewhere to put them the
+# only options were to emit them as components, which is a false positive, or to drop them, which
+# throws away a correct reading and teaches the model that text it read properly was wrong.
+#
+# Measured on the 192 gold records: 26 of the 32B teacher's 47 false positives are exactly this,
+# 55% of everything it gets wrong. Fourteen are protein storage buffers ("Protein solution was at
+# 20 mg/mL containing 50 mM Tris, 100 mM NaCl, 10 mM EDTA"), five are soaks, and the rest are
+# cryo steps that `cryo` already covers.
 Role = Literal["precipitant", "salt", "buffer", "additive", "cryo", "protein",
-               "not_a_component", "unknown"]
+               "protein_buffer", "soak", "not_a_component", "unknown"]
+
+# Roles that name a real, correctly-read reagent that the crystal nonetheless did not grow in.
+# Everything downstream that asks "what was in the condition" filters on this rather than
+# re-deriving the list, so adding a scope role in one place propagates.
+OUT_OF_SCOPE_ROLES = frozenset({"protein_buffer", "soak"})
 
 # Why a clause was judged to contain no reagent. Kept alongside the role so the decision is
 # auditable: a false positive here silently deletes real chemistry, so it must never be a

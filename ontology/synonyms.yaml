@@ -1,4 +1,4 @@
-version: 0.6.1
+version: 0.6.2
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -467,6 +467,15 @@ reagents:
   - 1 butanol
   - n-butanol
   - butan-1-ol
+- canonical_id: BUTANOL_2
+  display_name: 2-Butanol
+  chem_class: organic
+  default_unit: percent_v_v
+  aliases:
+  - 2-butanol
+  - 2 butanol
+  - sec-butanol
+  - butan-2-ol
 - chem_class: additive
   default_unit: millimolar
   canonical_id: BUTYROLACTONE
@@ -1329,6 +1338,13 @@ reagents:
   display_name: 2,5-hexanediol
   aliases:
   - 2,5-hexanediol
+  - 2,5 hexanediol
+  - 2,5-hexane diol
+  - 2,5-hexandiol
+  - hexane-2,5-diol
+  note: 'The spacing variants matter: `hexanediol` unqualified is an alias of HEXANEDIOL_16,
+    which outnumbers this entry 17 to 1, so a 2,5 spelling the index misses is not merely
+    dropped -- it is at risk of being read as the 1,6 isomer.'
 - chem_class: additive
   default_unit: millimolar
   canonical_id: HEXANETRIOL_126

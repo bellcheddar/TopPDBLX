@@ -54,6 +54,7 @@ import polars as pl
 
 from .. import config
 from ..manifest import Manifest
+from ..parse import schema
 
 STAGE = "assign.classify"
 
@@ -105,6 +106,21 @@ def classify_condition(components: list[dict[str, Any]]) -> tuple[str, Optional[
         # the pipeline merely suspects is a cryoprotectant may be a genuine precipitant, and
         # silently dropping it would invent an Unclassified where there was a real reading.
         if role == "cryo" and component.get("cryo_evidence") == "explicit":
+            continue
+
+        # **A protein storage buffer and a soak are the same argument as the cryoprotectant.**
+        # The reagent is real and correctly read; the crystal simply did not grow in it. A
+        # depositor who writes "Protein solution was at 20 mg/mL containing 50 mM Tris, 100 mM
+        # NaCl, 10 mM EDTA. Mother liqueur contained 0.2 M Na citrate" has named three reagents
+        # that belong to neither the drop nor the reservoir, and counting the Tris would name
+        # this condition's class from chemistry that was never in it.
+        #
+        # No evidence qualifier here, unlike `cryo`. That exclusion is hedged because `cryo` is
+        # mostly *inferred* from a reagent's identity, so dropping the inferred ones would
+        # discard genuine precipitants on a guess. These two roles are only ever assigned from
+        # the depositor's own framing -- the words "protein solution", "stock", "soaked in" --
+        # so there is no inference to hedge against.
+        if role in schema.OUT_OF_SCOPE_ROLES:
             continue
 
         if component.get("premix_id"):

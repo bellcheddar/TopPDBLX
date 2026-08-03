@@ -131,7 +131,7 @@ for deposition in archive:
 | RCSB Data GraphQL API | Fetches every deposition, batched and resumable |
 | gemmi | Reads the archive mmCIF for the byte-level fidelity gate |
 | `regex` | Clause splitting, which turned out to be the hard part rather than the chemistry |
-| `ontology/synonyms.yaml` | The reagent dictionary: 561 reagents, 1,362 spellings |
+| `ontology/synonyms.yaml` | The reagent dictionary: 562 reagents, 1,370 spellings |
 | pydantic | Enforces the schema and the chemical invariants on load |
 | polars, pyarrow, duckdb | Tables, joins and the queryable release |
 | MMseqs2 | Sequence clustering at 30%, 50% and 90% identity, to control redundancy |
@@ -150,7 +150,7 @@ for deposition in archive:
 | Records | 199,185 |
 | Usable | **186,263 (93.5%)** |
 | Components | 605,481, **85.3% identified** as a canonical reagent (87.6% excluding text that names no chemistry) |
-| Reagent lexicon | 561 reagents, 1,362 names (v0.6.1) |
+| Reagent lexicon | 562 reagents, 1,370 names (v0.6.2) |
 | Linked sequences | 184,229 across **23,159** distinct 30% identity clusters |
 | Screen-well matches | 45,547 component-set matches, 20,339 agreeing on every concentration |
 | Archive fidelity | **100.0000%** over 205,943 entries against the 90 GB mmCIF snapshot |
@@ -228,7 +228,12 @@ An earlier three-level ontology of 163 binned groups was withdrawn at v0.3.0. It
 | Round 2: 10 grouped decisions, 1,004 names | 502 | 1,265 | 84.5% |
 | Prose stripping (a parser fix, not curation) | 502 | 1,265 | 85.2% |
 | Separating apparatus notes and bare units from reagents | 502 | 1,265 | 85.2% (87.5% on chemistry alone) |
-| The 26 ionic liquids from PEG/Ionic Liquid 1 and 2 | 561 | 1,362 | **85.2%** (87.5% on chemistry alone) |
+| The 26 ionic liquids from PEG/Ionic Liquid 1 and 2 (v0.4.0) | 526 | 1,289 | 85.2% (87.5% on chemistry alone) |
+| v0.5.0: stop aliasing one molecule to another | 535 | 1,300 | 85.3% |
+| v0.5.1: twelve more aliases naming a different molecule | 542 | 1,306 | 85.3% |
+| v0.6.0: the first gold set, 96 records labelled by hand | 556 | 1,346 | 85.3% |
+| v0.6.1: the second gold set, sampled where teacher and pipeline disagree | 561 | 1,362 | 85.3% |
+| v0.6.2: isomers the teacher's false positives exposed | **562** | **1,370** | 85.3% |
 
 **For the crystallographer:** every reagent carries the chemistry the ontology needs, and each field is enforced on load rather than being optional documentation. A `peg` entry must state its molecular weight, a `buffer` must state its pKa, and a `premix` must list its constituents. Those invariants caught three separate attempts to bulk-add entries that could not satisfy them.
 

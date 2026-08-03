@@ -72,7 +72,8 @@ PARSER_NAME = "teacher_v1"
 SYSTEM = (
     "You convert a PDB crystallisation condition string into JSON. "
     "Return only a JSON array, no prose and no code fence. Each element has: "
-    "role (precipitant, salt, buffer, additive, cryo, not_a_component or unknown), "
+    "role (precipitant, salt, buffer, additive, cryo, protein_buffer, soak, not_a_component "
+    "or unknown), "
     "name (the canonical reagent in UPPER_SNAKE_CASE, or null when the text names no reagent), "
     "amount (a number or null) and "
     "unit (percent_w_v, percent_v_v, molar, millimolar, mg_ml or null).\n"
@@ -85,6 +86,13 @@ SYSTEM = (
     "ratios, protein concentrations, or an unnamed protein, inhibitor or compound.\n"
     "- Give the reagent, never the product: 'sodium acetate trihydrate' is SODIUM_ACETATE.\n"
     "- A cryoprotectant added after growth still gets role cryo, not precipitant.\n"
+    "- Depositions often describe the protein sample before the condition. A reagent in the "
+    "protein solution, stock, storage or purification buffer gets role protein_buffer. Name it "
+    "normally; the role records that the crystal did not grow in it. Look for 'protein "
+    "solution', 'protein at N mg/mL in ...', 'stock', 'enzyme was in'.\n"
+    "- A reagent a grown crystal was moved into gets role soak: 'soaked in', 'transferred to', "
+    "'crystals were incubated with'. Growth chemistry stated in the same sentence keeps its "
+    "own role.\n"
     "- If the text states an impossible amount, report it as written; do not silently fix it."
 )
 
@@ -116,6 +124,27 @@ FEWSHOT: list[tuple[str, str]] = [
      '[{"role":"precipitant","name":"PEG_3350","amount":20.0,"unit":"percent_w_v"},'
      '{"role":"salt","name":"SODIUM_CHLORIDE","amount":0.2,"unit":"molar"},'
      '{"role":"not_a_component","name":null,"amount":null,"unit":null}]'),
+    # **The only hand-written example here, and the exception is argued rather than assumed.**
+    # The other three are verbatim `train.jsonl` records, so their answers are known-good and
+    # provably disjoint from anything the teacher is scored on. No such record can exist for
+    # `protein_buffer` or `soak`: the rules have never emitted those roles, so `train.jsonl`
+    # contains no instance of either and there is nothing to copy.
+    #
+    # Written to the shape of the failure rather than lifted from it. The 26 scope errors in the
+    # gold sets are all one pattern -- a protein sample described before the condition, and the
+    # condition after it -- so the example states both halves and puts the boundary in the middle,
+    # where the model has to choose. Composed from reagents in that pattern, not from any gold
+    # record's text, so the yardstick stays outside the prompt.
+    ("Protein solution was at 20 mg/mL containing 50 mM Tris pH 7.5, 100 mM NaCl and 10 mM EDTA. "
+     "Mother liquor contained 0.2 M sodium citrate and 18% PEG 3350. Crystals were soaked in "
+     "5 mM inhibitor, then cryoprotected with 20% glycerol.",
+     '[{"role":"protein_buffer","name":"TRIS","amount":50.0,"unit":"millimolar"},'
+     '{"role":"protein_buffer","name":"SODIUM_CHLORIDE","amount":100.0,"unit":"millimolar"},'
+     '{"role":"protein_buffer","name":"EDTA","amount":10.0,"unit":"millimolar"},'
+     '{"role":"buffer","name":"SODIUM_CITRATE","amount":0.2,"unit":"molar"},'
+     '{"role":"precipitant","name":"PEG_3350","amount":18.0,"unit":"percent_w_v"},'
+     '{"role":"not_a_component","name":null,"amount":null,"unit":null},'
+     '{"role":"cryo","name":"GLYCEROL","amount":20.0,"unit":"percent_v_v"}]'),
 ]
 
 

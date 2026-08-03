@@ -130,3 +130,42 @@ def test_a_condition_that_is_only_an_explicit_cryo_is_unclassified():
     """Excluding it must leave no precipitant rather than silently leaving the class behind."""
     label, reason = classify_condition([cryo()])
     assert (label, reason) == (UNCLASSIFIED, "no_precipitant")
+
+
+# Scope roles, 2026-08-03. Measured on the 192 gold records: 26 of the 32B teacher's 47 false
+# positives are a reagent that is really in the text and correctly named, but belongs to the
+# protein sample or a post-growth soak rather than to the condition. Fourteen are protein storage
+# buffers, five are soaks, and the rest are cryo steps `cryo` already covered.
+
+def scoped(role, name="TRIS", chem_class="buffer", concentration=50, unit="millimolar"):
+    return {"name_canonical": name, "chem_class": chem_class, "concentration": concentration,
+            "unit": unit, "role": role, "premix_id": None}
+
+
+@pytest.mark.parametrize("role", ["protein_buffer", "soak"])
+def test_a_reagent_outside_the_condition_does_not_name_the_class(role):
+    """"Protein solution was at 20 mg/mL containing 50 mM Tris ... Mother liqueur contained 0.2 M
+    Na citrate and 18% PEG 3350." The Tris is real and read correctly; the crystal did not grow
+    in it, so it must not contribute a Salt or Buffer to a PEG condition."""
+    condition = [comp("PEG_3350", "peg", 18, "percent_w_v"), scoped(role)]
+    assert classify_condition(condition)[0] == "PEG"
+
+
+@pytest.mark.parametrize("role", ["protein_buffer", "soak"])
+def test_a_condition_that_is_only_out_of_scope_is_unclassified(role):
+    """The same requirement the cryo exclusion carries: removing the component must leave no
+    precipitant, never quietly leave its class behind."""
+    label, reason = classify_condition([scoped(role, "SODIUM_CHLORIDE", "salt", 0.1, "molar")])
+    assert (label, reason) == (UNCLASSIFIED, "no_precipitant")
+
+
+def test_scope_roles_are_excluded_without_an_evidence_qualifier():
+    """Unlike `cryo`, which is hedged on `cryo_evidence` because it is mostly *inferred* from a
+    reagent's identity. `protein_buffer` and `soak` are only ever assigned from the depositor's
+    own framing, so there is no inference to hedge and no qualifier to supply -- and the exclusion
+    must not silently depend on one being absent."""
+    for role in ("protein_buffer", "soak"):
+        component = scoped(role)
+        assert "cryo_evidence" not in component
+        assert classify_condition([comp("PEG_3350", "peg", 18, "percent_w_v"), component])[0] \
+            == "PEG"

@@ -3,6 +3,86 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
+## 2026-08-03: scope roles, and two claims in this file that were wrong
+
+### Running now
+
+`models.teacher_label` on **2,779 residual records where the rules and the student between them
+identified nothing** — total recall loss rather than partial, and the subset where the teacher's
+measured recall advantage is worth most. Both gold sets held out (13 records). Steady at ~84
+s/batch of 8, so **about 8 hours**, not the 31 estimated from 40 s/record: these texts are short,
+median 76 characters. Output `data/interim/teacher_components_blank.parquet`, log
+`data/interim/slm/teacher_blank.log`.
+
+**The union ensemble is not deployable over the whole residual and this file implied it was.** At
+the observed rate the full 52,145 records is 24 days on this machine. The 96.0% union recall is a
+measurement of what is recoverable, not a pipeline. Targeting the blank records is what makes it
+affordable.
+
+### The role question, measured rather than assumed
+
+The 32B teacher's false positives across both gold sets, 47 of them, read against their own
+deposition text:
+
+| cause | n | share |
+|---|---|---|
+| **scope** — protein storage buffer, soak, or cryo step | 26 | 55% |
+| gold labeller disagreement (reagent is plainly in the text) | ~10 | 21% |
+| titrant of a buffer pair read as a component | 3 | 6% |
+| wrong isomer or variant | 3 | 6% |
+| other | ~5 | 11% |
+
+**This file said "every surviving error is a role problem" and "the schema already has (`role`)".
+Both are wrong.** Scope is 55%, not everything. And the schema had `cryo` and `protein` — where
+`protein` means *the reagent is a protein* — with no way to say *this is real chemistry belonging
+to a step that is not crystallisation*. There was nowhere to put a protein storage buffer, so the
+only options were to emit it as a component, which is a false positive, or drop it, which throws
+away a correct reading and teaches the model that text it read properly was wrong.
+
+**Built:** `protein_buffer` and `soak` added to `parse.schema.Role`, with
+`schema.OUT_OF_SCOPE_ROLES` as the single list everything downstream filters on. `classify` now
+skips them on the same argument as the explicit cryoprotectant, and deliberately *without* an
+evidence qualifier: `cryo` is hedged because it is mostly inferred from a reagent's identity,
+whereas these two are only ever assigned from the depositor's own framing. The teacher's prompt
+gains both roles, the cues that signal them, and one worked example.
+
+**Not yet measured.** The prompt change needs a teacher run over the gold records to score, and
+the GPU is busy until the blank-record job finishes. Expect it to recover part of 26 FPs of 520
+predictions — a ceiling of about 5 points of teacher precision, 91.0% to ~96%, if every scope
+error were caught and nothing else broke. Treat that as the optimistic bound, not a forecast.
+
+**The running job predates the prompt change** and will label those 2,779 records without scope
+roles. 236 of them (8.5%) carry protein-buffer or soak framing. Re-run *only those 236* under the
+new prompt afterwards — 30 batches, well under an hour — rather than redoing eight hours.
+
+### Do not edit `build_slm_dataset.SYSTEM`
+
+It is imported by `apply_slm` and `eval_slm`, so it is both the prompt round 06 was trained under
+and the prompt it is served with, for a model that is public on HuggingFace and cannot be
+retrained to match. Editing it would re-prompt a shipped model and fail silently — it would still
+answer, slightly worse, with no test going red. The scope roles were added to the teacher's prompt
+and not to this one. A student round trained on teacher labels needs its own versioned prompt
+beside it.
+
+### Lexicon 0.6.2, and the two edits the evidence rejected
+
+`HEXANEDIOL_25` gains four spacing variants and `BUTANOL_2` is new. Two further changes were
+queued and then dropped after reading the text: the bare `butanol` alias on `TERT_BUTANOL` looks
+exactly like the 0.5.x isomer bugs, but all 25 residual occurrences are `TERTIARY BUTANOL` with
+the qualifier split off, so removing it would have cost correct readings; and 639 apparent
+`2,4-pentanediol` hits are all `2-methyl-2,4-pentanediol`, which is MPD. **Checking the text
+changed two of four decisions.**
+
+### The titrant pattern, now seen in three places
+
+`CAPS/ Sodium hydroxide`, `BICINE/Tris base`, `MOPS/HEPES-Na` — the second half is the titrant of
+a buffer system, not a component. 1,065 residual records match the pattern, though only 266
+components corpus-wide currently resolve to a titrant, because aliases already fold the common
+`tris/hcl` into `TRIS`. This is the same bug already logged against the Rigaku screen extraction
+and visible in the head of the dropped-name list. **Not fixed** — one guard would serve all three
+callers, and it needs care, since acetic acid and sodium hydroxide are occasionally real
+components in their own right.
+
 ## 2026-08-03: the contested gold batch changes the reading
 
 96 records sampled where teacher and pipeline disagree, three equal strata. **32 rejections against
@@ -70,11 +150,13 @@ was picked.
 
 1. **Three-way agreement.** Qwen3-32B is cached and untried. Two teachers cut the wrong additions
    by 55%; a third may reach the precision bar, at ~100 s/record on the candidate subset only.
-2. **The role question, not the chemistry question.** Every surviving error is a reagent that *is*
-   in the text but belongs to a protein buffer, a soak or a cryo step. That is a labelling
-   distinction the schema already has (`role`) and nobody has trained against.
-3. **A disagreement-sampled second gold set.** The current 96 is 9% informative; recall differences
-   keep landing at p = 0.26–0.38, so real effects read as noise.
+2. ~~**The role question, not the chemistry question.** Every surviving error is a reagent that
+   *is* in the text but belongs to a protein buffer, a soak or a cryo step. That is a labelling
+   distinction the schema already has (`role`) and nobody has trained against.~~ **Both halves
+   corrected 2026-08-03**: scope is 55% of the errors rather than all of them, and the schema had
+   no vocabulary for it. See the top of this file.
+3. ~~**A disagreement-sampled second gold set.**~~ Done 2026-08-03; it is what produced the
+   correction above.
 
 ### Reasoning models need a different harness
 

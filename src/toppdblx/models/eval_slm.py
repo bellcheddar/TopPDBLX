@@ -60,7 +60,7 @@ IDENTIFICATION_TARGET = 85.0
 VALIDITY_TARGET = 99.0
 
 VALID_ROLES = {"precipitant", "salt", "buffer", "additive", "cryo", "not_a_component",
-               "unknown"}
+               "unknown", "protein_buffer", "soak"}
 VALID_UNITS = {"percent_w_v", "percent_v_v", "molar", "millimolar", "mg_ml", None}
 
 # Near-misses that mean exactly one of the valid units, mapped rather than rejected.

@@ -41,6 +41,16 @@ from ..manifest import Manifest
 
 STAGE = "models.build_slm_dataset"
 
+# **This string is a released interface, not an editable constant.** `apply_slm` and `eval_slm`
+# both import it, so it is the prompt the shipped round 06 adapter was trained under *and* the one
+# it is served with. Changing it re-prompts a model that cannot be retrained to match, and the
+# damage would be silent: the model would still answer, slightly worse, with nothing failing.
+#
+# `protein_buffer` and `soak` were added to the role vocabulary in `parse.schema` and to the
+# *teacher's* prompt in `models.teacher_label`, and deliberately not here. The rules cannot
+# produce those roles, so this dataset can never contain one, and listing a role the training
+# targets never use teaches the model only that it is unused. The first student round trained on
+# teacher labels needs its own versioned prompt beside this one, not an edit to this one.
 SYSTEM = (
     "You convert a PDB crystallisation condition string into JSON. "
     "Return only a JSON array. Each element has: role (precipitant, salt, buffer, additive, "

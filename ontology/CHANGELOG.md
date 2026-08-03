@@ -7,7 +7,7 @@ Two artefacts are versioned here, independently:
 
 | File | Version | What it is |
 |------|---------|------------|
-| `synonyms.yaml` | 0.6.1 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
+| `synonyms.yaml` | 0.6.2 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
 | `groups.yaml` | 0.3.0 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
 
 ## groups.yaml
@@ -106,6 +106,38 @@ Known gaps recorded rather than hidden:
   could ever have been assigned to it.
 
 ## synonyms.yaml
+
+### 0.6.2 (2026-08-03)
+
+**562 reagents, 1,370 names.** Found by taking the 32B teacher's 47 false positives across both
+gold sets and reading each one against its own deposition text, rather than by scanning the
+lexicon against itself.
+
+- **`HEXANEDIOL_25` gains four spacing variants** — `2,5 hexanediol`, `2,5-hexane diol`,
+  `2,5-hexandiol`, `hexane-2,5-diol`. Only the fully hyphenated spelling was listed, and 28
+  occurrences in the residual use another. This is the dangerous kind of gap rather than a merely
+  wasteful one: `hexanediol` unqualified is an alias of `HEXANEDIOL_16`, which outnumbers the 2,5
+  isomer 730 to 42, so a missed 2,5 spelling is not dropped but at risk of being read as the wrong
+  molecule.
+- **`BUTANOL_2` is new**, with `2-butanol`, `sec-butanol` and `butan-2-ol`. Nine occurrences in
+  the residual, resolving to nothing.
+
+**Two further changes were proposed and rejected on the evidence, which is the more useful
+result.**
+
+`TERT_BUTANOL` claims the bare alias `butanol`, which has the exact shape of the 0.5.x bugs — a
+stem that names four isomers, aliased to one of them, and this corpus holds 340 tert against 219
+1-butanol, so there is no dominant convention to appeal to. It was queued for removal. Reading the
+25 residual occurrences of bare `butanol` first showed every one of them to be a `TERTIARY
+BUTANOL` or `tert Butanol` whose qualifier the splitter had separated. The alias is not
+overreaching, it is catching that split, and removing it would have cost correct identifications
+to fix a bug that was not there.
+
+A `2,4-pentanediol` gap was also queued, on 639 residual hits. Every one is
+`2-methyl-2,4-pentanediol`, which is MPD, already an entry.
+
+**Checking the text before editing changed two of four decisions.** A frequency scan says which
+spellings exist; only the surrounding words say what they mean.
 
 ### 0.6.1 (2026-08-03)
 
