@@ -120,6 +120,18 @@ def accounted_for(component: dict[str, Any]) -> bool:
     return bool(component["name_canonical"]) or component["role"] == "not_a_component"
 
 
+def _group_components(frame: "pl.DataFrame") -> dict[tuple, list[dict[str, Any]]]:
+    """Teacher components by record, in emission order, keeping only what the pipeline would."""
+    out: dict[tuple, list[dict[str, Any]]] = {}
+    cols = ["pdb_id", "crystal_id", "component_index", "role", "name_canonical",
+            "concentration", "unit"]
+    for row in frame.select(cols).sort("component_index").iter_rows(named=True):
+        if row["role"] != "not_a_component" and not row["name_canonical"]:
+            continue
+        out.setdefault((row["pdb_id"], row["crystal_id"]), []).append(row)
+    return out
+
+
 def target_json(components: list[dict[str, Any]]) -> str:
     """The completion the model must learn to produce.
 
@@ -156,6 +168,22 @@ def main(argv: Optional[list[str]] = None) -> int:
                              "arithmetic: the rules find scope roles in 2,641 usable records "
                              "against ~100,000, so at 1x the model sees the distinction in under "
                              "3%% of its examples and will not learn a class it barely meets")
+    parser.add_argument("--teacher-components", type=Path, nargs="*", default=None,
+                        help="one or more teacher components parquets. Their records are added "
+                             "as ADDITIONAL training rows, never replacing a rules label. This is "
+                             "what rounds 07 and 08 got wrong: they substituted noisier teacher "
+                             "labels for good rules labels across the board")
+    parser.add_argument("--oversample-teacher", type=int, default=4,
+                        help="repeat teacher-labelled rows. They are residual-like text, which "
+                             "is the population the model is applied to and the one thing a "
+                             "rules-only set cannot supply, but they are only ~3%% of the data. "
+                             "Held at 4x deliberately: the teacher invents a reagent in 3.7%% of "
+                             "its components, and the multiplier scales that contribution too")
+    parser.add_argument("--exclude-gold", type=Path, nargs="*", default=None,
+                        help="gold sets whose records must never become training rows. NOT "
+                             "optional when passing --teacher-components: 96 records of "
+                             "teacher_components_2k.parquet ARE the contested gold set, and "
+                             "training on them would leave the yardstick measuring itself")
     parser.add_argument("--system-version", choices=sorted(PROMPTS), default="v1",
                         help="v1 is the frozen prompt the shipped round 06 adapter is served "
                              "under and must stay the default. v2 adds the protein_buffer and "
@@ -179,6 +207,26 @@ def main(argv: Optional[list[str]] = None) -> int:
     with Manifest(STAGE, params={"max_train": args.max_train}) as m:
         m.add_input(args.conditions).add_input(args.components).add_input(args.splits)
 
+        # **The gold hold-out, applied to every row and not only the teacher's.**
+        #
+        # The gold set is drawn from the residual, so up to round 08 no gold text could reach
+        # training by construction: a residual record is one the rules failed on. Lexicon 0.7.0
+        # and `parse.scope` changed that -- records that now parse confidently include some whose
+        # text is a verbatim duplicate of a gold record deposited under a different pdb_id, and
+        # 11 of them entered training as ordinary *rules* rows. A rules-only round would have
+        # leaked just as much as this one.
+        #
+        # Matched on normalised text, not on `(pdb_id, crystal_id)`: this corpus deposits the
+        # same condition string under many entries, one of them 1,784 times, so the key catches
+        # almost none of it.
+        held_keys: set[tuple] = set()
+        held_text: set[str] = set()
+        for path in (args.exclude_gold or []):
+            for record in json.loads(Path(path).read_text()).get("records", []):
+                held_keys.add((record["pdb_id"], record.get("crystal_id", "1")))
+                if record.get("text"):
+                    held_text.add(" ".join(record["text"].split()).lower())
+
         bootstrap: dict[str, list[dict[str, Any]]] = {"train": [], "valid": []}
         residual: list[dict[str, Any]] = []
         skipped_unidentified = 0
@@ -190,6 +238,8 @@ def main(argv: Optional[list[str]] = None) -> int:
             if not text:
                 continue
             key = (row["pdb_id"], row["crystal_id"])
+            if key in held_keys or " ".join(text.split()).lower() in held_text:
+                continue                      # the yardstick is never a training example
             parts = grouped.get(key, [])
             fold = row["fold_30"] or "train"
 
@@ -239,6 +289,56 @@ def main(argv: Optional[list[str]] = None) -> int:
                     "n_unidentified": sum(1 for c in parts if not accounted_for(c)),
                     "fold": fold,
                 })
+
+        # **Teacher-labelled residual rows, added rather than substituted.**
+        #
+        # Every row above comes from a record the *rules* read confidently, which is the
+        # distillation ceiling stated at the top of this file: the model can approximate the
+        # mapping the rules already implement and no more. These rows are the opposite -- text the
+        # rules could not read, labelled by a local 32B -- and they are the only ingredient that
+        # can teach something the rules do not already know.
+        #
+        # Filtered on exactly the guards `apply_slm` applies to model output, because a label the
+        # pipeline would refuse to keep is not a label worth training on.
+        n_teacher = 0
+        if args.teacher_components:
+            # **Held out by text as well as by key, and the key alone is not enough.** This
+            # corpus repeats itself: the same condition string is deposited under many different
+            # pdb_ids, one of them 1,784 times. Excluding only `(pdb_id, crystal_id)` let 15 gold
+            # records back into training and 4 into validation under a different entry's id --
+            # the yardstick, verbatim, as a training example.
+            #
+            # Rounds up to 08 were never exposed to this: the gold set is drawn from the residual,
+            # and residual records cannot become rules-derived training rows by construction. The
+            # hole opens only when teacher-labelled residual text is added, which is new here.
+            held = held_keys
+            by_key = {(r["pdb_id"], r["crystal_id"]): r for r in residual}
+            teacher_rows: list[dict[str, Any]] = []
+            seen_keys: set[tuple] = set()
+            for path in args.teacher_components:
+                if not Path(path).exists():
+                    print(f"  teacher source missing, skipped: {path}")
+                    continue
+                frame = pl.read_parquet(path)
+                for key, group in _group_components(frame).items():
+                    if key in held or key in seen_keys or key not in by_key:
+                        continue
+                    if " ".join(by_key[key]["text"].split()).lower() in held_text:
+                        continue
+                    if not any(c["name_canonical"] for c in group):
+                        continue          # the teacher found nothing either; nothing to teach
+                    seen_keys.add(key)
+                    teacher_rows.append({"messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": by_key[key]["text"]},
+                        {"role": "assistant", "content": target_json(group)},
+                    ]})
+            n_teacher = len(teacher_rows)
+            bootstrap["train"].extend(teacher_rows * max(1, args.oversample_teacher))
+            print(f"  teacher rows: {n_teacher:,} distinct, "
+                  f"{n_teacher * max(1, args.oversample_teacher):,} after "
+                  f"{args.oversample_teacher}x oversampling, "
+                  f"{len(held):,} gold records held out")
 
         # **Deduplicate before training.** The corpus repeats itself heavily: 45.7% of rows
         # shared an input with another row, and one condition ("protein in 25mM Tris/HCl pH 7.5
@@ -320,6 +420,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             "n_duplicate_inputs_removed": n_duplicates,
             "n_empty_answer_examples": n_empty_answers,
             "n_scope_examples": n_scope_examples,
+            "n_teacher_rows": n_teacher,
             "system_version": args.system_version,
             "n_valid": len(bootstrap["valid"]),
             "n_residual": len(residual),
