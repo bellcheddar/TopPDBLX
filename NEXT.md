@@ -3,6 +3,31 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
+## 2026-08-03: scoring round 09 — `SCORE_ROUND09.sh`
+
+Run it after training. It produces every column the round table needs, and two of them need care.
+
+**Identification and grounding are scored for round 06 as well, today, not quoted from July.** The
+frozen benchmark fixes the *records* (2,000 of them, header says `lexicon_version: 0.3.0,
+n_reagents: 502`) but identification asks whether an emitted name is **in the lexicon**, and the
+lexicon has gone 502 → 499 reagents through today's merges with 92 ids retired. Round 06's
+published 88.99% and a round 09 figure measured now are therefore not the same measurement.
+Scoring both against the same dictionary is the only way the column means anything.
+
+**Each round is served with the prompt it was trained under** — round 06 with `--system-version
+v1`, round 09 with `v2`. A mismatch does not fail, it answers slightly worse and reports nothing.
+
+**A new progress file for round 09.** `apply_slm` resumes from whatever `--progress` it is given,
+and the default `apply_progress.jsonl` holds round 06's generations — pointing at it would
+silently re-ship round 06 under round 09's name. The script uses `apply_progress_r09.jsonl`.
+
+The checkpoint sweep scores on **both** gold sets and picks on F0.5, never on `identification`,
+which has given three wrong answers to "how long should this train". Round 06 stays shipped unless
+round 09 wins; its current figures are 98.2% / 95.2%, F0.5 97.6.
+
+242 of the 2,000 frozen records have since left the residual because the rules learned to read
+them. That is harmless: the frozen file carries its own `text`, so the population is still fixed.
+
 ## 2026-08-03: end-to-end review before the final training round
 
 A full-pipeline review. Four findings acted on, three deferred with reasons, and a set of stages

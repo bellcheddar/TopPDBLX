@@ -80,7 +80,9 @@ echo "== 6. train: 32 layers, NOT the default 16 =="
   --steps-per-report 10 --steps-per-eval 50
 
 echo
-echo "Next, in the morning: sweep checkpoints on BOTH gold sets and serve with v2."
+echo "Next: ./SCORE_ROUND09.sh   -- identification, grounding, the gold sweep and components"
+echo
+echo "Then, in the morning: sweep checkpoints on BOTH gold sets and serve with v2."
 echo "  ./run.sh models.apply_slm --checkpoint N --system-version v2 --records <gold>"
 echo "  ./run.sh eval.gold_metrics --gold <gold> --slm-components ..."
 echo "Round 06 stays shipped unless round 09 wins on F0.5."
