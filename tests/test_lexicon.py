@@ -171,7 +171,7 @@ def test_yaml_file_parses_as_plain_yaml():
 
 
 def test_reported_name_count_is_the_parser_lookup_index(shipped):
-    """"485 reagents, 1,461 names" in the README and changelog means the *normalised lookup index*,
+    """"488 reagents, 1,466 names" in the README and changelog means the *normalised lookup index*,
     not the raw alias count nor aliases plus display names.
 
     Pinned because the three counts differ by up to 25% and the changelog was published with the
@@ -180,8 +180,8 @@ def test_reported_name_count_is_the_parser_lookup_index(shipped):
     string are one name, not two.
     """
     index = shipped.index()
-    assert len(index) == 1461, f"lookup index is {len(index)}; update the README and CHANGELOG"
-    assert len(shipped.reagents) == 485
+    assert len(index) == 1466, f"lookup index is {len(index)}; update the README and CHANGELOG"
+    assert len(shipped.reagents) == 488
     raw_aliases = sum(len(r.aliases) for r in shipped.reagents)
     assert raw_aliases != len(index), "the two counts must not be conflated"
 
@@ -253,3 +253,58 @@ def test_no_two_entries_share_a_display_name(shipped):
         shipped.reagents,
         lambda r: re.sub(r"[^a-z0-9]", "", (r.display_name or "").lower()),
     ) == {}
+
+
+# Aliases naming a *different molecule*, 2026-08-03. This is the fault class of lexicon 0.5.0 and
+# it keeps recurring, because a wrong alias is invisible in every metric: the name resolves, so
+# the corpus scores better for being wrong. Seven were found in one afternoon --
+# BARIUM_CHLORIDE claiming "yttrium chloride", SODIUM_ACETATE claiming "praseodymium acetate",
+# CALCIUM_ACETATE claiming "cobalt acetate", CAPS claiming "chaps" and "capso", MOPS claiming
+# "mopso", BETA_OG claiming "n-acetyl-d-glucosamine", TRIS claiming "bistris-hcl".
+#
+# The metals and anions below are enough to catch the inorganic half automatically. The organic
+# half still needs a chemist, which is what LEXICON_REVIEW.csv is generated for.
+
+METALS = {"lithium", "sodium", "potassium", "rubidium", "caesium", "cesium", "beryllium",
+          "magnesium", "calcium", "strontium", "barium", "aluminium", "aluminum", "yttrium",
+          "lanthanum", "cerium", "praseodymium", "neodymium", "samarium", "europium",
+          "gadolinium", "terbium", "dysprosium", "holmium", "erbium", "thulium", "ytterbium",
+          "lutetium", "titanium", "vanadium", "chromium", "manganese", "iron", "cobalt",
+          "nickel", "copper", "zinc", "silver", "cadmium", "mercury", "thallium", "lead",
+          "bismuth", "gold", "platinum", "palladium", "rhodium", "ruthenium", "iridium",
+          "osmium", "tungsten", "molybdenum", "uranium", "thorium", "tin", "antimony",
+          "ammonium"}
+
+ANIONS = {"chloride", "bromide", "iodide", "fluoride", "sulfate", "sulfite", "phosphate",
+          "nitrate", "nitrite", "acetate", "citrate", "formate", "tartrate", "malonate",
+          "maleate", "malate", "succinate", "oxalate", "carbonate", "bicarbonate", "borate",
+          "molybdate", "tungstate", "thiocyanate", "cyanide", "azide", "perchlorate", "chlorate",
+          "iodate", "bromate", "selenate", "thiosulfate", "pyrophosphate", "glutamate",
+          "benzoate", "propionate", "butyrate", "lactate", "gluconate", "hydroxide", "oxide",
+          "cacodylate"}
+
+_SPELLING = {"sulphate": "sulfate", "sulphite": "sulfite", "thiosulphate": "thiosulfate",
+             "aluminum": "aluminium", "cesium": "caesium", "cupric": "copper",
+             "cuprous": "copper", "ferrous": "iron", "ferric": "iron"}
+
+
+def _chem_words(text: str) -> set[str]:
+    return {_SPELLING.get(w, w) for w in re.split(r"[^a-z]+", (text or "").lower()) if w}
+
+
+def test_no_alias_names_a_different_metal_or_anion(shipped):
+    """`BARIUM_CHLORIDE` claiming `yttrium chloride` resolved silently from the day it was added,
+    and cost nothing measurable -- which is exactly why it survived. Barium is not yttrium."""
+    wrong = []
+    for reagent in shipped.reagents:
+        reference = _chem_words(reagent.canonical_id.replace("_", " ")) | _chem_words(
+            reagent.display_name)
+        ref_metals, ref_anions = reference & METALS, reference & ANIONS
+        for alias in reagent.aliases or []:
+            words = _chem_words(alias)
+            metals, anions = words & METALS, words & ANIONS
+            if ref_metals and metals and not (metals & ref_metals):
+                wrong.append(f"{reagent.canonical_id} <- {alias!r} ({sorted(metals)})")
+            if ref_anions and anions and not (anions & ref_anions):
+                wrong.append(f"{reagent.canonical_id} <- {alias!r} ({sorted(anions)})")
+    assert wrong == [], "aliases naming a different molecule: " + "; ".join(wrong)

@@ -1,4 +1,4 @@
-version: 0.8.3
+version: 0.8.4
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -373,7 +373,6 @@ reagents:
   - bog
   - n-octyl-b-d-glucoside
   - n-octyl-d-glucoside
-  - n-acetyl-d-glucosamine
   - beta-octylglucoside
   - octyl-beta-d-glucopyranoside
   - n-octyl glucoside
@@ -409,6 +408,8 @@ reagents:
   - bis:tris:hcl
   - 'bis-tris: hcl'
   - bis-tris chloride
+  - bistris-hcl
+  - bistris hcl
 - canonical_id: BIS_TRIS_PROPANE
   display_name: Bis-Tris propane
   chem_class: buffer
@@ -561,7 +562,6 @@ reagents:
   - ca(ac)2
   - caac2
   - caac
-  - cobalt acetate
   - caoac
 - canonical_id: CALCIUM_CHLORIDE
   display_name: Calcium chloride
@@ -722,6 +722,14 @@ reagents:
   display_name: Coa
   aliases:
   - coa
+- canonical_id: COBALT_ACETATE
+  display_name: Cobalt(II) acetate
+  chem_class: salt
+  default_unit: millimolar
+  aliases:
+  - cobalt acetate
+  - cobalt(ii) acetate
+  - cobaltous acetate
 - canonical_id: COBALT_CHLORIDE
   display_name: Cobalt chloride
   chem_class: salt
@@ -2331,6 +2339,14 @@ reagents:
   - nonylglucoside
   - nonyl glucoside
   - n-nonyl-beta-d-glucoside
+- canonical_id: N_ACETYL_GLUCOSAMINE
+  display_name: N-Acetyl-D-glucosamine
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - n-acetyl-d-glucosamine
+  - n-acetylglucosamine
+  - nag
 - chem_class: detergent
   default_unit: percent_w_v
   canonical_id: N_BOG
@@ -3190,6 +3206,14 @@ reagents:
   - kscn
   - kcn
   - potassium thiocynate
+- canonical_id: PRASEODYMIUM_ACETATE
+  display_name: Praseodymium(III) acetate
+  chem_class: salt
+  default_unit: millimolar
+  aliases:
+  - praseodymium acetate
+  - pr(iii) acetate
+  - praseodymium(iii) acetate
 - canonical_id: PROLINE
   display_name: L-Proline
   chem_class: additive
@@ -3341,7 +3365,6 @@ reagents:
   - acetate
   - sodium acetate buffer
   - acetate buffer
-  - praseodymium acetate
   - sodium-acetate
   - sodium acetate tri-hydrate
   - na-ac
@@ -3953,7 +3976,6 @@ reagents:
   - tris-hydrochloride
   - tris.cl
   - tris/cl
-  - bistris-hcl
   - tris/hcl buffer
   - tris_hcl
   - tris-base

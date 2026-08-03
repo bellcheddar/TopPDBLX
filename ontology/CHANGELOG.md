@@ -7,7 +7,7 @@ Two artefacts are versioned here, independently:
 
 | File | Version | What it is |
 |------|---------|------------|
-| `synonyms.yaml` | 0.8.3 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
+| `synonyms.yaml` | 0.8.4 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
 | `groups.yaml` | 0.3.0 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
 
 ## groups.yaml
@@ -106,6 +106,40 @@ Known gaps recorded rather than hidden:
   could ever have been assigned to it.
 
 ## synonyms.yaml
+
+### 0.8.4 (2026-08-03)
+
+**488 reagents, 1,466 names.** A deliberate sweep for the barium/yttrium fault — an alias naming a
+different molecule — after that one turned up by accident. **Four more found**, and the sweep is
+now a test.
+
+| entry | alias removed | why | components on the entry |
+|---|---|---|---|
+| `SODIUM_ACETATE` | `praseodymium acetate` | a different metal | 20,593 |
+| `CALCIUM_ACETATE` | `cobalt acetate` | a different metal | 3,276 |
+| `BETA_OG` | `n-acetyl-d-glucosamine` | NAG is a sugar, beta-OG is a detergent | 477 |
+| `TRIS` | `bistris-hcl` | Bis-Tris is a different buffer, and `BIS_TRIS` already existed | 32,981 |
+
+`bistris-hcl` moved to `BIS_TRIS` rather than deleted. The other three name reagents with no
+entry of their own, so `PRASEODYMIUM_ACETATE`, `COBALT_ACETATE` and `N_ACETYL_GLUCOSAMINE` are
+new: removing an alias without rehoming the reagent would trade a wrong answer for no answer.
+
+**Three sweeps were run; only one was productive.** Comparing metals and anions between an alias
+and its own entry found all four. Comparing *digits* produced 86 candidates and no faults —
+`BUTANEDIOL_12` ← `1,2-butanediol` is right, the id merely compresses the locants. The 0.5.1
+no-shared-word test produced 94, almost all legitimate acronym mappings: `ATP` ←
+`adenosine triphosphate`, `MPD` ← `2-methyl-2,4-pentanediol`, `HEPES` ←
+`4-(2-hydroxyethyl)-1-piperazineethanesulfonic acid`. It found the `BETA_OG` and `TRIS` errors
+among them, so it earns its keep as a review aid rather than as a test.
+
+**The metal and anion comparison is now `test_no_alias_names_a_different_metal_or_anion`.** It
+covers the inorganic half of the fault class mechanically. The organic half — two entries naming
+the same molecule in unrelated words — still needs a chemist, which is what `LEXICON_REVIEW.csv`
+is generated for.
+
+**Two left for human judgement**, flagged rather than changed: `HYDROXYMERCURYBENZOATE` claims
+`para-chloromercuribenzoic acid`, and PCMB is strictly the chloro compound rather than the
+hydroxy one; `SODIUM_DIHYDROGEN_PHOSPHATE` claims `k/nah2po4`, which names a potassium salt too.
 
 ### 0.8.3 (2026-08-03)
 
