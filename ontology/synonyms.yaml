@@ -1,4 +1,4 @@
-version: 0.8.4
+version: 0.8.5
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -353,11 +353,6 @@ reagents:
   - b-me
   - beta-mercapto ethanol
   - 2-mercapto ethanol
-- chem_class: organic
-  default_unit: percent_v_v
-  canonical_id: BETA_MERCAPTOETHANOL_AT_298K
-  display_name: Beta-mercaptoethanol at 298k
-  aliases:
   - beta-mercaptoethanol at 298k
 - canonical_id: BETA_OG
   display_name: beta-octyl glucoside
@@ -1304,6 +1299,7 @@ reagents:
   - glicerol
   - (vol/vol) glycerol
   - cryoprotected with 20% glycerol
+  - glycerol for cryoprotection
   note: Dual use. Only about 2% of entries name a cryoprotectant explicitly, and a third of glycerol values
     in the corpus exceed 15%, which is precipitant scale. The parser sets cryo_evidence to explicit or
     inferred; only explicit cryo is dropped from the screen-matching fingerprint.
@@ -1321,12 +1317,6 @@ reagents:
   - glycerol ethoxylate
   - glycerol ethoxylate 1000
   - polyglycerol
-- chem_class: polyol
-  default_unit: percent_v_v
-  canonical_id: GLYCEROL_FOR_CRYOPROTECTION
-  display_name: Glycerol for cryoprotection
-  aliases:
-  - glycerol for cryoprotection
 - canonical_id: GLYCINE
   display_name: Glycine
   chem_class: buffer
@@ -1683,12 +1673,6 @@ reagents:
   aliases:
   - imp
   - inosine monophosphate
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: INHIBITOR_TO_PEPTIDE
-  display_name: Inhibitor to peptide
-  aliases:
-  - inhibitor to peptide
 - chem_class: additive
   default_unit: millimolar
   canonical_id: IP6
@@ -2207,18 +2191,13 @@ reagents:
   - methyl-pentanediol
   - methane pentanediol
   - 2-methyl-2,4-pentane-diol
+  - mpd in resevoir
 - chem_class: polyol
   default_unit: percent_v_v
   canonical_id: MPD_2
   display_name: Mpd (2%)
   aliases:
   - mpd (2%)
-- chem_class: polyol
-  default_unit: percent_v_v
-  canonical_id: MPD_IN_RESEVOIR
-  display_name: Mpd in resevoir
-  aliases:
-  - mpd in resevoir
 - chem_class: polyol
   default_unit: percent_v_v
   canonical_id: MPD_P1K_P3350
@@ -2279,12 +2258,6 @@ reagents:
   display_name: Nadph
   aliases:
   - nadph
-- chem_class: salt
-  default_unit: molar
-  canonical_id: NA_THIOCYANATE
-  display_name: Na thiocyanate
-  aliases:
-  - na thiocyanate
 - canonical_id: NDSB_195
   display_name: NDSB-195
   chem_class: additive
@@ -2928,12 +2901,6 @@ reagents:
   display_name: Phenol
   aliases:
   - phenol
-- chem_class: salt
-  default_unit: molar
-  canonical_id: PHOSPHATE_AT_PH_4_5
-  display_name: Phosphate at ph 4.5
-  aliases:
-  - phosphate at ph 4.5
 - canonical_id: PHOSPHATE_CITRATE
   display_name: Phosphate-citrate
   chem_class: premix
@@ -3695,6 +3662,7 @@ reagents:
   aliases:
   - nascn
   - sodium isothiocyanate
+  - na thiocyanate
 - canonical_id: SODIUM_THIOSULFATE
   display_name: Sodium thiosulfate
   chem_class: salt

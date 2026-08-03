@@ -7,7 +7,7 @@ Two artefacts are versioned here, independently:
 
 | File | Version | What it is |
 |------|---------|------------|
-| `synonyms.yaml` | 0.8.4 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
+| `synonyms.yaml` | 0.8.5 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
 | `groups.yaml` | 0.3.0 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
 
 ## groups.yaml
@@ -106,6 +106,22 @@ Known gaps recorded rather than hidden:
   could ever have been assigned to it.
 
 ## synonyms.yaml
+
+### 0.8.5 (2026-08-03)
+
+**482 reagents, 1,464 names.** Two more from Marc, and the general patterns behind them, both now
+tested.
+
+`NA_THIOCYANATE` → `SODIUM_THIOCYANATE`, and `BETA_MERCAPTOETHANOL_AT_298K` → BME. The second is
+a reagent with a **temperature** welded to its name; sweeping for that pattern found three more:
+`GLYCEROL_FOR_CRYOPROTECTION` (a purpose), `MPD_IN_RESEVOIR` (a vessel, and a typo), and two that
+are not reagents at all — `PHOSPHATE_AT_PH_4_5`, which names an anion class rather than a salt,
+the same decision as `carboxylic acid` in 0.5.1, and `INHIBITOR_TO_PEPTIDE`, which is a drop ratio.
+
+Sweeping for the first pattern — an element **abbreviation** where the name belongs — found only
+`NA_THIOCYANATE`, because 0.8.3 had already done the formula-shaped ids. Both sweeps are now
+tests: `test_no_canonical_id_carries_method_or_temperature_text` and
+`test_ids_spell_the_element_out_rather_than_abbreviating_it`.
 
 ### 0.8.4 (2026-08-03)
 

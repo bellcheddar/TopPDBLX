@@ -171,7 +171,7 @@ def test_yaml_file_parses_as_plain_yaml():
 
 
 def test_reported_name_count_is_the_parser_lookup_index(shipped):
-    """"488 reagents, 1,466 names" in the README and changelog means the *normalised lookup index*,
+    """"482 reagents, 1,464 names" in the README and changelog means the *normalised lookup index*,
     not the raw alias count nor aliases plus display names.
 
     Pinned because the three counts differ by up to 25% and the changelog was published with the
@@ -180,8 +180,8 @@ def test_reported_name_count_is_the_parser_lookup_index(shipped):
     string are one name, not two.
     """
     index = shipped.index()
-    assert len(index) == 1466, f"lookup index is {len(index)}; update the README and CHANGELOG"
-    assert len(shipped.reagents) == 488
+    assert len(index) == 1464, f"lookup index is {len(index)}; update the README and CHANGELOG"
+    assert len(shipped.reagents) == 482
     raw_aliases = sum(len(r.aliases) for r in shipped.reagents)
     assert raw_aliases != len(index), "the two counts must not be conflated"
 
@@ -308,3 +308,42 @@ def test_no_alias_names_a_different_metal_or_anion(shipped):
             if ref_anions and anions and not (anions & ref_anions):
                 wrong.append(f"{reagent.canonical_id} <- {alias!r} ({sorted(anions)})")
     assert wrong == [], "aliases naming a different molecule: " + "; ".join(wrong)
+
+
+# Method text in a canonical id, 2026-08-03. `BETA_MERCAPTOETHANOL_AT_298K` is BME with a
+# temperature welded on, `GLYCEROL_FOR_CRYOPROTECTION` is glycerol with a purpose, and
+# `MPD_IN_RESEVOIR` is MPD with a vessel and a typo. Each resolved, so each counted as a
+# successful identification while splitting its reagent's count.
+
+METHOD_WORDS = re.compile(
+    r"(?:^|_)(?:at|in|on|for|to|with|after|before|overnight|hours?|hrs?|mins?|days?"
+    r"|\d+k|\d+c|room|rt|degrees?|celsius|kelvin|temperature|deg|saturated|percent"
+    r"|stock|final|approx|about|mixture|containing|drop|well|reservoir|resevoir)(?:_|$)",
+    re.IGNORECASE,
+)
+
+
+def test_no_canonical_id_carries_method_or_temperature_text(shipped):
+    """A canonical id names a substance. A temperature, a duration, a vessel or a preposition in
+    one means the clause splitter leaked text into the name."""
+    bad = [r.canonical_id for r in shipped.reagents if METHOD_WORDS.search(r.canonical_id)]
+    assert bad == [], f"method text in canonical ids: {bad}"
+
+
+ELEMENT_ABBREVIATIONS = {"NA": "SODIUM", "K": "POTASSIUM", "LI": "LITHIUM", "MG": "MAGNESIUM",
+                         "CA": "CALCIUM", "NH4": "AMMONIUM", "CS": "CAESIUM", "RB": "RUBIDIUM",
+                         "BA": "BARIUM", "SR": "STRONTIUM", "ZN": "ZINC", "CU": "COPPER",
+                         "NI": "NICKEL", "CO": "COBALT", "MN": "MANGANESE", "FE": "IRON",
+                         "CD": "CADMIUM", "HG": "MERCURY", "AL": "ALUMINIUM", "Y": "YTTRIUM"}
+
+
+def test_ids_spell_the_element_out_rather_than_abbreviating_it(shipped):
+    """Marc's rule, 2026-08-03: the name is the identity and the formula is a spelling. An id
+    beginning `NA_` splits its reagent from the `SODIUM_` entry that already exists."""
+    ids = {r.canonical_id for r in shipped.reagents}
+    bad = []
+    for canonical_id in ids:
+        head, _, rest = canonical_id.partition("_")
+        if rest and head in ELEMENT_ABBREVIATIONS:
+            bad.append(f"{canonical_id} (use {ELEMENT_ABBREVIATIONS[head]}_{rest})")
+    assert bad == [], f"element abbreviations in canonical ids: {bad}"

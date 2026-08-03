@@ -221,11 +221,25 @@ def main(argv: Optional[list[str]] = None) -> int:
         dropped_implausible = 0
         rescued_typos = 0
         rescued_aliases = 0
+        dropped_stale = 0
         text_by_key = {(r["pdb_id"], r["crystal_id"]): r["text"] for r in residual}
         for line in args.progress.read_text().splitlines():
             if not line.strip():
                 continue
             row = json.loads(line)
+
+            # **A cached generation whose record has left the residual is not a result.** The
+            # progress file is keyed to the residual as it stood when generation ran, and the
+            # residual shrinks whenever the rules learn to read something: lexicon 0.8.x and
+            # `parse.scope` moved 1,268 records out of it. Their text is no longer here, so the
+            # grounding guard saw an empty string and scored every component an invention --
+            # 5,000 of them, which looked like a precision collapse and was an accounting error.
+            # The rules now parse these records, so dropping the model's answer is right; saying
+            # why is the part that was missing.
+            if (row["pdb_id"], row["crystal_id"]) not in text_by_key:
+                dropped_stale += 1
+                continue
+
             scored = check(row["generated"], lexicon)
             if not scored["valid"]:
                 dropped_invalid += 1
@@ -305,6 +319,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             "n_records_with_components": kept,
             "n_components": frame.height,
             "n_dropped_invalid_json": dropped_invalid,
+            "n_skipped_left_residual": dropped_stale,
             "n_dropped_unknown_name": dropped_unknown,
             "n_resolved_via_alias": rescued_aliases,
             "n_dropped_ungrounded": dropped_ungrounded,
@@ -315,6 +330,7 @@ def main(argv: Optional[list[str]] = None) -> int:
         print(f"\n  records the model read      {kept:,}")
         print(f"  components emitted          {frame.height:,}")
         print(f"  dropped, invalid JSON       {dropped_invalid:,}")
+        print(f"  skipped, no longer residual {dropped_stale:,}   the rules read these now")
         print(f"  dropped, name not in lexicon {dropped_unknown:,}")
         print(f"  resolved via an alias        {rescued_aliases:,}")
         print(f"  dropped, not in the text     {dropped_ungrounded:,}   inventions")

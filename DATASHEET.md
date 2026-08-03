@@ -4,8 +4,8 @@ Generated 2026-08-03 by `./run.sh release.datasheet`. Every figure is read
 from the data at generation time, so this file cannot drift from what it describes.
 
 **Schema version** `0.1.0-draft` · **Ontology version** `0.2.0`
-· **Lexicon version** `0.8.4` (488 reagents,
-1466 names)
+· **Lexicon version** `0.8.5` (482 reagents,
+1464 names)
 
 ---
 
@@ -44,10 +44,10 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 |---------|-------|
 | Records (one per `pdb_id` + `crystal_id`) | 199,185 |
 | Distinct PDB entries | 198,691 |
-| Usable records | 186,248 (93.5%) |
-| Discarded, with a reason code | 12,937 |
+| Usable records | 186,215 (93.5%) |
+| Discarded, with a reason code | 12,970 |
 | Components | 605,491 |
-| Components identified as a canonical reagent | 518,373 (85.6%) |
+| Components identified as a canonical reagent | 517,935 (85.5%) |
 | Records with a linked protein sequence | 195,985 |
 | Distinct 30% identity sequence clusters | 23,868 |
 | Classified into a precipitant class | 143,626 |
@@ -61,7 +61,7 @@ distribution is itself a result.
 
 | Reason | Records | Share |
 |--------|---------|-------|
-| `NO_REAGENT_MATCH` | 5,649 | 2.84% |
+| `NO_REAGENT_MATCH` | 5,682 | 2.85% |
 | `TOO_SHORT` | 4,369 | 2.19% |
 | `METHOD_ONLY` | 2,500 | 1.26% |
 | `UNPARSEABLE_RESIDUAL` | 147 | 0.07% |
@@ -73,15 +73,15 @@ distribution is itself a result.
 
 | Class | Components |
 |-------|-----------|
-| buffer | 164,659 |
-| salt | 147,195 |
-| peg | 127,439 |
-| additive | 26,719 |
-| organic | 23,366 |
-| polyol | 20,319 |
+| buffer | 164,495 |
+| salt | 147,149 |
+| peg | 127,286 |
+| additive | 26,771 |
+| organic | 23,347 |
+| polyol | 20,297 |
 | premix | 5,914 |
-| detergent | 1,422 |
 | other | 1,340 |
+| detergent | 1,336 |
 
 ### How pH was attributed
 
@@ -91,8 +91,8 @@ value and refuses to guess its meaning.
 
 | Source | Records |
 |--------|---------|
-| buffer | 98,585 |
-| unstated | 87,614 |
+| buffer | 98,524 |
+| unstated | 87,642 |
 | final | 49 |
 
 ---
