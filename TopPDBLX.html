@@ -256,7 +256,7 @@
 </tr>
 <tr>
 <td data-label="Measure">Screen-well matches</td>
-<td data-label="Value">45,547 component-set matches, 20,339 agreeing on every concentration</td>
+<td data-label="Value">80,581 component-set matches, 38,481 agreeing on every concentration</td>
 </tr>
 <tr>
 <td data-label="Measure">Archive fidelity</td>
@@ -282,7 +282,7 @@
 </table></div>
 <p>The project brief anticipated a rule-based parser plateauing near 75%. It reaches 93.5%, because most of the difficulty in this corpus turned out to be clause splitting rather than chemistry: newlines, double spaces, <code>in</code>, spaced slashes and stray brackets all separate components, and handling them properly recovered far more than chasing reagent names did.</p>
 <h3>Two denominators, both reported</h3>
-<p>16,268 of the "unidentified" components contain no chemistry at all: method notes (<code>streak seeded</code>), screen references (<code>hampton research index screen</code>), unnamed ligands (<code>protein</code>, <code>inhibitor</code>) and bare splitter fragments (<code>na</code>). No lexicon entry can ever match them, so counting them as reagents the parser failed to identify measures an artefact rather than the parser. They carry the role <code>not_a_component</code> with an auditable reason, and both denominators are published: <strong>85.3%</strong> over every component, <strong>87.6%</strong> over those that actually name a substance.</p>
+<p>16,971 of the "unidentified" components contain no chemistry at all: method notes (<code>streak seeded</code>), screen references (<code>hampton research index screen</code>), unnamed ligands (<code>protein</code>, <code>inhibitor</code>) and bare splitter fragments (<code>na</code>). No lexicon entry can ever match them, so counting them as reagents the parser failed to identify measures an artefact rather than the parser. They carry the role <code>not_a_component</code> with an auditable reason, and both denominators are published: <strong>85.9%</strong> over every component, <strong>88.4%</strong> over those that actually name a substance.</p>
 <h3>Why records are discarded</h3>
 <p>Every X-ray record is accounted for: it either parsed or carries exactly one reason code.</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
@@ -730,7 +730,7 @@
 <p><strong>F0.5 is the one to read for this project.</strong> F1 weights precision and recall equally and they are not equal here: a missed reagent is recoverable by re-reading the deposition, an invented one propagates into everything built on the data. The two summaries disagree by more than they look — round 06 leads round 08 by 1.0 on F1 and by <strong>2.9</strong> on F0.5.</p>
 <p><strong>This is the number that settles what the model is for.</strong> It adds <strong>+20.1 points of recall</strong> and finds 59 reagents the rules never reach, for 0.4 points of precision. The fidelity metric had made it look like an expensive imitation of <code>rules_v3</code>; against labelled truth it is reading a fifth of the corpus that the rules cannot.</p>
 <p>It also confirmed the shape every audit had gestured at: <strong>precision was never the problem.</strong> One proposed reagent was removed across 96 records; 50 were added.</p>
-<p><strong>For the crystallographer:</strong> 96 records is a small yardstick and its intervals are wide (recall [88, 94]). It measures reagent <em>identity</em>, not concentration or unit. It does not replace the commercial screen cross-reference, where 20,339 conditions match a vendor-published formulation on every concentration, and it does not replace the human audit. What it does is make "did we miss something" answerable at all, which nothing in this project could do before.</p>
+<p><strong>For the crystallographer:</strong> 96 records is a small yardstick and its intervals are wide (recall [88, 94]). It measures reagent <em>identity</em>, not concentration or unit. It does not replace the commercial screen cross-reference, where 38,481 conditions match a vendor-published formulation on every concentration, and it does not replace the human audit. What it does is make "did we miss something" answerable at all, which nothing in this project could do before.</p>
 <h3>🤗 What the model has delivered</h3>
 <p>Tracked honestly, including the rounds that delivered nothing. From round 05 onwards these are measured on the <strong>frozen benchmark</strong>, so they are comparable to each other; earlier rounds were scored against a live residual that shrank from the easy end every time curation improved, and are not comparable to anything. Components contributed counts rows that actually reached the dataset.</p>
 <div class="emd-table-wrap"><table class="emd-data-table">

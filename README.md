@@ -152,7 +152,7 @@ for deposition in archive:
 | Components | 605,481, **85.3% identified** as a canonical reagent (87.6% excluding text that names no chemistry) |
 | Reagent lexicon | 499 reagents, 1,543 names (v0.9.0) |
 | Linked sequences | 184,229 across **23,159** distinct 30% identity clusters |
-| Screen-well matches | 45,547 component-set matches, 20,339 agreeing on every concentration |
+| Screen-well matches | 80,581 component-set matches, 38,481 agreeing on every concentration |
 | Archive fidelity | **100.0000%** over 205,943 entries against the 90 GB mmCIF snapshot |
 | Condition classes | Seven JCSG Top96 precipitant classes (v0.3.0), **80.0% classified**, 20.0% honestly unclassified |
 | Parser accuracy | Against hand-labelled records: **99.3% precision, 92.5% recall**, F0.5 **97.8** (rules alone: 99.5% / 72.8%) |
@@ -163,7 +163,7 @@ The project brief anticipated a rule-based parser plateauing near 75%. It reache
 
 ### Two denominators, both reported
 
-16,268 of the "unidentified" components contain no chemistry at all: method notes (`streak seeded`), screen references (`hampton research index screen`), unnamed ligands (`protein`, `inhibitor`) and bare splitter fragments (`na`). No lexicon entry can ever match them, so counting them as reagents the parser failed to identify measures an artefact rather than the parser. They carry the role `not_a_component` with an auditable reason, and both denominators are published: **85.3%** over every component, **87.6%** over those that actually name a substance.
+16,971 of the "unidentified" components contain no chemistry at all: method notes (`streak seeded`), screen references (`hampton research index screen`), unnamed ligands (`protein`, `inhibitor`) and bare splitter fragments (`na`). No lexicon entry can ever match them, so counting them as reagents the parser failed to identify measures an artefact rather than the parser. They carry the role `not_a_component` with an auditable reason, and both denominators are published: **85.9%** over every component, **88.4%** over those that actually name a substance.
 
 ### Why records are discarded
 
@@ -332,7 +332,7 @@ round 06 leads round 08 by 1.0 on F1 and by **2.9** on F0.5.
 
 It also confirmed the shape every audit had gestured at: **precision was never the problem.** One proposed reagent was removed across 96 records; 50 were added.
 
-**For the crystallographer:** 96 records is a small yardstick and its intervals are wide (recall [88, 94]). It measures reagent *identity*, not concentration or unit. It does not replace the commercial screen cross-reference, where 20,339 conditions match a vendor-published formulation on every concentration, and it does not replace the human audit. What it does is make "did we miss something" answerable at all, which nothing in this project could do before.
+**For the crystallographer:** 96 records is a small yardstick and its intervals are wide (recall [88, 94]). It measures reagent *identity*, not concentration or unit. It does not replace the commercial screen cross-reference, where 38,481 conditions match a vendor-published formulation on every concentration, and it does not replace the human audit. What it does is make "did we miss something" answerable at all, which nothing in this project could do before.
 
 ### 🤗 What the model has delivered
 

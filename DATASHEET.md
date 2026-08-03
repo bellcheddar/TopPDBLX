@@ -20,8 +20,8 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 2. **Condition frequency reflects screen popularity, not intrinsic success rate.** PEG 3350
    and PEG/Ion dominate because they are in everyone's screens. A condition being common here
    is evidence about what crystallographers tried, not about what works best.
-3. **Reported conditions are often optimised, not screen hits.** Of the 79,676 records
-   whose component set matches a published screen well, only 38,114 agree on every
+3. **Reported conditions are often optimised, not screen hits.** Of the 80,581 records
+   whose component set matches a published screen well, only 38,481 agree on every
    concentration. The rest are flagged `optimised_not_screen`, but it remains a confounder.
 4. **Protein concentration, drop ratio and equilibration volume are usually missing**, and
    they matter. They are captured where present and null otherwise.
