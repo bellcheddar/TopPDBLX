@@ -69,6 +69,59 @@ SOAK_SECTION = re.compile(
 )
 
 
+# The second half of a buffer system: "0.1 M CAPS/ Sodium hydroxide pH 10.5" names one buffer
+# titrated with one base, not two reagents. Vendors write screen formulations this way as a
+# matter of course, so it turns up in the deposition text, in the Rigaku screen extraction and in
+# the head of the model's unrecognised-name list -- one pattern, three callers.
+#
+# Each of these is also a perfectly good reagent in its own right, which is what makes a
+# blocklist wrong: `1.8 M ammonium sulfate, 22 mM acetic acid, 78 mM sodium acetate` states an
+# acetate buffer as its two halves with real concentrations, and both belong in the dataset.
+TITRANTS = frozenset({
+    "SODIUM_HYDROXIDE", "POTASSIUM_HYDROXIDE", "HYDROCHLORIC_ACID",
+    "ACETIC_ACID", "PHOSPHORIC_ACID", "NITRIC_ACID",
+})
+
+
+def is_buffer_titrant(text: str, offset: int, has_amount: bool) -> bool:
+    """Is the clause at `offset` the titrant half of a `buffer/titrant` pair?
+
+    Both tests are load-bearing. **The slash** is what distinguishes a titrant from a reagent:
+    without it, `22 mM acetic acid` in a list is an ordinary component. **The absent amount** is
+    what distinguishes a titrant from a genuine second component sharing a slash --
+    `400 mM sodium phosphate monobasic / 1600 mM potassium phosphate dibasic` states two real
+    reagents, and 8H28 writes both patterns in one deposition.
+
+    Measured on the corpus: 32 of the 189 records that currently emit a titrant component match
+    this, and the other 157 state a concentration and are left alone.
+    """
+    if has_amount:
+        return False
+    before = text[:offset].rstrip()
+    return before.endswith("/")
+
+
+# The same pair written without spaces around the slash. `100 mM HEPES / Sodium hydroxide` is
+# split into two clauses and handled by `is_buffer_titrant`; `0.1 M CAPS/ Sodium hydroxide` is
+# not split at all, so the whole clause fails to identify and CAPS is lost with the titrant.
+# Two spellings of one pattern, needing two fixes.
+_TITRANT_SUFFIX = re.compile(
+    r"\s*/\s*(?:sodium\s+hydroxide|naoh|potassium\s+hydroxide|koh"
+    r"|hydrochloric\s+acid|hcl|acetic\s+acid|phosphoric\s+acid|nitric\s+acid)\s*$",
+    re.IGNORECASE,
+)
+
+
+def strip_titrant_suffix(name: str) -> str | None:
+    """`caps/ sodium hydroxide` -> `caps`. None when there is no titrant suffix to strip.
+
+    Anchored at the end so it cannot eat a real second reagent: `sodium phosphate monobasic /
+    1600 mM potassium phosphate dibasic` has a quantity after the slash and never matches.
+    """
+    stripped = _TITRANT_SUFFIX.sub("", name)
+    return stripped if stripped != name and stripped.strip() else None
+
+
 def spans(text: str) -> list[tuple[int, int, str]]:
     """Half-open `(start, end, role)` ranges of `text` that describe something other than the drop.
 

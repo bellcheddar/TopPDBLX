@@ -1,4 +1,4 @@
-version: 0.6.2
+version: 0.7.0
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -30,12 +30,6 @@ reagents:
   display_name: Acetyl-coa
   aliases:
   - acetyl-coa
-- chem_class: organic
-  default_unit: percent_v_v
-  canonical_id: AC_DEVD_CMK_RECONSTITUTED_IN_DMSO
-  display_name: Ac-devd-cmk reconstituted in dmso
-  aliases:
-  - ac-devd-cmk reconstituted in dmso
 - canonical_id: ADA
   display_name: ADA
   chem_class: buffer
@@ -43,6 +37,8 @@ reagents:
   default_unit: molar
   aliases:
   - ada buffer
+  - n-(2-acetamido)iminodiacetic acid
+  - n-[-acetamido]-2-iminodiacetic acid
 - chem_class: additive
   default_unit: millimolar
   canonical_id: ADENOSINE
@@ -73,6 +69,15 @@ reagents:
   display_name: Alpha-ketoglutarate
   aliases:
   - alpha-ketoglutarate
+- canonical_id: ALUMINIUM_FLUORIDE
+  display_name: Aluminium fluoride
+  chem_class: salt
+  default_unit: millimolar
+  aliases:
+  - alf4
+  - alf3
+  - aluminium fluoride
+  - aluminum fluoride
 - chem_class: additive
   default_unit: millimolar
   canonical_id: AMINOHEXANOIC_ACID_6
@@ -198,12 +203,6 @@ reagents:
   - mg sulfate
   - ammounium sulfate
   - amonium sulphate
-- chem_class: salt
-  default_unit: molar
-  canonical_id: AMMONIUM_SULFATE_0_5_1_0M
-  display_name: Ammonium sulfate (0.5-1.0m)
-  aliases:
-  - ammonium sulfate (0.5-1.0m)
 - canonical_id: AMMONIUM_TARTRATE
   display_name: Ammonium tartrate
   chem_class: salt
@@ -224,6 +223,15 @@ reagents:
   display_name: Amp
   aliases:
   - amp
+- canonical_id: AMPD
+  display_name: AMPD
+  chem_class: buffer
+  default_unit: millimolar
+  buffer_pka: 8.8
+  aliases:
+  - ampd
+  - 2-amino-2-methyl-1,3-propanediol
+  - 2-amino-2-methyl-1,3-propanediol (ampd)
 - canonical_id: AMPPNP
   display_name: AMP-PNP
   chem_class: additive
@@ -263,6 +271,12 @@ reagents:
   display_name: Azide
   aliases:
   - azide
+- canonical_id: BARIUM_ACETATE
+  display_name: Barium acetate
+  chem_class: salt
+  default_unit: millimolar
+  aliases:
+  - barium acetate
 - canonical_id: BARIUM_CHLORIDE
   display_name: Barium chloride
   chem_class: salt
@@ -274,12 +288,6 @@ reagents:
   - bacl2.2h2o
   - barium chloride dihydrate
   - yttrium chloride
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: BATCH_CRYSTALLIZATION_DONE_IN_POLYPROPYLENE_TUBES
-  display_name: Batch crystallization done in polypropylene tubes
-  aliases:
-  - batch crystallization done in polypropylene tubes
 - chem_class: additive
   default_unit: millimolar
   canonical_id: BECL2
@@ -296,6 +304,13 @@ reagents:
   - benzamidine hydrochloride
   - benzamidine-hcl
   note: Serine protease inhibitor, added to protect the construct rather than to precipitate it.
+- canonical_id: BENZYLTRIETHYLAMMONIUM_CHLORIDE
+  display_name: Benzyltriethylammonium chloride
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - benzyltriethylammonium chloride
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
 - chem_class: additive
   default_unit: millimolar
   canonical_id: BES
@@ -327,12 +342,8 @@ reagents:
   - beta mercaptoethanol
   - 2-me
   - b-me
-- chem_class: organic
-  default_unit: percent_v_v
-  canonical_id: BETA_MERCAPTOETHANOL_AND_OR_50_MM_HYDROXYETHYL_DISULFIDE
-  display_name: Beta-mercaptoethanol and/or 50 mm hydroxyethyl disulfide
-  aliases:
-  - beta-mercaptoethanol and/or 50 mm hydroxyethyl disulfide
+  - beta-mercapto ethanol
+  - 2-mercapto ethanol
 - chem_class: organic
   default_unit: percent_v_v
   canonical_id: BETA_MERCAPTOETHANOL_AT_298K
@@ -419,12 +430,6 @@ reagents:
   display_name: 8-bromoadenosine
   aliases:
   - 8-bromoadenosine
-- chem_class: polyol
-  default_unit: percent_v_v
-  canonical_id: BUTANEDIOL_13
-  display_name: 1,3-butanediol
-  aliases:
-  - 1,3-butanediol
 - canonical_id: BUTANEDIOL_12
   display_name: 1,2-Butanediol
   chem_class: organic
@@ -433,8 +438,14 @@ reagents:
   - 1,2-butanediol
   - 1,2 butanediol
   - 1,2-butane diol
-  note: 'A third isomer alongside BUTANEDIOL_14 and BUTANEDIOL_23. It was an alias of
-    ETHYLENE_GLYCOL until 2026-08-01, which is a different molecule. 19 records.'
+  note: A third isomer alongside BUTANEDIOL_14 and BUTANEDIOL_23. It was an alias of ETHYLENE_GLYCOL until
+    2026-08-01, which is a different molecule. 19 records.
+- chem_class: polyol
+  default_unit: percent_v_v
+  canonical_id: BUTANEDIOL_13
+  display_name: 1,3-butanediol
+  aliases:
+  - 1,3-butanediol
 - canonical_id: BUTANEDIOL_14
   display_name: 1,4-Butanediol
   chem_class: organic
@@ -482,6 +493,12 @@ reagents:
   display_name: Butyrolactone
   aliases:
   - butyrolactone
+- canonical_id: C11DAO
+  display_name: C11DAO
+  chem_class: detergent
+  default_unit: millimolar
+  aliases:
+  - c11dao
 - chem_class: detergent
   default_unit: percent_w_v
   canonical_id: C12E8
@@ -552,6 +569,21 @@ reagents:
   - cacl
   - calcium chloride dihydrate
   - calcium chloride dehydrate
+- canonical_id: CALCIUM_NITRATE
+  display_name: Calcium nitrate
+  chem_class: salt
+  default_unit: molar
+  aliases:
+  - calcium nitrate
+  - ca(no3)2
+  - calcium nitrate tetrahydrate
+- canonical_id: CAMPHOR
+  display_name: D-Camphor
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - camphor
+  - d-camphor
 - canonical_id: CAPS
   display_name: CAPS
   chem_class: buffer
@@ -580,12 +612,26 @@ reagents:
   display_name: Carboxylic acid mix
   aliases:
   - carboxylic acid mix
+- canonical_id: CDP
+  display_name: CDP
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - cdp
+  - cytidine diphosphate
 - chem_class: additive
   default_unit: millimolar
   canonical_id: CELLOBIOSE
   display_name: Cellobiose
   aliases:
   - cellobiose
+- canonical_id: CESIUM_ACETATE
+  display_name: Cesium acetate
+  chem_class: salt
+  default_unit: millimolar
+  aliases:
+  - cesium acetate
+  - caesium acetate
 - canonical_id: CESIUM_CHLORIDE
   display_name: Cesium chloride
   chem_class: salt
@@ -594,6 +640,14 @@ reagents:
   aliases:
   - caesium chloride
   - cscl
+- canonical_id: CESIUM_SULFATE
+  display_name: Cesium sulfate
+  chem_class: salt
+  default_unit: molar
+  aliases:
+  - cesium sulfate
+  - caesium sulfate
+  - cs2so4
 - chem_class: additive
   default_unit: millimolar
   canonical_id: CH3COONA
@@ -627,12 +681,42 @@ reagents:
   display_name: 8-chloroadenosine
   aliases:
   - 8-chloroadenosine
+- canonical_id: CHLOROTRYPTOPHAN_7
+  display_name: 7-Chlorotryptophan
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - 7-chlorotryptophan
+  - 7 chlorotryptophan
 - chem_class: additive
   default_unit: millimolar
   canonical_id: CHOLESTEROL
   display_name: Cholesterol
   aliases:
   - cholesterol
+- canonical_id: CHOLINE
+  display_name: Choline
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - choline
+  note: The free cation, deposited bare and at additive concentrations ("5 mM Choline", 3P03). Deliberately
+    its own entry rather than an alias of the two choline ionic liquids, which are specific salts; found
+    by the 2026-08-01 accuracy audit.
+- canonical_id: CHOLINE_DIHYDROGEN_PHOSPHATE
+  display_name: Choline dihydrogen phosphate
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - choline dihydrogen phosphate
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: CHOLIN_ACETATE
+  display_name: Cholin acetate
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - cholin acetate
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
 - canonical_id: CITRIC_ACID
   display_name: Citric acid
   chem_class: buffer
@@ -675,26 +759,22 @@ reagents:
   display_name: Cobalt hexammine
   aliases:
   - cobalt hexammine
-- chem_class: organic
-  default_unit: percent_v_v
-  canonical_id: COMPOUND_STOCK_SOLUTIONS_EITHER_100MM_OR_1M_STOCKS_WERE_ADDED_UP_TO_A_FINAL_DROP_CONCENTRATION_OF_4_8_DMSO
-  display_name: Compound stock solutions (either 100mm or 1m stocks) were added up to a final drop concentration
-    of 4.8% dmso
+  - coh18n6
+  - hexamine cobalt
+  - hexammine cobalt
+- canonical_id: COENZYME_A
+  display_name: Coenzyme A
+  chem_class: additive
+  default_unit: millimolar
   aliases:
-  - compound stock solutions (either 100mm or 1m stocks) were added up to a final drop concentration of
-    4.8% dmso
+  - coenzyme a
+  - co-enzyme a
 - chem_class: additive
   default_unit: millimolar
   canonical_id: CONCENTRATED_DTT
   display_name: Concentrated dtt
   aliases:
   - concentrated dtt
-- chem_class: salt
-  default_unit: molar
-  canonical_id: CONTAINED_1_7_2_7_M_SODIUM_ACETATE
-  display_name: Contained 1.7-2.7 m sodium acetate
-  aliases:
-  - contained 1.7-2.7 m sodium acetate
 - chem_class: salt
   default_unit: molar
   canonical_id: COPPER_CHLORIDE
@@ -707,31 +787,12 @@ reagents:
   display_name: Copper sulfate
   aliases:
   - copper sulfate
-- chem_class: salt
-  default_unit: molar
-  canonical_id: CO_CRYSTALLIZED_WITH_URANIUM_ACETATE
-  display_name: Co-crystallized with uranium acetate
-  aliases:
-  - co-crystallized with uranium acetate
-- chem_class: polyol
-  default_unit: percent_v_v
-  canonical_id: CRYOPROTECTED_WITH_20_ETHYLENE_GLYCOL
-  display_name: Cryoprotected with 20% ethylene glycol
-  aliases:
-  - cryoprotected with 20% ethylene glycol
 - chem_class: polyol
   default_unit: percent_v_v
   canonical_id: CRYOPROTECTED_WITH_20_GLYCEROL
   display_name: Cryoprotected with 20% glycerol
   aliases:
   - cryoprotected with 20% glycerol
-- chem_class: peg
-  peg_mw: 3350
-  default_unit: percent_w_v
-  canonical_id: CSCL_12_W_V_PEG_3350
-  display_name: Cscl 12 % w/v peg 3350
-  aliases:
-  - cscl 12 % w/v peg 3350
 - canonical_id: CTAB
   display_name: CTAB
   chem_class: detergent
@@ -757,18 +818,73 @@ reagents:
   display_name: Cuso4
   aliases:
   - cuso4
+- canonical_id: CYMAL_3
+  display_name: CYMAL-3
+  chem_class: detergent
+  default_unit: percent_w_v
+  aliases:
+  - cymal-3
+  - cymal 3
+  - 3-cyclohexyl-1-propyl-beta-d-maltoside
+- canonical_id: CYMAL_6
+  display_name: CYMAL-6
+  chem_class: detergent
+  default_unit: percent_w_v
+  aliases:
+  - cymal-6
+  - cymal 6
+- canonical_id: CYMAL_7
+  display_name: CYMAL-7
+  chem_class: detergent
+  default_unit: percent_w_v
+  aliases:
+  - cymal-7
+  - cymal 7
+- canonical_id: DATP
+  display_name: dATP
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - datp
+  - deoxyadenosine triphosphate
+- canonical_id: DDAO
+  display_name: DDAO
+  chem_class: detergent
+  default_unit: millimolar
+  aliases:
+  - ddao
+  - n,n-dimethyldecylamine-n-oxide
+  - decyldimethylamine oxide
 - chem_class: detergent
   default_unit: percent_w_v
   canonical_id: DDM
   display_name: Ddm
   aliases:
   - ddm
+  - dodecyl maltoside
+  - dodecyl-maltoside
+  - n-dodecyl-b-d-maltoside
 - chem_class: detergent
   default_unit: percent_w_v
   canonical_id: DECYLMALTOSIDE
   display_name: Decylmaltoside
   aliases:
   - decylmaltoside
+- canonical_id: DEOXYCYTIDINE
+  display_name: Deoxycytidine
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - deoxycytidine
+  - 2-deoxycytidine
+- canonical_id: DEOXYGUANOSINE
+  display_name: 2-Deoxyguanosine
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - 2-deoxyguanosine
+  - 2 deoxyguanosine
+  - deoxyguanosine
 - canonical_id: DEXTRAN_SULFATE
   display_name: Dextran sulfate
   chem_class: other
@@ -776,6 +892,12 @@ reagents:
   aliases:
   - dextran sulfate sodium salt
   - dextran sulphate
+- canonical_id: DGTP
+  display_name: dGTP
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - dgtp
 - chem_class: additive
   default_unit: millimolar
   canonical_id: DIAMINOHEXANE_16
@@ -788,6 +910,13 @@ reagents:
   display_name: 1,5-diaminopentane dihydrochloride
   aliases:
   - 1,5-diaminopentane dihydrochloride
+- canonical_id: DIAMMONIUM_CITRATE
+  display_name: Diammonium hydrogen citrate
+  chem_class: salt
+  default_unit: molar
+  aliases:
+  - diammonium citrate
+  - diammonium hydrogen citrate
 - chem_class: salt
   default_unit: molar
   canonical_id: DIAMMONIUM_HYDROGEN_PHOSPHATE
@@ -812,12 +941,27 @@ reagents:
   display_name: Dichloromethane
   aliases:
   - dichloromethane
+- canonical_id: DICOUMAROL
+  display_name: Dicoumarol
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - dicoumarol
+  - dicumarol
+- canonical_id: DIETHYLENE_GLYCOL
+  display_name: Diethylene glycol
+  chem_class: polyol
+  default_unit: percent_v_v
+  aliases:
+  - diethylene glycol
+  - diethyleneglycol
 - chem_class: additive
   default_unit: millimolar
   canonical_id: DIHYDROOROTATE
   display_name: Dihydroorotate
   aliases:
   - dihydroorotate
+  - dho
 - chem_class: polyol
   default_unit: percent_v_v
   canonical_id: DIMETHYLHEXANEDIOL
@@ -927,6 +1071,12 @@ reagents:
   - dl-dithiothreitol
   - 1,4-dithiothreitol
   - dithioerythritol
+- canonical_id: DUMP
+  display_name: dUMP
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - dump
 - chem_class: additive
   default_unit: millimolar
   canonical_id: D_GALACTOSE
@@ -1009,6 +1159,13 @@ reagents:
   display_name: 2-ethoxyethanol
   aliases:
   - 2-ethoxyethanol
+- canonical_id: ETHYLAMMONIUM_NITRATE
+  display_name: Ethylammonium nitrate
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - ethylammonium nitrate
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
 - canonical_id: ETHYLENE_GLYCOL
   display_name: Ethylene glycol
   chem_class: polyol
@@ -1025,10 +1182,10 @@ reagents:
   - ethylenglycol
   - ethylene glycole
   - each ethylene glycol
-  note: 'The di-, tetra- and pentaethylene glycols were aliases here until 2026-08-01. They are
-    distinct oligomers, not spellings of the monomer: 129, 119 and 133 records name them.
-    "hexylene glycol" (30 records) moved to MPD at the same time, being another name for
-    2-methyl-2,4-pentanediol, and "1,2-butanediol" (19) to its own entry.'
+  note: 'The di-, tetra- and pentaethylene glycols were aliases here until 2026-08-01. They are distinct
+    oligomers, not spellings of the monomer: 129, 119 and 133 records name them. "hexylene glycol" (30
+    records) moved to MPD at the same time, being another name for 2-methyl-2,4-pentanediol, and "1,2-butanediol"
+    (19) to its own entry.'
 - chem_class: salt
   default_unit: molar
   canonical_id: ETHYL_ACETATE
@@ -1054,12 +1211,27 @@ reagents:
   display_name: Fmn
   aliases:
   - fmn
+- canonical_id: FOLINIC_ACID
+  display_name: Folinic acid
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - folinic acid
+  - leucovorin
 - chem_class: additive
   default_unit: millimolar
   canonical_id: FORMAMIDE
   display_name: Formamide
   aliases:
   - formamide
+- canonical_id: FOS_CHOLINE_9
+  display_name: Fos-Choline-9
+  chem_class: detergent
+  default_unit: percent_w_v
+  aliases:
+  - fos-choline-9
+  - fos choline 9
+  - foscholine-9
 - chem_class: additive
   default_unit: millimolar
   canonical_id: FRUCTOSE
@@ -1100,12 +1272,26 @@ reagents:
   - dextrose
   - alpha-d-glucose
   - udp-glucose
+- canonical_id: GLUCOSE_6_PHOSPHATE
+  display_name: Glucose-6-phosphate
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - glucose-6-phosphate
+  - glucose 6 phosphate
+  - g6p
 - chem_class: additive
   default_unit: millimolar
   canonical_id: GLUTAMATE
   display_name: Glutamate
   aliases:
   - glutamate
+- canonical_id: GLUTARIC_ACID
+  display_name: Glutaric acid
+  chem_class: additive
+  default_unit: percent_w_v
+  aliases:
+  - glutaric acid
 - canonical_id: GLUTATHIONE
   display_name: Glutathione
   chem_class: additive
@@ -1160,6 +1346,16 @@ reagents:
   aliases:
   - glycine buffer
   - gly
+- canonical_id: GLYCYLGLYCINE
+  display_name: Glycylglycine
+  chem_class: buffer
+  default_unit: millimolar
+  buffer_pka: 8.2
+  aliases:
+  - glycyl-glycine
+  - glycylglycine
+  - gly-gly
+  - glygly
 - chem_class: buffer
   buffer_pka: 8.1
   default_unit: molar
@@ -1216,6 +1412,13 @@ reagents:
   display_name: Hcl
   aliases:
   - hcl
+- canonical_id: HEGA_10
+  display_name: HEGA-10
+  chem_class: detergent
+  default_unit: percent_w_v
+  aliases:
+  - hega-10
+  - hega 10
 - canonical_id: HEPES
   display_name: HEPES
   chem_class: buffer
@@ -1255,6 +1458,7 @@ reagents:
   - hepes/sodium hydroxide
   - hepes ph 7.0
   - hepes (7.5)
+  - 4-(2-hydroxyethyl)-1-piperazineethanesulfonic acid
 - chem_class: buffer
   buffer_pka: 8.0
   default_unit: molar
@@ -1326,10 +1530,6 @@ reagents:
   - 1,6-hexane diol
   - 1,6-hexandiol
   - 1,6-haxanediol
-  # 2ATB, found by the 2026-08-01 accuracy audit, which writes it "1,6 Hexnediol". The entry
-  # already carries two other depositor misspellings, so this is the established pattern rather
-  # than a new one. Both separators are listed because nothing normalises a hyphen to a space:
-  # `tidy_name` does not, and the hyphenated forms that resolve today do so via `display_name`.
   - 1,6-hexnediol
   - 1,6 hexnediol
 - chem_class: polyol
@@ -1342,9 +1542,9 @@ reagents:
   - 2,5-hexane diol
   - 2,5-hexandiol
   - hexane-2,5-diol
-  note: 'The spacing variants matter: `hexanediol` unqualified is an alias of HEXANEDIOL_16,
-    which outnumbers this entry 17 to 1, so a 2,5 spelling the index misses is not merely
-    dropped -- it is at risk of being read as the 1,6 isomer.'
+  note: 'The spacing variants matter: `hexanediol` unqualified is an alias of HEXANEDIOL_16, which outnumbers
+    this entry 17 to 1, so a 2,5 spelling the index misses is not merely dropped -- it is at risk of being
+    read as the 1,6 isomer.'
 - chem_class: additive
   default_unit: millimolar
   canonical_id: HEXANETRIOL_126
@@ -1378,16 +1578,140 @@ reagents:
   - 2-hydroxyethyldisulfide
 - chem_class: additive
   default_unit: millimolar
-  canonical_id: HYDROXYETHYL_1_PIPERAZINEETHANESULFONIC_ACID_4_2
-  display_name: 4-(2-hydroxyethyl)-1-piperazineethanesulfonic acid
-  aliases:
-  - 4-(2-hydroxyethyl)-1-piperazineethanesulfonic acid
-- chem_class: additive
-  default_unit: millimolar
   canonical_id: HYDROXYETHYL_DISULFIDE_2
   display_name: 2-hydroxyethyl disulfide
   aliases:
   - 2-hydroxyethyl disulfide
+  - hydroxyethyl disulfide
+  - 2-hyrdoxyethyl disulfide
+- canonical_id: HYDROXYMERCURYBENZOATE
+  display_name: 4-Hydroxymercurybenzoate
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - 4-hydroxymercurybenzoate
+  - hydroxymercurybenzoate
+  - para-chloromercuribenzoic acid
+  - p-chloromercurybenzoate
+- canonical_id: IL_1_3_DIMETHYLIMIDAZOLIUM_DIMETHYL_PHOSPHATE
+  display_name: 1,3-dimethylimidazolium dimethyl phosphate
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - 1,3-dimethylimidazolium dimethyl phosphate
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: IL_1_3_DIMETHYLIMIDAZOLIUM_METHYL_SULFATE
+  display_name: 1,3-dimethylimidazolium methyl sulfate
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - 1,3-dimethylimidazolium methyl sulfate
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: IL_1_BUTYLPYRIDINIUM_CHLORIDE
+  display_name: 1-butylpyridinium chloride
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - 1-butylpyridinium chloride
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: IL_1_BUTYL_2_3_DIMETHYLIMIDAZOLIUM_TETRAFLUOROBORATE
+  display_name: 1-butyl-2,3-dimethylimidazolium tetrafluoroborate
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - 1-butyl-2,3-dimethylimidazolium tetrafluoroborate
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: IL_1_BUTYL_3_METHYLIMIDAZOLIUM_CHLORIDE
+  display_name: 1-butyl-3-methylimidazolium chloride
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - 1-butyl-3-methylimidazolium chloride
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: IL_1_BUTYL_3_METHYLIMIDAZOLIUM_DICYANAMIDE
+  display_name: 1-butyl-3-methylimidazolium dicyanamide
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - 1-butyl-3-methylimidazolium dicyanamide
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: IL_1_BUTYL_3_METHYLIMIDAZOLIUM_METHYL_SULFATE
+  display_name: 1-butyl-3-methylimidazolium methyl sulfate
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - 1-butyl-3-methylimidazolium methyl sulfate
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: IL_1_BUTYL_3_METHYLIMIDAZOLIUM_TETRAFLUOROBORATE
+  display_name: 1-butyl-3-methylimidazolium tetrafluoroborate
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - 1-butyl-3-methylimidazolium tetrafluoroborate
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: IL_1_BUTYL_3_METHYLIMIDAZOLIUM_TRIFLUOROACETATE
+  display_name: 1-butyl-3-methylimidazolium trifluoroacetate
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - 1-butyl-3-methylimidazolium trifluoroacetate
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: IL_1_ETHYL_3_METHYLIMIDAZOLIUM_ACETATE
+  display_name: 1-ethyl-3-methylimidazolium acetate
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - 1-ethyl-3-methylimidazolium acetate
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: IL_1_ETHYL_3_METHYLIMIDAZOLIUM_CHLORIDE
+  display_name: 1-ethyl-3-methylimidazolium chloride
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - 1-ethyl-3-methylimidazolium chloride
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: IL_1_ETHYL_3_METHYLIMIDAZOLIUM_ETHYL_SULFATE
+  display_name: 1-ethyl-3-methylimidazolium ethyl sulfate
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - 1-ethyl-3-methylimidazolium ethyl sulfate
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: IL_1_ETHYL_3_METHYLIMIDAZOLIUM_TETRAFLUOROBORATE
+  display_name: 1-ethyl-3-methylimidazolium tetrafluoroborate
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - 1-ethyl-3-methylimidazolium tetrafluoroborate
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: IL_1_ETHYL_3_METHYLIMIDAZOLIUM_TRIFLUOROMETHANESULFONATE
+  display_name: 1-ethyl-3-methylimidazolium trifluoromethanesulfonate
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - 1-ethyl-3-methylimidazolium trifluoromethanesulfonate
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: IL_1_HEXYL_3_METHYLIMIDAZOLIUM_CHLORIDE
+  display_name: 1-hexyl-3-methylimidazolium chloride
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - 1-hexyl-3-methylimidazolium chloride
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: IL_1_N_BUTYL_3_METHYLIMIDAZOLIUM_N_OCTYLSULFATE
+  display_name: 1-n-butyl-3-methylimidazolium n-octylsulfate
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - 1-n-butyl-3-methylimidazolium n-octylsulfate
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: IL_2_HYDROXYETHYLAMMONIUM_FORMATE
+  display_name: 2-hydroxyethylammonium formate
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - 2-hydroxyethylammonium formate
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
 - canonical_id: IMIDAZOLE
   display_name: Imidazole
   chem_class: buffer
@@ -1414,12 +1738,13 @@ reagents:
   - malate imidazole
   - imidazole-malate
   note: 'Mixed buffer system. Chosen over MES/imidazole at audit: different acid.'
-- chem_class: organic
-  default_unit: percent_v_v
-  canonical_id: INHIBITOR_IS_SOAKED_IN_CRYSTALS_BY_ADDITION_DIRECTLY_TO_THE_DROPS_OF_DMSO_DISSOLVED_COMPOUND
-  display_name: Inhibitor is soaked in crystals by addition directly to the drops of dmso dissolved compound
+- canonical_id: IMP
+  display_name: IMP
+  chem_class: additive
+  default_unit: millimolar
   aliases:
-  - inhibitor is soaked in crystals by addition directly to the drops of dmso dissolved compound
+  - imp
+  - inosine monophosphate
 - chem_class: additive
   default_unit: millimolar
   canonical_id: INHIBITOR_TO_PEPTIDE
@@ -1442,6 +1767,24 @@ reagents:
   - iron chloride hexahydrate
   - fecl2
   - ferrous chloride
+- canonical_id: IRON_SULFATE
+  display_name: Iron(II) sulfate
+  chem_class: salt
+  default_unit: millimolar
+  aliases:
+  - iron sulfate
+  - iron(ii) sulfate
+  - iron(ii) sulphate
+  - ferrous sulfate
+  - feso4
+- canonical_id: ISOCITRATE
+  display_name: Isocitrate
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - isocitrate
+  - dl-isocitrate
+  - sodium isocitrate
 - canonical_id: ISOPROPANOL
   display_name: Isopropanol
   chem_class: organic
@@ -1452,6 +1795,12 @@ reagents:
   - isopropyl alcohol
   - ipa
   - propan-2-ol
+- canonical_id: JEFFAMINE
+  display_name: Jeffamine
+  chem_class: other
+  default_unit: percent_v_v
+  aliases:
+  - jeffamine
 - canonical_id: JEFFAMINE_ED2001
   display_name: Jeffamine ED-2001
   chem_class: other
@@ -1492,12 +1841,6 @@ reagents:
   display_name: Ldao
   aliases:
   - ldao
-- chem_class: detergent
-  default_unit: percent_w_v
-  canonical_id: LDAO_PRECIPITANT_SOLUTION
-  display_name: Ldao precipitant solution
-  aliases:
-  - ldao precipitant solution
 - chem_class: salt
   default_unit: molar
   canonical_id: LIBR
@@ -1529,6 +1872,12 @@ reagents:
   - lithium citrate tribasic
   - tri-lithium citrate
   - trilithium citrate
+- canonical_id: LITHIUM_FORMATE
+  display_name: Lithium formate
+  chem_class: salt
+  default_unit: molar
+  aliases:
+  - lithium formate
 - canonical_id: LITHIUM_NITRATE
   display_name: Lithium nitrate
   chem_class: salt
@@ -1578,6 +1927,14 @@ reagents:
   display_name: L-arginine
   aliases:
   - l-arginine
+- canonical_id: L_CYSTEINE
+  display_name: L-Cysteine
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - l-cysteine
+  - cysteine
+  - l cysteine
 - chem_class: additive
   default_unit: millimolar
   canonical_id: L_FUCOSE
@@ -1590,27 +1947,53 @@ reagents:
   display_name: L-glutamate
   aliases:
   - l-glutamate
+- canonical_id: L_GLUTAMIC_ACID
+  display_name: L-Glutamic acid
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - glutamic acid
+  - l-glutamic acid
 - chem_class: additive
   default_unit: millimolar
   canonical_id: L_LYSINE
   display_name: L-lysine
   aliases:
   - l-lysine
+- canonical_id: L_METHIONINE
+  display_name: L-Methionine
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - methionine
+  - l-methionine
 - chem_class: additive
   default_unit: millimolar
   canonical_id: L_NA_GLUTAMATE
   display_name: L-na-glutamate
   aliases:
   - l-na-glutamate
+- canonical_id: L_PHENYLALANINE
+  display_name: L-Phenylalanine
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - phenylalanine
+  - l-phenylalanine
 - chem_class: additive
   default_unit: millimolar
   canonical_id: L_SERINE
   display_name: L-serine
   aliases:
-  # Bare "serine" was an alias of SPERMINE until 2026-08-02, an amino acid aliased
-  # to a polyamine. It belongs here: in a crystallisation drop it is the L form.
   - serine
   - l-serine
+- canonical_id: L_TRYPTOPHAN
+  display_name: L-Tryptophan
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - tryptophan
+  - l-tryptophan
 - chem_class: additive
   default_unit: millimolar
   canonical_id: L_TYROSINE
@@ -1680,6 +2063,15 @@ reagents:
   - mgso4
   - magnesium sulfate heptahydrate
   - mg2so4
+- canonical_id: MALEIC_ACID
+  display_name: Maleic acid
+  chem_class: buffer
+  default_unit: molar
+  buffer_pka: 1.92
+  aliases:
+  - maleic acid
+  note: 'Was an alias of MALIC_ACID until 2026-08-02. One letter apart in spelling and a different molecule:
+    malic is hydroxysuccinic, maleic is the cis-butenedioic. 42 records.'
 - canonical_id: MALIC_ACID
   display_name: Malic acid
   chem_class: buffer
@@ -1692,12 +2084,28 @@ reagents:
   - malate
   - sodium malate
   - dl malic acid
+- canonical_id: MALONIC_ACID
+  display_name: Malonic acid
+  chem_class: buffer
+  default_unit: molar
+  buffer_pka: 2.83
+  aliases:
+  - malonic acid
+  note: 'Was an alias of MALIC_ACID until 2026-08-02. A different diacid, and MALIC_ACID had swallowed
+    three of them: malonic, maleic and molybdate. 123 records.'
 - chem_class: additive
   default_unit: millimolar
   canonical_id: MALTOSE
   display_name: Maltose
   aliases:
   - maltose
+- canonical_id: MANGANESE_ACETATE
+  display_name: Manganese(II) acetate
+  chem_class: salt
+  default_unit: millimolar
+  aliases:
+  - manganese acetate
+  - manganese(ii) acetate
 - canonical_id: MANGANESE_CHLORIDE
   display_name: Manganese chloride
   chem_class: salt
@@ -1717,6 +2125,8 @@ reagents:
   display_name: Mega8
   aliases:
   - mega8
+  - mega 8
+  - mega-8
 - chem_class: salt
   default_unit: molar
   canonical_id: MERCURY_CHLORIDE
@@ -1747,6 +2157,10 @@ reagents:
   - mes ph 6.5
   - mes/sodium hydroxide
   - mes/ sodium hydroxide
+  - (n-morpholino)ethanesulfonic acid
+  - 2-(n-morpholino)ethanesulfonic acid
+  - 2-(n-morpholino) ethanesulfonic acid
+  - 2-morpholinoethanesulfonic acid
 - canonical_id: MES_IMIDAZOLE
   display_name: MES/imidazole
   chem_class: premix
@@ -1863,6 +2277,12 @@ reagents:
   display_name: Monomethyl ether peg 5000
   aliases:
   - monomethyl ether peg 5000
+- canonical_id: MONOOLEIN
+  display_name: Monoolein
+  chem_class: organic
+  default_unit: percent_w_v
+  aliases:
+  - monoolein
 - canonical_id: MOPS
   display_name: MOPS
   chem_class: buffer
@@ -1886,19 +2306,11 @@ reagents:
   - mops hepes
   - mops/hepes
   - hepes/mops
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: MORPHOLINOETHANESULFONIC_ACID_2
-  display_name: 2-morpholinoethanesulfonic acid
-  aliases:
-  - 2-morpholinoethanesulfonic acid
 - canonical_id: MPD
   display_name: MPD
   chem_class: organic
   default_unit: percent_v_v
   aliases:
-  # Hexylene glycol *is* 2-methyl-2,4-pentanediol, so it belongs here. It was an alias of
-  # ETHYLENE_GLYCOL until 2026-08-01, which is a different molecule entirely. 30 records.
   - hexylene glycol
   - 2-methyl-2,4-pentanediol
   - (+/-)-2-methyl-2,4-pentanediol
@@ -1934,6 +2346,14 @@ reagents:
   display_name: Mpd/peg1000/peg3350
   aliases:
   - mpd/peg1000/peg3350
+- canonical_id: MTA
+  display_name: MTA
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - mta
+  - 5'-methylthioadenosine
+  - methylthioadenosine
 - chem_class: polyol
   default_unit: percent_v_v
   canonical_id: MYO_INOSITOL
@@ -1972,13 +2392,6 @@ reagents:
   display_name: Na2so3
   aliases:
   - na2so3
-- chem_class: peg
-  peg_mw: 514
-  default_unit: percent_v_v
-  canonical_id: NA3_CITRATE_PH_5_14_W_V_PEG6000
-  display_name: Na3 citrate ph 5,14% w/v peg6000
-  aliases:
-  - na3 citrate ph 5,14% w/v peg6000
 - canonical_id: NAD
   display_name: NAD
   chem_class: additive
@@ -1988,17 +2401,9 @@ reagents:
   - nad+
   - beta-nad
   - nicotinamide adenine dinucleotide
-  note: 'NADP, NADP+ and NADH were aliases here until 2026-08-01. They are different molecules
-    (a phosphate, and a redox state), NADPH already had its own entry, and 462 records name
-    NADP against 159 naming NADH. Found by the second classification accuracy audit, on 6FKU.'
-- canonical_id: NADP
-  display_name: NADP
-  chem_class: additive
-  default_unit: millimolar
-  aliases:
-  - nadp
-  - nadp+
-  - nicotinamide adenine dinucleotide phosphate
+  note: NADP, NADP+ and NADH were aliases here until 2026-08-01. They are different molecules (a phosphate,
+    and a redox state), NADPH already had its own entry, and 462 records name NADP against 159 naming
+    NADH. Found by the second classification accuracy audit, on 6FKU.
 - canonical_id: NADH
   display_name: NADH
   chem_class: additive
@@ -2007,6 +2412,14 @@ reagents:
   - nadh
   note: Cofactor carried into the drop with the protein. Merged with the separate 'nad' string from the
     same audit, 346 components combined.
+- canonical_id: NADP
+  display_name: NADP
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - nadp
+  - nadp+
+  - nicotinamide adenine dinucleotide phosphate
 - chem_class: additive
   default_unit: millimolar
   canonical_id: NADPH
@@ -2037,6 +2450,33 @@ reagents:
   display_name: Na thiocyanate
   aliases:
   - na thiocyanate
+- canonical_id: NDSB_195
+  display_name: NDSB-195
+  chem_class: additive
+  default_unit: molar
+  aliases:
+  - dimethylethylammonium propane sulfonate
+  - ndsb-195
+  - ndsb 195
+  - dimethylethyl-(3-sulfopropyl)-ammonium
+  note: The non-detergent sulfobetaine sold as NDSB-195 *is* dimethylethyl-(3-sulfopropyl)- ammonium;
+    3RFC writes the systematic name and 9P0C the trade name. Both are this entry.
+- canonical_id: NDSB_201
+  display_name: NDSB-201
+  chem_class: additive
+  default_unit: molar
+  aliases:
+  - ndsb-201
+  - ndsb 201
+  - 3-(benzyldimethylammonio)propanesulfonate
+  note: 'A different non-detergent sulfobetaine from NDSB-195: benzyl rather than ethyl.'
+- canonical_id: NDSB_256
+  display_name: NDSB-256
+  chem_class: additive
+  default_unit: molar
+  aliases:
+  - ndsb-256
+  - ndsb 256
 - chem_class: salt
   default_unit: molar
   canonical_id: NH4ACETATE
@@ -2079,18 +2519,14 @@ reagents:
   display_name: Niso4
   aliases:
   - niso4
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: N_2_ACETAMIDO_IMINODIACETIC_ACID
-  display_name: N-(2-acetamido)iminodiacetic acid
+- canonical_id: NONYL_GLUCOSIDE
+  display_name: Nonyl glucoside
+  chem_class: detergent
+  default_unit: percent_w_v
   aliases:
-  - n-(2-acetamido)iminodiacetic acid
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: N_ACETAMIDO_2_IMINODIACETIC_ACID
-  display_name: N-[-acetamido]-2-iminodiacetic acid
-  aliases:
-  - n-[-acetamido]-2-iminodiacetic acid
+  - nonylglucoside
+  - nonyl glucoside
+  - n-nonyl-beta-d-glucoside
 - chem_class: detergent
   default_unit: percent_w_v
   canonical_id: N_BOG
@@ -2123,24 +2559,6 @@ reagents:
   - n-dodecyl-n
 - chem_class: additive
   default_unit: millimolar
-  canonical_id: N_MORPHOLINO_ETHANESULFONIC_ACID
-  display_name: (n-morpholino)ethanesulfonic acid
-  aliases:
-  - (n-morpholino)ethanesulfonic acid
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: N_MORPHOLINO_ETHANESULFONIC_ACID_2
-  display_name: 2-(n-morpholino)ethanesulfonic acid
-  aliases:
-  - 2-(n-morpholino)ethanesulfonic acid
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: N_MORPHOLINO_ETHANESULFONIC_ACID_2_2
-  display_name: 2-(n-morpholino) ethanesulfonic acid
-  aliases:
-  - 2-(n-morpholino) ethanesulfonic acid
-- chem_class: additive
-  default_unit: millimolar
   canonical_id: OCTANOYL_N_METHYLGLUCAMIDE
   display_name: Octanoyl-n-methylglucamide
   aliases:
@@ -2163,7 +2581,6 @@ reagents:
   display_name: 2-oxoglutarate
   aliases:
   - 2-oxoglutarate
-  # Depositor spelling, oxy for oxo. 3THP, found by the 2026-08-01 accuracy audit.
   - 2-oxyglutarate
 - chem_class: additive
   default_unit: millimolar
@@ -2177,13 +2594,6 @@ reagents:
   display_name: P8k
   aliases:
   - p8k
-- chem_class: peg
-  peg_mw: 33500
-  default_unit: percent_w_v
-  canonical_id: PEG3350_0_12_0_21M_SODIUM_SULFATE_24
-  display_name: ~24%peg3350,0.12~0.21m sodium sulfate
-  aliases:
-  - ~24%peg3350,0.12~0.21m sodium sulfate
 - chem_class: peg
   peg_mw: 5000
   default_unit: percent_w_v
@@ -2238,13 +2648,6 @@ reagents:
   display_name: Peg 1000 (2%)
   aliases:
   - peg 1000 (2%)
-- chem_class: peg
-  peg_mw: 1000
-  default_unit: percent_w_v
-  canonical_id: PEG_1000_E_11_PEG_3350
-  display_name: Peg 1000 e 11% peg 3350
-  aliases:
-  - peg 1000 e 11% peg 3350
 - chem_class: peg
   peg_mw: 10000
   default_unit: percent_w_v
@@ -2491,8 +2894,6 @@ reagents:
   - polyethylene glycol 400
   - peg400
   - peg-400
-  note: 'The polypropylene glycol spellings were aliases here until 2026-08-01. PPG is a
-    different polymer from PEG, not a spelling of it, and 163 records name it.'
   note: Below about 600 a PEG behaves as an organic precipitant rather than a polymer, and is usually
     reported v/v. Spec 6.3 requires this distinction be preserved.
 - canonical_id: PEG_4000
@@ -2638,7 +3039,6 @@ reagents:
   - peg 2000 mme
   - peg mme 2000
   - peg2000mme
-  # Sat on PEG_2000 until 2026-08-01, where it made a monomethyl ether into a plain PEG.
   - polyethylene glycol 2000 mme
   - mpeg 2000
   - polyethylene glycol monomethyl ether 2000
@@ -2653,6 +3053,16 @@ reagents:
   - peg2k mme
   - mmepeg 2000
   - mepeg 2000
+- canonical_id: PEG_MME_20000
+  display_name: PEG MME 20000
+  chem_class: peg
+  default_unit: percent_w_v
+  aliases:
+  - peg mme 20000
+  - peg 20000 mme
+  - polyethylene glycol monomethyl ether 20000
+  peg_mw: 20000
+  is_mme: true
 - chem_class: peg
   peg_mw: 2000
   default_unit: percent_w_v
@@ -2808,6 +3218,32 @@ reagents:
   - molecular dimensions peg smear broad
   note: A vendor mixture of several PEG molecular weights, so it has no single peg_mw and is deliberately
     not chem_class peg. Added from the 2026-07-29 audit, 225 components.
+- canonical_id: PEG_SMEAR_HIGH
+  display_name: PEG Smear High
+  chem_class: other
+  default_unit: percent_w_v
+  aliases:
+  - peg smear high
+  - peg smear hi
+  note: A vendor mixture of several PEG molecular weights, so it has no single peg_mw and is deliberately
+    not chem_class peg. Same treatment as PEG_SMEAR_BROAD.
+- canonical_id: PEG_SMEAR_LOW
+  display_name: PEG Smear Low
+  chem_class: other
+  default_unit: percent_w_v
+  aliases:
+  - peg smear low
+  note: A vendor mixture of several PEG molecular weights, so it has no single peg_mw and is deliberately
+    not chem_class peg. Same treatment as PEG_SMEAR_BROAD.
+- canonical_id: PEG_SMEAR_MEDIUM
+  display_name: PEG Smear Medium
+  chem_class: other
+  default_unit: percent_w_v
+  aliases:
+  - peg smear medium
+  - peg smear med
+  note: A vendor mixture of several PEG molecular weights, so it has no single peg_mw and is deliberately
+    not chem_class peg. Same treatment as PEG_SMEAR_BROAD.
 - canonical_id: PEI
   display_name: Polyethyleneimine
   chem_class: other
@@ -2859,6 +3295,13 @@ reagents:
   display_name: Pentaerythritol propoxylate po/oh 5/4
   aliases:
   - pentaerythritol propoxylate po/oh 5/4
+- canonical_id: PENTAETHYLENE_GLYCOL
+  display_name: Pentaethylene glycol
+  chem_class: polyol
+  default_unit: percent_v_v
+  aliases:
+  - pentaethylene glycol
+  - pentaethyleneglycol
 - chem_class: additive
   default_unit: millimolar
   canonical_id: PENTAFLUOROBENZYL_ALCOHOL_23456
@@ -2878,6 +3321,17 @@ reagents:
   display_name: Percent peg 3350
   aliases:
   - percent peg 3350
+- canonical_id: PGA_LM
+  display_name: PGA-LM
+  chem_class: additive
+  default_unit: percent_w_v
+  aliases:
+  - pga-lm
+  - pga lm
+  - poly-gamma-glutamic acid low molecular weight
+  - gamma-pga
+  - gamma pga
+  - poly-gamma-glutamic acid
 - chem_class: organic
   default_unit: percent_v_v
   canonical_id: PHENOL
@@ -2932,6 +3386,13 @@ reagents:
   - pyridoxal 5'-phosphate
   - pyridoxal-5-phosphate
   note: Pyridoxal 5'-phosphate, cofactor of PLP-dependent enzymes.
+- canonical_id: PMSF
+  display_name: PMSF
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - pmsf
+  - phenylmethylsulfonyl fluoride
 - chem_class: additive
   default_unit: millimolar
   canonical_id: POLYACRYLIC_ACID
@@ -2977,6 +3438,17 @@ reagents:
   display_name: Polyethylene glycol 8k
   aliases:
   - polyethylene glycol 8k
+- canonical_id: POLYPROPYLENE_GLYCOL
+  display_name: Polypropylene glycol
+  chem_class: organic
+  default_unit: percent_v_v
+  aliases:
+  - polypropylene glycol
+  - polypropyleneglycol
+  - ppg
+  note: Deliberately chem_class organic rather than peg. It is a precipitant polymer and behaves like
+    one, but it is not polyethylene glycol, and the whole point of splitting it out is to stop the two
+    being counted as one. This does move its conditions from the PEG family to the Organic family.
 - chem_class: organic
   default_unit: percent_v_v
   canonical_id: POLYPROPYLENE_GLYCOL_P_400
@@ -2987,17 +3459,19 @@ reagents:
   - polypropylene glycol 400
   - ppg 400
   - ppg p400
-  note: 'Was chem_class peg with peg_mw 400 until 2026-08-01, and PEG_400 separately claimed
-    "polypropylene glycol 400" and "polypropylene glycol p400" as its own aliases, so the same
-    reagent resolved two ways depending on spelling. PPG is a different polymer from PEG: the
-    peg_mw is dropped and the class is organic, which does move these conditions out of the PEG
-    family.'
+  note: 'Was chem_class peg with peg_mw 400 until 2026-08-01, and PEG_400 separately claimed "polypropylene
+    glycol 400" and "polypropylene glycol p400" as its own aliases, so the same reagent resolved two ways
+    depending on spelling. PPG is a different polymer from PEG: the peg_mw is dropped and the class is
+    organic, which does move these conditions out of the PEG family.'
 - chem_class: additive
   default_unit: millimolar
   canonical_id: POLYVINYLPYRROLIDONE
   display_name: Polyvinylpyrrolidone
   aliases:
   - polyvinylpyrrolidone
+  - pvp
+  - pvp k15
+  - pvp k-15
 - chem_class: additive
   default_unit: millimolar
   canonical_id: POLYVINYLPYRROLIDONE_K15
@@ -3145,6 +3619,9 @@ reagents:
   - na-tartrate
   - k-na-tartrate
   - k/na-tartrate
+  - na/k-tartate
+  - na/k tartate
+  - sodium potassium tartate
 - canonical_id: POTASSIUM_SULFATE
   display_name: Potassium sulfate
   chem_class: salt
@@ -3168,13 +3645,6 @@ reagents:
   - kscn
   - kcn
   - potassium thiocynate
-- chem_class: organic
-  default_unit: percent_v_v
-  canonical_id: PRIOR_TO_CRYSTALLIZATION_COMPOUND_SOLUTIONS_IN_DMSO_WERE_DRIED_ONTO_THE_WELLS_OF_SWISSCI_96_WELL_PLATES
-  display_name: Prior to crystallization compound solutions in dmso were dried onto the wells of swissci
-    96-well plates
-  aliases:
-  - prior to crystallization compound solutions in dmso were dried onto the wells of swissci 96-well plates
 - canonical_id: PROLINE
   display_name: L-Proline
   chem_class: additive
@@ -3203,20 +3673,8 @@ reagents:
   - propylene glycol
   - 1,2-propane diol
   - (rs)-1,2-propanediol
-  note: '"Polypropylene glycol" was an alias here until 2026-08-01: PPG is the polymer, this is
-    the monomer, and they are not interchangeable.'
-- canonical_id: POLYPROPYLENE_GLYCOL
-  display_name: Polypropylene glycol
-  chem_class: organic
-  default_unit: percent_v_v
-  aliases:
-  - polypropylene glycol
-  - polypropyleneglycol
-  - ppg
-  note: 'Deliberately chem_class organic rather than peg. It is a precipitant polymer and behaves
-    like one, but it is not polyethylene glycol, and the whole point of splitting it out is to
-    stop the two being counted as one. This does move its conditions from the PEG family to the
-    Organic family.'
+  note: '"Polypropylene glycol" was an alias here until 2026-08-01: PPG is the polymer, this is the monomer,
+    and they are not interchangeable.'
 - canonical_id: PROPANEDIOL_13
   display_name: 1,3-Propanediol
   chem_class: organic
@@ -3226,38 +3684,10 @@ reagents:
   - 1,3-propanediol
   - 1,3-propane diol
   - trimethylene glycol
-  note: 'Distinct from PROPANEDIOL_12: a different isomer, not a synonym. Triethylene and
-    tetraethylene glycol were aliases here until 2026-08-01: they are ethylene glycol oligomers
-    and have nothing to do with propanediol. Found by the second accuracy audit; it is also what
-    made 3UTW read "triethylene glycerol" as propanediol 13 in the first.'
-- canonical_id: DIETHYLENE_GLYCOL
-  display_name: Diethylene glycol
-  chem_class: polyol
-  default_unit: percent_v_v
-  aliases:
-  - diethylene glycol
-  - diethyleneglycol
-- canonical_id: TRIETHYLENE_GLYCOL
-  display_name: Triethylene glycol
-  chem_class: polyol
-  default_unit: percent_v_v
-  aliases:
-  - triethylene glycol
-  - triethyleneglycol
-- canonical_id: TETRAETHYLENE_GLYCOL
-  display_name: Tetraethylene glycol
-  chem_class: polyol
-  default_unit: percent_v_v
-  aliases:
-  - tetraethylene glycol
-  - tetraethyleneglycol
-- canonical_id: PENTAETHYLENE_GLYCOL
-  display_name: Pentaethylene glycol
-  chem_class: polyol
-  default_unit: percent_v_v
-  aliases:
-  - pentaethylene glycol
-  - pentaethyleneglycol
+  note: 'Distinct from PROPANEDIOL_12: a different isomer, not a synonym. Triethylene and tetraethylene
+    glycol were aliases here until 2026-08-01: they are ethylene glycol oligomers and have nothing to
+    do with propanediol. Found by the second accuracy audit; it is also what made 3UTW read "triethylene
+    glycerol" as propanediol 13 in the first.'
 - canonical_id: PROPANOL_1
   display_name: 1-Propanol
   chem_class: organic
@@ -3275,6 +3705,13 @@ reagents:
   display_name: Protamine sulphate
   aliases:
   - protamine sulphate
+- canonical_id: PUTRESCINE
+  display_name: Putrescine
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - putrescine
+  - 1,4-diaminobutane
 - chem_class: additive
   default_unit: millimolar
   canonical_id: PYRUVATE
@@ -3293,12 +3730,28 @@ reagents:
   display_name: Reconstituted in dmso
   aliases:
   - reconstituted in dmso
+- canonical_id: RHODIUM_HEXAMINE
+  display_name: Rhodium(III) hexammine
+  chem_class: salt
+  default_unit: millimolar
+  aliases:
+  - rhodium(iii) hexammine
+  - rhodium(iii) hexamine
+  - rhodium hexammine
 - chem_class: salt
   default_unit: molar
   canonical_id: RUBIDIUM_CHLORIDE
   display_name: Rubidium chloride
   aliases:
   - rubidium chloride
+- canonical_id: SAH
+  display_name: S-adenosylhomocysteine
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - sah
+  - s-adenosylhomocysteine
+  - s-adenosyl-l-homocysteine
 - chem_class: additive
   default_unit: millimolar
   canonical_id: SAM
@@ -3324,12 +3777,6 @@ reagents:
   display_name: Saturated peg 6000
   aliases:
   - saturated peg 6000
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: SATURATED_WITH_PARA_CHLOROMERCURIBENZOIC_ACID
-  display_name: Saturated with para-chloromercuribenzoic acid
-  aliases:
-  - saturated with para-chloromercuribenzoic acid
 - canonical_id: SDS
   display_name: SDS
   chem_class: detergent
@@ -3350,222 +3797,6 @@ reagents:
   display_name: Sodium 4-(hydroxymercury)benzoate
   aliases:
   - sodium 4-(hydroxymercury)benzoate
-- canonical_id: MALONIC_ACID
-  display_name: Malonic acid
-  chem_class: buffer
-  default_unit: molar
-  buffer_pka: 2.83
-  aliases:
-  - malonic acid
-  note: 'Was an alias of MALIC_ACID until 2026-08-02. A different diacid, and MALIC_ACID had
-    swallowed three of them: malonic, maleic and molybdate. 123 records.'
-- canonical_id: MALEIC_ACID
-  display_name: Maleic acid
-  chem_class: buffer
-  default_unit: molar
-  buffer_pka: 1.92
-  aliases:
-  - maleic acid
-  note: 'Was an alias of MALIC_ACID until 2026-08-02. One letter apart in spelling and a
-    different molecule: malic is hydroxysuccinic, maleic is the cis-butenedioic. 42 records.'
-- canonical_id: SODIUM_MOLYBDATE
-  display_name: Sodium molybdate
-  chem_class: salt
-  default_unit: molar
-  aliases:
-  - sodium molybdate
-  - na molybdate
-  note: 'Was an alias of MALIC_ACID until 2026-08-02, which is not a near miss of any kind.
-    19 records.'
-- canonical_id: SODIUM_OXALATE
-  display_name: Sodium oxalate
-  chem_class: salt
-  default_unit: molar
-  aliases:
-  - sodium oxalate
-  - na oxalate
-  note: 'Was an alias of SODIUM_OXAMATE until 2026-08-02. Oxalate is the diacid anion, oxamate
-    the amide: different reagents. 50 records.'
-- canonical_id: SODIUM_THIOSULFATE
-  display_name: Sodium thiosulfate
-  chem_class: salt
-  default_unit: molar
-  aliases:
-  - sodium thiosulfate
-  - sodium thiosulphate
-  - na thiosulfate
-  note: 'Was an alias of SODIUM_SULFATE until 2026-08-02, along with sodium sulfite. 30 records.'
-- canonical_id: SODIUM_SULFITE
-  display_name: Sodium sulfite
-  chem_class: salt
-  default_unit: molar
-  aliases:
-  - sodium sulfite
-  - sodium sulphite
-  note: 'Was an alias of SODIUM_SULFATE until 2026-08-02. Sulfite and sulfate differ by an
-    oxygen and by Hofmeister behaviour. 23 records.'
-- canonical_id: SODIUM_PYROPHOSPHATE
-  display_name: Sodium pyrophosphate
-  chem_class: salt
-  default_unit: molar
-  aliases:
-  - sodium pyrophosphate
-  - tetrasodium pyrophosphate
-  - na pyrophosphate
-  note: 'Was an alias of DISODIUM_HYDROGEN_PHOSPHATE until 2026-08-02. A condensed diphosphate,
-    not the orthophosphate. 29 records.'
-- canonical_id: AMPD
-  display_name: AMPD
-  chem_class: buffer
-  default_unit: millimolar
-  buffer_pka: 8.8
-  aliases:
-  - ampd
-  - 2-amino-2-methyl-1,3-propanediol
-  - 2-amino-2-methyl-1,3-propanediol (ampd)
-- canonical_id: GLYCYLGLYCINE
-  display_name: Glycylglycine
-  chem_class: buffer
-  default_unit: millimolar
-  buffer_pka: 8.2
-  aliases:
-  - glycyl-glycine
-  - glycylglycine
-  - gly-gly
-  - glygly
-- canonical_id: CALCIUM_NITRATE
-  display_name: Calcium nitrate
-  chem_class: salt
-  default_unit: molar
-  aliases:
-  - calcium nitrate
-  - ca(no3)2
-  - calcium nitrate tetrahydrate
-- canonical_id: NDSB_195
-  display_name: NDSB-195
-  chem_class: additive
-  default_unit: molar
-  aliases:
-  - dimethylethylammonium propane sulfonate
-  - ndsb-195
-  - ndsb 195
-  - dimethylethyl-(3-sulfopropyl)-ammonium
-  note: 'The non-detergent sulfobetaine sold as NDSB-195 *is* dimethylethyl-(3-sulfopropyl)-
-    ammonium; 3RFC writes the systematic name and 9P0C the trade name. Both are this entry.'
-- canonical_id: CYMAL_3
-  display_name: CYMAL-3
-  chem_class: detergent
-  default_unit: percent_w_v
-  aliases:
-  - cymal-3
-  - cymal 3
-  - 3-cyclohexyl-1-propyl-beta-d-maltoside
-- canonical_id: NONYL_GLUCOSIDE
-  display_name: Nonyl glucoside
-  chem_class: detergent
-  default_unit: percent_w_v
-  aliases:
-  - nonylglucoside
-  - nonyl glucoside
-  - n-nonyl-beta-d-glucoside
-- canonical_id: TETRAETHYLAMMONIUM_CHLORIDE
-  display_name: Tetraethylammonium chloride
-  chem_class: salt
-  default_unit: millimolar
-  aliases:
-  - tetraethylammonium chloride
-  - teacl
-- canonical_id: ALUMINIUM_FLUORIDE
-  display_name: Aluminium fluoride
-  chem_class: salt
-  default_unit: millimolar
-  aliases:
-  - alf4
-  - alf3
-  - aluminium fluoride
-  - aluminum fluoride
-- canonical_id: RHODIUM_HEXAMINE
-  display_name: Rhodium(III) hexammine
-  chem_class: salt
-  default_unit: millimolar
-  aliases:
-  - rhodium(iii) hexammine
-  - rhodium(iii) hexamine
-  - rhodium hexammine
-- canonical_id: CHLOROTRYPTOPHAN_7
-  display_name: 7-Chlorotryptophan
-  chem_class: additive
-  default_unit: millimolar
-  aliases:
-  - 7-chlorotryptophan
-  - 7 chlorotryptophan
-- canonical_id: DEOXYGUANOSINE
-  display_name: 2-Deoxyguanosine
-  chem_class: additive
-  default_unit: millimolar
-  aliases:
-  - 2-deoxyguanosine
-  - 2 deoxyguanosine
-  - deoxyguanosine
-- canonical_id: DEOXYCYTIDINE
-  display_name: Deoxycytidine
-  chem_class: additive
-  default_unit: millimolar
-  aliases:
-  - deoxycytidine
-  - 2-deoxycytidine
-- canonical_id: SAH
-  display_name: S-adenosylhomocysteine
-  chem_class: additive
-  default_unit: millimolar
-  aliases:
-  - sah
-  - s-adenosylhomocysteine
-  - s-adenosyl-l-homocysteine
-- canonical_id: STAUROSPORINE
-  display_name: Staurosporine
-  chem_class: additive
-  default_unit: millimolar
-  aliases:
-  - staurosporine
-- canonical_id: NDSB_201
-  display_name: NDSB-201
-  chem_class: additive
-  default_unit: molar
-  aliases:
-  - ndsb-201
-  - ndsb 201
-  - 3-(benzyldimethylammonio)propanesulfonate
-  note: 'A different non-detergent sulfobetaine from NDSB-195: benzyl rather than ethyl.'
-- canonical_id: ISOCITRATE
-  display_name: Isocitrate
-  chem_class: additive
-  default_unit: millimolar
-  aliases:
-  - isocitrate
-  - dl-isocitrate
-  - sodium isocitrate
-- canonical_id: UMP
-  display_name: UMP
-  chem_class: additive
-  default_unit: millimolar
-  aliases:
-  - ump
-  - uridine monophosphate
-  - uridine 5'-monophosphate
-- canonical_id: DICOUMAROL
-  display_name: Dicoumarol
-  chem_class: additive
-  default_unit: millimolar
-  aliases:
-  - dicoumarol
-  - dicumarol
-- canonical_id: XYLOPENTAOSE
-  display_name: Xylopentaose
-  chem_class: additive
-  default_unit: millimolar
-  aliases:
-  - xylopentaose
 - canonical_id: SODIUM_ACETATE
   display_name: Sodium acetate
   chem_class: buffer
@@ -3595,12 +3826,6 @@ reagents:
   display_name: Sodium acetate/acetic acid
   aliases:
   - sodium acetate/acetic acid
-- chem_class: salt
-  default_unit: molar
-  canonical_id: SODIUM_ACETATE_AT_PH_4_0_AS_WELL_AS_5_V_V_DMSO
-  display_name: Sodium acetate at ph 4.0 as well as 5% v/v dmso
-  aliases:
-  - sodium acetate at ph 4.0 as well as 5% v/v dmso
 - canonical_id: SODIUM_AZIDE
   display_name: Sodium azide
   chem_class: additive
@@ -3776,6 +4001,14 @@ reagents:
   - na-malonate
   - di-sodium malonate
   - namalonate
+- canonical_id: SODIUM_MOLYBDATE
+  display_name: Sodium molybdate
+  chem_class: salt
+  default_unit: molar
+  aliases:
+  - sodium molybdate
+  - na molybdate
+  note: Was an alias of MALIC_ACID until 2026-08-02, which is not a near miss of any kind. 19 records.
 - canonical_id: SODIUM_NITRATE
   display_name: Sodium nitrate
   chem_class: salt
@@ -3784,12 +4017,15 @@ reagents:
   aliases:
   - na nitrate
   - nano3
-- chem_class: salt
+- canonical_id: SODIUM_OXALATE
+  display_name: Sodium oxalate
+  chem_class: salt
   default_unit: molar
-  canonical_id: SODIUM_NITRATE_MOLECULAR_DIMENSIONS
-  display_name: Sodium nitrate - molecular dimensions
   aliases:
-  - sodium nitrate - molecular dimensions
+  - sodium oxalate
+  - na oxalate
+  note: 'Was an alias of SODIUM_OXAMATE until 2026-08-02. Oxalate is the diacid anion, oxamate the amide:
+    different reagents. 50 records.'
 - canonical_id: SODIUM_OXAMATE
   display_name: Sodium oxamate
   chem_class: salt
@@ -3847,6 +4083,16 @@ reagents:
   - na/k phospate
   - na-k phosphate
   - na/k phosphate buffer
+- canonical_id: SODIUM_PYROPHOSPHATE
+  display_name: Sodium pyrophosphate
+  chem_class: salt
+  default_unit: molar
+  aliases:
+  - sodium pyrophosphate
+  - tetrasodium pyrophosphate
+  - na pyrophosphate
+  note: Was an alias of DISODIUM_HYDROGEN_PHOSPHATE until 2026-08-02. A condensed diphosphate, not the
+    orthophosphate. 29 records.
 - chem_class: additive
   default_unit: millimolar
   canonical_id: SODIUM_PYRUVATE
@@ -3868,6 +4114,15 @@ reagents:
   - sodium sulphate
   - na2so4
   - naso4
+- canonical_id: SODIUM_SULFITE
+  display_name: Sodium sulfite
+  chem_class: salt
+  default_unit: molar
+  aliases:
+  - sodium sulfite
+  - sodium sulphite
+  note: Was an alias of SODIUM_SULFATE until 2026-08-02. Sulfite and sulfate differ by an oxygen and by
+    Hofmeister behaviour. 23 records.
 - canonical_id: SODIUM_TARTRATE
   display_name: Sodium tartrate
   chem_class: salt
@@ -3885,6 +4140,15 @@ reagents:
   aliases:
   - nascn
   - sodium isothiocyanate
+- canonical_id: SODIUM_THIOSULFATE
+  display_name: Sodium thiosulfate
+  chem_class: salt
+  default_unit: molar
+  aliases:
+  - sodium thiosulfate
+  - sodium thiosulphate
+  - na thiosulfate
+  note: Was an alias of SODIUM_SULFATE until 2026-08-02, along with sodium sulfite. 30 records.
 - chem_class: additive
   default_unit: millimolar
   canonical_id: SODIUM_TUNGSTATE
@@ -3932,6 +4196,12 @@ reagents:
   - succinate/ phosphate/ glycine
   note: Succinate/phosphate/glycine buffer system, Qiagen. Titrated mixture, so the constituents are listed
     but not their proportions.
+- canonical_id: STAUROSPORINE
+  display_name: Staurosporine
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - staurosporine
 - canonical_id: STRONTIUM_CHLORIDE
   display_name: Strontium chloride
   chem_class: salt
@@ -4008,6 +4278,34 @@ reagents:
   - tertiary butanol
   - 2-methyl-2-propanol
   - butanol
+- canonical_id: TETRABUTYLPHOSPHONIUM_BROMIDE
+  display_name: Tetrabutylphosphonium bromide
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - tetrabutylphosphonium bromide
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: TETRAETHYLAMMONIUM_BROMIDE
+  display_name: Tetraethylammonium bromide
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - tetraethylammonium bromide
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
+- canonical_id: TETRAETHYLAMMONIUM_CHLORIDE
+  display_name: Tetraethylammonium chloride
+  chem_class: salt
+  default_unit: millimolar
+  aliases:
+  - tetraethylammonium chloride
+  - teacl
+- canonical_id: TETRAETHYLENE_GLYCOL
+  display_name: Tetraethylene glycol
+  chem_class: polyol
+  default_unit: percent_v_v
+  aliases:
+  - tetraethylene glycol
+  - tetraethyleneglycol
 - chem_class: salt
   default_unit: molar
   canonical_id: TETRAMETHYLAMMONIUM_CHLORIDE
@@ -4020,6 +4318,9 @@ reagents:
   display_name: Thiamine diphosphate
   aliases:
   - thiamine diphosphate
+  - tdp
+  - thiamine pyrophosphate
+  - tpp
 - chem_class: salt
   default_unit: molar
   canonical_id: THIOCYANATE
@@ -4076,12 +4377,26 @@ reagents:
   display_name: Triethanolamine-hcl
   aliases:
   - triethanolamine-hcl
+- canonical_id: TRIETHYLENE_GLYCOL
+  display_name: Triethylene glycol
+  chem_class: polyol
+  default_unit: percent_v_v
+  aliases:
+  - triethylene glycol
+  - triethyleneglycol
 - chem_class: organic
   default_unit: percent_v_v
   canonical_id: TRIFLUOROETHANOL_222
   display_name: 2,2,2-trifluoroethanol
   aliases:
   - 2,2,2-trifluoroethanol
+- canonical_id: TRIISOBUTYLMETHYLPHOSPHONIUM_TOSYLATE
+  display_name: Triisobutylmethylphosphonium tosylate
+  chem_class: salt
+  default_unit: percent_w_v
+  aliases:
+  - triisobutylmethylphosphonium tosylate
+  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
 - canonical_id: TRIS
   display_name: Tris
   chem_class: buffer
@@ -4175,12 +4490,13 @@ reagents:
   display_name: T-butyl alcohol
   aliases:
   - t-butyl alcohol
-- chem_class: salt
-  default_unit: molar
-  canonical_id: UL_0_1_M_SODIUM_PHOSPHATE
-  display_name: Ul 0.1 m sodium phosphate
+- canonical_id: UDAO
+  display_name: UDAO
+  chem_class: detergent
+  default_unit: millimolar
   aliases:
-  - ul 0.1 m sodium phosphate
+  - udao
+  - undecyldimethylamine oxide
 - chem_class: peg
   peg_mw: 3350
   default_unit: percent_w_v
@@ -4188,12 +4504,14 @@ reagents:
   display_name: Ul 16% peg3350
   aliases:
   - ul 16% peg3350
-- chem_class: additive
+- canonical_id: UMP
+  display_name: UMP
+  chem_class: additive
   default_unit: millimolar
-  canonical_id: UL_OF_S_ADENOSYL_METHIONINE_IN_WATER_WERE_ADDED_TO_100UL_OF_PROTEIN
-  display_name: Ul of s-adenosyl methionine in water were added to 100ul of protein
   aliases:
-  - ul of s-adenosyl methionine in water were added to 100ul of protein
+  - ump
+  - uridine monophosphate
+  - uridine 5'-monophosphate
 - chem_class: additive
   default_unit: millimolar
   canonical_id: UREA
@@ -4231,19 +4549,6 @@ reagents:
   display_name: (weight/vol) peg3350
   aliases:
   - (weight/vol) peg3350
-- chem_class: additive
-  default_unit: millimolar
-  canonical_id: WELL_3_DROP_CRYSTALLIZATION_PLATE
-  display_name: Well 3 drop crystallization plate
-  aliases:
-  - well 3 drop crystallization plate
-- chem_class: peg
-  peg_mw: 8000
-  default_unit: percent_w_v
-  canonical_id: WERE_TRANSFERRED_TO_A_COMPOUND_SOAKING_SOLUTION_CONTAINING_22_W_V_PEG_8000
-  display_name: Were transferred to a compound soaking solution containing 22% w/v peg 8000
-  aliases:
-  - were transferred to a compound soaking solution containing 22% w/v peg 8000
 - chem_class: peg
   peg_mw: 3350
   default_unit: percent_w_v
@@ -4270,6 +4575,12 @@ reagents:
   chem_class: polyol
   default_unit: percent_w_v
   aliases: []
+- canonical_id: XYLOPENTAOSE
+  display_name: Xylopentaose
+  chem_class: additive
+  default_unit: millimolar
+  aliases:
+  - xylopentaose
 - chem_class: additive
   default_unit: millimolar
   canonical_id: XYLOSE
@@ -4321,180 +4632,3 @@ reagents:
   aliases:
   - zinc sulphate
   - znso4
-- canonical_id: IL_1_3_DIMETHYLIMIDAZOLIUM_DIMETHYL_PHOSPHATE
-  display_name: 1,3-dimethylimidazolium dimethyl phosphate
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - 1,3-dimethylimidazolium dimethyl phosphate
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: IL_1_3_DIMETHYLIMIDAZOLIUM_METHYL_SULFATE
-  display_name: 1,3-dimethylimidazolium methyl sulfate
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - 1,3-dimethylimidazolium methyl sulfate
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: IL_1_BUTYL_2_3_DIMETHYLIMIDAZOLIUM_TETRAFLUOROBORATE
-  display_name: 1-butyl-2,3-dimethylimidazolium tetrafluoroborate
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - 1-butyl-2,3-dimethylimidazolium tetrafluoroborate
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: IL_1_BUTYL_3_METHYLIMIDAZOLIUM_CHLORIDE
-  display_name: 1-butyl-3-methylimidazolium chloride
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - 1-butyl-3-methylimidazolium chloride
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: IL_1_BUTYL_3_METHYLIMIDAZOLIUM_DICYANAMIDE
-  display_name: 1-butyl-3-methylimidazolium dicyanamide
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - 1-butyl-3-methylimidazolium dicyanamide
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: IL_1_BUTYL_3_METHYLIMIDAZOLIUM_METHYL_SULFATE
-  display_name: 1-butyl-3-methylimidazolium methyl sulfate
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - 1-butyl-3-methylimidazolium methyl sulfate
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: IL_1_BUTYL_3_METHYLIMIDAZOLIUM_TETRAFLUOROBORATE
-  display_name: 1-butyl-3-methylimidazolium tetrafluoroborate
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - 1-butyl-3-methylimidazolium tetrafluoroborate
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: IL_1_BUTYL_3_METHYLIMIDAZOLIUM_TRIFLUOROACETATE
-  display_name: 1-butyl-3-methylimidazolium trifluoroacetate
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - 1-butyl-3-methylimidazolium trifluoroacetate
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: IL_1_BUTYLPYRIDINIUM_CHLORIDE
-  display_name: 1-butylpyridinium chloride
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - 1-butylpyridinium chloride
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: IL_1_ETHYL_3_METHYLIMIDAZOLIUM_ACETATE
-  display_name: 1-ethyl-3-methylimidazolium acetate
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - 1-ethyl-3-methylimidazolium acetate
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: IL_1_ETHYL_3_METHYLIMIDAZOLIUM_CHLORIDE
-  display_name: 1-ethyl-3-methylimidazolium chloride
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - 1-ethyl-3-methylimidazolium chloride
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: IL_1_ETHYL_3_METHYLIMIDAZOLIUM_ETHYL_SULFATE
-  display_name: 1-ethyl-3-methylimidazolium ethyl sulfate
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - 1-ethyl-3-methylimidazolium ethyl sulfate
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: IL_1_ETHYL_3_METHYLIMIDAZOLIUM_TETRAFLUOROBORATE
-  display_name: 1-ethyl-3-methylimidazolium tetrafluoroborate
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - 1-ethyl-3-methylimidazolium tetrafluoroborate
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: IL_1_ETHYL_3_METHYLIMIDAZOLIUM_TRIFLUOROMETHANESULFONATE
-  display_name: 1-ethyl-3-methylimidazolium trifluoromethanesulfonate
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - 1-ethyl-3-methylimidazolium trifluoromethanesulfonate
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: IL_1_HEXYL_3_METHYLIMIDAZOLIUM_CHLORIDE
-  display_name: 1-hexyl-3-methylimidazolium chloride
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - 1-hexyl-3-methylimidazolium chloride
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: IL_1_N_BUTYL_3_METHYLIMIDAZOLIUM_N_OCTYLSULFATE
-  display_name: 1-n-butyl-3-methylimidazolium n-octylsulfate
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - 1-n-butyl-3-methylimidazolium n-octylsulfate
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: IL_2_HYDROXYETHYLAMMONIUM_FORMATE
-  display_name: 2-hydroxyethylammonium formate
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - 2-hydroxyethylammonium formate
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: BENZYLTRIETHYLAMMONIUM_CHLORIDE
-  display_name: Benzyltriethylammonium chloride
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - benzyltriethylammonium chloride
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: CHOLIN_ACETATE
-  display_name: Cholin acetate
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - cholin acetate
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: CHOLINE_DIHYDROGEN_PHOSPHATE
-  display_name: Choline dihydrogen phosphate
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - choline dihydrogen phosphate
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: CHOLINE
-  display_name: Choline
-  chem_class: additive
-  default_unit: millimolar
-  aliases:
-  - choline
-  note: The free cation, deposited bare and at additive concentrations ("5 mM Choline",
-    3P03). Deliberately its own entry rather than an alias of the two choline ionic
-    liquids, which are specific salts; found by the 2026-08-01 accuracy audit.
-- canonical_id: ETHYLAMMONIUM_NITRATE
-  display_name: Ethylammonium nitrate
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - ethylammonium nitrate
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: TETRABUTYLPHOSPHONIUM_BROMIDE
-  display_name: Tetrabutylphosphonium bromide
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - tetrabutylphosphonium bromide
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: TETRAETHYLAMMONIUM_BROMIDE
-  display_name: Tetraethylammonium bromide
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - tetraethylammonium bromide
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).
-- canonical_id: TRIISOBUTYLMETHYLPHOSPHONIUM_TOSYLATE
-  display_name: Triisobutylmethylphosphonium tosylate
-  chem_class: salt
-  default_unit: percent_w_v
-  aliases:
-  - triisobutylmethylphosphonium tosylate
-  note: Ionic liquid, from Hampton PEG/Ionic Liquid 1 and 2 (HR2-078, HR2-079).

@@ -124,3 +124,53 @@ def test_a_scope_role_overrides_cryo(parser):
     glycerol = [c for c in record.components if c.name_canonical == "GLYCEROL"]
     assert glycerol and glycerol[0].role == "protein_buffer"
     assert glycerol[0].cryo_evidence is None
+
+
+# --- buffer titrants ---------------------------------------------------------------------
+#
+# "0.1 M CAPS/ Sodium hydroxide pH 10.5" is one buffer titrated with one base. The corpus writes
+# it both with and without spaces around the slash, and the two spellings fail differently: the
+# spaced form is split into two clauses and puts a phantom additive in the dataset, the unspaced
+# form is not split at all and loses the buffer as well as the titrant.
+
+def test_the_titrant_half_of_a_pair_is_not_a_component(parser):
+    record = parser.parse("TEST", "1", "15% PEG 20000, 100 mM HEPES / Sodium hydroxide pH 7.0")
+    assert ("buffer", "HEPES") in roles(parser, "100 mM HEPES / Sodium hydroxide pH 7.0")
+    titrant = [c for c in record.components if c.non_component_reason == "buffer_titrant"]
+    assert len(titrant) == 1 and titrant[0].name_canonical is None
+
+
+def test_the_pair_ph_belongs_to_the_buffer_not_the_titrant(parser):
+    """It is the buffer system's pH, stated on whichever half the splitter put it next to.
+    Discarding it with the titrant would lose the only number in the clause that describes the
+    condition."""
+    assert parser.parse("TEST", "1",
+                        "15% PEG 20000, 100 mM HEPES / Sodium hydroxide pH 7.0").ph == 7.0
+
+
+def test_an_unspaced_pair_keeps_the_buffer(parser):
+    """The clause never splits, so without the name-level strip `caps/ sodium hydroxide`
+    identifies to nothing and CAPS is lost with the titrant."""
+    got = roles(parser, "0.2 M lithium sulfate, 0.1 M CAPS/ Sodium hydroxide pH 10.5")
+    assert ("buffer", "CAPS") in got
+
+
+def test_a_quantified_reagent_after_a_slash_is_a_real_component(parser):
+    """8H28 writes both patterns in one deposition. The absent amount is what separates them."""
+    got = roles(parser, "400 mM sodium phosphate monobasic / 1600 mM potassium phosphate dibasic")
+    assert ("buffer", "DIPOTASSIUM_HYDROGEN_PHOSPHATE") in got
+
+
+def test_a_standalone_acid_or_base_is_left_alone(parser):
+    """6IN3 states an acetate buffer as its two halves with real concentrations, and both belong
+    in the dataset. 157 of the 189 records emitting a titrant look like this."""
+    got = roles(parser, "1.8 M ammonium sulfate, 22 mM acetic acid, 78 mM sodium acetate")
+    assert ("additive", "ACETIC_ACID") in got
+    assert ("salt", "MAGNESIUM_SULFATE") in roles(parser, "MOPS, Magnesium sulfate, Sodium hydroxide")
+    assert ("additive", "SODIUM_HYDROXIDE") in roles(parser, "MOPS, Magnesium sulfate, Sodium hydroxide")
+
+
+def test_strip_titrant_suffix_is_anchored():
+    assert scope.strip_titrant_suffix("caps/ sodium hydroxide") == "caps"
+    assert scope.strip_titrant_suffix("sodium phosphate / 1600 mm potassium phosphate") is None
+    assert scope.strip_titrant_suffix("sodium acetate") is None

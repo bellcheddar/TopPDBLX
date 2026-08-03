@@ -146,6 +146,21 @@ class RuleParser:
         name = strip_quantity(body)
         reagent = self.index.get(normalise(name)) if name else None
 
+        # "0.1 M CAPS/ Sodium hydroxide": one buffer titrated with one base. Written with spaces
+        # around the slash the splitter separates them and `scope.is_buffer_titrant` catches the
+        # second half; written without, the clause stays whole and identifies to nothing -- so
+        # the buffer is lost along with the titrant, which is the worse of the two failures.
+        #
+        # Only ever a retry after the full name has failed. `sodium acetate/acetic acid` is a
+        # lexicon entry in its own right on some spellings, and a name that already resolves is
+        # never second-guessed.
+        if reagent is None and name:
+            without = scope.strip_titrant_suffix(name)
+            if without:
+                candidate = self.index.get(normalise(without))
+                if candidate is not None:
+                    reagent, name = candidate, without
+
         # "hepes 7.5", "mes 6.5": a buffer named with a bare pH and no "pH" token. Retrying
         # without the trailing number identifies it, and the number is kept as the buffer pH.
         # Doing this in the lexicon would need one alias per buffer per pH value.
@@ -277,7 +292,8 @@ class RuleParser:
         cursor = scope.Cursor(raw_details)
 
         for clause, bracket_depth in clauses_detailed(raw_details, self._head_is_reagent):
-            clause_scope = scope.role_at(cursor.locate(clause), scope_ranges)
+            clause_at = cursor.locate(clause)
+            clause_scope = scope.role_at(clause_at, scope_ranges)
             # Inside an unclosed bracket AND carrying no amount: the constituent list of the
             # reagent that opened it. "PEG Smear Broad (PEG 400, PEG 600, ...)" is one
             # reagent, and splitting it produced nine phantom PEGs.
@@ -304,6 +320,33 @@ class RuleParser:
                     clause, explicit_here)
                 if implausible:
                     flags.append("implausible_concentration")
+
+                # **"0.1 M CAPS/ Sodium hydroxide pH 10.5" is one buffer, not two reagents.** The
+                # splitter breaks on the slash and hands back a bare `sodium hydroxide` with no
+                # amount, which then enters the dataset as an additive the depositor never added.
+                #
+                # The pH is deliberately *kept* and re-attributed. It is the buffer system's pH,
+                # stated on the half the splitter put it next to, so discarding it with the
+                # titrant would lose the one number in the clause that describes the condition.
+                if (component.name_canonical in scope.TITRANTS
+                        and scope.is_buffer_titrant(raw_details, clause_at,
+                                                    component.concentration is not None)):
+                    component = component.model_copy(update={
+                        "role": "not_a_component",
+                        "name_canonical": None, "chem_class": None, "buffer_pka": None,
+                        "concentration": None, "unit": None,
+                        "non_component_reason": "buffer_titrant",
+                    })
+                    flags.append("buffer_titrant")
+                    # Read off the clause rather than taken from `buffer_ph`, which is only
+                    # populated for a buffer-class reagent -- and sodium hydroxide is an
+                    # additive, so the pH of "CAPS/ Sodium hydroxide pH 10.5" arrives here as
+                    # None however plainly the text states it. Credited to the buffer on the
+                    # other side of the slash, which is whose pH it is.
+                    titrant_ph = split_trailing_ph(clause)[1]
+                    if titrant_ph and previous_was_buffer:
+                        buffer_phs.append(titrant_ph)
+                    buffer_ph = None
 
                 # **The reagent is kept, only its scope is corrected.** A protein storage buffer
                 # is read exactly as before -- name, amount, unit, all of it -- and the role

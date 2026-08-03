@@ -54,7 +54,7 @@ OUT_OF_SCOPE_ROLES = frozenset({"protein_buffer", "soak"})
 # auditable: a false positive here silently deletes real chemistry, so it must never be a
 # verdict without a recorded reason.
 NonComponentReason = Literal["method_text", "unnamed_macromolecule", "screen_reference",
-                             "publication_reference", "splitter_fragment"]
+                             "publication_reference", "splitter_fragment", "buffer_titrant"]
 
 Unit = Literal["percent_w_v", "percent_v_v", "percent_unspecified",
                "molar", "millimolar", "micromolar", "nanomolar",

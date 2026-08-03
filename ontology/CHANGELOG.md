@@ -7,7 +7,7 @@ Two artefacts are versioned here, independently:
 
 | File | Version | What it is |
 |------|---------|------------|
-| `synonyms.yaml` | 0.6.2 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
+| `synonyms.yaml` | 0.7.0 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
 | `groups.yaml` | 0.3.0 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
 
 ## groups.yaml
@@ -106,6 +106,58 @@ Known gaps recorded rather than hidden:
   could ever have been assigned to it.
 
 ## synonyms.yaml
+
+### 0.7.0 (2026-08-03)
+
+**574 reagents, 1,456 names.** Minor rather than patch: entries are removed and merged, so a name
+that resolved yesterday may resolve to something else today, or to nothing.
+
+From ranking the 8,437 distinct names the SLM emitted that the lexicon does not know, by corpus
+frequency, and reading the deposition text behind the top 120 rather than judging them by name.
+That last part decided most of the outcomes, and reversed several.
+
+**29 entries removed, because they were never reagents.** Corpus mining had promoted whole
+clauses to canonical entries, each of which then resolved and so counted as a successful
+identification:
+
+    WELL_3_DROP_CRYSTALLIZATION_PLATE                                          41 components
+    SATURATED_WITH_PARA_CHLOROMERCURIBENZOIC_ACID                              39
+    CRYOPROTECTED_WITH_20_ETHYLENE_GLYCOL                                      36
+    COMPOUND_STOCK_SOLUTIONS_EITHER_100MM_OR_1M_STOCKS_WERE_ADDED_UP_TO_...    31
+    UL_OF_S_ADENOSYL_METHIONINE_IN_WATER_WERE_ADDED_TO_100UL_OF_PROTEIN        31
+    BATCH_CRYSTALLIZATION_DONE_IN_POLYPROPYLENE_TUBES                          15
+
+This is the failure mode the 0.5.1 entry named: a wrong entry *raises* the identification rate,
+because the name resolves. The corpus looked better for being wrong.
+
+**7 systematic names merged into the molecule they already name.** `MES` had four separate
+entries -- `N_MORPHOLINO_ETHANESULFONIC_ACID` and three variants of its punctuation -- holding 190
+components between them, `HEPES` had one, `ADA` two. Every duplicate was classed `additive` with
+no `buffer_pka`, so a MES written systematically was not recognised as a buffer at all and could
+not contribute its pH.
+
+**42 reagents added.** PEG Smear High, Low and Medium (`PEG_SMEAR_BROAD` already shipped and set
+the convention: `chem_class: other`, because a vendor PEG mixture has no single molecular weight);
+PGA-LM and gamma-PGA; the detergents CYMAL-6, CYMAL-7, DDAO, UDAO, C11DAO, HEGA-10 and
+Fos-Choline-9; the nucleotides dATP, dGTP, dUMP, CDP and IMP; L-cysteine, L-methionine,
+L-tryptophan, L-phenylalanine, L-glutamic acid; PMSF, putrescine, monoolein, coenzyme A, folinic
+acid, MTA, glucose-6-phosphate, glutaric acid; and the salts diammonium citrate, iron(II)
+sulfate, manganese(II) acetate, caesium sulfate, caesium acetate, barium acetate and lithium
+formate.
+
+**20 aliases onto entries that already existed** -- `pvp` on `POLYVINYLPYRROLIDONE`, `tdp` on
+`THIAMINE_DIPHOSPHATE`, `coh18n6` on `COBALT_HEXAMMINE`, `dho` on `DIHYDROOROTATE`, `mega 8` on
+`MEGA8`, `dodecyl maltoside` on `DDM`.
+
+**Reading the text reversed several decisions the name alone would have got wrong.** `L_CYSTINE`
+is L-*cysteine*. `MAGNESIUM_8` is the detergent *Mega 8*. `FOLIC_ACID` is *folinic* acid, a
+different molecule. `COACHINE_A` is *coenzyme A*. `PENTANEDIOL_12` is 2-methyl-2,4-pentanediol,
+which is MPD. `PEG_2700` is a 27% concentration. `PEG_20` is `PEG 20, 000` split at its own comma.
+None of these are lexicon gaps and adding them as written would have created five wrong entries.
+
+**The uniqueness validator caught a sixth**, rejecting `2-hydroxyethyl disulfide` as already
+claimed -- which is how `HYDROXYETHYL_DISULFIDE_2` turned out to exist. Merged rather than
+duplicated. It has now earned its place in four separate edits.
 
 ### 0.6.2 (2026-08-03)
 

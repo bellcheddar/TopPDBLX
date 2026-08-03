@@ -1,11 +1,11 @@
 # Datasheet: toppdblx-conditions v0.1.0
 
-Generated 2026-08-02 by `./run.sh release.datasheet`. Every figure is read
+Generated 2026-08-03 by `./run.sh release.datasheet`. Every figure is read
 from the data at generation time, so this file cannot drift from what it describes.
 
 **Schema version** `0.1.0-draft` · **Ontology version** `0.2.0`
-· **Lexicon version** `0.6.2` (562 reagents,
-1370 names)
+· **Lexicon version** `0.7.0` (574 reagents,
+1456 names)
 
 ---
 
@@ -20,8 +20,8 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 2. **Condition frequency reflects screen popularity, not intrinsic success rate.** PEG 3350
    and PEG/Ion dominate because they are in everyone's screens. A condition being common here
    is evidence about what crystallographers tried, not about what works best.
-3. **Reported conditions are often optimised, not screen hits.** Of the 79,133 records
-   whose component set matches a published screen well, only 37,838 agree on every
+3. **Reported conditions are often optimised, not screen hits.** Of the 79,676 records
+   whose component set matches a published screen well, only 38,114 agree on every
    concentration. The rest are flagged `optimised_not_screen`, but it remains a confounder.
 4. **Protein concentration, drop ratio and equilibration volume are usually missing**, and
    they matter. They are captured where present and null otherwise.
@@ -44,10 +44,10 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 |---------|-------|
 | Records (one per `pdb_id` + `crystal_id`) | 199,185 |
 | Distinct PDB entries | 198,691 |
-| Usable records | 186,260 (93.5%) |
-| Discarded, with a reason code | 12,925 |
-| Components | 605,481 |
-| Components identified as a canonical reagent | 516,291 (85.3%) |
+| Usable records | 186,248 (93.5%) |
+| Discarded, with a reason code | 12,937 |
+| Components | 605,491 |
+| Components identified as a canonical reagent | 518,373 (85.6%) |
 | Records with a linked protein sequence | 195,985 |
 | Distinct 30% identity sequence clusters | 23,868 |
 | Classified into a precipitant class | 143,626 |
@@ -61,10 +61,10 @@ distribution is itself a result.
 
 | Reason | Records | Share |
 |--------|---------|-------|
-| `NO_REAGENT_MATCH` | 5,629 | 2.83% |
+| `NO_REAGENT_MATCH` | 5,649 | 2.84% |
 | `TOO_SHORT` | 4,369 | 2.19% |
 | `METHOD_ONLY` | 2,500 | 1.26% |
-| `UNPARSEABLE_RESIDUAL` | 155 | 0.08% |
+| `UNPARSEABLE_RESIDUAL` | 147 | 0.07% |
 | `REFERENCE_ONLY` | 103 | 0.05% |
 | `EMPTY` | 91 | 0.05% |
 | `NON_CRYSTALLISATION_TEXT` | 78 | 0.04% |
@@ -73,15 +73,15 @@ distribution is itself a result.
 
 | Class | Components |
 |-------|-----------|
-| buffer | 163,918 |
-| salt | 147,097 |
-| peg | 127,540 |
-| additive | 25,822 |
-| organic | 23,462 |
-| polyol | 20,347 |
-| premix | 5,905 |
-| detergent | 1,184 |
-| other | 1,016 |
+| buffer | 164,659 |
+| salt | 147,195 |
+| peg | 127,439 |
+| additive | 26,719 |
+| organic | 23,366 |
+| polyol | 20,319 |
+| premix | 5,914 |
+| detergent | 1,422 |
+| other | 1,340 |
 
 ### How pH was attributed
 
@@ -91,8 +91,8 @@ value and refuses to guess its meaning.
 
 | Source | Records |
 |--------|---------|
-| buffer | 98,835 |
-| unstated | 87,376 |
+| buffer | 98,585 |
+| unstated | 87,614 |
 | final | 49 |
 
 ---

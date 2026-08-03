@@ -109,11 +109,35 @@ deposition every lookup failed silently and fell back to a stale offset — on 2
 Nothing raised; the count merely looked plausible. And the first version withdrew pH from soak
 spans too, which cost 2IH1 a correct value. Both are now covered by tests.
 
-**Not yet applied.** The parser is changed but `parsed_components.parquet` and everything
-downstream still hold the old readings. Re-run `parse.run_parser` → `assign.classify` → release
-once the GPU is free; doing it now would contend for CPU with the teacher job. Expect coverage to
-move slightly *down*, because removing a buffer or salt from a record can leave it with no
-precipitant — that is the correct direction and should not be read as a regression.
+**Applied 2026-08-03**, together with the titrant guard and lexicon 0.7.0. `parse.run_parser`
+takes 62 seconds, so the CPU contention this was deferred for turned out not to matter.
+
+| | before | after |
+|---|---|---|
+| components identified | 85.3% | **85.6%** (88.0% excluding text with no chemistry) |
+| `protein_buffer` / `soak` components | 0 | 4,170 / 2,630 |
+| pH from a buffer | 98,835 | 98,585 |
+| pH unstated | 87,376 | 87,614 |
+| classified | 77.0% | 77.0% |
+
+533 records changed class. `unidentified_reagent` rose 630 → 761 as the 29 fake lexicon entries
+stopped resolving, and `no_precipitant` 9,632 → 9,751 as records lost an out-of-scope component
+that had been their only one. Both are the corpus becoming honest rather than worse. Identified
+components rose *despite* deleting 29 entries, because the 42 real additions more than covered
+them. Baselines kept at `*.pre070.parquet`.
+
+### The titrant guard — done
+
+`0.1 M CAPS/ Sodium hydroxide pH 10.5` is one buffer titrated with one base. The corpus writes it
+two ways and they failed differently: with spaces the splitter separates them and the titrant
+enters the dataset as an additive nobody added; without spaces the clause never splits, so the
+whole thing fails to identify and **the buffer is lost too**, which is the worse of the two. Both
+are fixed, and the pH is re-attributed to the buffer rather than discarded with the titrant.
+
+Guarded on two tests, both load-bearing: a preceding slash, and *no amount of its own*. 8H28
+writes both patterns in one deposition — `400 mM sodium phosphate monobasic / 1600 mM potassium
+phosphate dibasic` is two real reagents — and the amount is what separates them. 32 of the 189
+records that emitted a titrant match; the other 157 state a concentration and are untouched.
 
 ### The titrant pattern, now seen in three places
 
