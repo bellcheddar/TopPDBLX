@@ -3,6 +3,63 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
+## 2026-08-04 (evening): round 09 ships, and F0.5 is demoted
+
+**Decision: round 09, checkpoint true iteration 4,500, is the shipped model.** Round 06 wins F0.5
+by 0.8 points and was overruled deliberately, on Marc's criterion — chemistry and completeness
+rather than the precision-weighted summary.
+
+| pooled, 192 records / 616 reagents | found | missed | false | recall | precision | F1 | F0.5 |
+|---|---|---|---|---|---|---|---|
+| round 06 | 528 | 88 | 26 | 85.7% | 95.3% | 90.26 | **93.22** |
+| **round 09 @ 4,500** | **567** | **49** | 46 | **92.0%** | 92.5% | **92.27** | 92.41 |
+
+**Why F0.5 lost its standing.** It weights precision double to punish invented chemistry. But none
+of the extra false positives is an invention — every one names a reagent genuinely in the source
+text, placed in the wrong role, which is what `protein_buffer` and `soak` exist to absorb. Meanwhile
+a missed reagent is simply absent, with nothing marking its absence, and nothing in this pipeline
+re-reads the deposition to recover it. The asymmetry runs the opposite way to F0.5's.
+
+**The gold sweep looked flat, and that was an artefact of sample size.** Ten points from true 1,000
+to 8,000 span 1.7 points of recall on the 192-record gold sets, with overlapping intervals, which
+read as "training longer bought nothing". The 2,000-record frozen benchmark disagrees flatly:
+
+| | round 06 | r09 @ true 1,000 | r09 @ true 8,000 |
+|---|---|---|---|
+| identification | 89.05% | 89.76% | **95.28%** |
+| fully-identified records | 62.85% | 65.8% | **81.0%** |
+| fidelity (exact match) | 91.95% | **80.5%** | 94.38% |
+| distinct unidentified names | 629 | 635 | **294** |
+
+Iteration 1,000 is *far* worse: 5.5 points of identification, 15 points of fully-identified records,
+and more than twice the unidentified names. **Longer training clearly does help**, and the earlier
+"the last 3,500 iterations bought nothing measurable" claim written in this file is withdrawn.
+
+**The lesson is about measurement, not training.** 192 records could not resolve a difference that
+2,000 records resolve easily, and the smaller set was quoted first. When two benchmarks disagree,
+prefer the larger one rather than averaging the impression.
+
+**Which checkpoint ships is therefore reopened.** True 4,500 leads on gold recall (92.0% against
+8,000's 90.3%) but has not yet been measured on the frozen benchmark; that run is in progress. The
+corpus regeneration was halted before it generated anything so the choice stays open, and it will
+be relaunched against whichever checkpoint the frozen benchmark supports.
+
+**Three claims that had to be withdrawn while getting here**, all recorded because each was stated
+before it was checked:
+- *"16 gold records leaked into round 09's training set."* Wrong. All 16 were substring artefacts —
+  a gold text appearing inside a longer, genuinely different condition. Exact verbatim leaks: **0**.
+  `--exclude-gold` works.
+- *"Round 06's 97.6 is contaminated by training on gold."* Wrong. `train.r08.jsonl` contains zero
+  gold records.
+- *"Round 06 beats round 09 by 4.8 points of F0.5."* That compared round 09 measured today against
+  a round 06 number hardcoded from 1 August, before today's parser, scope-role and lexicon changes —
+  and it was one gold set, not the mean. Re-measured today the gap is 0.8.
+
+**Still outstanding:** the corpus has not been re-generated with round 09. That is a 4.7-hour
+`apply_slm` pass followed by `assign.classify`, `assign.screen_match` and `release.datasheet`.
+Until it runs the released dataset is round 06's 153,736 components, and the "components shipped"
+column stays pending for round 09.
+
 ## 2026-08-04: why round 09 ran at half speed, and it is not this project
 
 **The same project, same config, was 2.4x faster four days earlier.** Training manifests give
@@ -97,6 +154,9 @@ teacher ~21:45, evals to ~22:10, training finishing **~06:10**.
 **In the morning:** `SCORE_ROUND09.sh` for round 09's identification and grounding, the checkpoint
 sweep on both gold sets, and — once a checkpoint wins — the components. Round 06 stays shipped
 unless round 09 wins on F0.5.
+
+> **Superseded 2026-08-04 evening.** Round 09 ships despite losing on F0.5; see the entry at the
+> top of this file. The F0.5 condition was the wrong test for what this dataset is for.
 
 **Components shipped stays N/A for every round but 06**, deliberately. That column counts rows
 that reached the released dataset and only round 06 was ever applied to the corpus. Generating a

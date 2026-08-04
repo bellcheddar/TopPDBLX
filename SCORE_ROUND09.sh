@@ -5,6 +5,11 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 R09=data/interim/slm/runs/r1-parse-residual-smollm2-360m-round09
+# The pre-resume checkpoints live OUTSIDE ~/Documents on purpose: Documents is iCloud-synced,
+# and 663 MB of new files there gave fileproviderd enough upload work to stall a checkpoint
+# save for 23 minutes mid-training. Keeping them out also protects them from Optimize-Mac-
+# Storage eviction, which has emptied model files from this tree before.
+PRERUN=/Users/dellboy/toppdblx_prerun_ckpts
 R06=data/interim/slm/runs/r1-parse-residual-smollm2-360m-round06
 [ -d "$R09" ] || { echo "round 09 has not trained yet"; exit 1; }
 
@@ -22,17 +27,31 @@ echo "=================== 1. Identification and grounding, frozen benchmark ====
 
 echo "=================== 2. Checkpoint sweep on both gold sets ==================="
 # Never on identification: it has given three wrong answers to "how long should this train".
-for CKPT in 1000 2000 3000 4000 5000 6000 7000 8000; do
-  [ -f "$R09/$(printf '%07d' $CKPT)_adapters.safetensors" ] || continue
+# **The resume reset the iteration counter, so filenames lie.** Training stopped at true 2900 and
+# restarted numbering from 0000100, which then began overwriting the originals. The pre-resume
+# checkpoints for true 1000-2900 were copied to prerun_offset0/ before that happened; everything in
+# the run dir now is offset by 2900 (true = 2900 + reported). Sweeping "1000 2000 ... 8000" against
+# the run dir would have scored two different schedules under one set of names, and would never
+# have found 6000-8000 at all because the resumed run only counts to 5100.
+# Format: <true iter>:<dir>:<reported iter>
+# Denser through true 3000-5000: val loss hit its floor (0.0040) at true 3800 and has been flat
+# since, so that is where the downstream peak most likely sits and where 1000-iter spacing would
+# step straight over it. Sparse above 5000, where the curve is not moving.
+SWEEP="1000:prerun_offset0:1000 2000:prerun_offset0:2000 3000:.:100 3500:.:600 \
+       4000:.:1100 4500:.:1600 5000:.:2100 6000:.:3100 7000:.:4100 8000:.:5100"
+for ENTRY in $SWEEP; do
+  TRUE="${ENTRY%%:*}"; REST="${ENTRY#*:}"; SUB="${REST%%:*}"; CKPT="${REST##*:}"
+  DIR="$R09"; [ "$SUB" = "." ] || DIR="$PRERUN"
+  [ -f "$DIR/$(printf '%07d' $CKPT)_adapters.safetensors" ] || { echo "skip: no true-$TRUE"; continue; }
   for G in gold_set_20260801 gold_set_20260803; do
-    ./run.sh models.apply_slm --adapter-dir "$R09" --checkpoint "$CKPT" --system-version v2 \
+    ./run.sh models.apply_slm --adapter-dir "$DIR" --checkpoint "$CKPT" --system-version v2 \
         --records "data/interim/$G.json" \
-        --progress "data/interim/slm/apply_r09_${CKPT}_${G}.jsonl" \
-        --out "data/interim/slm_components_r09_${CKPT}_${G}.parquet"
-    echo "--- round 09 @ $CKPT on $G"
+        --progress "data/interim/slm/apply_r09_t${TRUE}_${G}.jsonl" \
+        --out "data/interim/slm_components_r09_t${TRUE}_${G}.parquet"
+    echo "--- round 09 @ TRUE iter $TRUE (file $(printf '%07d' $CKPT) in $SUB) on $G"
     ./run.sh eval.gold_metrics --gold "data/interim/$G.json" \
-        --slm-components "data/interim/slm_components_r09_${CKPT}_${G}.parquet" \
-        --out "data/interim/gold_r09_${CKPT}_${G}.json" | grep -E "rules \+ model|source "
+        --slm-components "data/interim/slm_components_r09_t${TRUE}_${G}.parquet" \
+        --out "data/interim/gold_r09_t${TRUE}_${G}.json" | grep -E "rules \+ model|source "
   done
 done
 
@@ -42,10 +61,14 @@ echo "Round 06 stays shipped unless round 09 wins. Its current figures are 98.2%
 echo
 echo "=================== 3. Components shipped (edit CKPT first) ==================="
 cat <<'NEXT'
-  CKPT=<the winner>
+  # Use the TRUE iteration the sweep reported, and the dir it came from:
+  #   true 1000-2900 -> DIR=$PRERUN, CKPT = the true number
+  #   true 3000-8000 -> DIR=$R09,               CKPT = true - 2900
+  CKPT=<reported number for the winner>
+  DIR=<$R09, or $PRERUN for true 1000-2900>
   # A NEW progress file. apply_progress.jsonl holds round 06's generations, and apply_slm
   # resumes from whatever it is given -- pointing at the old one would silently re-ship round 06.
-  ./run.sh models.apply_slm --adapter-dir data/interim/slm/runs/r1-parse-residual-smollm2-360m-round09 \
+  ./run.sh models.apply_slm --adapter-dir $DIR \
       --checkpoint $CKPT --system-version v2 \
       --progress data/interim/slm/apply_progress_r09.jsonl \
       --out data/interim/slm_components_r09.parquet

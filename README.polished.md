@@ -110,7 +110,7 @@ It runs as a chain of stages. Each is one command, each writes a manifest record
                                                     into the next parse
 ```
 
-### The teaching loop, and why there are two models
+### 🤗 The teaching loop, and why there are two models
 
 **Why bother with two models: the teacher is roughly 90x larger and far slower to run.** At around 40 seconds per record, a 32B model would take weeks to read every residual record the rules cannot parse; the 360M student reads them in under two hours. So the teacher labels a few thousand of the hardest cases, and the student does the corpus-scale work, which took recall against hand-labelled truth from **69.5% (rules alone) to 92.0% (rules + round 09, pooled)**.
 
