@@ -3,19 +3,19 @@
 # Chained behind CHAIN_FROZEN.sh by waiting on its output file, not on a pid.
 cd "$(dirname "$0")"
 R09=data/interim/slm/runs/r1-parse-residual-smollm2-360m-round09
-CKPT=1600                                   # true 4,500; offset 2,900 from the resume
-T4500=data/interim/slm/eval_round09_t4500_frozen_lex092.json
+CKPT=5100                                   # true 8,000, the final adapter; offset 2,900 from the resume
+GATE=data/interim/slm/eval_round09_t4500_frozen_lex092.json   # already complete; kept as a no-op gate
 PROG=data/interim/slm/apply_progress_r09.jsonl
 OUT=data/interim/slm_components_r09.parquet
 say(){ printf '%s | %s\n' "$(date '+%H:%M:%S')" "$1"; }
 
 say "stage 3 queued, waiting for the true-4500 frozen eval"
-for _ in $(seq 1 240); do [ -f "$T4500" ] && break; sleep 20; done
-[ -f "$T4500" ] || say "true-4500 eval never produced output — proceeding anyway, it does not gate the corpus"
+for _ in $(seq 1 240); do [ -f "$GATE" ] && break; sleep 20; done
+[ -f "$GATE" ] || say "true-4500 eval never produced output — proceeding anyway, it does not gate the corpus"
 
 # **A NEW progress file.** apply_progress.jsonl holds round 06's generations and apply_slm resumes
 # from whatever it is given, so reusing it would silently re-ship round 06.
-say "apply_slm over the residual with round 09 @ true 4,500 (~4.7 h, resumable)"
+say "apply_slm over the residual with round 09 final adapter, true 8,000 (~4.7 h, resumable)"
 for attempt in 1 2 3 4 5; do
   [ -f "$OUT" ] && break
   say "apply_slm attempt $attempt"

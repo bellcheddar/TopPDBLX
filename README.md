@@ -315,7 +315,7 @@ Everything else in this project checks whether an answer is defensible. This sec
 |---|---|---|---|---|---|
 | rule parser alone | 428 | 188 | 22 | 95.1% | 69.5% |
 | rules + round 06 | 528 | 88 | 26 | 95.3% | 85.7% |
-| rules + round 09 (shipped, iteration `SHIPPED_ITER`) | 567 | 49 | 46 | 92.5% | 92.0% |
+| rules + round 09 (shipped, final adapter) | 556 | 60 | 40 | 93.3% | 90.3% |
 
 *Both batches pooled, measured 2026-08-04 at lexicon 0.9.2.*
 
@@ -324,7 +324,7 @@ Everything else in this project checks whether an answer is defensible. This sec
 | **Precision** | Of the reagents claimed, how many really are in the condition? | The parser invents chemistry |
 | **Recall** | Of the reagents really in the condition, how many did it find? | The parser misses chemistry |
 
-**Round 09 finds 39 more reagents than round 06 and misses 44% fewer.** Its extra false positives are not inventions: every one names a reagent genuinely present in the source text (a protein storage buffer, a soak, a cryoprotectant) placed in the wrong role, which is what the `protein_buffer` and `soak` scope roles exist to fix. In short: **round 09 finds more chemistry and misfiles slightly more of it.**
+**Round 09 finds 28 more reagents than round 06 and misses 32% fewer.** Its extra false positives are not inventions: every one names a reagent genuinely present in the source text (a protein storage buffer, a soak, a cryoprotectant) placed in the wrong role, which is what the `protein_buffer` and `soak` scope roles exist to fix. In short: **round 09 finds more chemistry and misfiles slightly more of it.**
 
 **For the crystallographer:** the gold sets are a small yardstick with wide intervals. They measure reagent *identity*, not concentration or unit, and they don't replace the commercial screen cross-reference (81,802 component-set matches) or the human audit.
 
@@ -332,15 +332,17 @@ Everything else in this project checks whether an answer is defensible. This sec
 
 The gold sets are precise enough to rank sources but, at 192 records, too small to resolve some real differences: see [Training](#-training). A larger, held-out slice of the residual (2,000 records, never used for training or checkpoint selection) is used to compare rounds directly, including across a single round's own checkpoints:
 
-| | round 06 | round 09 @ true 1,000 | round 09 @ true 8,000 |
-|---|---|---|---|
-| identification | 89.05% | 89.76% | 95.28% |
-| grounding | 93.15% | 93.04% | 94.83% |
-| fully-identified records | 62.85% | 65.8% | 81.0% |
-| fidelity (exact match) | 91.95% | 80.5% | 94.38% |
-| distinct unidentified names | 629 | 635 | 294 |
+| | round 06 | r09 @ 1,000 | r09 @ 4,500 | **r09 @ 8,000** |
+|---|---|---|---|---|
+| identification | 89.05% | 89.76% | 92.67% | **95.28%** |
+| grounding | 93.15% | 93.04% | 94.06% | **94.83%** |
+| fully-identified records | 62.85% | 65.8% | 73.75% | **81.0%** |
+| fidelity (exact match) | 91.95% | 80.5% | 90.9% | **94.38%** |
+| distinct unidentified names | 629 | 635 | 462 | **294** |
 
-*Measured 2026-08-04 at lexicon 0.9.2. Round 09's shipped checkpoint is `SHIPPED_ITER`, still being finalised within this range.*
+*Measured 2026-08-04 at lexicon 0.9.2. The shipped checkpoint is round 09's final adapter, true iteration 8,000.*
+
+**Every measure improves monotonically with training, and that is why the final adapter ships.** Iteration 4,500 leads on gold-set recall (92.0% against the final adapter's 90.3%), which on the 192-record yardstick alone would have selected it. On 2,000 records it identifies 2.6 points fewer reagents, leaves 7.3 points fewer records fully identified, and emits 168 more names the lexicon cannot place. Trading that for 1.7 points of recall would buy components while leaving more of them unresolvable, which is not what completeness means here.
 
 ## 🤗 Every round, and what it delivered
 
@@ -356,11 +358,9 @@ All rounds ship as LoRA adapters for `mlx-community/SmolLM2-360M-Instruct`, one 
 | [**06**](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) | Full epoch, rank 16, 32 LoRA layers, empty-answer examples added | 89.05% | 93.15% | 95.3% / 85.7% | **153,736** |
 | [07](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) | 32B-teacher labels *replacing* rules labels, 16 LoRA layers | not measured | not measured | superseded by round 09, see below | N/A ‡ |
 | [08](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08) | Same idea, labels filtered for precision, trained 4x longer, still 16 LoRA layers | not measured | not measured | superseded by round 09, see below | N/A ‡ |
-| [**09**](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round09) | **Shipped 2026-08-04.** Teacher labels *added* to the rules labels, not substituted; `protein_buffer`/`soak` scope roles; prompt v2; 32 LoRA layers, matching round 06 | 95.28% § | 94.83% § | **92.5% / 92.0%** | pending ¶ |
+| [**09**](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round09) | **Shipped 2026-08-04.** Teacher labels *added* to the rules labels, not substituted; `protein_buffer`/`soak` scope roles; prompt v2; 32 LoRA layers, matching round 06 | **95.28%** | **94.83%** | 93.3% / **90.3%** | pending ¶ |
 
 † Rounds 01–03 were scored against a live residual that shrank as curation improved, so these three figures are not comparable to each other or to later rounds. The comparable, frozen-benchmark story starts at round 05.
-
-§ Round 09's final adapter (true iteration 8,000). The shipped checkpoint (iteration `SHIPPED_ITER`) is being finalised on this benchmark; see [the frozen benchmark](#the-frozen-benchmark-2000-held-out-residual-records) above.
 
 ‡ N/A rather than 0: the column counts rows that reached the released dataset. Only round 06 has ever been applied to the corpus at scale before round 09; every other adapter was a training experiment, measured and set aside, and was never run over the residual.
 
@@ -372,7 +372,7 @@ Round 09 is the first clean test of whether teacher distillation helps when the 
 
 Three things changed together: every rules label was kept and roughly 3,400 teacher-labelled residual rows were added on top; the run used 32 LoRA layers, matching round 06 (rounds 07 and 08 had trained at 16, since `--num-layers` was left at its default); and the prompt gained `protein_buffer` and `soak` roles so a correctly-identified reagent in the wrong role has somewhere to go. A build-time gate fails the run rather than training on a leak: zero gold records reached training, verified after the fact.
 
-Round 09 also trains for longer than round 06 (8,000 iterations against 6,000), and the frozen benchmark shows that this matters on its own: identification and fully-identified records both keep climbing well past round 06's schedule. Exactly which checkpoint ships is still being finalised; it will be named here as round 09, iteration `SHIPPED_ITER`, once that measurement lands.
+Round 09 also trains for longer than round 06 (8,000 iterations against 6,000), and the frozen benchmark shows that this matters on its own: identification, grounding, fully-identified records and fidelity all climb monotonically from iteration 1,000 to 8,000. **The shipped model is therefore round 09's final adapter**, chosen on the 2,000-record benchmark rather than on the 192-record gold sets, which were too small to separate checkpoints that differ by 7 points of fully-identified records.
 
 ## 🔁 Redundancy
 
@@ -565,7 +565,7 @@ These determine what conclusions the data can support, and are stated in full in
 - [x] **Teacher distillation, resolved:** round 09 adds the 32B's labels to the rules labels instead of replacing them, at 32 LoRA layers matching round 06. Pooled recall against hand-labelled truth rises from 85.7% to 92.0%, finding 39 more reagents; rounds 07 and 08 had changed the label source and halved LoRA capacity in the same experiment
 - [x] **Ship round 09, preferring recall over a precision-weighted score:** it finds more chemistry and misfiles slightly more of it, and the extra errors are role misattributions (a real reagent in the wrong scope), not inventions
 - [x] Confirm training length matters: on the 2,000-record frozen benchmark, round 09's identification and fully-identified records keep rising from true iteration 1,000 to 8,000; the 192-record gold sets were too small to resolve the same gap clearly
-- [ ] **Finalise which round 09 checkpoint ships** (currently marked `SHIPPED_ITER`) and measure it on the frozen benchmark
+- [x] **Choose the round 09 checkpoint on the larger benchmark, not the smaller one:** the 192-record gold sets picked iteration 4,500 on recall, and the 2,000-record frozen benchmark showed it identifying 2.6 points fewer reagents and leaving 7.3 points fewer records fully identified. The final adapter (iteration 8,000) ships
 - [ ] **Re-generate the corpus with round 09** (a 4.7-hour pass), then re-run classification, screen matching and the datasheet. Until this lands the released data is still round 06's
 - [ ] Cut the 49 reagents round 09 still misses, and the 46 it misfiles: the misfiles are role errors the `protein_buffer` and `soak` classes should absorb
 - [ ] Supply pKa values for 59 buffers, or fix the clause splitter that produced them

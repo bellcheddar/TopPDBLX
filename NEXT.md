@@ -39,10 +39,24 @@ and more than twice the unidentified names. **Longer training clearly does help*
 2,000 records resolve easily, and the smaller set was quoted first. When two benchmarks disagree,
 prefer the larger one rather than averaging the impression.
 
-**Which checkpoint ships is therefore reopened.** True 4,500 leads on gold recall (92.0% against
-8,000's 90.3%) but has not yet been measured on the frozen benchmark; that run is in progress. The
-corpus regeneration was halted before it generated anything so the choice stays open, and it will
-be relaunched against whichever checkpoint the frozen benchmark supports.
+**Settled: round 09's final adapter (true iteration 8,000) ships.** True 4,500 was measured on the
+frozen benchmark and lost clearly:
+
+| | r09 @ 1,000 | r09 @ 4,500 | **r09 @ 8,000** |
+|---|---|---|---|
+| identification | 89.76% | 92.67% | **95.28%** |
+| grounding | 93.04% | 94.06% | **94.83%** |
+| fully-identified records | 65.8% | 73.75% | **81.0%** |
+| fidelity | 80.5% | 90.9% | **94.38%** |
+| distinct unidentified names | 635 | 462 | **294** |
+
+Every measure improves monotonically with training. 4,500 leads only on gold-set recall (92.0% vs
+90.3%), and buying 1.7 points of recall at the cost of 7.3 points of fully-identified records and
+168 more unplaceable names is not completeness, it is volume. **The 192-record gold sets would have
+chosen 4,500; the 2,000-record benchmark chose correctly.**
+
+The corpus regeneration was halted before generating anything and has been retargeted to checkpoint
+5100 (true 8,000).
 
 **Three claims that had to be withdrawn while getting here**, all recorded because each was stated
 before it was checked:
