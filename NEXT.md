@@ -3,6 +3,50 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
+## 2026-08-04: why round 09 ran at half speed, and it is not this project
+
+**The same project, same config, was 2.4x faster four days earlier.** Training manifests give
+`iters / wall_seconds` directly, so rounds are comparable:
+
+| date | round | iters | layers | rank | it/sec |
+|---|---|---|---|---|---|
+| 31 Jul | 06 | 6,000 | 32 | 16 | **0.375** |
+| 2 Aug | 08 | 8,000 | 16 | 16 | 0.431 |
+| 4 Aug | **09** | 8,000 | **32** | **16** | **0.155** |
+
+Round 06 is the controlled comparison — identical repo, layers and rank on the same Mac.
+
+**The cause is CPU contention from macOS background services, not anything in TopPDBLX.** Three
+project-level explanations were checked and all three came back negative:
+
+- **Size**: TopPDBLX is the *smallest* of the three ML projects — 901 MB against `chem_sage`'s
+  25 GB and `chatPDB`'s 416 GB.
+- **iCloud eviction**: zero dataless files in any of them.
+- **Indexing exclusions**: TopPDBLX and `chatPDB` both carry `data/.metadata_never_index`;
+  `chem_sage` carries **none** and trained fine.
+
+What actually changed is the machine: a macOS update staged 31 July with its metadata refreshed
+**3 Aug 12:55**, seven days of uptime, and ~1 GB of swap. A staged update produces exactly the
+observed pattern — `mobileassetd` pulling assets, then Spotlight reindexing, then MediaAnalysis
+and photo analysis catching up, each respawning within seconds of being killed.
+
+**`chem_sage` and `chatPDB` did not hit this because they ran on a quieter machine, not because
+they are different.**
+
+### What to do about it
+
+1. `sudo mdutil -a -i off` in a **real Terminal** before a long run, `-i on` after. This removed
+   the largest contributor immediately: Spotlight processes fell from 100-195% to 0.0-0.2% and the
+   reaper went from a kill every 5-10 minutes to none.
+2. `scripts/preflight.sh` has attempted this since 2026-07-21 and **fails silently without a TTY**
+   — which is exactly what happened here. It now **verifies with `mdutil -a -s` and prints a
+   blocking banner at the end** if indexing survived.
+3. `scripts/spotlight_reaper.sh` for what sudo cannot reach: 5-second poll, 20% threshold, never
+   `fileproviderd`. Mitigation only — it killed ~25 daemons in one night, one at 377%, and the run
+   still ran at half speed.
+4. **Reboot after the run.** It clears both the staged update and the accumulated swap, and
+   preflight has been recommending it all night.
+
 ## 2026-08-03, 21:25: the teacher run had to be killed and resumed
 
 **It degraded 16x under memory pressure and would not have finished.** Batches went 82 s → 192 →

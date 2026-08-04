@@ -59,7 +59,18 @@ killall bird cloudd 2>/dev/null && echo "   Stopped bird/cloudd" || echo "   Not
 # future recurrences even without sudo, though an already-in-progress scan may not stop instantly.
 echo ""
 echo "4. Stopping Spotlight indexing..."
-sudo mdutil -a -i off 2>/dev/null && echo "   Spotlight paused via mdutil" || echo "   mdutil failed (need sudo -- expected with no TTY in an agent session)"
+sudo -n mdutil -a -i off >/dev/null 2>&1 && echo "   Spotlight paused via mdutil" \
+  || echo "   mdutil needs sudo (expected with no TTY in an agent session)"
+
+# **Verify, and make the failure the last thing anyone sees.** The mdutil call above has been in
+# this script since 2026-07-21 and it failed silently on 2026-08-03: the one-line note scrolled
+# past, indexing stayed on, and the run that followed spent the night at 0.155 it/sec against the
+# 0.375 the same config reached on 2026-07-31 -- 2.4x slower, on the same machine, for the same
+# project. A check whose failure is invisible is not a check.
+SPOTLIGHT_STILL_ON=""
+if mdutil -a -s 2>/dev/null | grep -q "Indexing enabled"; then
+  SPOTLIGHT_STILL_ON=1
+fi
 touch "$(dirname "$0")/../data/.metadata_never_index" 2>/dev/null
 touch "$(dirname "$0")/../data/raw/mmcif_archive/.metadata_never_index" 2>/dev/null
 echo "   Marked data/ and data/raw/mmcif_archive/ as .metadata_never_index (no sudo needed)"
@@ -136,6 +147,22 @@ echo ""
 echo "=== Disk Report ==="
 df -H / | tail -1
 echo ""
+
+if [ -n "$SPOTLIGHT_STILL_ON" ]; then
+  echo ""
+  echo "############################################################"
+  echo "##  SPOTLIGHT INDEXING IS STILL ON.                       ##"
+  echo "##                                                        ##"
+  echo "##  Measured cost: 2.4x slower training (0.155 vs 0.375   ##"
+  echo "##  it/sec, same project and config, 2026-08-03 vs 07-31).##"
+  echo "##                                                        ##"
+  echo "##  Run this in a REAL Terminal before training:          ##"
+  echo "##      sudo mdutil -a -i off                             ##"
+  echo "##  and afterwards:                                       ##"
+  echo "##      sudo mdutil -a -i on                              ##"
+  echo "############################################################"
+  echo ""
+fi
 
 echo "=== Preflight complete ==="
 echo "Run training with: ./run.sh models.train_slm --config config/train_config.yaml"
