@@ -356,11 +356,13 @@ All rounds ship as LoRA adapters for `mlx-community/SmolLM2-360M-Instruct`, one 
 | [04](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04) | Retrained on the 502-reagent lexicon | abandoned (36% duplicate training rows) | - | - | N/A ‡ |
 | [05](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05) | Deduplicated training set; first round scored on a frozen benchmark | 87.58% | 93.41% | - | N/A ‡ |
 | [**06**](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) | Full epoch, rank 16, 32 LoRA layers, empty-answer examples added | 89.05% | 93.15% | 95.3% / 85.7% | **153,736** |
-| [07](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) | 32B-teacher labels *replacing* rules labels, 16 LoRA layers | not measured | not measured | superseded by round 09, see below | N/A ‡ |
-| [08](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08) | Same idea, labels filtered for precision, trained 4x longer, still 16 LoRA layers | not measured | not measured | superseded by round 09, see below | N/A ‡ |
+| [07](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) | 32B-teacher labels *replacing* rules labels, 16 LoRA layers | 92.39% | 92.65% | superseded by round 09, see below | N/A ‡ |
+| [08](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08) | Same idea, labels filtered for precision, trained 4x longer, still 16 LoRA layers | 93.3% | 93.53% | superseded by round 09, see below | N/A ‡ |
 | [**09**](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round09) | **Shipped 2026-08-04.** Teacher labels *added* to the rules labels, not substituted; `protein_buffer`/`soak` scope roles; prompt v2; 32 LoRA layers, matching round 06 | **95.28%** | **94.83%** | 93.3% / **90.3%** | **188,655** ¶ |
 
 † Rounds 01–03 were scored against a live residual that shrank as curation improved, so these three figures are not comparable to each other or to later rounds. The comparable, frozen-benchmark story starts at round 05.
+
+**Read down the identification and grounding columns from round 05: every round improves on the last.** 87.58, 89.05, 92.39, 93.3, 95.28 on identification; 93.41, 93.15, 92.65, 93.53, 94.83 on grounding; and 62.85 to 81.0 on fully-identified records between rounds 06 and 09. All measured on the same 2,000 held-out records against the same lexicon 0.9.2, so the comparison is between models rather than dictionaries.
 
 ‡ N/A rather than 0: the column counts components the round *generated* over the residual, not rows in the released component table (see [Release contents](#-release)). Only rounds 06 and 09 have ever been run over the corpus at scale; every other adapter was a training experiment, measured and set aside, and was never asked to read the residual.
 
