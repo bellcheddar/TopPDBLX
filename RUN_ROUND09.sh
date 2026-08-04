@@ -57,7 +57,11 @@ for line in open("data/interim/slm/train.jsonl"):
     messages = json.loads(line)["messages"]
     if len(json.dumps(messages)) < 1800:      # cheap filter; only long rows can threaten the cap
         continue
-    n = len(tok.apply_chat_template(messages, tokenize=True))
+    # **Render to text, then encode.** `apply_chat_template(tokenize=True)` returns a
+    # BatchEncoding, which is NOT a dict subclass in transformers 5.x, so `len()` on it counts
+    # its two keys and every example measures "2 tokens". The gate passed trivially and
+    # validated nothing -- worse than having no gate, because it reported success.
+    n = len(tok(tok.apply_chat_template(messages, tokenize=False))["input_ids"])
     worst = max(worst, n)
 print(f"   longest training example: {worst} tokens against a cap of {CAP}")
 if worst > CAP:
