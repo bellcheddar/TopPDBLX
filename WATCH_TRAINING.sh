@@ -3,7 +3,10 @@
 cd "$(dirname "$0")"
 emit(){ printf '%s | %s\n' "$(date '+%H:%M:%S')" "$*"; }
 LOG=data/interim/slm/round09.log
-TARGET=8000
+# **The resumed run reports 1..5100, not 2901..8000.** mlx-lm reloads weights only, so its
+# iteration counter restarts; --iter-offset is for our reporting, not for what it prints.
+TARGET=5100
+OFFSET=2900
 
 # **The done-condition must not be satisfiable mid-run.** The previous check was
 # `[ -f adapters.safetensors ]`, and mlx_lm writes that file at the FIRST checkpoint — so it
@@ -14,7 +17,7 @@ done_check(){ grep -q "Iter ${TARGET}:" "$LOG" 2>/dev/null; }
 progress(){ grep -oE "^Iter [0-9]+:" "$LOG" 2>/dev/null | grep -oE "[0-9]+" | sort -n | tail -1; }
 
 last=""; changed=$(date +%s); beat=$changed; restarts=0
-emit "training supervisor started at iteration $(progress)"
+emit "training supervisor started at reported iteration $(progress) (true $((OFFSET+$(progress 2>/dev/null || echo 0))))"
 while true; do
   if done_check; then emit "training: reached iteration $TARGET — COMPLETE"; break; fi
   now=$(date +%s)
@@ -37,7 +40,7 @@ while true; do
     sleep 180; changed=$(date +%s); last=""
   fi
   if [ $((now-beat)) -ge 1800 ]; then
-    emit "training: alive at iteration ${cur:-?}/$TARGET"; beat=$now
+    emit "training: alive at ${cur:-?}/$TARGET reported, true $((OFFSET+${cur:-0}))/8000"; beat=$now
   fi
   sleep 60
 done
