@@ -348,7 +348,7 @@ The gold sets are precise enough to rank sources but, at 192 records, too small 
 
 All rounds ship as LoRA adapters for `mlx-community/SmolLM2-360M-Instruct`, one directory per round in **[`Dellboy/toppdblx-residual-parser`](https://huggingface.co/Dellboy/toppdblx-residual-parser)**. Each is 33 MB; the base model is not redistributed. Rounds that didn't reach the corpus are listed anyway, since the point is the arc.
 
-| Round | What changed | Identification | Grounding | Gold sets: precision / recall | Components shipped |
+| Round | What changed | Identification | Grounding | Gold sets: precision / recall | Residual components generated |
 |---|---|---|---|---|---|
 | [01](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01) | Bootstrap distillation from rule output, lexicon 0.1.0 | 87.0% † | not yet invented | - | N/A ‡ |
 | [02](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round02) | `not_a_component` class added, confidence gate fixed | 89.7% † | not yet invented | - | N/A ‡ |
@@ -358,13 +358,13 @@ All rounds ship as LoRA adapters for `mlx-community/SmolLM2-360M-Instruct`, one 
 | [**06**](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06) | Full epoch, rank 16, 32 LoRA layers, empty-answer examples added | 89.05% | 93.15% | 95.3% / 85.7% | **153,736** |
 | [07](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07) | 32B-teacher labels *replacing* rules labels, 16 LoRA layers | not measured | not measured | superseded by round 09, see below | N/A ‡ |
 | [08](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08) | Same idea, labels filtered for precision, trained 4x longer, still 16 LoRA layers | not measured | not measured | superseded by round 09, see below | N/A ‡ |
-| [**09**](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round09) | **Shipped 2026-08-04.** Teacher labels *added* to the rules labels, not substituted; `protein_buffer`/`soak` scope roles; prompt v2; 32 LoRA layers, matching round 06 | **95.28%** | **94.83%** | 93.3% / **90.3%** | pending ¶ |
+| [**09**](https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round09) | **Shipped 2026-08-04.** Teacher labels *added* to the rules labels, not substituted; `protein_buffer`/`soak` scope roles; prompt v2; 32 LoRA layers, matching round 06 | **95.28%** | **94.83%** | 93.3% / **90.3%** | **188,655** ¶ |
 
 † Rounds 01–03 were scored against a live residual that shrank as curation improved, so these three figures are not comparable to each other or to later rounds. The comparable, frozen-benchmark story starts at round 05.
 
-‡ N/A rather than 0: the column counts rows that reached the released dataset. Only round 06 has ever been applied to the corpus at scale before round 09; every other adapter was a training experiment, measured and set aside, and was never run over the residual.
+‡ N/A rather than 0: the column counts components the round *generated* over the residual, not rows in the released component table (see [Release contents](#-release)). Only rounds 06 and 09 have ever been run over the corpus at scale; every other adapter was a training experiment, measured and set aside, and was never asked to read the residual.
 
-¶ Round 09 was chosen 2026-08-04 and the corpus has not yet been regenerated with it, a roughly 4.7-hour pass. **Until it completes, the released dataset still carries round 06's 153,736 components.**
+¶ Generated 2026-08-04, a 5.1-hour pass over all 47,845 residual records: **188,655 components against round 06's 153,736, a 22.7% increase.** Classification and screen matching have been rebuilt from it. The released component table is unaffected by design, since it carries rule-parser output only.
 
 ### Round 09: why it ships over round 06
 
@@ -497,7 +497,7 @@ Every stage is a single command and writes its own manifest.
 | `toppdblx.duckdb` | Both tables, plus `usable_conditions` and `condition_components` views |
 | `schema-v0.1.0-draft.json` | JSON Schema, generated from the pydantic model |
 
-The residual components in this release (153,736 of them) currently come from round 06; round 09's regeneration is running but not yet applied, see [Every round](#-every-round-and-what-it-delivered).
+**The released component table is rule-parser output only** (605,481 rows, from `parsed_components.parquet`). The model's residual components are *not* rows in it: `release.assemble` reads only the rule parser's table, and no merge path exists. What the model changes in the release is the **condition classification** and the **commercial screen matching**, both of which are rebuilt from its output. This was true of round 06 as well, and an earlier version of this README described it incorrectly.
 
 ```sql
 -- which reagents crystallise the widest range of protein families,
@@ -552,7 +552,9 @@ These determine what conclusions the data can support, and are stated in full in
 - [x] Seven-class condition ontology, replacing the withdrawn three-level version
 - [x] Fine-tune SmolLM2 on the parse residual, and strip narrative prose in the parser
 - [x] Classification accuracy audit, two rounds of 96 (spec 6.6): 85.4% rules-derived, 83.3% model-derived, pooled
-- [x] Apply the trained model over the residual: 153,736 components, classified coverage 59.5% to 80.2%
+- [x] Apply the trained model over the residual: round 06 generated 153,736 components and lifted classified coverage from 59.5% to 80.2%
+- [x] **Regenerate the corpus with round 09** (5.1 hours over all 47,845 residual records): **188,655 components, 22.7% more than round 06**, and classified coverage 80.2% to **80.8%**
+- [x] **Establish what the model actually contributes to the release:** not component rows. `release.assemble` reads the rule parser's table only, so the model's route into the published data is via condition classification and screen matching. The README had described this incorrectly since round 06
 - [x] Gold set of 96 hand-labelled records, and the first precision/recall this project has had
 - [x] Second gold set of 96, sampled where the pipeline and the teacher disagree
 - [x] Add the reagents the gold sets named that the lexicon could not place

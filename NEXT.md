@@ -3,6 +3,29 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
+## 2026-08-05, 00:00: the corpus is regenerated, and "components shipped" was never what it said
+
+**Round 09 generated 188,655 components over all 47,845 residual records**, against round 06's
+153,736: **22.7% more chemistry recovered**. Classified coverage rose 80.2% to **80.8%**. The pass
+took 5.1 hours, slowed in the middle by a 21 GB PANTS job competing for CPU.
+
+**What it did not do is change the released component table, and that is by design rather than a
+failure.** `release.assemble` reads `parsed_components.parquet` (610,076 rows, rule parser only,
+no `parser` column) and there is no code path merging the model's output into it. The released
+`toppdblx-components-v0.1.0.parquet` is 605,481 rule-parser rows. The model's components live in
+`slm_components_r09.parquet` and reach the release only through **condition classification** and
+**commercial screen matching**, both rebuilt from them.
+
+So the README's "Components shipped" column never counted rows in the release. It counted
+components the round generated. Round 06's 153,736 was always that number too. The column is now
+labelled "Residual components generated" and the footnotes say plainly what it measures.
+
+**The open product question, which is Marc's to answer:** should the model's residual components be
+merged into the released component table? Doing so would take the release from 605,481 to roughly
+794,000 rows and would need a `parser` provenance column so consumers can filter to rule-parser
+rows if they want determinism. It is a change to what the dataset *is*, not a bug fix, so nothing
+has been done about it.
+
 ## 2026-08-04 (evening): round 09 ships, and F0.5 is demoted
 
 **Decision: round 09, checkpoint true iteration 4,500, is the shipped model.** Round 06 wins F0.5
@@ -71,8 +94,7 @@ before it was checked:
 
 **Still outstanding:** the corpus has not been re-generated with round 09. That is a 4.7-hour
 `apply_slm` pass followed by `assign.classify`, `assign.screen_match` and `release.datasheet`.
-Until it runs the released dataset is round 06's 153,736 components, and the "components shipped"
-column stays pending for round 09.
+It has since run: see the entry below.
 
 ## 2026-08-04: why round 09 ran at half speed, and it is not this project
 

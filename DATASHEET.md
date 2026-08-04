@@ -1,6 +1,6 @@
 # Datasheet: toppdblx-conditions v0.1.0
 
-Generated 2026-08-03 by `./run.sh release.datasheet`. Every figure is read
+Generated 2026-08-04 by `./run.sh release.datasheet`. Every figure is read
 from the data at generation time, so this file cannot drift from what it describes.
 
 **Schema version** `0.1.0-draft` · **Ontology version** `0.2.0`
