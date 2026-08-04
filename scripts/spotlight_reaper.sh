@@ -7,7 +7,9 @@
 # Deliberately narrow. Only background *analysers*, only above a CPU threshold, and never
 # fileproviderd -- signalling that freezes every I/O under Documents (iCloud) and hangs the shell.
 THRESH=${1:-40}
-PATTERN='Metadata\.framework|mds_stores|MediaAnalysis|photoanalysisd|photolibraryd|AppleNeuralEngine|mdworker'
+# mobileassetd downloads OS assets and models. Safe to signal -- it retries, and the download
+# resuming tomorrow is a far better outcome than it competing with an overnight training run.
+PATTERN='Metadata\.framework|CoreSpotlight|mds_stores|mdworker|MediaAnalysis|photoanalysisd|photolibraryd|AppleNeuralEngine|suggestd|knowledge-agent|mobileassetd'
 while true; do
   ps -eo pid,pcpu,args | \
     awk -v t="$THRESH" -v p="$PATTERN" \
@@ -15,5 +17,7 @@ while true; do
   while read -r pid cpu; do
     kill "$pid" 2>/dev/null && printf '%s | reaped %s at %s%% cpu\n' "$(date '+%H:%M:%S')" "$pid" "$cpu"
   done
-  sleep 20
+  # 20s let a daemon at 195% CPU run for up to twenty seconds before it was caught; over an
+  # eight-hour run that sawtooth is most of the damage. `ps` costs nothing next to that.
+  sleep 5
 done
