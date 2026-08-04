@@ -2,7 +2,7 @@
 
 > **Every crystallisation condition in the Protein Data Bank, parsed, normalised and linked to the sequence that produced it.**
 
-![python](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white) ![records](https://img.shields.io/badge/records-199%2C185-467FF7) ![components](https://img.shields.io/badge/components-610%2C076-467FF7) ![parse coverage](https://img.shields.io/badge/parse%20coverage-93.5%25-00897B) ![archive fidelity](https://img.shields.io/badge/archive%20fidelity-100%25-00897B) ![tests](https://img.shields.io/badge/tests-400%20passing-00897B) ![data](https://img.shields.io/badge/data-CC--BY--4.0-9b51e0) ![code](https://img.shields.io/badge/code-MIT-9b51e0) ![phase 0](https://img.shields.io/badge/phase%200-complete-fcb900) ![phase 1](https://img.shields.io/badge/phase%201-complete-fcb900) ![author](https://img.shields.io/badge/author-Marc%20C.%20Deller%2C%20D.Phil.-1C244B)
+![python](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white) ![records](https://img.shields.io/badge/records-199%2C185-467FF7) ![components](https://img.shields.io/badge/components-645%2C656-467FF7) ![parse coverage](https://img.shields.io/badge/parse%20coverage-93.5%25-00897B) ![archive fidelity](https://img.shields.io/badge/archive%20fidelity-100%25-00897B) ![tests](https://img.shields.io/badge/tests-400%20passing-00897B) ![data](https://img.shields.io/badge/data-CC--BY--4.0-9b51e0) ![code](https://img.shields.io/badge/code-MIT-9b51e0) ![phase 0](https://img.shields.io/badge/phase%200-complete-fcb900) ![phase 1](https://img.shields.io/badge/phase%201-complete-fcb900) ![author](https://img.shields.io/badge/author-Marc%20C.%20Deller%2C%20D.Phil.-1C244B)
 
 <table>
 <tr>
@@ -30,7 +30,7 @@ The Protein Data Bank holds about 200,000 crystallisation recipes, and every one
 | Capability | Detail |
 |---|---|
 | **Parses the whole archive** | 199,185 crystallisation records from 198,691 PDB entries, keyed on `(pdb_id, crystal_id)` |
-| **Typed components** | 610,076 reagents with role, concentration, unit, PEG molecular weight, Hofmeister rank and buffer pKa |
+| **Typed components** | 645,656 reagents with role, concentration, unit, PEG molecular weight, Hofmeister rank and buffer pKa, each tagged with the parser that produced it |
 | **Separates text from chemistry** | Method notes, screen references and unnamed ligands are labelled `not_a_component`, so they never inflate a failure rate |
 | **Accounts for every record** | Anything not parsed carries one of seven discard codes, with its raw text retained |
 | **Links to sequence** | 184,229 usable records carry the construct sequence, UniProt accessions and cluster ids at 30%, 50% and 90% identity |
@@ -81,7 +81,7 @@ It runs as a chain of stages. Each is one command, each writes a manifest record
           │
           │  parse.run_parser  split into clauses, read amounts and units, look each
           ▼                    name up in the reagent lexicon
-   610,076 typed components ────────────────┐
+   645,656 typed components ────────────────┐
           │  parse.scope     tells the drop │ 47,845 records the rules cannot read
           │  from the protein sample and a  │
           │  assign.classify                ▼
@@ -172,7 +172,7 @@ for deposition in archive:
 |---|---|
 | Records | 199,185 |
 | Usable | **188,039 (94.4%)** |
-| Components | 610,076, **86.5% identified** as a canonical reagent (89.0% excluding text that names no chemistry) |
+| Components | 645,656, **87.2% identified** as a canonical reagent. 610,076 from the rule parser, 35,580 recovered by the residual parser |
 | Reagent lexicon | 499 reagents, 1,583 names (v0.9.2) |
 | Linked sequences | 184,229 across **23,159** distinct 30% identity clusters |
 | Screen-well matches | 81,802 component-set matches, 39,219 agreeing on every concentration |
@@ -364,7 +364,7 @@ All rounds ship as LoRA adapters for `mlx-community/SmolLM2-360M-Instruct`, one 
 
 ‡ N/A rather than 0: the column counts components the round *generated* over the residual, not rows in the released component table (see [Release contents](#-release)). Only rounds 06 and 09 have ever been run over the corpus at scale; every other adapter was a training experiment, measured and set aside, and was never asked to read the residual.
 
-¶ Generated 2026-08-04, a 5.1-hour pass over all 47,845 residual records: **188,655 components against round 06's 153,736, a 22.7% increase.** Classification and screen matching have been rebuilt from it. The released component table is unaffected by design, since it carries rule-parser output only.
+¶ Generated 2026-08-04, a 5.1-hour pass over all 47,845 residual records: **188,655 components against round 06's 153,736, a 22.7% increase.** **35,580 of those are chemistry the rules never named, and they are now in the released component table**, tagged `parser = slm`. Classification and screen matching were rebuilt from the same output.
 
 ### Round 09: why it ships over round 06
 
@@ -497,7 +497,16 @@ Every stage is a single command and writes its own manifest.
 | `toppdblx.duckdb` | Both tables, plus `usable_conditions` and `condition_components` views |
 | `schema-v0.1.0-draft.json` | JSON Schema, generated from the pydantic model |
 
-**The released component table is rule-parser output only** (605,481 rows, from `parsed_components.parquet`). The model's residual components are *not* rows in it: `release.assemble` reads only the rule parser's table, and no merge path exists. What the model changes in the release is the **condition classification** and the **commercial screen matching**, both of which are rebuilt from its output. This was true of round 06 as well, and an earlier version of this README described it incorrectly.
+**Every component carries a `parser` field**, `rules` or `slm`, so the two sources are always separable:
+
+| `parser` | rows | what it is |
+|---|---|---|
+| `rules` | 610,076 | The deterministic parser. Filter to this for a fully reproducible subset containing no model output |
+| `slm` | 35,580 | Chemistry the rules left unnamed and the residual parser recovered, across 26,339 records |
+
+**The rule parser wins wherever it succeeded.** A model row is published only when it names a reagent the rules did *not* name for that record: of round 09's 149,913 named rows, 113,943 simply restate a reagent the rules already had and are discarded. The rules' unnamed rows (an amount with no reagent attached) are kept rather than replaced, because matching them to a model row on concentration and unit succeeds for only 24% of cases, and inventing that correspondence would be worse than recording the gap honestly.
+
+Until 2026-08-05 the released table was rule-parser output only, and this README described the model's contribution incorrectly: the "components shipped" figures quoted for round 06 counted rows in the model's own working file, not rows anyone could download.
 
 ```sql
 -- which reagents crystallise the widest range of protein families,
@@ -554,7 +563,7 @@ These determine what conclusions the data can support, and are stated in full in
 - [x] Classification accuracy audit, two rounds of 96 (spec 6.6): 85.4% rules-derived, 83.3% model-derived, pooled
 - [x] Apply the trained model over the residual: round 06 generated 153,736 components and lifted classified coverage from 59.5% to 80.2%
 - [x] **Regenerate the corpus with round 09** (5.1 hours over all 47,845 residual records): **188,655 components, 22.7% more than round 06**, and classified coverage 80.2% to **80.8%**
-- [x] **Establish what the model actually contributes to the release:** not component rows. `release.assemble` reads the rule parser's table only, so the model's route into the published data is via condition classification and screen matching. The README had described this incorrectly since round 06
+- [x] **Publish the model's recovered chemistry, with provenance:** `release.assemble` now merges the residual parser's components into the released table behind a `parser` column (`rules` or `slm`). The rule parser wins wherever it succeeded, so only genuinely new reagents are added. **Components 610,076 to 645,656; identified 86.5% to 87.2%; conditions classified 143,626 to 152,006.** Before this, the model's output never reached anyone who downloaded the dataset, and the README said otherwise
 - [x] Gold set of 96 hand-labelled records, and the first precision/recall this project has had
 - [x] Second gold set of 96, sampled where the pipeline and the teacher disagree
 - [x] Add the reagents the gold sets named that the lexicon could not place

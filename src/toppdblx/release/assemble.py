@@ -67,6 +67,9 @@ def build_records(conditions: pl.DataFrame, components: pl.DataFrame,
                                     if row["concentration_is_range"] else None),
             "cryo_evidence": row["cryo_evidence"],
             "premix_id": row["premix_id"],
+            # "rules" for the deterministic parser, "slm" for the residual parser. Filter to
+            # "rules" for a fully reproducible subset that contains no model output.
+            "parser": row.get("parser", "rules"),
         })
 
     # Phase 1 group assignment, if it has been run. Absent, curated_group stays null and the
@@ -187,10 +190,64 @@ def _curated_group(row: Optional[dict[str, Any]],
     }
 
 
+def merge_model_components(rules: pl.DataFrame,
+                           model_path: Path) -> tuple[pl.DataFrame, dict[str, int]]:
+    """Fold the residual parser's components into the rule parser's, with provenance.
+
+    **The rule parser wins wherever it succeeded.** A model row is kept only when it names a
+    reagent the rules did *not* name for that same record, so the deterministic answer is never
+    overwritten and nothing is double counted: of round 09's 149,913 named rows, 113,943 simply
+    restate a reagent the rules already had, and only the remainder is new chemistry.
+
+    The rules' unnamed rows (an amount with no reagent, 89,190 of them in v0.1.0) are kept rather
+    than deleted. They are an honest record that the text stated a quantity the parser could not
+    attribute, and the model's row sits alongside rather than in place of them: matching the two
+    on concentration and unit resolves only 24% of cases, so silently pairing them would invent a
+    correspondence that has not been verified.
+    """
+    if not model_path.exists():
+        return rules.with_columns(pl.lit("rules").alias("parser")), {"model_rows_added": 0}
+
+    model = pl.read_parquet(model_path)
+    key = ["pdb_id", "crystal_id"]
+    rules_named = (rules.filter(pl.col("name_canonical").is_not_null())
+                        .select(key + ["name_canonical"]).unique())
+    new = (model.filter(pl.col("name_canonical").is_not_null())
+                .join(rules_named, on=key + ["name_canonical"], how="anti")
+                # **De-duplicated within a record.** The model emits one row per sub-condition,
+                # so a text describing two drops at "15% PEG 3350" yields the reagent twice where
+                # the rules recorded a single unattributed amount. Keeping both would inflate the
+                # component count without adding chemistry: 390 rows, 1% of the additions.
+                .unique(subset=key + ["role", "name_canonical", "concentration", "unit"],
+                        keep="first"))
+
+    # Align to the rules schema: carry the columns the release publishes, null the rest, and
+    # **cast the shared ones**. The two parsers write the same column at different widths
+    # (`component_index` is UInt16 from the rules and Int64 from the model), and a vertical
+    # concat rejects that rather than widening silently.
+    for column, dtype in zip(rules.columns, rules.dtypes):
+        if column not in new.columns:
+            new = new.with_columns(pl.lit(None, dtype=dtype).alias(column))
+        elif new.schema[column] != dtype:
+            new = new.with_columns(pl.col(column).cast(dtype, strict=False))
+    new = new.select(rules.columns)
+
+    merged = pl.concat([rules.with_columns(pl.lit("rules").alias("parser")),
+                        new.with_columns(pl.lit("slm").alias("parser"))], how="vertical")
+    stats = {"model_rows_added": new.height,
+             "records_gaining_a_reagent": new.select(key).unique().height,
+             "distinct_reagents_added": new["name_canonical"].n_unique()}
+    return merged, stats
+
+
 def main(argv: Optional[list[str]] = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--out-dir", type=Path, default=config.PROCESSED_DIR)
     parser.add_argument("--version", default=config.DATASET_VERSION)
+    parser.add_argument("--slm-components", type=Path,
+                        default=config.INTERIM_DIR / "slm_components_r09.parquet",
+                        help="residual-parser components to merge in; pass a missing path to "
+                             "publish rule-parser output only")
     args = parser.parse_args(argv)
 
     config.ensure_dirs()
@@ -224,10 +281,16 @@ def main(argv: Optional[list[str]] = None) -> int:
     db_path = args.out_dir / "toppdblx.duckdb"
     schema_path = args.out_dir / f"schema-v{config.SCHEMA_VERSION}.json"
 
-    with Manifest(STAGE, params={"version": args.version}) as m:
+    components, merge_stats = merge_model_components(components, args.slm_components)
+    print(f"  components: {components.height:,} "
+          f"({merge_stats['model_rows_added']:,} from the residual parser)")
+
+    with Manifest(STAGE, params={"version": args.version, **merge_stats}) as m:
         for name in ("parsed_conditions", "parsed_components", "entry_sequence",
                      "sequence_clusters", "screen_matches"):
             m.add_input(interim / f"{name}.parquet")
+        if args.slm_components.exists():
+            m.add_input(args.slm_components)
 
         records = build_records(conditions, components, sequences, matches,
                                 entry_meta, entity_meta, assignments, ontology_version)

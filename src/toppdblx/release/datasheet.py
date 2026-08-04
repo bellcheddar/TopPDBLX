@@ -46,7 +46,14 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     config.ensure_dirs()
     conditions = pl.read_parquet(config.INTERIM_DIR / "parsed_conditions.parquet")
-    components = pl.read_parquet(config.INTERIM_DIR / "parsed_components.parquet")
+    # **The same merge the release performs**, so this file describes what is published rather
+    # than the rule parser's intermediate. Reading `parsed_components.parquet` alone reported
+    # 610,076 components for a release that ships 645,656, and the difference is precisely the
+    # chemistry the residual parser recovered.
+    from .assemble import merge_model_components
+    components, _ = merge_model_components(
+        pl.read_parquet(config.INTERIM_DIR / "parsed_components.parquet"),
+        config.INTERIM_DIR / "slm_components_r09.parquet")
     lexicon = load_lexicon()
 
     kept = conditions.filter(pl.col("discard_reason").is_null())

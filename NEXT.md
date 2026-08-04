@@ -20,11 +20,22 @@ So the README's "Components shipped" column never counted rows in the release. I
 components the round generated. Round 06's 153,736 was always that number too. The column is now
 labelled "Residual components generated" and the footnotes say plainly what it measures.
 
-**The open product question, which is Marc's to answer:** should the model's residual components be
-merged into the released component table? Doing so would take the release from 605,481 to roughly
-794,000 rows and would need a `parser` provenance column so consumers can filter to rule-parser
-rows if they want determinism. It is a change to what the dataset *is*, not a bug fix, so nothing
-has been done about it.
+**Answered and done, 2026-08-05.** `release.assemble` now merges the residual parser's components
+behind a `parser` column (`rules` or `slm`). The rule parser wins wherever it succeeded: a model
+row is published only when it names a reagent the rules did not name for that record, so of round
+09's 149,913 named rows only **35,580** are new chemistry and the other 113,943 are dropped as
+restatements. Result: components **610,076 to 645,656**, identified **86.5% to 87.2%**, conditions
+classified **143,626 to 152,006** (6,601 conditions left Unclassified because naming the
+precipitant was what had blocked them).
+
+My earlier estimate of "roughly 794,000 rows" was wrong: it assumed every model row would be added,
+rather than only those naming something new.
+
+Three defects found while building it: `component_index` is `UInt16` from the rules and `Int64`
+from the model, which polars refuses to concat; the model emits one row per sub-condition, so 390
+additions were duplicates within a record; and `release.datasheet` reads `parsed_components.parquet`
+directly, so it kept reporting 610,076 for a release shipping 645,656 until it was given the same
+merge.
 
 ## 2026-08-04 (evening): round 09 ships, and F0.5 is demoted
 

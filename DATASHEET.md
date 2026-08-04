@@ -1,6 +1,6 @@
 # Datasheet: toppdblx-conditions v0.1.0
 
-Generated 2026-08-04 by `./run.sh release.datasheet`. Every figure is read
+Generated 2026-08-05 by `./run.sh release.datasheet`. Every figure is read
 from the data at generation time, so this file cannot drift from what it describes.
 
 **Schema version** `0.1.0-draft` · **Ontology version** `0.2.0`
@@ -46,12 +46,12 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 | Distinct PDB entries | 198,691 |
 | Usable records | 188,039 (94.4%) |
 | Discarded, with a reason code | 11,146 |
-| Components | 610,076 |
-| Components identified as a canonical reagent | 527,735 (86.5%) |
+| Components | 645,656 |
+| Components identified as a canonical reagent | 563,315 (87.2%) |
 | Records with a linked protein sequence | 195,985 |
 | Distinct 30% identity sequence clusters | 23,868 |
-| Classified into a precipitant class | 143,626 |
-| Unclassified, with the reason recorded | 42,634 |
+| Classified into a precipitant class | 152,006 |
+| Unclassified, with the reason recorded | 36,033 |
 | Assigned at L2 (fallback) | 0 |
 
 ### Why records are discarded
@@ -73,15 +73,15 @@ distribution is itself a result.
 
 | Class | Components |
 |-------|-----------|
-| buffer | 167,281 |
-| salt | 149,723 |
-| peg | 128,938 |
-| additive | 27,228 |
-| organic | 23,593 |
-| polyol | 20,798 |
-| premix | 7,346 |
-| detergent | 1,474 |
-| other | 1,354 |
+| buffer | 179,394 |
+| salt | 157,907 |
+| peg | 136,339 |
+| additive | 29,755 |
+| organic | 25,765 |
+| polyol | 22,664 |
+| premix | 8,255 |
+| detergent | 1,720 |
+| other | 1,516 |
 
 ### How pH was attributed
 

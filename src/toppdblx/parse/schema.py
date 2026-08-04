@@ -102,6 +102,10 @@ class Component(BaseModel, extra="forbid"):
 
     cryo_evidence: Optional[CryoEvidence] = None
     premix_id: Optional[str] = None
+    # Which parser produced this row: "rules" for the deterministic parser, "slm" for the
+    # residual parser. Filter to "rules" for a subset that contains no model output. Defaults
+    # to "rules" so records written before the residual parser existed stay valid.
+    parser: Literal["rules", "slm"] = "rules"
     parse_confidence: float = 1.0
     # Set only when role is `not_a_component`, so the exclusion can be audited by reason.
     non_component_reason: Optional[NonComponentReason] = None
