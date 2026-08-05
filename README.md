@@ -2,7 +2,7 @@
 
 > **Every crystallisation condition in the Protein Data Bank, parsed, normalised and linked to the sequence that produced it.**
 
-![python](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white) ![records](https://img.shields.io/badge/records-199%2C185-467FF7) ![components](https://img.shields.io/badge/components-645%2C656-467FF7) ![parse coverage](https://img.shields.io/badge/parse%20coverage-93.5%25-00897B) ![archive fidelity](https://img.shields.io/badge/archive%20fidelity-100%25-00897B) ![tests](https://img.shields.io/badge/tests-400%20passing-00897B) ![data](https://img.shields.io/badge/data-CC--BY--4.0-9b51e0) ![code](https://img.shields.io/badge/code-MIT-9b51e0) ![phase 0](https://img.shields.io/badge/phase%200-complete-fcb900) ![phase 1](https://img.shields.io/badge/phase%201-complete-fcb900) ![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21807133-1C244B?logo=doi&logoColor=white) ![author](https://img.shields.io/badge/author-Marc%20C.%20Deller%2C%20D.Phil.-1C244B)
+![python](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white) ![records](https://img.shields.io/badge/records-199%2C185-467FF7) ![components](https://img.shields.io/badge/components-645%2C656-467FF7) ![parse coverage](https://img.shields.io/badge/parse%20coverage-93.5%25-00897B) ![archive fidelity](https://img.shields.io/badge/archive%20fidelity-100%25-00897B) ![tests](https://img.shields.io/badge/tests-400%20passing-00897B) ![data](https://img.shields.io/badge/data-CC--BY--4.0-9b51e0) ![code](https://img.shields.io/badge/code-MIT-9b51e0) ![phase 0](https://img.shields.io/badge/phase%200-complete-fcb900) ![phase 1](https://img.shields.io/badge/phase%201-complete-fcb900) [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21807133-1C244B?logo=doi&logoColor=white)](https://doi.org/10.5281/zenodo.21807133) ![author](https://img.shields.io/badge/author-Marc%20C.%20Deller%2C%20D.Phil.-1C244B)
 
 <table>
 <tr>
@@ -596,7 +596,7 @@ These determine what conclusions the data can support, and are stated in full in
 
 Attributing TopPDBLX does not discharge the obligation to the sources it derives from: the Protein Data Bank (CC0), SIFTS and UniProt (both CC BY 4.0). Commercial screen formulations in `ontology/screens/` are transcriptions of vendor-published support materials, kept structurally separable so they can be withdrawn without breaking the release. Screen names are trademarks of their owners, used nominatively.
 
-**Cite as:** Deller, M. C. (2026). TopPDBLX: a parsed, normalised and sequence-linked database of crystallisation conditions from the Protein Data Bank. Version 1.0.0. Zenodo. https://doi.org/10.5281/zenodo.21807134
+**Cite as:** Deller, M. C. (2026). TopPDBLX: a parsed, normalised and sequence-linked database of crystallisation conditions from the Protein Data Bank. Version 1.0.0. Zenodo. https://doi.org/10.5281/zenodo.21807134 (concept DOI [10.5281/zenodo.21807133](https://doi.org/10.5281/zenodo.21807133) always resolves to the latest version)
 
 ---
 
