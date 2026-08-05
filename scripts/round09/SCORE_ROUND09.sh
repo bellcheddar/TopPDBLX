@@ -2,7 +2,7 @@
 # Everything the round table needs, for round 09 and for round 06 on equal terms.
 # Run after RUN_ROUND09.sh finishes training. Roughly 2 hours.
 set -euo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/../.."   # repo root
 
 R09=data/interim/slm/runs/r1-parse-residual-smollm2-360m-round09
 # The pre-resume checkpoints live OUTSIDE ~/Documents on purpose: Documents is iCloud-synced,

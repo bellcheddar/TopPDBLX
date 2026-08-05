@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Supervises stage 3. Progress signal is the line count of the resumable progress file, which
 # changes while healthy; never CPU%, which reads ~0 for a GPU-bound MLX process.
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/../.."   # repo root
 PROG=data/interim/slm/apply_progress_r09.jsonl
 OUT=data/interim/slm_components_r09.parquet
 LOG=data/interim/slm/stage3_chain.log

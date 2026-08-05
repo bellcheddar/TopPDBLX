@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Resume round 09 after the 2026-08-04 reboot. Stopped cleanly at iteration 2,900 of 8,000.
 set -euo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/../.."   # repo root
 
 OFFSET=2900                 # iterations already done, from checkpoint 0002900
 REMAINING=$((8000-OFFSET))  # 5,100 to go

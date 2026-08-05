@@ -3,6 +3,49 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
+## 2026-08-05: phase closed - the residual parser ships and its chemistry is published
+
+**Where this phase started:** the rule parser read 93.5% of the archive and the model's output
+went nowhere near the release. **Where it ends:** round 09 ships, its recovered chemistry is in the
+published component table behind a `parser` provenance column, and the remaining gap has been
+measured rather than guessed.
+
+| | start of phase | now |
+|---|---|---|
+| Released components | 605,481 | **645,656** |
+| Identified as a canonical reagent | 86.5% | **87.3%** |
+| Conditions classified | 143,626 | **152,006** |
+| Recall against hand-labelled truth | 85.7% (round 06) | **90.3%** (round 09) |
+| Identification, frozen benchmark | 89.05% | **95.28%** |
+| Reagent lexicon | 499 reagents | **500** (v0.9.3, ACES added) |
+
+**The three findings worth carrying forward:**
+
+1. **Choose checkpoints on the biggest benchmark available.** The 192-record gold sets picked
+   iteration 4,500; the 2,000-record frozen benchmark showed it identifying 2.6 points fewer
+   reagents and leaving 7.3 points fewer records fully identified. The larger set was right, and
+   the same trap caught iteration 1,000 earlier the same day.
+2. **Publishing is a separate question from measuring.** Recall improvements were tracked for four
+   rounds while none of them reached anyone who downloaded the dataset, because `release.assemble`
+   read the rule parser's table only. Check where a metric actually lands before optimising it.
+3. **The remaining unnamed components are largely not recoverable.** Probing 464 of them with a 32B
+   teacher yields a reagent the release lacks in only 17.7% of cases (CI 14.2 to 21.1). The source
+   text says "PEG" or "phosphate" without saying which, or names no reagent at all. Further
+   curation has a low ceiling.
+
+**Housekeeping done:** the round 09 one-off scripts moved from the repo root to `scripts/round09/`
+(their `cd` lines were repointed at the repo root); round 09's adapter published to the Hub, which
+the README had been linking to before it existed; release artefacts rebuilt end to end after the
+lexicon change and verified against the datasheet.
+
+**Outstanding, not blocking:** re-enable Spotlight indexing with `sudo mdutil -a -i on` in a real
+Terminal, which needs a TTY an agent session does not have. The reaper has been stopped.
+
+**Next phase candidates**, in the order they unblock things: publish to Zenodo for a citable DOI
+and mirror on HuggingFace Datasets; the browser front end; then the construct boundary model and
+crystallisation propensity. The 49 reagents round 09 still misses and the 46 it misfiles are a
+smaller, well-defined cleanup that does not need another training round.
+
 ## 2026-08-05, 00:00: the corpus is regenerated, and "components shipped" was never what it said
 
 **Round 09 generated 188,655 components over all 47,845 residual records**, against round 06's

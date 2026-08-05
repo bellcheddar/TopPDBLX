@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Supervises round 09 training only. Replaces the watchdog that exited on a false completion.
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/../.."   # repo root
 emit(){ printf '%s | %s\n' "$(date '+%H:%M:%S')" "$*"; }
 LOG=data/interim/slm/round09.log
 # **The resumed run reports 1..5100, not 2901..8000.** mlx-lm reloads weights only, so its

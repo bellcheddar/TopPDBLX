@@ -2,7 +2,7 @@
 # Round 09 launch. Run this once the blank-record teacher job has finished.
 # Plan and reasoning: NEXT.md, section "2026-08-03: round 09 plan".
 set -euo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/../.."   # repo root
 
 echo "== 1. the teacher job must be finished =="
 pgrep -f "toppdblx.*teacher_label" >/dev/null && { echo "still running; wait"; exit 1; }

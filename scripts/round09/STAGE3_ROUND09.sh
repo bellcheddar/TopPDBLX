@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Stage 3: re-generate the corpus with the SHIPPED round 09 checkpoint (true 4,500 = reported 1,600).
 # Chained behind CHAIN_FROZEN.sh by waiting on its output file, not on a pid.
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/../.."   # repo root
 R09=data/interim/slm/runs/r1-parse-residual-smollm2-360m-round09
 CKPT=5100                                   # true 8,000, the final adapter; offset 2,900 from the resume
 GATE=data/interim/slm/eval_round09_t4500_frozen_lex092.json   # already complete; kept as a no-op gate

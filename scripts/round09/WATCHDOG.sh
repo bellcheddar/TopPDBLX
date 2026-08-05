@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Supervises tonight end to end: teacher -> evals -> training.
 # Detects a stalled stage and restarts it. Every line on stdout is an event.
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/../.."   # repo root
 emit(){ printf '%s | %s\n' "$(date '+%H:%M:%S')" "$*"; }
 
 RUNS=data/interim/slm/runs

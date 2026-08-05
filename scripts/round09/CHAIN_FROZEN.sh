@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Waits for the true-1000 frozen eval, then scores the SHIPPED checkpoint (true 4500).
 # Polls the output file, never `until ! pgrep -f`, which matches its own command line.
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/../.."   # repo root
 T1000=data/interim/slm/eval_round09_t1000_frozen_lex092.json
 T4500=data/interim/slm/eval_round09_t4500_frozen_lex092.json
 echo "$(date '+%H:%M:%S') | waiting for true-1000"

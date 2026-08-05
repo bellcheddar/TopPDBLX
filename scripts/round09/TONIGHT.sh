@@ -2,7 +2,7 @@
 # Unattended chain: wait for the teacher, score rounds 06/07/08, then train round 09.
 # Started 2026-08-03. Log: data/interim/slm/tonight.log
 set -euo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/../.."   # repo root
 say() { printf '\n=== %s  %s ===\n' "$(date '+%H:%M:%S')" "$*"; }
 
 # --- 1. wait for the teacher --------------------------------------------------------------
