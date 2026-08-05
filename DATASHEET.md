@@ -4,8 +4,8 @@ Generated 2026-08-05 by `./run.sh release.datasheet`. Every figure is read
 from the data at generation time, so this file cannot drift from what it describes.
 
 **Schema version** `0.1.0-draft` · **Ontology version** `0.2.0`
-· **Lexicon version** `0.9.2` (499 reagents,
-1583 names)
+· **Lexicon version** `0.9.3` (500 reagents,
+1587 names)
 
 ---
 
@@ -47,7 +47,7 @@ These are not caveats to be skimmed. They determine what conclusions the data ca
 | Usable records | 188,039 (94.4%) |
 | Discarded, with a reason code | 11,146 |
 | Components | 645,656 |
-| Components identified as a canonical reagent | 563,315 (87.2%) |
+| Components identified as a canonical reagent | 563,337 (87.3%) |
 | Records with a linked protein sequence | 195,985 |
 | Distinct 30% identity sequence clusters | 23,868 |
 | Classified into a precipitant class | 152,006 |
@@ -73,7 +73,7 @@ distribution is itself a result.
 
 | Class | Components |
 |-------|-----------|
-| buffer | 179,394 |
+| buffer | 179,416 |
 | salt | 157,907 |
 | peg | 136,339 |
 | additive | 29,755 |
@@ -91,8 +91,8 @@ value and refuses to guess its meaning.
 
 | Source | Records |
 |--------|---------|
-| buffer | 100,156 |
-| unstated | 87,834 |
+| buffer | 100,161 |
+| unstated | 87,829 |
 | final | 49 |
 
 ---

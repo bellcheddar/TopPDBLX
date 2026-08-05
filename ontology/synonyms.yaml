@@ -1,4 +1,4 @@
-version: 0.9.2
+version: 0.9.3
 reagents:
 - chem_class: additive
   default_unit: millimolar
@@ -6,6 +6,18 @@ reagents:
   display_name: Acarbose
   aliases:
   - acarbose
+- chem_class: buffer
+  default_unit: molar
+  buffer_pka: 6.85
+  canonical_id: ACES
+  display_name: ACES
+  aliases:
+  - aces
+  - n-(2-acetamido)-2-aminoethanesulfonic acid
+  - n-2-acetamido-2-aminoethanesulfonic acid
+  - 2-(carbamoylmethylamino)ethanesulfonic acid
+  note: Good's buffer, pKa 6.85. Present in 35 deposition texts and absent from the lexicon
+    until 0.9.3, found by the residual-parser probe of 2026-08-05.
 - chem_class: additive
   default_unit: millimolar
   canonical_id: ACETIC_ACID

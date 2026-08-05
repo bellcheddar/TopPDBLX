@@ -154,7 +154,7 @@ for deposition in archive:
 | RCSB Data GraphQL API | Fetches every deposition, batched and resumable |
 | gemmi | Reads the archive mmCIF for the byte-level fidelity gate |
 | `regex` | Clause splitting, which turned out to be the hard part rather than the chemistry |
-| `ontology/synonyms.yaml` | The reagent dictionary: 499 reagents, 1,583 spellings |
+| `ontology/synonyms.yaml` | The reagent dictionary: 500 reagents, 1,587 spellings |
 | pydantic | Enforces the schema and the chemical invariants on load |
 | polars, pyarrow, duckdb | Tables, joins and the queryable release |
 | MMseqs2 | Sequence clustering at 30%, 50% and 90% identity, to control redundancy |
@@ -172,8 +172,8 @@ for deposition in archive:
 |---|---|
 | Records | 199,185 |
 | Usable | **188,039 (94.4%)** |
-| Components | 645,656, **87.2% identified** as a canonical reagent. 610,076 from the rule parser, 35,580 recovered by the residual parser |
-| Reagent lexicon | 499 reagents, 1,583 names (v0.9.2) |
+| Components | 645,656, **87.3% identified** as a canonical reagent. 610,076 from the rule parser, 35,580 recovered by the residual parser |
+| Reagent lexicon | 500 reagents, 1,587 names (v0.9.3) |
 | Linked sequences | 184,229 across **23,159** distinct 30% identity clusters |
 | Screen-well matches | 81,802 component-set matches, 39,219 agreeing on every concentration |
 | Archive fidelity | **100%** over 205,943 entries against the 90 GB mmCIF snapshot |
@@ -255,7 +255,8 @@ An earlier three-level ontology of 163 binned groups was withdrawn at v0.3.0. It
 | Two gold sets sampled and labelled; isomers the teacher's false positives exposed (v0.6.x) | 562 | 1,370 | 85.3% |
 | De-duplication: PEG MME's seven ids per weight merged to one, all remaining duplicate ids merged, method text and element abbreviations stripped out (v0.7.0–v0.8.7) | 486 | 1,487 | 85.7% (88.3% on chemistry) |
 | v0.9.0: the Morpheus stock table, 15 premixes transcribed from the vendor brochure | 499 | 1,543 | 85.9% (88.4% on chemistry) |
-| v0.9.2 (current): every pre-merge canonical id resolves again | **499** | **1,583** | **86.5%** (89.0% on chemistry) |
+| v0.9.2: every pre-merge canonical id resolves again | 499 | 1,583 | 86.5% (89.0% on chemistry) |
+| v0.9.3 (current): ACES added, found by probing what the parsers still cannot name | **500** | **1,587** | **87.2%** |
 
 **For the crystallographer:** every reagent carries the chemistry the ontology needs, and each field is enforced on load rather than being optional documentation. A `peg` entry must state its molecular weight, a `buffer` must state its pKa, and a `premix` must list its constituents. Those invariants caught three separate attempts to bulk-add entries that could not satisfy them.
 
@@ -580,6 +581,7 @@ These determine what conclusions the data can support, and are stated in full in
 - [x] Confirm training length matters: on the 2,000-record frozen benchmark, round 09's identification and fully-identified records keep rising from true iteration 1,000 to 8,000; the 192-record gold sets were too small to resolve the same gap clearly
 - [x] **Choose the round 09 checkpoint on the larger benchmark, not the smaller one:** the 192-record gold sets picked iteration 4,500 on recall, and the 2,000-record frozen benchmark showed it identifying 2.6 points fewer reagents and leaving 7.3 points fewer records fully identified. The final adapter (iteration 8,000) ships
 - [ ] **Re-generate the corpus with round 09** (a 4.7-hour pass), then re-run classification, screen matching and the datasheet. Until this lands the released data is still round 06's
+- [x] **Probe what the parsers still cannot name**, by labelling 464 records carrying an unnamed component with a 32B teacher. **17.7% yield a reagent the release lacks** (CI 14.2 to 21.1), so the remaining 82,341 unnamed components are mostly not recoverable chemistry: the source text says "PEG" or "phosphate" without saying which, or names no reagent at all. One genuine lexicon gap found and closed (ACES, lexicon 0.9.3)
 - [ ] Cut the 49 reagents round 09 still misses, and the 46 it misfiles: the misfiles are role errors the `protein_buffer` and `soak` classes should absorb
 - [ ] Supply pKa values for 59 buffers, or fix the clause splitter that produced them
 - [ ] Publish to Zenodo for a citable DOI, and mirror on HuggingFace Datasets

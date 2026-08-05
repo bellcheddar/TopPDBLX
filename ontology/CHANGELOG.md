@@ -10,6 +10,23 @@ Two artefacts are versioned here, independently:
 | `synonyms.yaml` | 0.9.0 | Reagent lexicon: canonical ids, aliases, PEG molecular weights, Hofmeister ranks, buffer pKas |
 | `groups.yaml` | 0.3.1 | Withdrawn at 0.3.0: classification is now the seven JCSG Top96 precipitant classes, in `assign.classify` |
 
+## 0.9.3 - 2026-08-05
+
+**500 reagents, 1,587 names.** ACES (N-(2-acetamido)-2-aminoethanesulfonic acid), a Good's buffer
+with pKa 6.85, present in 35 deposition texts and absent from the lexicon until now.
+
+Found by labelling 464 records that still carried an unnamed component with a 32B teacher and
+asking what it named that the pipeline could not. Of the names it produced, ACES was the only
+genuine gap: `TRIS_HCL` already resolves (`tris-hcl` has been an alias of `TRIS` throughout, and
+the parser normalises underscores before lookup), while `PEG` and `PHOSPHATE` are underspecified
+in the source text and `PROTEIN` and `VAPOR_DIFFUSION` are not reagents.
+
+**`POTASSIUM_DIPHOSPHATE` and `SODIUM_DIPHOSPHATE` were deliberately NOT added as aliases of the
+hydrogen phosphates.** A diphosphate is a pyrophosphate, a different molecule, and the corpus uses
+the word correctly: of 93 records containing "diphosphate", the reagents are genuine diphosphates
+such as farnesyl diphosphate. Aliasing them would have mapped a name onto the wrong chemistry, the
+same error corrected in 0.8.x for barium/yttrium, CAPS/CHAPS and DTT/DTE.
+
 ## groups.yaml
 
 ### 0.3.1 (2026-08-03)
