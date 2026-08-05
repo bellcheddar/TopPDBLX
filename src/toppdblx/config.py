@@ -61,8 +61,8 @@ SEARCH_PAGE_SIZE = 10_000
 # ---------------------------------------------------------------------------
 # Versions: every manifest records all three, and every released record carries them
 # ---------------------------------------------------------------------------
-SCHEMA_VERSION = "0.1.0-draft"       # frozen to 1.0.0 at WP9
-DATASET_VERSION = "0.1.0"            # toppdblx-conditions
+SCHEMA_VERSION = "1.0.0"             # frozen 2026-08-05 for the first citable release
+DATASET_VERSION = "1.0.0"            # toppdblx-conditions
 # Set by Phase 1. Kept as a constant for stages that only need to stamp it; the release
 # reads the real version out of ontology/groups.yaml so the two cannot drift.
 ONTOLOGY_VERSION = "0.2.0"

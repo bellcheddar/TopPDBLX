@@ -1,9 +1,9 @@
-# Datasheet: toppdblx-conditions v0.1.0
+# Datasheet: toppdblx-conditions v1.0.0
 
 Generated 2026-08-05 by `./run.sh release.datasheet`. Every figure is read
 from the data at generation time, so this file cannot drift from what it describes.
 
-**Schema version** `0.1.0-draft` · **Ontology version** `0.2.0`
+**Schema version** `1.0.0` · **Ontology version** `0.2.0`
 · **Lexicon version** `0.9.3` (500 reagents,
 1587 names)
 
@@ -135,12 +135,12 @@ value and refuses to guess its meaning.
 
 | File | Contents |
 |------|----------|
-| `toppdblx-conditions-v0.1.0.jsonl.gz` | Canonical, one nested record per line |
-| `toppdblx-conditions-v0.1.0.parquet` | Record level, sequence linkage flattened on |
-| `toppdblx-components-v0.1.0.parquet` | One row per reagent |
-| `toppdblx-components-v0.1.0.csv.gz` | The same, for spreadsheets |
+| `toppdblx-conditions-v1.0.0.jsonl.gz` | Canonical, one nested record per line |
+| `toppdblx-conditions-v1.0.0.parquet` | Record level, sequence linkage flattened on |
+| `toppdblx-components-v1.0.0.parquet` | One row per reagent |
+| `toppdblx-components-v1.0.0.csv.gz` | The same, for spreadsheets |
 | `toppdblx.duckdb` | Both tables plus `usable_conditions` and `condition_components` views |
-| `schema-v0.1.0-draft.json` | JSON Schema, generated from the pydantic model |
+| `schema-v1.0.0.json` | JSON Schema, generated from the pydantic model |
 
 ---
 
@@ -154,7 +154,7 @@ changes. Full terms in `LICENSE-DATA`.
 
 **Cite as:** Deller, M. C. (2026). TopPDBLX: a parsed, normalised and sequence-linked
 database of crystallisation conditions from the Protein Data Bank. Version
-0.1.0.
+1.0.0.
 
 **Cite the upstream sources too.** Attributing TopPDBLX does not discharge the obligation
 to the sources it derives from: the **Protein Data Bank** (every condition string and sequence

@@ -38,7 +38,7 @@ The Protein Data Bank holds about 200,000 crystallisation recipes, and every one
 | **Refuses to guess** | A condition with an unrecognised reagent or no stated amount is Unclassified, with the reason recorded |
 | **Records its own uncertainty** | Inferred units, inferred cryoprotectant roles and pH attribution are flagged, never presented as fact |
 | **Reproducible by stage** | Every stage is one command and writes a manifest of input hashes, tool versions and git state |
-| **Reads what the rules cannot** | A 32B teacher labels the hard records; a 360M student learns from it and reads every residual record the rule parser gives up on. Recall against hand-labelled truth: 69.5% (rules alone) → 92.0% (rules + round 09, pooled) |
+| **Reads what the rules cannot** | A 32B teacher labels the hard records; a 360M student learns from it and reads every residual record the rule parser gives up on. Recall against hand-labelled truth: 69.5% (rules alone) → 90.3% (rules + round 09, pooled) |
 
 ## 📖 The words on this page
 
@@ -112,7 +112,7 @@ It runs as a chain of stages. Each is one command, each writes a manifest record
 
 ### The teaching loop, and why there are two models
 
-**Why bother with two models: the teacher is roughly 90x larger and far slower to run.** At around 40 seconds per record, a 32B model would take weeks to read every residual record the rules cannot parse; the 360M student reads them in under two hours. So the teacher labels a few thousand of the hardest cases, and the student does the corpus-scale work, which took recall against hand-labelled truth from **69.5% (rules alone) to 92.0% (rules + round 09, pooled)**.
+**Why bother with two models: the teacher is roughly 90x larger and far slower to run.** At around 40 seconds per record, a 32B model would take weeks to read every residual record the rules cannot parse; the 360M student reads them in under two hours. So the teacher labels a few thousand of the hardest cases, and the student does the corpus-scale work, which took recall against hand-labelled truth from **69.5% (rules alone) to 90.3% (rules + round 09, pooled)**.
 
 **In plain terms:** a small model is cheap to run over 200,000 records but not clever enough to teach itself. A large model is clever enough to teach but far too slow to run over the whole archive. So the large one reads a few thousand of the hard cases, the small one learns from what it produces, and the small one does the actual work. The expert never labels a corpus: they label a couple of hundred records that decide whether any of it worked.
 
@@ -178,7 +178,7 @@ for deposition in archive:
 | Screen-well matches | 81,802 component-set matches, 39,219 agreeing on every concentration |
 | Archive fidelity | **100%** over 205,943 entries against the 90 GB mmCIF snapshot |
 | Condition classes | Seven JCSG Top96 precipitant classes (v0.3.1), **80.2% classified**, 19.8% honestly unclassified |
-| Parser accuracy | Both gold-set batches pooled, rules + round 09: **92.5% precision, 92.0% recall** (rules alone: 95.1% precision, 69.5% recall) |
+| Parser accuracy | Both gold-set batches pooled, rules + round 09: **93.3% precision, 90.3% recall** (rules alone: 95.1% precision, 69.5% recall) |
 | Leak-free splits | 181,007 records, no cluster spanning folds at 30%, 50% or 90% |
 | Tests | 492 passing |
 
@@ -371,7 +371,7 @@ All rounds ship as LoRA adapters for `mlx-community/SmolLM2-360M-Instruct`, one 
 
 ### Round 09: why it ships over round 06
 
-Round 09 is the first clean test of whether teacher distillation helps when the teacher's labels are *added* to the rule parser's labels rather than replacing them, at matched LoRA capacity. It does: pooled recall against hand-labelled truth rises from round 06's 85.7% to 92.0%, finding 39 more reagents and missing 44% fewer, for a rise in role-misattribution errors rather than invented chemistry (see [Results against hand-labelled truth](#-results-against-hand-labelled-truth)).
+Round 09 is the first clean test of whether teacher distillation helps when the teacher's labels are *added* to the rule parser's labels rather than replacing them, at matched LoRA capacity. It does: pooled recall against hand-labelled truth rises from round 06's 85.7% to 90.3%, finding 28 more reagents and missing 32% fewer, for a rise in role-misattribution errors rather than invented chemistry (see [Results against hand-labelled truth](#-results-against-hand-labelled-truth)).
 
 Three things changed together: every rules label was kept and roughly 3,400 teacher-labelled residual rows were added on top; the run used 32 LoRA layers, matching round 06 (rounds 07 and 08 had trained at 16, since `--num-layers` was left at its default); and the prompt gained `protein_buffer` and `soak` roles so a correctly-identified reagent in the wrong role has somewhere to go. A build-time gate fails the run rather than training on a leak: zero gold records reached training, verified after the fact.
 
@@ -493,12 +493,12 @@ Every stage is a single command and writes its own manifest.
 
 | File | Contents |
 |---|---|
-| `toppdblx-conditions-v0.1.0.jsonl.gz` | Canonical form, one nested record per line |
-| `toppdblx-conditions-v0.1.0.parquet` | Record level, sequence linkage flattened on |
-| `toppdblx-components-v0.1.0.parquet` | One row per reagent |
-| `toppdblx-components-v0.1.0.csv.gz` | The same, for spreadsheets |
+| `toppdblx-conditions-v1.0.0.jsonl.gz` | Canonical form, one nested record per line |
+| `toppdblx-conditions-v1.0.0.parquet` | Record level, sequence linkage flattened on |
+| `toppdblx-components-v1.0.0.parquet` | One row per reagent |
+| `toppdblx-components-v1.0.0.csv.gz` | The same, for spreadsheets |
 | `toppdblx.duckdb` | Both tables, plus `usable_conditions` and `condition_components` views |
-| `schema-v0.1.0-draft.json` | JSON Schema, generated from the pydantic model |
+| `schema-v1.0.0.json` | JSON Schema, generated from the pydantic model |
 
 **Every component carries a `parser` field**, `rules` or `slm`, so the two sources are always separable:
 
@@ -549,7 +549,7 @@ These determine what conclusions the data can support, and are stated in full in
 | Fidelity to the rules is a ceiling, not evidence of beating it | The rule parser's own labels train the residual model, so agreement with `rules_v3` cannot show a gain; only identification and grounding on the residual, and precision/recall against the gold sets, can |
 | The residual parser cannot discover new chemistry | It emits only names it has seen, so a genuinely absent reagent looks the same as a model error. Closing that gap is curation, not modelling |
 | The gold sets are 192 records pooled | Wide confidence intervals, reagent identity only, no concentrations. Makes "did we miss something" answerable, not precisely answerable |
-| Recall is the weaker half of the pair | Rules alone: 95.1% precision against 69.5% recall, the parser is far likelier to miss a reagent than invent one. Rules + round 09 narrows that gap to 92.5% precision, 92.0% recall |
+| Recall is the weaker half of the pair | Rules alone: 95.1% precision against 69.5% recall, the parser is far likelier to miss a reagent than invent one. Rules + round 09 narrows that gap to 93.3% precision, 90.3% recall |
 
 ## ✅ To Do
 
@@ -576,7 +576,7 @@ These determine what conclusions the data can support, and are stated in full in
 - [x] Transcribe the Morpheus stock table from the vendor brochure: 15 premixes with real compositions
 - [x] Classify premixes on their constituents rather than refusing them: coverage 76.8% to 80.2%
 - [x] Split reagents written with no separator at all: +7,553 identified components, nothing lost
-- [x] **Teacher distillation, resolved:** round 09 adds the 32B's labels to the rules labels instead of replacing them, at 32 LoRA layers matching round 06. Pooled recall against hand-labelled truth rises from 85.7% to 92.0%, finding 39 more reagents; rounds 07 and 08 had changed the label source and halved LoRA capacity in the same experiment
+- [x] **Teacher distillation, resolved:** round 09 adds the 32B's labels to the rules labels instead of replacing them, at 32 LoRA layers matching round 06. Pooled recall against hand-labelled truth rises from 85.7% to 90.3%, finding 28 more reagents; rounds 07 and 08 had changed the label source and halved LoRA capacity in the same experiment
 - [x] **Ship round 09, preferring recall over a precision-weighted score:** it finds more chemistry and misfiles slightly more of it, and the extra errors are role misattributions (a real reagent in the wrong scope), not inventions
 - [x] Confirm training length matters: on the 2,000-record frozen benchmark, round 09's identification and fully-identified records keep rising from true iteration 1,000 to 8,000; the 192-record gold sets were too small to resolve the same gap clearly
 - [x] **Choose the round 09 checkpoint on the larger benchmark, not the smaller one:** the 192-record gold sets picked iteration 4,500 on recall, and the 2,000-record frozen benchmark showed it identifying 2.6 points fewer reagents and leaving 7.3 points fewer records fully identified. The final adapter (iteration 8,000) ships

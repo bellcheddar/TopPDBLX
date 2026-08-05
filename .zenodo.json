@@ -1,0 +1,38 @@
+{
+  "title": "TopPDBLX: a parsed, normalised and sequence-linked database of crystallisation conditions from the Protein Data Bank",
+  "version": "1.0.0",
+  "upload_type": "dataset",
+  "language": "eng",
+  "license": "cc-by-4.0",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "Deller, Marc C.",
+      "affiliation": "Independent"
+    }
+  ],
+  "description": "<p>Every crystallisation condition in the Protein Data Bank, parsed into typed components and linked to the sequence that produced it.</p><p>The PDB holds about 200,000 crystallisation recipes, each typed free-hand by a different scientist in no agreed format. TopPDBLX turns the free-text <code>_exptl_crystal_grow.pdbx_details</code> field into structured components (reagent, concentration, unit, role), cross-references them against published commercial screen formulations, and attaches MMseqs2 cluster identifiers so redundancy can be controlled.</p><h4>Contents</h4><ul><li><strong>199,185 records</strong> from 198,691 PDB entries, keyed on (pdb_id, crystal_id)</li><li><strong>645,656 typed components</strong>, 87.3% resolved to a canonical reagent from a curated 500-reagent lexicon</li><li><strong>195,985 records</strong> with a linked protein sequence, carrying UniProt accessions and MMseqs2 cluster ids at 30%, 50% and 90% identity</li><li><strong>81,802 records</strong> matched to a well in one of 9 commercial screens, extracted verbatim from vendor support materials</li><li>Seven-class precipitant ontology; 152,006 conditions classified, the remainder Unclassified with the reason recorded</li></ul><h4>Provenance</h4><p>Every component carries a <code>parser</code> field. 610,076 come from a deterministic rule parser; 35,580 were recovered by a LoRA fine-tune of SmolLM2-360M reading the residual the rules could not parse. Filter to <code>parser = 'rules'</code> for a fully reproducible subset containing no model output.</p><h4>Quality</h4><p>Measured against 192 hand-labelled records: 93.3% precision and 90.3% recall for reagent identity, against the rule parser alone at 95.1% and 69.5%. Archive fidelity is 100%: every condition string was byte-compared against the source mmCIF. Inferred units, inferred cryoprotectant roles and pH attribution are flagged rather than presented as fact.</p><h4>Limitations</h4><p>Condition frequency reflects screen popularity, not intrinsic success rate. Reported conditions are often optimised rather than screen hits. Only successful crystallisations are represented: there are no negative examples. See DATASHEET.md for the full set.</p><p>Code: MIT. Data: CC-BY-4.0. Attribution does not discharge the obligation to the sources this derives from: the Protein Data Bank (CC0), SIFTS and UniProt.</p>",
+  "keywords": [
+    "structural biology",
+    "protein crystallography",
+    "crystallisation",
+    "Protein Data Bank",
+    "text mining",
+    "cheminformatics",
+    "dataset"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/bellcheddar/TopPDBLX",
+      "relation": "isSupplementTo",
+      "resource_type": "software",
+      "scheme": "url"
+    },
+    {
+      "identifier": "10.1093/nar/gkae1011",
+      "relation": "isDerivedFrom",
+      "resource_type": "dataset",
+      "scheme": "doi"
+    }
+  ]
+}
