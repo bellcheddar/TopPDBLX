@@ -2,7 +2,7 @@
 
 > **Every crystallisation condition in the Protein Data Bank, parsed, normalised and linked to the sequence that produced it.**
 
-![python](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white) ![records](https://img.shields.io/badge/records-199%2C185-467FF7) ![components](https://img.shields.io/badge/components-645%2C656-467FF7) ![parse coverage](https://img.shields.io/badge/parse%20coverage-93.5%25-00897B) ![archive fidelity](https://img.shields.io/badge/archive%20fidelity-100%25-00897B) ![tests](https://img.shields.io/badge/tests-400%20passing-00897B) ![data](https://img.shields.io/badge/data-CC--BY--4.0-9b51e0) ![code](https://img.shields.io/badge/code-MIT-9b51e0) ![phase 0](https://img.shields.io/badge/phase%200-complete-fcb900) ![phase 1](https://img.shields.io/badge/phase%201-complete-fcb900) ![author](https://img.shields.io/badge/author-Marc%20C.%20Deller%2C%20D.Phil.-1C244B)
+![python](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white) ![records](https://img.shields.io/badge/records-199%2C185-467FF7) ![components](https://img.shields.io/badge/components-645%2C656-467FF7) ![parse coverage](https://img.shields.io/badge/parse%20coverage-93.5%25-00897B) ![archive fidelity](https://img.shields.io/badge/archive%20fidelity-100%25-00897B) ![tests](https://img.shields.io/badge/tests-400%20passing-00897B) ![data](https://img.shields.io/badge/data-CC--BY--4.0-9b51e0) ![code](https://img.shields.io/badge/code-MIT-9b51e0) ![phase 0](https://img.shields.io/badge/phase%200-complete-fcb900) ![phase 1](https://img.shields.io/badge/phase%201-complete-fcb900) ![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21807133-1C244B?logo=doi&logoColor=white) ![author](https://img.shields.io/badge/author-Marc%20C.%20Deller%2C%20D.Phil.-1C244B)
 
 <table>
 <tr>
@@ -584,7 +584,8 @@ These determine what conclusions the data can support, and are stated in full in
 - [x] **Probe what the parsers still cannot name**, by labelling 464 records carrying an unnamed component with a 32B teacher. **17.7% yield a reagent the release lacks** (CI 14.2 to 21.1), so the remaining 82,341 unnamed components are mostly not recoverable chemistry: the source text says "PEG" or "phosphate" without saying which, or names no reagent at all. One genuine lexicon gap found and closed (ACES, lexicon 0.9.3)
 - [ ] Cut the 49 reagents round 09 still misses, and the 46 it misfiles: the misfiles are role errors the `protein_buffer` and `soak` classes should absorb
 - [ ] Supply pKa values for 59 buffers, or fix the clause splitter that produced them
-- [ ] Publish to Zenodo for a citable DOI, and mirror on HuggingFace Datasets
+- [x] **Publish to Zenodo for a citable DOI:** v1.0.0 deposited 2026-08-05, [10.5281/zenodo.21807134](https://doi.org/10.5281/zenodo.21807134). Schema and dataset versions frozen at 1.0.0; eight files, each checksum-verified on upload
+- [x] **Mirror on HuggingFace Datasets:** [`Dellboy/toppdblx-conditions`](https://huggingface.co/datasets/Dellboy/toppdblx-conditions), public, with a dataset card carrying the provenance split and the limitations
 - [ ] Browser front end (an exploration tool, not a predictor)
 - [ ] Construct boundary model, then crystallisation propensity
 
@@ -595,7 +596,7 @@ These determine what conclusions the data can support, and are stated in full in
 
 Attributing TopPDBLX does not discharge the obligation to the sources it derives from: the Protein Data Bank (CC0), SIFTS and UniProt (both CC BY 4.0). Commercial screen formulations in `ontology/screens/` are transcriptions of vendor-published support materials, kept structurally separable so they can be withdrawn without breaking the release. Screen names are trademarks of their owners, used nominatively.
 
-**Cite as:** Deller, M. C. (2026). TopPDBLX: a parsed, normalised and sequence-linked database of crystallisation conditions from the Protein Data Bank. Version 0.1.0.
+**Cite as:** Deller, M. C. (2026). TopPDBLX: a parsed, normalised and sequence-linked database of crystallisation conditions from the Protein Data Bank. Version 1.0.0. Zenodo. https://doi.org/10.5281/zenodo.21807134
 
 ---
 

@@ -3,6 +3,31 @@
 Written 2026-07-31 so that nothing outstanding lives only in a conversation. Everything here is
 either running, generated and waiting for an answer, or specified and not yet built.
 
+## 2026-08-05: R2 done, the dataset is citable
+
+**DOI [10.5281/zenodo.21807134](https://doi.org/10.5281/zenodo.21807134)**, concept DOI
+`10.5281/zenodo.21807133` which always resolves to the latest version. Eight files deposited, each
+checksum-verified on upload. Mirrored at
+[`Dellboy/toppdblx-conditions`](https://huggingface.co/datasets/Dellboy/toppdblx-conditions).
+
+Schema and dataset versions frozen at **1.0.0**, resolving the roadmap's open R2 question (publish
+now at 0.1.0 or later at 1.0.0) in favour of 1.0.0, since R1 completed first.
+
+**What the pre-deposit verification caught.** Every claim in the Zenodo description was checked
+against the released parquet rather than against README prose, and six figures were wrong: the
+README still carried iteration 4,500's gold-set numbers (92.5% precision, 92.0% recall) in six
+places, describing a checkpoint that was measured but never shipped. The shipped final adapter is
+93.3% and 90.3%. One of those had already been pasted into the Zenodo description, where a DOI
+would have made it permanent. **Verify published numbers against artefacts, never against your own
+earlier prose.**
+
+Two mechanical notes worth keeping: Python `urllib` breaks the pipe on a 77 MB upload and `curl -T`
+does not, and the README's "184,229 records with sequence linkage" could not be reproduced from the
+data (the datasheet's generated 195,985 was used instead). That README line is still unverified.
+
+**Next: R6 front end, or R3 construct boundary model.** R3 needs residue-level SIFTS, not yet
+fetched. R6 is rated certain as an exploration tool and now has a citable dataset behind it.
+
 ## 2026-08-05: phase closed - the residual parser ships and its chemistry is published
 
 **Where this phase started:** the rule parser read 93.5% of the archive and the model's output

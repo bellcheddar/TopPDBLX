@@ -152,6 +152,8 @@ changes. Full terms in `LICENSE-DATA`.
 
 **Code:** MIT (`LICENSE`).
 
+**DOI:** [10.5281/zenodo.21807134](https://doi.org/10.5281/zenodo.21807134) (this version) - [10.5281/zenodo.21807133](https://doi.org/10.5281/zenodo.21807133) (always resolves to the latest)
+
 **Cite as:** Deller, M. C. (2026). TopPDBLX: a parsed, normalised and sequence-linked
 database of crystallisation conditions from the Protein Data Bank. Version
 1.0.0.
