@@ -474,15 +474,26 @@ returning a construct nobody would clone.
 **Two structural rules were tried and both lost to the model.** Neither is in the shipped
 proposer, and both are kept in the code with their numbers attached, as results rather than gaps.
 
-| Rule tried | Idea | Result |
+| Feature tried | Idea | Result |
 |---|---|---|
-| Nudge the cut to the nearest coil | Do not cut mid-helix, using Chou-Fasman propensity | **Worse**: median error 5 residues to 8 |
-| Gate on ESMFold pLDDT | Trim where a single-sequence fold is unconfident, since that is disorder | **No change**: median 2 residues either way, within-25 88% against 89%. pLDDT *alone* is much worse, median 6 and 71% within 25 |
+| Chou-Fasman coil nudge | Do not cut mid-helix | **Worse**: median error 5 residues to 8 |
+| ESMFold pLDDT gate | Trim where a single-sequence fold is unconfident | **No change**: median 2 either way; pLDDT alone much worse (median 6, 71% within 25) |
+| Pfam domain-edge snapping | Cut where the curated domain ends | **Signal real, application fails.** True boundaries sit within 15 residues of a Pfam edge 54% of the time against a 19% null, but snapping never improves the median and nudges p75 from 56 to 58 |
+| metapredict disorder, blended | Trim predicted-disordered tails | **Not redundant but no help.** Correlates with pLDDT only −0.39, and predicts "inside" better than pLDDT does (AUROC 0.793 against 0.719), yet blending leaves the median at 6 and worsens p90 |
+| Disorder as an input channel, retrained | Fuse the feature rather than blending post hoc | **No movement**: like-for-like head-only pilot, p75 111 to 108, p90 unchanged at 362 |
+| Surface entropy, hydrophobicity | Trim high-entropy EKQR patches | **No signal at all**: AUROC 0.474 and 0.491, both indistinguishable from chance |
 
-The pattern is worth stating: **the classifier is trained on the decision itself, and both rules
-are proxies for it.** A construct boundary frequently sits in perfectly ordered sequence, at a
-domain junction or a convenient cloning site, and neither a propensity window nor a fold
-confidence has any view on that. Effort is better spent on the model than on rules around it.
+**Six attempts, no improvement, and the pattern is consistent.** Two of the features carry
+genuine independent signal (Pfam edges at 2.8x enrichment over a null, disorder outscoring pLDDT
+on the very task) and still fail to help, whether blended afterwards or fused as an input channel
+and retrained.
+
+The reading: **the classifier is trained on the decision itself, and every one of these features is
+a proxy for part of that decision.** A construct boundary frequently sits in perfectly ordered
+sequence, at a domain junction or a convenient cloning site, and a 33.5M-parameter protein language
+model has evidently already absorbed what these proxies encode. Meanwhile validation MCC was still
+climbing when round 01 stopped (0.607, 0.681, 0.700 by epoch). **Effort belongs in the model, not
+in features around it.**
 
 ### What it is not
 
