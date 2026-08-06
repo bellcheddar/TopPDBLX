@@ -406,14 +406,34 @@ middle, falling away at the ends it thinks you should trim.
 
 | Measure | Test set | Why this measure |
 |---|---|---|
-| **Boundary error** | **9 residues** (median) | How far off the cut is, in residues, on the 1,314 test proteins that were genuinely truncated. This is the number you would feel at the bench |
+| **Boundary error** | **9 residues** (median) | How far off the cut is, on the 1,314 test proteins that were genuinely truncated. A median: the spread matters and is below |
 | **MCC** | **0.669** | Correlation between predicted and real per-residue calls. A model that says "keep everything" scores 0.00 |
 | Accuracy | 85.7% | Reported for completeness and **should not be read alone**: 61.5% of residues really are inside a construct, so "keep everything" already scores 61.5% while being useless |
 
-**In plain terms: on a protein it has never seen, from a family it has never seen, the model puts
-the cut within about nine residues of where a crystallographer put it.** For context, the
-truncated constructs in this corpus trim a median of 62 residues from the N-terminus and keep
-under half the full-length chain, so nine residues is a small fraction of the decision.
+**A worked example.** Hen lysozyme (`P00698`) is 147 residues in UniProt, of which 1 to 18 are
+the signal peptide and 19 to 147 the mature chain. Asked cold, the model proposes **19 to 147**.
+Nobody told it what a signal peptide is; it learned that crystallographers do not clone them.
+
+**But read the spread before trusting a single number**, because the median hides the shape of it:
+
+| | boundary error |
+|---|---|
+| Half the boundaries | within **5 residues** |
+| Three quarters | within 56 residues |
+| Nine tenths | within 250 residues |
+
+**It is excellent on most proteins and badly wrong on a minority.** 60% of boundaries land within
+10 residues, and 56% of proteins have *both* ends within 25. The mean error of 72 residues is the
+tail talking, not the typical case.
+
+**The model half knows when it is wrong.** Mean probability across the proposed span runs 0.97 on
+good predictions and 0.82 on bad ones, so `model.propose_boundaries` returns a `confident` flag at
+0.85. Confident proposals get both ends within 25 residues **71%** of the time against 56%
+ungated, and cover 68% of proteins. Treat a low-confidence span as a hint and look at the profile.
+
+For context, truncated constructs here trim a median of 62 residues from the N-terminus and keep
+under half the chain, so being within 5 residues is a small fraction of the decision, and being
+250 out is not a usable answer.
 
 ### Training rounds
 
@@ -428,6 +448,17 @@ residues. Improving throughout with no overfitting, so a longer run is the obvio
 boundary error worse than 20 residues would have meant the signal is not learnable from sequence
 at this scale, and R3 would have stopped. Declaring it in advance is what stops a marginal result
 being tuned until it looks like a good one.
+
+### Turning a probability into a construct
+
+`./run.sh model.propose_boundaries --uniprot P00698` smooths the profile, takes the longest
+contiguous run, merges runs separated by short gaps, and refuses below 50 residues rather than
+returning a construct nobody would clone.
+
+**One textbook rule was tried and dropped because it was measured.** Nudging each cut to the
+nearest coil-looking position, so as not to cut mid-helix, moved the median error from 5 residues
+to 8. The classifier has already learned where the ends are, and a Chou-Fasman propensity window
+knows less than it does. The code is kept with the numbers attached, as a result rather than a gap.
 
 ### What it is not
 
