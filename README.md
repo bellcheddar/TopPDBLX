@@ -38,7 +38,23 @@ The Protein Data Bank holds about 200,000 crystallisation recipes, and every one
 | **Refuses to guess** | A condition with an unrecognised reagent or no stated amount is Unclassified, with the reason recorded |
 | **Records its own uncertainty** | Inferred units, inferred cryoprotectant roles and pH attribution are flagged, never presented as fact |
 | **Reproducible by stage** | Every stage is one command and writes a manifest of input hashes, tool versions and git state |
-| **Reads what the rules cannot** | A 32B teacher labels the hard records; a 360M student learns from it and reads every residual record the rule parser gives up on. Recall against hand-labelled truth: 69.5% (rules alone) → 90.3% (rules + round 09, pooled) |
+| **Reads what the rules cannot** | A 32B **teacher** labels the hard records; a 360M **student** learns from it and reads every residual record the rule parser gives up on. Recall against hand-labelled truth: 69.5% (rules alone) → 90.3% (rules + round 09, pooled) |
+| **Suggests where to cut** | A third model, a **boundary proposer**, reads a protein sequence and predicts where a crystallographer would truncate it. Trained on 523,018 deposited constructs, and separate from the two above |
+
+### Three language models, each doing a different job
+
+The project runs **three**, and they are not interchangeable. Two read text; one reads protein.
+
+| Model | What it reads | What it produces | Why it exists |
+|---|---|---|---|
+| **1. Parser teacher**<br>Qwen2.5-32B, local | The hardest crystallisation strings, a few thousand of them | Training labels for the student | The rule parser cannot label its own failures, so something has to say what the difficult cases mean. Too slow to run over the corpus: at ~40 s a record it would take weeks |
+| **2. Parser student**<br>[SmolLM2-360M](https://huggingface.co/Dellboy/toppdblx-residual-parser), LoRA | Every condition string the rule parser gave up on | Typed components: reagent, amount, unit, role | Does the corpus-scale work the teacher cannot. 90x smaller, reads the whole residual in under two hours, and contributes **35,580 components** to the release |
+| **3. Boundary proposer**<br>[ESM-2 t12-35M](https://huggingface.co/Dellboy/toppdblx-construct-boundary) | A protein sequence, not text | Per-residue probability of being inside a crystallised construct | Answers a different question entirely: not *what was in the drop* but *what was in the tube*. Trained on 523,018 deposited constructs |
+
+**Models 1 and 2 are a distillation pair**: the big one teaches, the small one works. Model 3 is
+unrelated to both, shares no code path with them, and would still be useful if the parser did not
+exist. Keeping them straight matters when reading the results below, because "the model" means
+something different in each section.
 
 ## 📖 The words on this page
 
