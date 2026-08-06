@@ -377,6 +377,70 @@ Three things changed together: every rules label was kept and roughly 3,400 teac
 
 Round 09 also trains for longer than round 06 (8,000 iterations against 6,000), and the frozen benchmark shows that this matters on its own: identification, grounding, fully-identified records and fidelity all climb monotonically from iteration 1,000 to 8,000. **The shipped model is therefore round 09's final adapter**, chosen on the 2,000-record benchmark rather than on the 192-record gold sets, which were too small to separate checkpoints that differ by 7 points of fully-identified records.
 
+## 🧬 Where to cut: the construct boundary model
+
+**The practical question.** You have a protein that will not crystallise. Almost nobody
+crystallises the full-length gene product: they trim the flexible tails, drop a disordered linker,
+and try the folded core. Choosing where to cut is judgement, and it is usually made once, by hand,
+from a disorder plot and an alignment.
+
+The Protein Data Bank already contains **523,018 of those decisions**, made by crystallographers
+who then got a structure. Every deposited chain records exactly which stretch of the full-length
+protein was cloned, and SIFTS maps it back residue by residue. Those are free labels: nobody had
+to annotate anything, the experiment did it.
+
+**What the model does.** Give it a full-length sequence. It returns, for every residue, the
+probability that a crystallographer would have kept that residue in the construct. High in the
+middle, falling away at the ends it thinks you should trim.
+
+| | |
+|---|---|
+| Weights | **[`Dellboy/toppdblx-construct-boundary`](https://huggingface.co/Dellboy/toppdblx-construct-boundary)** on HuggingFace, 134 MB |
+| Base model | [ESM-2 t12-35M](https://huggingface.co/facebook/esm2_t12_35M_UR50D), 33.5M parameters |
+| Input | Full-length UniProt sequence, up to 1,022 residues |
+| Output | Per-residue probability of being inside a crystallised construct |
+| Trained on | 34,874 proteins, from 523,018 deposited chains across 185,831 PDB entries |
+| Held out | 4,077 proteins, split by 30% sequence identity so no homologue is on both sides |
+
+### What it achieves
+
+| Measure | Test set | Why this measure |
+|---|---|---|
+| **Boundary error** | **9 residues** (median) | How far off the cut is, in residues, on the 1,314 test proteins that were genuinely truncated. This is the number you would feel at the bench |
+| **MCC** | **0.669** | Correlation between predicted and real per-residue calls. A model that says "keep everything" scores 0.00 |
+| Accuracy | 85.7% | Reported for completeness and **should not be read alone**: 61.5% of residues really are inside a construct, so "keep everything" already scores 61.5% while being useless |
+
+**In plain terms: on a protein it has never seen, from a family it has never seen, the model puts
+the cut within about nine residues of where a crystallographer put it.** For context, the
+truncated constructs in this corpus trim a median of 62 residues from the N-terminus and keep
+under half the full-length chain, so nine residues is a small fraction of the decision.
+
+### Training rounds
+
+| Round | What changed | MCC | Boundary error | Verdict |
+|---|---|---|---|---|
+| [**01**](https://huggingface.co/Dellboy/toppdblx-construct-boundary) | ESM-2 t12-35M, 3 epochs, token-bucketed batches, consensus labels at 50% agreement | **0.669** | **9 residues** | **Shipped.** Clears the pre-declared failure condition (MCC 0.40, error 20 residues) |
+
+Per epoch, on validation: MCC 0.607 then 0.681 then 0.700, boundary error 14 then 9 then 7
+residues. Improving throughout with no overfitting, so a longer run is the obvious next experiment.
+
+**The failure condition was written before the run, not after.** MCC below 0.40 or a median
+boundary error worse than 20 residues would have meant the signal is not learnable from sequence
+at this scale, and R3 would have stopped. Declaring it in advance is what stops a marginal result
+being tuned until it looks like a good one.
+
+### What it is not
+
+- **It is not a disorder predictor.** Residues that were cloned but never appeared in the density
+  count as *inside* the construct. The model predicts what a crystallographer chose to clone, not
+  what turned out to be ordered.
+- **It only knows successes.** Every label comes from a construct that produced a crystal. It has
+  never seen a construct that failed, so it cannot tell you a boundary is bad, only that it is
+  unlike the ones that worked.
+- **It errs towards keeping residues.** It predicts "inside" for 69% of residues where the truth
+  is 61.5%, so proposed spans run slightly long. For construct design that is the safer direction,
+  but trim rather than extend if you are choosing between its suggestion and your own.
+
 ## 🔁 Redundancy
 
 **In plain terms:** the same experiment appears in the archive over and over. Popular proteins are solved hundreds of times, and a successful recipe gets copied. One condition string in this corpus appears **1,784 times**. That sounds harmless, and it quietly corrupts three different things if you let it.
