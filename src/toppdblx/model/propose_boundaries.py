@@ -22,6 +22,14 @@ Three rules that help, and one that measurably does not:
 * **Take the longest run, not every run.** Thresholding gives several islands; a construct is one
   contiguous stretch. Islands separated by a short gap are merged, because a 5-residue dip is
   noise rather than two domains.
+* **Do not gate on ESMFold pLDDT either.** Folding 60 truncated test proteins with ESMFold and
+  blending its per-residue confidence into the classifier output changed nothing: median error 2
+  residues either way, within-25 88% against 89%, across blend weights 0.3 to 0.8. **pLDDT used
+  alone is markedly worse** than the classifier: median 6 residues and 71% within 25. The reading
+  is that the classifier already knows where the ordered core ends *and more besides*, because a
+  construct boundary often sits in ordered sequence at a domain junction, and pLDDT has no view on
+  that. Second structural heuristic to lose to the model, which is a pattern rather than an
+  accident: the classifier is trained on the decision itself and the heuristics are proxies for it.
 * **Do not nudge the cut to the nearest coil.** This is the textbook rule and it is switched off,
   because it was measured and it hurts: at a window of 8 it moved the median error from 5 residues
   to 8, and at 4 it gained nothing. The classifier has already learned where the ends are, and a

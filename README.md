@@ -471,10 +471,18 @@ being tuned until it looks like a good one.
 contiguous run, merges runs separated by short gaps, and refuses below 50 residues rather than
 returning a construct nobody would clone.
 
-**One textbook rule was tried and dropped because it was measured.** Nudging each cut to the
-nearest coil-looking position, so as not to cut mid-helix, moved the median error from 5 residues
-to 8. The classifier has already learned where the ends are, and a Chou-Fasman propensity window
-knows less than it does. The code is kept with the numbers attached, as a result rather than a gap.
+**Two structural rules were tried and both lost to the model.** Neither is in the shipped
+proposer, and both are kept in the code with their numbers attached, as results rather than gaps.
+
+| Rule tried | Idea | Result |
+|---|---|---|
+| Nudge the cut to the nearest coil | Do not cut mid-helix, using Chou-Fasman propensity | **Worse**: median error 5 residues to 8 |
+| Gate on ESMFold pLDDT | Trim where a single-sequence fold is unconfident, since that is disorder | **No change**: median 2 residues either way, within-25 88% against 89%. pLDDT *alone* is much worse, median 6 and 71% within 25 |
+
+The pattern is worth stating: **the classifier is trained on the decision itself, and both rules
+are proxies for it.** A construct boundary frequently sits in perfectly ordered sequence, at a
+domain junction or a convenient cloning site, and neither a propensity window nor a fold
+confidence has any view on that. Effort is better spent on the model than on rules around it.
 
 ### What it is not
 
