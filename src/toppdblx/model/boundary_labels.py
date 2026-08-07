@@ -92,6 +92,12 @@ def main(argv: Optional[list[str]] = None) -> int:
             # Stored as a compact string of 0/1 rather than a list column: 49k proteins by up to
             # 34k residues is large, and a bitstring round-trips through parquet cheaply.
             "inside": "".join("1" if v else "0" for v in inside),
+            # **The soft target, which round 01 threw away.** `coverage` is the fraction of this
+            # protein's deposited constructs that include the residue: for a protein deposited
+            # many times it is the empirical distribution of where crystallographers actually
+            # cut, and binarising it at 0.5 discards exactly the width a construct panel wants to
+            # span. Stored quantised to 0-100 in one byte per residue, same cost as the bitstring.
+            "coverage": (coverage * 100).round().astype(np.uint8).tolist(),
             "consensus_start": int(idx[0]) + 1,
             "consensus_end": int(idx[-1]) + 1,
             "inside_fraction": float(inside.mean()),

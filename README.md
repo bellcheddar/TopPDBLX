@@ -453,12 +453,33 @@ under half the chain, so being within 5 residues is a small fraction of the deci
 
 ### Training rounds
 
-| Round | What changed | MCC | Boundary error | Verdict |
-|---|---|---|---|---|
-| [**01**](https://huggingface.co/Dellboy/toppdblx-construct-boundary) | ESM-2 t12-35M, 3 epochs, token-bucketed batches, consensus labels at 50% agreement | **0.669** | **9 residues** | **Shipped.** Clears the pre-declared failure condition (MCC 0.40, error 20 residues) |
+All figures are the **held-out test split** (4,077 proteins, 1,445 of them truncated), never the
+validation split used to pick checkpoints. That distinction decided which model ships.
+
+| Round | What changed | MCC | Boundary error | coverage@3 | Verdict |
+|---|---|---|---|---|---|
+| [**01**](https://huggingface.co/Dellboy/toppdblx-construct-boundary) | ESM-2 t12-35M, 3 epochs, token-bucketed batches, consensus labels at 50% agreement | **0.669** | **9 residues** | **36.1%** | **Shipped.** Best on every metric, and still is |
+| 02 | Soft targets everywhere: train on the fraction of a protein's constructs covering each residue | 0.661 † | 11 † | 30.6% † | **Abandoned at epoch 3.** Validation metrics flat while training loss fell |
+| 03 | Soft targets gated to proteins with at least 10 deposited constructs, 6 epochs | 0.659 | 10 | 35.6% | **Rejected.** Worse than round 01 on all five metrics |
+| 04 | No soft targets, round 01's recipe run for 6 epochs instead of 3 | 0.662 | 10 | 35.8% | **Rejected.** Led on validation, lost on test |
+
+† round 02 was stopped early, so its figures are validation-only and not comparable to the rest.
+
+**The campaign found nothing, and how it failed is the useful part.** On the 519-protein validation
+split round 04 read coverage@3 41.8% against round 01's 40.3%, and that looked like a result. On
+the 1,445-protein test split it reverses to 35.8% against 36.1%. Round 03's dramatic jump from
+34.1% to 41.0% at epoch 5, and round 04 matching it, were both inside the variance of the smaller
+sample.
+
+Three conclusions, all negative and all worth keeping: **soft targets do not help** (gated or not),
+**six epochs do not beat three**, and (from the [feature campaign](#turning-a-probability-into-a-construct))
+**no structural feature tested helps either**. The model is at a plateau that neither the training
+schedule nor added features move, so round 05 should change something substantive: a larger ESM-2
+backbone is the obvious untested lever.
 
 Per epoch, on validation: MCC 0.607 then 0.681 then 0.700, boundary error 14 then 9 then 7
-residues. Improving throughout with no overfitting, so a longer run is the obvious next experiment.
+residues. That upward trend suggested a longer run would help. **Round 04 tested it directly and it
+did not**: six epochs scored marginally worse on held-out data than three.
 
 **The failure condition was written before the run, not after.** MCC below 0.40 or a median
 boundary error worse than 20 residues would have meant the signal is not learnable from sequence
