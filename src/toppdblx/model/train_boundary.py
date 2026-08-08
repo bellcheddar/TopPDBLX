@@ -39,7 +39,7 @@ from .. import config
 from ..manifest import Manifest
 
 STAGE = "model.train_boundary"
-CHECKPOINT = "facebook/esm2_t12_35M_UR50D"
+CHECKPOINT = "facebook/esm2_t12_35M_UR50D"     # round 05 tests t30-150M via --backbone
 MAX_LEN = 1022                      # ESM-2 positions, before the two special tokens
 MCC_FLOOR = 0.40                    # roadmap failure condition
 BOUNDARY_CEILING = 20               # residues, median absolute error
@@ -149,9 +149,9 @@ def collate(batch, tokenizer):
 
 
 class BoundaryModel(nn.Module):
-    def __init__(self) -> None:
+    def __init__(self, checkpoint: str = CHECKPOINT) -> None:
         super().__init__()
-        self.esm = AutoModel.from_pretrained(CHECKPOINT)
+        self.esm = AutoModel.from_pretrained(checkpoint)
         hidden = self.esm.config.hidden_size
         self.head = nn.Sequential(nn.Dropout(0.1), nn.Linear(hidden, 1))
 
@@ -246,6 +246,14 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--eval-batches", type=int, default=120)
+    parser.add_argument("--backbone", default=CHECKPOINT,
+                        help="ESM-2 checkpoint; t30-150M is 4x the parameters and 3x the "
+                             "seconds per batch on this M1 Max, measured")
+    parser.add_argument("--eval-split", default="valid", choices=["valid", "test"],
+                        help="**Score on test from the first epoch when comparing recipes.** "
+                             "Validation carries 519 truncated proteins and test carries 1,445; "
+                             "rounds 03 and 04 both looked like wins on validation and both "
+                             "reversed on test, which cost a night")
     parser.add_argument("--soft-min-constructs", type=int, default=1,
                         help="apply soft targets only to proteins with at least this many "
                              "deposited constructs; below it the hard label is used")
@@ -260,18 +268,19 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     frame = pl.read_parquet(args.labels)
     train = frame.filter(pl.col("split") == "train")
-    valid = frame.filter(pl.col("split") == "valid")
+    valid = frame.filter(pl.col("split") == args.eval_split)
     if args.limit:
         train, valid = train.head(args.limit), valid.head(max(64, args.limit // 8))
     # Shortest first inside each split keeps padding down without shuffling away the split.
     train = train.sort("length")
     valid = valid.sort("length")
-    print(f"  train {train.height:,} proteins, valid {valid.height:,}, device {device}")
+    print(f"  train {train.height:,} proteins, scoring on {args.eval_split} "
+          f"({valid.height:,}), device {device}")
 
-    tokenizer = AutoTokenizer.from_pretrained(CHECKPOINT)
-    model = BoundaryModel().to(device)
+    tokenizer = AutoTokenizer.from_pretrained(args.backbone)
+    model = BoundaryModel(args.backbone).to(device)
     n_params = sum(p.numel() for p in model.parameters())
-    print(f"  {CHECKPOINT}: {n_params/1e6:.1f}M parameters")
+    print(f"  {args.backbone}: {n_params/1e6:.1f}M parameters")
 
     fn = lambda b: collate(b, tokenizer)
     rng = np.random.default_rng(17)
@@ -298,7 +307,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     loss_fn = nn.BCEWithLogitsLoss(reduction="none")
 
     history = []
-    with Manifest(STAGE, params={"checkpoint": CHECKPOINT, "epochs": args.epochs,
+    with Manifest(STAGE, params={"checkpoint": args.backbone, "epochs": args.epochs,
                                  "batch": args.batch, "lr": args.lr,
                                  "mcc_floor": MCC_FLOOR,
                                  "boundary_ceiling": BOUNDARY_CEILING}) as m:
