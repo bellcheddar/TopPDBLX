@@ -183,12 +183,21 @@ targets. The figure is honest for that population and is not a universal probabi
 
 ### 4.3 Condition recommendation: no
 
-*(Result pending: the full-scale run is in progress. The 3,000-record pass gave hit@5 of 0.848
-against the frequency prior's 0.847, a margin of +0.001 against a pre-declared requirement of
-+0.03, and was worse at hit@1 and hit@10. This section will state the full-scale figure.)*
+Frozen ESM-2 embeddings and a shallow multi-label head, trained on 97,471 records and tested on
+21,316, split at 30% sequence identity, over 41 L2 condition classes:
 
-The kill criterion was fixed before the experiment: beat a query-independent frequency prior at
-L2 hit@5 by at least three percentage points, or publish the negative result without tuning.
+| Source | hit@1 | hit@5 | hit@10 |
+|---|---|---|---|
+| **Frequency prior** | **0.646** | **0.846** | **0.922** |
+| ESM-2 + learned head | 0.571 | 0.833 | 0.909 |
+
+**The learned model is worse than the prior on every measure.** The hit@5 margin is **-0.013**
+against a pre-declared requirement of +0.03, so the kill criterion fires and the result is
+published untuned.
+
+The scaling behaviour is the informative part. A 3,000-record pass scored +0.001 at hit@5; the
+full set, 32 times larger, scores -0.013. A model that moves *away* from the baseline as data is
+added is not underfitting. There is no sequence-conditional signal there to fit.
 
 This is consistent with an earlier finding that reshaped the project's plan. **Homology retrieval
 also loses to the same frequency prior**, at every level, on both split thresholds, under three

@@ -124,8 +124,21 @@ def main(argv: Optional[list[str]] = None) -> int:
     # **The baseline, computed here rather than quoted**, so it is on exactly these rows.
     prior = [c for c, _ in Counter(train[level].to_list()).most_common()]
 
-    x_train = embed(train["protein_seq"].to_list())
-    x_test = embed(test["protein_seq"].to_list())
+    # **Cached on disk.** Embedding 21k test sequences takes 36 minutes on this M1 Max, and it
+    # is identical on every re-run, so the cache is what makes trying a second configuration
+    # affordable rather than a fresh half-hour each time.
+    cache = config.INTERIM_DIR / "recommender_embeddings"
+    cache.mkdir(parents=True, exist_ok=True)
+    def cached(name: str, seqs: list[str]) -> np.ndarray:
+        path = cache / f"{name}_{args.threshold}_{len(seqs)}.npy"
+        if path.exists():
+            print(f"  reusing cached {name} embeddings ({len(seqs):,})")
+            return np.load(path)
+        arr = embed(seqs)
+        np.save(path, arr)
+        return arr
+    x_train = cached("train", train["protein_seq"].to_list())
+    x_test = cached("test", test["protein_seq"].to_list())
     y_train = np.zeros((train.height, len(classes)), dtype=np.float32)
     for i, label in enumerate(train[level].to_list()):
         y_train[i, index[label]] = 1.0
