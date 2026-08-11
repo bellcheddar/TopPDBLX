@@ -381,7 +381,7 @@ All rounds ship as LoRA adapters for `mlx-community/SmolLM2-360M-Instruct`, one 
 
 **Read down the identification and grounding columns from round 05: every round improves on the last.** 87.58, 89.05, 92.39, 93.3, 95.28 on identification; 93.41, 93.15, 92.65, 93.53, 94.83 on grounding; and 62.85 to 81.0 on fully-identified records between rounds 06 and 09. All measured on the same 2,000 held-out records against the same lexicon 0.9.2, so the comparison is between models rather than dictionaries.
 
-‡ N/A rather than 0: the column counts components the round *generated* over the residual, not rows in the released component table (see [Release contents](#-release)). Only rounds 06 and 09 have ever been run over the corpus at scale; every other adapter was a training experiment, measured and set aside, and was never asked to read the residual.
+‡ N/A rather than 0: the column counts components the round *generated* over the residual, not rows in the released component table (see [Output](#-output)). Only rounds 06 and 09 have ever been run over the corpus at scale; every other adapter was a training experiment, measured and set aside, and was never asked to read the residual.
 
 ¶ Generated 2026-08-04, a 5.1-hour pass over all 47,845 residual records: **188,655 components against round 06's 153,736, a 22.7% increase.** **35,580 of those are chemistry the rules never named, and they are now in the released component table**, tagged `parser = slm`. Classification and screen matching were rebuilt from the same output.
 
@@ -541,6 +541,81 @@ in features around it.**
 - **It errs towards keeping residues.** It predicts "inside" for 69% of residues where the truth
   is 61.5%, so proposed spans run slightly long. For construct design that is the safer direction,
   but trim rather than extend if you are choosing between its suggestion and your own.
+
+## 🎲 Will it crystallise at all?
+
+**The one question the PDB cannot answer.** Every condition in this dataset produced a crystal, so
+the archive supports *what worked* and is silent on *what failed*. The only substantial record of
+crystallisation failures is [TargetTrack](https://zenodo.org/records/821654), the archived
+structural genomics target log, final release 1 July 2017.
+
+Parsed to 335,771 targets with sequences and full status histories, of which:
+
+| | Targets |
+|---|---|
+| Reached crystallisation | 21,173 |
+| Reached purified protein and never crystallised | 79,926 |
+
+**Conditioning the negatives on reaching purified protein is the load-bearing decision.** Every
+target in the training set got far enough that crystallisation was genuinely attempted, so the
+model answers *given soluble purified protein, will it crystallise*. Using all 335,771 targets
+instead drops the positive rate from 20.9% to 6.3%, and a model trained that way mostly predicts
+whether a gene expresses, which is a different and much easier question.
+
+Gradient boosting on 30 sequence descriptors, split at 30% identity by MMseqs2 cluster:
+
+| Measure | Value |
+|---|---|
+| AUC | **0.656** (pre-declared floor 0.65) |
+| Average precision | 0.360 against a 0.218 base rate |
+| **Top 5% of ranked constructs crystallise** | **53%**, a 2.4x lift |
+| Top 10% | 43%, 2.0x |
+
+**Read the ranking, not the AUC.** 0.656 barely clears the threshold set before the run and would
+not trouble a published predictor. What it does usefully is order a shortlist: pick the top twenty
+constructs from a hundred candidates and half of them crystallise, against a fifth if you pick at
+random. Sequence length, net charge and cysteine content dominate; disorder predictions add
+nothing (AUC 0.654 to 0.656).
+
+**TargetTrack ends in 2017** and is dominated by structural genomics centres that chose tractable
+targets. The number is honest for that population and is not a universal probability.
+
+## 🚫 What the dataset will not tell you
+
+Two independent attempts to predict the *condition* from the *sequence* both lose to a baseline
+that ignores the sequence entirely.
+
+| Source | hit@1 | hit@5 | hit@10 |
+|---|---|---|---|
+| **Frequency prior** (ignores the query) | **0.646** | **0.846** | **0.922** |
+| ESM-2 embeddings + learned head | 0.571 | 0.833 | 0.909 |
+
+97,471 training and 21,316 test records at the 30% identity split, 41 condition classes. The
+learned model is worse on every measure. Its hit@5 margin is **-0.013** against the **+0.03**
+declared before the experiment began, so the kill criterion fired and the result is published
+untuned.
+
+**The scaling is what makes this convincing rather than merely disappointing.** A 3,000-record
+pass scored +0.001 at hit@5; the full set, 32 times larger, scored -0.013. A model that moves
+*away* from the baseline as data is added is not short of data.
+
+Homology retrieval fails the same way, at every level, on both split thresholds, under three
+definitions of ground truth. Two independent methods failing identically points at the data rather
+than the method, and the reason is already visible in the data (see [Known limitations](#-known-limitations)):
+condition frequency reflects screen popularity, not protein identity. Homologues were screened
+with the same popular screens as everything else, so there is little protein-specific signal to
+retrieve.
+
+**The archive supports choosing a screen by precedent, and choosing a construct by sequence, but
+not choosing a condition by protein.** That is a useful thing to know before building a
+recommender, and it is why this project does not ship one.
+
+## 📄 The paper
+
+[`PAPER.md`](PAPER.md) draws the whole project together in about 1,800 words: fidelity, the
+parser, the curation, and then what can and cannot be learned. Every figure in it is re-derived
+from the released artefacts rather than copied from earlier prose, which caught five stale numbers
+including two of the roadmap's own.
 
 ## 🔁 Redundancy
 
@@ -745,14 +820,18 @@ These determine what conclusions the data can support, and are stated in full in
 - [x] **Ship round 09, preferring recall over a precision-weighted score:** it finds more chemistry and misfiles slightly more of it, and the extra errors are role misattributions (a real reagent in the wrong scope), not inventions
 - [x] Confirm training length matters: on the 2,000-record frozen benchmark, round 09's identification and fully-identified records keep rising from true iteration 1,000 to 8,000; the 192-record gold sets were too small to resolve the same gap clearly
 - [x] **Choose the round 09 checkpoint on the larger benchmark, not the smaller one:** the 192-record gold sets picked iteration 4,500 on recall, and the 2,000-record frozen benchmark showed it identifying 2.6 points fewer reagents and leaving 7.3 points fewer records fully identified. The final adapter (iteration 8,000) ships
-- [ ] **Re-generate the corpus with round 09** (a 4.7-hour pass), then re-run classification, screen matching and the datasheet. Until this lands the released data is still round 06's
+- [x] **Re-generate the corpus with round 09** (5.1 hours over 47,845 residual records): 188,655 components against round 06's 153,736, and classified coverage 80.2% to 80.8%
 - [x] **Probe what the parsers still cannot name**, by labelling 464 records carrying an unnamed component with a 32B teacher. **17.7% yield a reagent the release lacks** (CI 14.2 to 21.1), so the remaining 82,341 unnamed components are mostly not recoverable chemistry: the source text says "PEG" or "phosphate" without saying which, or names no reagent at all. One genuine lexicon gap found and closed (ACES, lexicon 0.9.3)
 - [ ] Cut the 49 reagents round 09 still misses, and the 46 it misfiles: the misfiles are role errors the `protein_buffer` and `soak` classes should absorb
 - [ ] Supply pKa values for 59 buffers, or fix the clause splitter that produced them
 - [x] **Publish to Zenodo for a citable DOI:** v1.0.0 deposited 2026-08-05, [10.5281/zenodo.21807134](https://doi.org/10.5281/zenodo.21807134). Schema and dataset versions frozen at 1.0.0; eight files, each checksum-verified on upload
 - [x] **Mirror on HuggingFace Datasets:** [`Dellboy/toppdblx-conditions`](https://huggingface.co/datasets/Dellboy/toppdblx-conditions), public, with a dataset card carrying the provenance split and the limitations
-- [ ] Browser front end (an exploration tool, not a predictor)
-- [ ] Construct boundary model, then crystallisation propensity
+- [x] **Browser front end**, an exploration tool rather than a predictor: [toppdblx.mdeller.com](https://toppdblx.mdeller.com), single file, no build step
+- [x] **Construct boundary model:** MCC 0.669 and a 9-residue median error on held-out proteins, and it survived five separate attempts to beat it
+- [x] **Crystallisation propensity from TargetTrack:** AUC 0.656, and the top 5% of ranked constructs crystallise at 2.4x the base rate
+- [x] **Condition recommender, killed on its own criterion:** worse than a query-independent frequency prior on every measure, and worse with 32x the data. Published as a negative result rather than tuned
+- [x] **Dataset paper drafted** ([`PAPER.md`](PAPER.md)), every figure re-derived from the released artefacts
+- [ ] Submit the paper, and mint a Zenodo version for the revision that accompanies it
 
 ## 📄 Licence
 

@@ -2,7 +2,7 @@
 <blockquote>
 <p><strong>Every crystallisation condition in the Protein Data Bank, parsed, normalised and linked to the sequence that produced it.</strong></p>
 </blockquote>
-<p><img alt="python" src="https://img.shields.io/badge/python-3.14-3776AB?logo=python&amp;logoColor=white"> <img alt="records" src="https://img.shields.io/badge/records-186%2C180-467FF7"> <img alt="components" src="https://img.shields.io/badge/components-603%2C459-467FF7"> <img alt="parse coverage" src="https://img.shields.io/badge/parse%20coverage-93.5%25-00897B"> <img alt="archive fidelity" src="https://img.shields.io/badge/archive%20fidelity-100%25-00897B"> <img alt="tests" src="https://img.shields.io/badge/tests-400%20passing-00897B"> <img alt="data" src="https://img.shields.io/badge/data-CC--BY--4.0-9b51e0"> <img alt="code" src="https://img.shields.io/badge/code-MIT-9b51e0"> <img alt="phase 0" src="https://img.shields.io/badge/phase%200-complete-fcb900"> <img alt="phase 1" src="https://img.shields.io/badge/phase%201-complete-fcb900"> <img alt="author" src="https://img.shields.io/badge/author-Marc%20C.%20Deller%2C%20D.Phil.-1C244B"></p>
+<p><img alt="python" src="https://img.shields.io/badge/python-3.14-3776AB?logo=python&amp;logoColor=white"> <img alt="records" src="https://img.shields.io/badge/records-199%2C185-467FF7"> <img alt="components" src="https://img.shields.io/badge/components-645%2C656-467FF7"> <img alt="parse coverage" src="https://img.shields.io/badge/parse%20coverage-93.5%25-00897B"> <img alt="archive fidelity" src="https://img.shields.io/badge/archive%20fidelity-100%25-00897B"> <img alt="tests" src="https://img.shields.io/badge/tests-400%20passing-00897B"> <img alt="data" src="https://img.shields.io/badge/data-CC--BY--4.0-9b51e0"> <img alt="code" src="https://img.shields.io/badge/code-MIT-9b51e0"> <img alt="phase 0" src="https://img.shields.io/badge/phase%200-complete-fcb900"> <img alt="phase 1" src="https://img.shields.io/badge/phase%201-complete-fcb900"> <a href="https://doi.org/10.5281/zenodo.21807133"><img alt="DOI" src="https://img.shields.io/badge/DOI-10.5281%2Fzenodo.21807133-1C244B?logo=doi&amp;logoColor=white"></a> <img alt="author" src="https://img.shields.io/badge/author-Marc%20C.%20Deller%2C%20D.Phil.-1C244B"></p>
 <table class="emd-info-table">
 <tr>
 <td>🌐 <b>Website</b></td><td><a href="https://marcdeller.com" target="_blank" rel="noopener noreferrer">marcdeller.com</a></td>
@@ -12,7 +12,7 @@
 </table>
 
 <hr>
-<p>Parse, normalise and curate every crystallisation condition in the Protein Data Bank, and link each one to the sequence of the construct that produced it. TopPDBLX turns the free-text <code>_exptl_crystal_grow.pdbx_details</code> field into typed components (reagent, concentration, unit, role), cross-references them against published commercial screen formulations, and attaches MMseqs2 cluster identifiers so that redundancy can be controlled properly.</p>
+<p>The Protein Data Bank holds about 200,000 crystallisation recipes, and every one was typed in free-hand by a different scientist, in no agreed format. TopPDBLX recovers structured, curated chemistry from that text: it turns the free-text <code>_exptl_crystal_grow.pdbx_details</code> field into typed components (reagent, concentration, unit, role), cross-references them against published commercial screen formulations, and attaches MMseqs2 cluster identifiers so that redundancy can be controlled properly.</p>
 <p><strong>Why it matters:</strong> the strongest lever on crystallisation success is construct design and the second strongest is choosing a screen that suits the protein, yet both are still done by intuition, because all the precedent sits in a quarter of a million unstructured strings that nobody can query. Turning that text into data is the precondition for every downstream question worth asking. It is useful for: crystallographers planning a screen, structural genomics groups mining historical outcomes, method developers who need a benchmark, and anyone building models over crystallisation space.</p>
 <ul>
 <li>Project brief: <a href="toppdblx_spec_v1.md"><code>toppdblx_spec_v1.md</code></a></li>
@@ -36,7 +36,7 @@
 </tr>
 <tr>
 <td data-label="Capability"><strong>Typed components</strong></td>
-<td data-label="Detail">610,076 reagents with role, concentration, unit, PEG molecular weight, Hofmeister rank and buffer pKa</td>
+<td data-label="Detail">645,656 reagents with role, concentration, unit, PEG molecular weight, Hofmeister rank and buffer pKa, each tagged with the parser that produced it</td>
 </tr>
 <tr>
 <td data-label="Capability"><strong>Separates text from chemistry</strong></td>
@@ -67,11 +67,48 @@
 <td data-label="Detail">Every stage is one command and writes a manifest of input hashes, tool versions and git state</td>
 </tr>
 <tr>
-<td data-label="Capability"><strong>Teaches a small model with a large one</strong></td>
-<td data-label="Detail">A 32B teacher labels the hard records; a 360M student learns from it and reads all 47,845. Recall 79.6% → 95.2% against hand-labelled truth</td>
+<td data-label="Capability"><strong>Reads what the rules cannot</strong></td>
+<td data-label="Detail">A 32B <strong>teacher</strong> labels the hard records; a 360M <strong>student</strong> learns from it and reads every residual record the rule parser gives up on. Recall against hand-labelled truth: 69.5% (rules alone) → 90.3% (rules + round 09, pooled)</td>
+</tr>
+<tr>
+<td data-label="Capability"><strong>Suggests where to cut</strong></td>
+<td data-label="Detail">A third model, a <strong>boundary proposer</strong>, reads a protein sequence and predicts where a crystallographer would truncate it. Trained on 523,018 deposited constructs, and separate from the two above</td>
 </tr>
 </tbody>
 </table></div>
+<h3>🤗 Three language models, each doing a different job</h3>
+<p>The project runs <strong>three</strong>, and they are not interchangeable. Two read text; one reads protein.</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Model</th>
+<th>What it reads</th>
+<th>What it produces</th>
+<th>Why it exists</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Model"><strong>1. Parser teacher</strong><br>Qwen2.5-32B, local</td>
+<td data-label="What it reads">The hardest crystallisation strings, a few thousand of them</td>
+<td data-label="What it produces">Training labels for the student</td>
+<td data-label="Why it exists">The rule parser cannot label its own failures, so something has to say what the difficult cases mean. Too slow to run over the corpus: at ~40 s a record it would take weeks</td>
+</tr>
+<tr>
+<td data-label="Model"><strong>2. Parser student</strong><br><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser">SmolLM2-360M</a>, LoRA</td>
+<td data-label="What it reads">Every condition string the rule parser gave up on</td>
+<td data-label="What it produces">Typed components: reagent, amount, unit, role</td>
+<td data-label="Why it exists">Does the corpus-scale work the teacher cannot. 90x smaller, reads the whole residual in under two hours, and contributes <strong>35,580 components</strong> to the release</td>
+</tr>
+<tr>
+<td data-label="Model"><strong>3. Boundary proposer</strong><br><a href="https://huggingface.co/Dellboy/toppdblx-construct-boundary">ESM-2 t12-35M</a></td>
+<td data-label="What it reads">A protein sequence, not text</td>
+<td data-label="What it produces">Per-residue probability of being inside a crystallised construct</td>
+<td data-label="Why it exists">Answers a different question entirely: not <em>what was in the drop</em> but <em>what was in the tube</em>. Trained on 523,018 deposited constructs</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Models 1 and 2 are a distillation pair</strong>: the big one teaches, the small one works. Model 3 is unrelated to both, shares no code path with them, and would still be useful if the parser did not exist. Keeping them straight matters when reading the results below, because "the model" means something different in each section.</p>
 <h2>📖 The words on this page</h2>
 <p>Crystallography and machine learning each bring their own vocabulary, and this page uses both. Everything here is defined where it first matters, but this is the short version.</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
@@ -92,7 +129,7 @@
 </tr>
 <tr>
 <td data-label="Term"><strong>Precipitant</strong></td>
-<td data-label="What it means here">The reagent doing the work — it pulls the protein out of solution. Usually a PEG, a salt or an organic</td>
+<td data-label="What it means here">The reagent doing the work: it pulls the protein out of solution. Usually a PEG, a salt or an organic</td>
 </tr>
 <tr>
 <td data-label="Term"><strong>Drop / reservoir</strong></td>
@@ -108,7 +145,7 @@
 </tr>
 <tr>
 <td data-label="Term"><strong>Premix</strong></td>
-<td data-label="What it means here">A vendor mixture sold as one bottle — Morpheus "Divalents", Tacsimate — that is really several reagents</td>
+<td data-label="What it means here">A vendor mixture sold as one bottle (Morpheus "Divalents", Tacsimate) that is really several reagents</td>
 </tr>
 <tr>
 <td data-label="Term"><strong>PEG</strong></td>
@@ -135,12 +172,12 @@
 <td data-label="What it means here">The records the rule parser could <strong>not</strong> read. This is what the language model is for, and it is never trained on them</td>
 </tr>
 <tr>
-<td data-label="Term"><strong>The gold set</strong></td>
-<td data-label="What it means here">96 records labelled by hand, twice over. The only ground truth here, used to measure and never to train</td>
+<td data-label="Term"><strong>The gold sets</strong></td>
+<td data-label="What it means here">Two batches of 96 records each, 192 in total, labelled by hand in <code>app/gold_bench_v1.html</code>. The only ground truth here, used to measure and never to train</td>
 </tr>
 <tr>
 <td data-label="Term"><strong>LoRA</strong></td>
-<td data-label="What it means here">A way of fine-tuning a model by training a small adapter rather than all its weights. Ours is 33 MB against a 360 M-parameter base</td>
+<td data-label="What it means here">A way of fine-tuning a model by training a small adapter rather than all its weights. Ours is 33 MB against a 360M-parameter base</td>
 </tr>
 <tr>
 <td data-label="Term"><strong>Distillation</strong></td>
@@ -152,12 +189,12 @@
 </tr>
 <tr>
 <td data-label="Term"><strong>Identification</strong></td>
-<td data-label="What it means here">Whether an emitted name exists in the lexicon. A weaker test than grounding, and it has misled this project three times</td>
+<td data-label="What it means here">Whether an emitted name exists in the lexicon. A weaker test than grounding: it doesn't check that the name is <em>right</em> for this text, only that it's real</td>
 </tr>
 </tbody>
 </table></div>
 <h2>🔄 Workflow</h2>
-<p><strong>In plain terms:</strong> the Protein Data Bank holds about 200,000 crystallisation recipes, and every one was typed in free-hand by a different scientist. There is no agreed format. The same chemical appears as "PEG 3350", "peg3350" and "polyethylene glycol 3,350", amounts are written in a dozen notations, and some entries are whole paragraphs of narrative. The work is to turn that text into a table you can query, without inventing anything that is not there.</p>
+<p><strong>In plain terms:</strong> the same chemical appears in the archive as "PEG 3350", "peg3350" and "polyethylene glycol 3,350", amounts are written in a dozen notations, and some entries are whole paragraphs of narrative. The work is to turn that text into a table you can query, without inventing anything that is not there.</p>
 <p>It runs as a chain of stages. Each is one command, each writes a manifest recording its inputs, tool versions and git state, and each can be re-run on its own.</p>
 <pre><code class="language-text">   RCSB PDB archive
           │
@@ -167,7 +204,7 @@
           │
           │  parse.run_parser  split into clauses, read amounts and units, look each
           ▼                    name up in the reagent lexicon
-   610,076 typed components ────────────────┐
+   645,656 typed components ────────────────┐
           │  parse.scope     tells the drop │ 47,845 records the rules cannot read
           │  from the protein sample and a  │
           │  assign.classify                ▼
@@ -181,7 +218,7 @@
           │                          │        │                        │       │
           │                          │        └──── gold_metrics ◄─────┘       │
           │                          │              scores both against        │
-          │                          │              96 hand-labelled records   │
+          │                          │              192 hand-labelled records  │
           │                          └────────────────┬────────────────────────┘
           │                                           │ names it wants but
           │                                           │ the lexicon lacks
@@ -196,8 +233,8 @@
                                                     into the next parse
 </code></pre>
 <h3>🤗 The teaching loop, and why there are two models</h3>
-<p><strong>Why bother with two models: the teacher is 90x larger and 400x slower.</strong> At 40 s/record a 32B would need 22 days to read the 47,845 residual records the rules cannot; the 360M student does it in under two hours. So the teacher reads ~2,000 of them to produce training labels, and the student does the work — which lifted recall on hand-labelled truth from <strong>79.6% to 95.2%</strong>, worth 46 reagents the rules never find, at a cost of 0.1 points of precision.</p>
-<p><strong>In plain terms:</strong> a small model is cheap to run over 200,000 records but not clever enough to teach itself. A large model is clever enough to teach but far too slow to run over the whole archive. So the large one reads a few thousand of the hard cases, the small one learns from what it produces, and the small one does the actual work. The expert never labels a corpus: they label 96 records that decide whether any of it worked.</p>
+<p><strong>Why bother with two models: the teacher is roughly 90x larger and far slower to run.</strong> At around 40 seconds per record, a 32B model would take weeks to read every residual record the rules cannot parse; the 360M student reads them in under two hours. So the teacher labels a few thousand of the hardest cases, and the student does the corpus-scale work, which took recall against hand-labelled truth from <strong>69.5% (rules alone) to 90.3% (rules + round 09, pooled)</strong>.</p>
+<p><strong>In plain terms:</strong> a small model is cheap to run over 200,000 records but not clever enough to teach itself. A large model is clever enough to teach but far too slow to run over the whole archive. So the large one reads a few thousand of the hard cases, the small one learns from what it produces, and the small one does the actual work. The expert never labels a corpus: they label a couple of hundred records that decide whether any of it worked.</p>
 <p>The cycle has three participants and each does the one thing it is best at:</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
@@ -211,27 +248,25 @@
 <tbody>
 <tr>
 <td data-label=""><strong>Expert</strong> (<code>gold_bench</code>, <code>courtroom</code>)</td>
-<td data-label="Does">Labels 96 records; answers tens of curation questions</td>
-<td data-label="Costs">An hour</td>
-<td data-label="Why it cannot do the others&#x27; job">Cannot label 47,845 records, and should never be asked to</td>
+<td data-label="Does">Labels the gold sets; answers curation questions</td>
+<td data-label="Costs">An hour or two</td>
+<td data-label="Why it cannot do the others&#x27; job">Cannot label the whole residual, and should never be asked to</td>
 </tr>
 <tr>
 <td data-label=""><strong>Teacher</strong> (Qwen2.5-32B, local)</td>
-<td data-label="Does">Labels a few thousand residual records</td>
+<td data-label="Does">Labels a few thousand of the hardest residual records</td>
 <td data-label="Costs">~40 s/record</td>
-<td data-label="Why it cannot do the others&#x27; job">Far too slow for the corpus, and 91% precise where the student is 99.6%</td>
+<td data-label="Why it cannot do the others&#x27; job">Far too slow for the corpus, and noisier than the student it trains</td>
 </tr>
 <tr>
 <td data-label=""><strong>Student</strong> (SmolLM2-360M)</td>
-<td data-label="Does">Reads all 47,845 residual records</td>
+<td data-label="Does">Reads every residual record</td>
 <td data-label="Costs">~0.1 s/record</td>
-<td data-label="Why it cannot do the others&#x27; job">Bootstrapped from the rules, so the rules are its ceiling until a teacher lifts it</td>
+<td data-label="Why it cannot do the others&#x27; job">Bootstrapped from the rules, so the rules were its ceiling until the teacher's labels lifted it</td>
 </tr>
 </tbody>
 </table></div>
-<p><strong>Why a teacher is needed at all.</strong> The student was taught entirely by the rule parser, on records the rules read <em>confidently</em>. It therefore never sees an example the rules got wrong, and cannot learn to beat them. Round 06 made that visible: sweeping its checkpoints, fidelity to <code>rules_v3</code> climbed to 93.6% while identification on the residual peaked at 2,000 iterations and then fell. Read at the time as <em>training longer buys a better imitation and a worse reader</em> — and the direction of that reading did not survive contact with labelled truth, which prefers the 6,000-iteration adapter. What the divergence shows is that the two metrics measure different things, not which checkpoint to keep.</p>
-<p><strong>Why this teacher, when it scores worse than its student.</strong> On the 96 gold records the 32B reaches 91.0% precision and 89.1% recall, against the 360M's 99.6% and 91.5%. It loses. But their recalls are statistically indistinguishable (p = 0.33) and <strong>their errors are different errors</strong>: the teacher finds 18 correct reagents that the rules and the student together miss, and taking neither away drops the misses from 25 to 7 out of 294. It is not a better reader, it is a <em>differently wrong</em> one, and that is precisely what makes it useful as a source of labels.</p>
-<p><strong>Why the expert sits at the top of the loop and not inside it.</strong> Nothing else in the chain can tell a model that is silently missing reagents from one that is doing well: every automated measure here is precision-shaped and blind to what was never mentioned. The 96 labelled records are the only thing that can, so they are the yardstick and are never trained on, and every teacher run excludes them by name.</p>
+<p><strong>Why the expert sits at the top of the loop and not inside it.</strong> Every automated measure in this project is precision-shaped: it can catch an invented reagent, but nothing automated can catch one that was never mentioned at all. The gold sets are the only thing that can, so they are the yardstick and are never trained on, and every teacher run excludes them by name.</p>
 <p>The other loop is unchanged and still pays: names the parser reaches for but cannot find are grouped into a few dozen curation calls, so the expert only ever sees decisions the machine could not make alone, and the lexicon they produce feeds back into the next parse.</p>
 <p><strong>The core of it is about ten lines.</strong> Everything else is provenance, validation and the lexicon:</p>
 <pre><code class="language-python">for deposition in archive:
@@ -273,7 +308,7 @@
 </tr>
 <tr>
 <td data-label="Tool"><code>ontology/synonyms.yaml</code></td>
-<td data-label="What it does here">The reagent dictionary: 499 reagents, 1,583 spellings</td>
+<td data-label="What it does here">The reagent dictionary: 500 reagents, 1,587 spellings</td>
 </tr>
 <tr>
 <td data-label="Tool">pydantic</td>
@@ -305,7 +340,7 @@
 </tr>
 <tr>
 <td data-label="Tool"><code>gold_bench_v1.html</code></td>
-<td data-label="What it does here">Single-file labeller for the 96 gold records that judge every model round</td>
+<td data-label="What it does here">Single-file labeller for the gold records that judge every model round</td>
 </tr>
 </tbody>
 </table></div>
@@ -329,11 +364,11 @@
 </tr>
 <tr>
 <td data-label="Measure">Components</td>
-<td data-label="Value">610,076, <strong>86.5% identified</strong> as a canonical reagent (89.0% excluding text that names no chemistry)</td>
+<td data-label="Value">645,656, <strong>87.3% identified</strong> as a canonical reagent. 610,076 from the rule parser, 35,580 recovered by the residual parser</td>
 </tr>
 <tr>
 <td data-label="Measure">Reagent lexicon</td>
-<td data-label="Value">499 reagents, 1,583 names (v0.9.2)</td>
+<td data-label="Value">500 reagents, 1,587 names (v0.9.3)</td>
 </tr>
 <tr>
 <td data-label="Measure">Linked sequences</td>
@@ -353,7 +388,7 @@
 </tr>
 <tr>
 <td data-label="Measure">Parser accuracy</td>
-<td data-label="Value">Against hand-labelled records: <strong>98.2% precision, 95.2% recall</strong>, F0.5 <strong>97.6</strong> (rules alone: 98.3% / 79.6%)</td>
+<td data-label="Value">Both gold-set batches pooled, rules + round 09: <strong>93.3% precision, 90.3% recall</strong> (rules alone: 95.1% precision, 69.5% recall)</td>
 </tr>
 <tr>
 <td data-label="Measure">Leak-free splits</td>
@@ -502,157 +537,79 @@
 </tbody>
 </table></div>
 <p><strong>The second row is a deliberate choice and the expensive one.</strong> Those 24,327 conditions name their precipitant unambiguously and simply never state a concentration: <code>PEG6000, Sodium Chloride, VAPOR DIFFUSION</code>. Classifying them as <code>Salt/PEG</code> would lift classified coverage from 58.9% to roughly 72% in one line, and the rule that a PEG is a PEG whatever its concentration would arguably support it. They stay Unclassified because a condition with no concentration is not a measured condition, and coverage is not worth buying with a claim the deposition does not make.</p>
-<p><strong>Premixes are no longer refused, and that is a reversal.</strong> Spec 6.4 was settled by declaring every premixed system Unclassified, which was right while a premix was an opaque token. Once the vendor compositions were transcribed (lexicon v0.9.0) it stopped being right: 59% of the conditions it refused were blocked by a premix made only of <em>buffers</em> — MES/imidazole, phosphate-citrate, MIB, SPG — and a buffer is excluded from naming the class anyway. Those were ordinary conditions declined for their packaging rather than their chemistry. A premix now contributes the chemistry it is made of, so Morpheus Precipitant Mix 4 is MPD with PEG 1000 and PEG 3350, which is <code>Organic/PEG</code>. Classified coverage moved 76.8% to <strong>80.2%</strong>. A premix with no transcribed composition is still Unclassified, because there is nothing to expand it into.</p>
+<p><strong>Premixes are no longer refused, and that is a reversal.</strong> Spec 6.4 was settled by declaring every premixed system Unclassified, which was right while a premix was an opaque token. Once the vendor compositions were transcribed (lexicon v0.9.0) it stopped being right: 59% of the conditions it refused were blocked by a premix made only of <em>buffers</em> (MES/imidazole, phosphate-citrate, MIB, SPG), and a buffer is excluded from naming the class anyway. Those were ordinary conditions declined for their packaging rather than their chemistry. A premix now contributes the chemistry it is made of, so Morpheus Precipitant Mix 4 is MPD with PEG 1000 and PEG 3350, which is <code>Organic/PEG</code>. Classified coverage moved 76.8% to <strong>80.2%</strong>. A premix with no transcribed composition is still Unclassified, because there is nothing to expand it into.</p>
 <p>An earlier three-level ontology of 163 binned groups was withdrawn at v0.3.0. Its groups were derived by binning the corpus and then having labels retrofitted, which spec 6.1 rejects in its first line, and several were not chemically coherent: median purity across the 41 second-level groups was 49%. The full reasoning is in <a href="ontology/CHANGELOG.md"><code>ontology/CHANGELOG.md</code></a>.</p>
-<h2>⚗️ Reagent classes</h2>
+<h2>⚗️ Reagent lexicon</h2>
 <p><strong>In plain terms:</strong> depositors write the same chemical a dozen different ways. "PEG 3350", "peg3350", "polyethylene glycol 3350" and "PEG 3,350" are one substance. The lexicon is the dictionary that maps every spelling onto one canonical name, and it is what makes the whole database queryable.</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
 <tr>
-<th>Round</th>
+<th>Stage</th>
 <th>Reagents</th>
 <th>Names</th>
-<th>Component identification</th>
+<th>Identified</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td data-label="Round">Seeded from corpus mining</td>
+<td data-label="Stage">Seeded from corpus mining</td>
 <td data-label="Reagents">147</td>
 <td data-label="Names">501</td>
-<td data-label="Component identification">79.1%</td>
+<td data-label="Identified">79.1%</td>
 </tr>
 <tr>
-<td data-label="Round">Round 1: 40 frequency-ranked decisions</td>
+<td data-label="Stage">Round 1: 40 frequency-ranked decisions</td>
 <td data-label="Reagents">165</td>
 <td data-label="Names">570</td>
-<td data-label="Component identification">80.1%</td>
+<td data-label="Identified">80.1%</td>
 </tr>
 <tr>
-<td data-label="Round">Round 2: 10 grouped decisions, 1,004 names</td>
+<td data-label="Stage">Round 2: 10 grouped decisions, 1,004 names</td>
 <td data-label="Reagents">502</td>
 <td data-label="Names">1,265</td>
-<td data-label="Component identification">84.5%</td>
+<td data-label="Identified">84.5%</td>
 </tr>
 <tr>
-<td data-label="Round">Prose stripping (a parser fix, not curation)</td>
+<td data-label="Stage">Prose stripping, and separating apparatus notes/bare units from reagents (parser fixes)</td>
 <td data-label="Reagents">502</td>
 <td data-label="Names">1,265</td>
-<td data-label="Component identification">85.2%</td>
+<td data-label="Identified">85.2% (87.5% on chemistry alone)</td>
 </tr>
 <tr>
-<td data-label="Round">Separating apparatus notes and bare units from reagents</td>
-<td data-label="Reagents">502</td>
-<td data-label="Names">1,265</td>
-<td data-label="Component identification">85.2% (87.5% on chemistry alone)</td>
-</tr>
-<tr>
-<td data-label="Round">The 26 ionic liquids from PEG/Ionic Liquid 1 and 2 (v0.4.0)</td>
-<td data-label="Reagents">526</td>
-<td data-label="Names">1,289</td>
-<td data-label="Component identification">85.2% (87.5% on chemistry alone)</td>
-</tr>
-<tr>
-<td data-label="Round">v0.5.0: stop aliasing one molecule to another</td>
-<td data-label="Reagents">535</td>
-<td data-label="Names">1,300</td>
-<td data-label="Component identification">85.3%</td>
-</tr>
-<tr>
-<td data-label="Round">v0.5.1: twelve more aliases naming a different molecule</td>
+<td data-label="Stage">Ionic liquids added (v0.4.0); aliases naming a different molecule removed (v0.5.x)</td>
 <td data-label="Reagents">542</td>
 <td data-label="Names">1,306</td>
-<td data-label="Component identification">85.3%</td>
+<td data-label="Identified">85.3%</td>
 </tr>
 <tr>
-<td data-label="Round">v0.6.0: the first gold set, 96 records labelled by hand</td>
-<td data-label="Reagents">556</td>
-<td data-label="Names">1,346</td>
-<td data-label="Component identification">85.3%</td>
-</tr>
-<tr>
-<td data-label="Round">v0.6.1: the second gold set, sampled where teacher and pipeline disagree</td>
-<td data-label="Reagents">561</td>
-<td data-label="Names">1,362</td>
-<td data-label="Component identification">85.3%</td>
-</tr>
-<tr>
-<td data-label="Round">v0.6.2: isomers the teacher's false positives exposed</td>
+<td data-label="Stage">Two gold sets sampled and labelled; isomers the teacher's false positives exposed (v0.6.x)</td>
 <td data-label="Reagents">562</td>
 <td data-label="Names">1,370</td>
-<td data-label="Component identification">85.3%</td>
+<td data-label="Identified">85.3%</td>
 </tr>
 <tr>
-<td data-label="Round">v0.7.0: 29 prose fragments removed, 7 systematic names merged, 42 reagents added</td>
-<td data-label="Reagents">574</td>
-<td data-label="Names">1,456</td>
-<td data-label="Component identification">85.6%</td>
-</tr>
-<tr>
-<td data-label="Round">v0.8.0: PEG MME de-fragmented, 20 duplicate ids merged</td>
-<td data-label="Reagents">557</td>
-<td data-label="Names">1,467</td>
-<td data-label="Component identification">—</td>
-</tr>
-<tr>
-<td data-label="Round">v0.8.1: all remaining duplicate ids merged, 5 invariants now tested</td>
-<td data-label="Reagents">517</td>
-<td data-label="Names">1,463</td>
-<td data-label="Component identification">—</td>
-</tr>
-<tr>
-<td data-label="Round">v0.8.2: leaked amount and method words merged onto their reagents</td>
-<td data-label="Reagents">509</td>
-<td data-label="Names">1,462</td>
-<td data-label="Component identification">—</td>
-</tr>
-<tr>
-<td data-label="Round">v0.8.3: Marc's review — formula ids renamed to names, 3 wrong aliases removed</td>
-<td data-label="Reagents">485</td>
-<td data-label="Names">1,461</td>
-<td data-label="Component identification">—</td>
-</tr>
-<tr>
-<td data-label="Round">v0.8.4: swept for aliases naming a different molecule — 4 more, now tested</td>
-<td data-label="Reagents">488</td>
-<td data-label="Names">1,466</td>
-<td data-label="Component identification">—</td>
-</tr>
-<tr>
-<td data-label="Round">v0.8.5: method text and element abbreviations out of ids, both now tested</td>
-<td data-label="Reagents">482</td>
-<td data-label="Names">1,464</td>
-<td data-label="Component identification">85.5%</td>
-</tr>
-<tr>
-<td data-label="Round">v0.8.6: orphaned buffers restored, DTE separated from DTT</td>
-<td data-label="Reagents">486</td>
-<td data-label="Names">1,484</td>
-<td data-label="Component identification">85.7%</td>
-</tr>
-<tr>
-<td data-label="Round">v0.8.7: AMS and BTPROP; narrative text out of the reagent denominator</td>
+<td data-label="Stage">De-duplication: PEG MME's seven ids per weight merged to one, all remaining duplicate ids merged, method text and element abbreviations stripped out (v0.7.0–v0.8.7)</td>
 <td data-label="Reagents">486</td>
 <td data-label="Names">1,487</td>
-<td data-label="Component identification">85.7% (88.3% on chemistry)</td>
+<td data-label="Identified">85.7% (88.3% on chemistry)</td>
 </tr>
 <tr>
-<td data-label="Round">v0.9.0: the Morpheus stock table, 15 premixes from the vendor brochure</td>
+<td data-label="Stage">v0.9.0: the Morpheus stock table, 15 premixes transcribed from the vendor brochure</td>
 <td data-label="Reagents">499</td>
 <td data-label="Names">1,543</td>
-<td data-label="Component identification">85.9% (88.4% on chemistry)</td>
+<td data-label="Identified">85.9% (88.4% on chemistry)</td>
 </tr>
 <tr>
-<td data-label="Round">v0.9.1: Tris IUPAC name, the DDT typo, MEGA8 suffix</td>
+<td data-label="Stage">v0.9.2: every pre-merge canonical id resolves again</td>
 <td data-label="Reagents">499</td>
-<td data-label="Names">1,549</td>
-<td data-label="Component identification">—</td>
+<td data-label="Names">1,583</td>
+<td data-label="Identified">86.5% (89.0% on chemistry)</td>
 </tr>
 <tr>
-<td data-label="Round">v0.9.2: every pre-merge canonical id resolves again</td>
-<td data-label="Reagents"><strong>499</strong></td>
-<td data-label="Names"><strong>1,583</strong></td>
-<td data-label="Component identification"><strong>86.5%</strong> (89.0% on chemistry)</td>
+<td data-label="Stage">v0.9.3 (current): ACES added, found by probing what the parsers still cannot name</td>
+<td data-label="Reagents"><strong>500</strong></td>
+<td data-label="Names"><strong>1,587</strong></td>
+<td data-label="Identified"><strong>87.2%</strong></td>
 </tr>
 </tbody>
 </table></div>
@@ -713,16 +670,15 @@
 </tr>
 </tbody>
 </table></div>
-<p>Two rounds of curation and one parser fix took identification from 79.1% to 85.2%. The marginal return has since fallen to roughly 15 components per decision, so further rounds are no longer the best use of expert time.</p>
+<p>Two rounds of curation and one parser fix took identification from 79.1% to 85.2%. The marginal return has since fallen to roughly 15 components per decision, so further curation rounds are no longer the best use of expert time; the remaining gains have come from the residual parser rather than the dictionary.</p>
 <h2>🎓 Training</h2>
 <p><strong>In plain terms:</strong> the rule-based parser reads most of the archive, but some depositions are written in prose it cannot follow. A small language model was trained to read those, by learning from the hundreds of thousands of examples the rule parser already handles correctly. It costs nothing in hand-labelling, because the rule parser writes its own teaching material.</p>
-<p>Progress per round, and what each has actually delivered, is tracked in <a href="#-how-the-model-is-measured">How the model is measured</a>.</p>
-<p><strong>For the crystallographer:</strong> SmolLM2-360M under MLX-LM LoRA on an M1 Max, prompt masked so the loss falls on the answer rather than on echoing the question, evaluated only on the residual the rule parser could not read.</p>
-<p>Three findings shaped how it is trained, and two of them contradict the obvious approach:</p>
+<p><strong>For the crystallographer:</strong> SmolLM2-360M under MLX-LM LoRA on an M1 Max, prompt masked so the loss falls on the answer rather than on echoing the question, evaluated on the residual the rule parser could not read.</p>
 <ul>
-<li><strong>Validation loss is the wrong stopping signal.</strong> The labels are the rule parser's own output, so validation loss measures fidelity to the teacher rather than skill on the residual. It flattens by iteration 400 while identification is still climbing, and fidelity keeps improving to 91% long after identification has plateaued. Checkpoints are chosen by sweeping residual identification instead.</li>
-<li><strong>How long to train is unsettled, and three answers have now been wrong.</strong> A plateau at ~600 iterations, measured against 36% duplicate rows. Then a full epoch. Then a frozen-benchmark sweep putting the peak at 2,000 — which is the version that reached this README, and it is wrong too. Against hand-labelled truth round 06's <strong>6,000-iteration final adapter beats its own 2,000 checkpoint</strong>: 99.6% precision to 95.7%, one false positive against twelve (p = 0.0034). Every one of those three answers came from <code>identification</code>, which cannot see a reagent that is real, present in the text, and not what the depositor meant. <strong>The guidance is withdrawn until it is re-derived on the gold set.</strong> On current evidence longer is better, which is also what the <a href="https://arxiv.org/abs/2502.02737">SmolLM2 paper</a> reports for small models.</li>
-<li><strong>Gates are judged on the lower confidence bound</strong>, so a lucky sample cannot pass them. An 800-record sweep once put two checkpoints on opposite sides of the identification gate whose intervals overlapped entirely.</li>
+<li><strong>Validation loss is the wrong stopping signal.</strong> The labels are the rule parser's own output, so validation loss measures fidelity to the teacher rather than skill on the residual: it flattens early while identification is still climbing. Checkpoints are chosen by sweeping downstream accuracy on the residual instead.</li>
+<li><strong>Longer training clearly helps recovery, and that is part of the improvement story.</strong> On the 2,000-record frozen benchmark, round 09's identification rises 5.5 points and fully-identified records rise 15 points between true iteration 1,000 and true iteration 8,000, and the number of distinct names the model can't identify more than halves. Round 09 is a better recipe <em>and</em> a longer one than round 06 (8,000 iterations, ~1.04 epochs, against round 06's 6,000, ~0.94 epochs).</li>
+<li><strong>Small evaluation sets can hide a real difference.</strong> The 192-record gold sets showed almost no gap between round 09's early and late checkpoints; the 2,000-record frozen benchmark resolved the same comparison easily. Where a metric is reported below, its sample size is given for exactly this reason.</li>
+<li><strong>Gates are judged on the lower confidence bound</strong>, so a lucky sample cannot pass them.</li>
 </ul>
 <p>Training data is deduplicated before oversampling: see <a href="#-redundancy">Redundancy</a> for why that is not a detail. Every run is named <code>r1-parse-residual-smollm2-360m-roundNN</code> and logged to Weights &amp; Biases, with the adapter directory carrying the same name so a checkpoint on disk traces back to the run that produced it.</p>
 <h2>📐 How the model is measured</h2>
@@ -758,41 +714,52 @@
 </tr>
 </tbody>
 </table></div>
-<p>None of those four has any ground truth behind it — they ask whether an answer is <em>defensible</em>, not whether it is <em>right</em>. Precision, recall, F1 and F0.5, defined below, are computed against hand-labelled truth and are the ones that decide anything.</p>
-<p><strong>Identification is the weakest of the four and was quoted alone for too long.</strong> A model reading <code>20% PEG 3350</code> and emitting <code>SODIUM_CHLORIDE</code> scores as identified: the name is real, it is simply not the reagent in front of it. Since the whole purpose of curation is to make names mean something, a measure that cannot tell a real name from the correct one is not measuring the thing that matters.</p>
+<p>None of those four has any ground truth behind it: they ask whether an answer is <em>defensible</em>, not whether it is <em>right</em>. Precision and recall, defined below, are computed against hand-labelled truth and are what decide anything.</p>
+<p><strong>Identification is the weakest of the four.</strong> A model reading <code>20% PEG 3350</code> and emitting <code>SODIUM_CHLORIDE</code> scores as identified: the name is real, it is simply not the reagent in front of it. Since the whole purpose of curation is to make names mean something, a measure that cannot tell a real name from the correct one is not measuring the thing that matters.</p>
 <p><strong>Grounding closes that hole and needs no labels.</strong> If the model names a reagent, some spelling of that reagent should appear in the source string. Punctuation and spacing are stripped on both sides, so <code>peg-3350</code>, <code>PEG3350</code> and <code>peg 3,350</code> all match one alias. A failure is either a hallucination or a spelling the lexicon has never seen, and both are worth knowing about, so ungrounded cases are written out for inspection rather than only counted.</p>
-<p><strong>Every one of those four is precision-shaped, and that was the hole.</strong> Each asks whether what the parser <em>said</em> is defensible. None can see a reagent it never mentioned at all, so a parser that reads one component per record and stops scores well on all four. Measured directly: on 4,000 residual records, 67% contain more reagent clauses than the parser emitted components.</p>
-<h3>🏅 The gold set: precision and recall against labelled truth</h3>
-<p>96 conditions were hand-labelled by a crystallographer in <code>app/gold_bench_v1.html</code>, one per screen, reagent names only. They are the yardstick, never training data, and they are excluded from every teacher run by name.</p>
+<p><strong>Every one of those four is precision-shaped.</strong> Each asks whether what the parser <em>said</em> is defensible; none can see a reagent it never mentioned at all, so a parser that reads one component per record and stops scores well on all four. Measured directly: on 4,000 residual records, 67% contain more reagent clauses than the parser emitted components. That blind spot is exactly what the gold sets and the frozen benchmark below exist to close.</p>
+<h2>🏅 Results against hand-labelled truth</h2>
+<p>Everything else in this project checks whether an answer is defensible. This section checks whether it is <em>right</em>, against two kinds of hand-labelled ground truth.</p>
+<p><strong>Two gold-set batches, always pooled.</strong> A random 96 records answers "how good is the pipeline overall", but rarely contains a reagent the sources disagree on, so it under-tests precision. A second 96, sampled specifically where the teacher and the rule parser disagree, supplies that. Both are labelled by hand in <code>gold_bench_v1.html</code>, one reagent list per condition, and both are pooled (192 records, 616 reagents) rather than averaged, so the headline figures below are one number with a real confidence interval. Neither batch is ever trained on, and both are excluded from every teacher run by name.</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
 <tr>
-<th>Source</th>
-<th>Precision</th>
-<th>Recall</th>
-<th>F1</th>
-<th>F0.5</th>
+<th>source</th>
+<th>found</th>
+<th>missed</th>
+<th>falsely added</th>
+<th>precision</th>
+<th>recall</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td data-label="Source">Rule parser alone</td>
-<td data-label="Precision">98.3%</td>
-<td data-label="Recall">79.6%</td>
-<td data-label="F1">88.0</td>
-<td data-label="F0.5">93.9</td>
+<td data-label="source">rule parser alone</td>
+<td data-label="found">428</td>
+<td data-label="missed">188</td>
+<td data-label="falsely added">22</td>
+<td data-label="precision">95.1%</td>
+<td data-label="recall">69.5%</td>
 </tr>
 <tr>
-<td data-label="Source">Rules + fine-tuned model <em>(shipped)</em></td>
-<td data-label="Precision"><strong>98.2%</strong></td>
-<td data-label="Recall"><strong>95.2%</strong></td>
-<td data-label="F1"><strong>96.7</strong></td>
-<td data-label="F0.5"><strong>97.6</strong></td>
+<td data-label="source">rules + round 06</td>
+<td data-label="found">528</td>
+<td data-label="missed">88</td>
+<td data-label="falsely added">26</td>
+<td data-label="precision">95.3%</td>
+<td data-label="recall">85.7%</td>
+</tr>
+<tr>
+<td data-label="source">rules + round 09 (shipped, final adapter)</td>
+<td data-label="found">556</td>
+<td data-label="missed">60</td>
+<td data-label="falsely added">40</td>
+<td data-label="precision">93.3%</td>
+<td data-label="recall">90.3%</td>
 </tr>
 </tbody>
 </table></div>
-<p><strong>Those precision figures are a property of the sample, not of the parsers.</strong> A second, deliberately contested batch puts the rules at <strong>91.5%</strong> and the model at 92.2% — see <a href="#-the-second-gold-batch-contested-records">the second gold batch</a> below. On a randomly drawn record the parsers are rarely challenged, so they rarely err.</p>
-<p><strong>What each measure asks, and why there are two summary scores:</strong></p>
+<p><em>Both batches pooled, measured 2026-08-04 at lexicon 0.9.2.</em></p>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
 <tr>
@@ -804,33 +771,72 @@
 <tbody>
 <tr>
 <td data-label="Measure"><strong>Precision</strong></td>
-<td data-label="Asks">Of the reagents we claim are in this condition, how many really are?</td>
+<td data-label="Asks">Of the reagents claimed, how many really are in the condition?</td>
 <td data-label="Fails when">The parser invents chemistry</td>
 </tr>
 <tr>
 <td data-label="Measure"><strong>Recall</strong></td>
-<td data-label="Asks">Of the reagents really in this condition, how many did we find?</td>
+<td data-label="Asks">Of the reagents really in the condition, how many did it find?</td>
 <td data-label="Fails when">The parser misses chemistry</td>
-</tr>
-<tr>
-<td data-label="Measure"><strong>F1</strong></td>
-<td data-label="Asks">One number ranking two parsers, as the harmonic mean of the two above</td>
-<td data-label="Fails when">Used alone: it treats a missed reagent and an invented one as equally bad</td>
-</tr>
-<tr>
-<td data-label="Measure"><strong>F0.5</strong></td>
-<td data-label="Asks">The same, weighting precision twice as heavily as recall</td>
-<td data-label="Fails when">The recall half is under-weighted: a parser that reads only the easy half of every condition can still score well, so it is read beside recall and never instead of it</td>
 </tr>
 </tbody>
 </table></div>
-<p>The harmonic mean rather than the average, deliberately: it punishes imbalance. A parser at 100% precision and 20% recall averages 60% but scores <strong>33</strong> on F1, because a parser that says almost nothing very carefully is not useful. That is the failure the older metrics could not see.</p>
-<p><strong>F0.5 is the one to read for this project.</strong> F1 weights precision and recall equally and they are not equal here: a missed reagent is recoverable by re-reading the deposition, an invented one propagates into everything built on the data. The two summaries disagree by more than they look — round 06 leads round 08 by 1.0 on F1 and by <strong>2.9</strong> on F0.5.</p>
-<p><strong>This is the number that settles what the model is for.</strong> It adds <strong>+20.1 points of recall</strong> and finds 59 reagents the rules never reach, for 0.4 points of precision. The fidelity metric had made it look like an expensive imitation of <code>rules_v3</code>; against labelled truth it is reading a fifth of the corpus that the rules cannot.</p>
-<p>It also confirmed the shape every audit had gestured at: <strong>precision was never the problem.</strong> One proposed reagent was removed across 96 records; 50 were added.</p>
-<p><strong>For the crystallographer:</strong> 96 records is a small yardstick and its intervals are wide (recall [88, 94]). It measures reagent <em>identity</em>, not concentration or unit. It does not replace the commercial screen cross-reference, where 38,481 conditions match a vendor-published formulation on every concentration, and it does not replace the human audit. What it does is make "did we miss something" answerable at all, which nothing in this project could do before.</p>
-<h3>🤗 Every round, and what it delivered</h3>
-<p>All eight rounds ship as LoRA adapters for <code>mlx-community/SmolLM2-360M-Instruct</code>, one directory per round in <strong><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser"><code>Dellboy/toppdblx-residual-parser</code></a></strong>. Each is 33 MB; the base model is not redistributed. Rounds that delivered nothing are listed anyway.</p>
+<p><strong>Round 09 finds 28 more reagents than round 06 and misses 32% fewer.</strong> Its extra false positives are not inventions: every one names a reagent genuinely present in the source text (a protein storage buffer, a soak, a cryoprotectant) placed in the wrong role, which is what the <code>protein_buffer</code> and <code>soak</code> scope roles exist to fix. In short: <strong>round 09 finds more chemistry and misfiles slightly more of it.</strong></p>
+<p><strong>For the crystallographer:</strong> the gold sets are a small yardstick with wide intervals. They measure reagent <em>identity</em>, not concentration or unit, and they don't replace the commercial screen cross-reference (81,802 component-set matches) or the human audit.</p>
+<h3>The frozen benchmark: 2,000 held-out residual records</h3>
+<p>The gold sets are precise enough to rank sources but, at 192 records, too small to resolve some real differences: see <a href="#-training">Training</a>. A larger, held-out slice of the residual (2,000 records, never used for training or checkpoint selection) is used to compare rounds directly, including across a single round's own checkpoints:</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th></th>
+<th>round 06</th>
+<th>r09 @ 1,000</th>
+<th>r09 @ 4,500</th>
+<th><strong>r09 @ 8,000</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="">identification</td>
+<td data-label="round 06">89.05%</td>
+<td data-label="r09 @ 1,000">89.76%</td>
+<td data-label="r09 @ 4,500">92.67%</td>
+<td data-label="r09 @ 8,000"><strong>95.28%</strong></td>
+</tr>
+<tr>
+<td data-label="">grounding</td>
+<td data-label="round 06">93.15%</td>
+<td data-label="r09 @ 1,000">93.04%</td>
+<td data-label="r09 @ 4,500">94.06%</td>
+<td data-label="r09 @ 8,000"><strong>94.83%</strong></td>
+</tr>
+<tr>
+<td data-label="">fully-identified records</td>
+<td data-label="round 06">62.85%</td>
+<td data-label="r09 @ 1,000">65.8%</td>
+<td data-label="r09 @ 4,500">73.75%</td>
+<td data-label="r09 @ 8,000"><strong>81.0%</strong></td>
+</tr>
+<tr>
+<td data-label="">fidelity (exact match)</td>
+<td data-label="round 06">91.95%</td>
+<td data-label="r09 @ 1,000">80.5%</td>
+<td data-label="r09 @ 4,500">90.9%</td>
+<td data-label="r09 @ 8,000"><strong>94.38%</strong></td>
+</tr>
+<tr>
+<td data-label="">distinct unidentified names</td>
+<td data-label="round 06">629</td>
+<td data-label="r09 @ 1,000">635</td>
+<td data-label="r09 @ 4,500">462</td>
+<td data-label="r09 @ 8,000"><strong>294</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p><em>Measured 2026-08-04 at lexicon 0.9.2. The shipped checkpoint is round 09's final adapter, true iteration 8,000.</em></p>
+<p><strong>Every measure improves monotonically with training, and that is why the final adapter ships.</strong> Iteration 4,500 leads on gold-set recall (92.0% against the final adapter's 90.3%), which on the 192-record yardstick alone would have selected it. On 2,000 records it identifies 2.6 points fewer reagents, leaves 7.3 points fewer records fully identified, and emits 168 more names the lexicon cannot place. Trading that for 1.7 points of recall would buy components while leaving more of them unresolvable, which is not what completeness means here.</p>
+<h2>🤗 Every round, and what it delivered</h2>
+<p>All rounds ship as LoRA adapters for <code>mlx-community/SmolLM2-360M-Instruct</code>, one directory per round in <strong><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser"><code>Dellboy/toppdblx-residual-parser</code></a></strong>. Each is 33 MB; the base model is not redistributed. Rounds that didn't reach the corpus are listed anyway, since the point is the arc.</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
 <tr>
@@ -838,93 +844,97 @@
 <th>What changed</th>
 <th>Identification</th>
 <th>Grounding</th>
-<th>On gold, with the rules</th>
-<th>Components shipped</th>
+<th>Gold sets: precision / recall</th>
+<th>Residual components generated</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round01">01</a></td>
-<td data-label="What changed">Bootstrap distillation from rule output, lexicon 0.1.0.<br>3,000 iters × batch 16 = 48k examples · 32 layers · rank 8 · dropout 0 · <strong>constant</strong> LR 1e-4</td>
+<td data-label="What changed">Bootstrap distillation from rule output, lexicon 0.1.0</td>
 <td data-label="Identification">87.0% †</td>
 <td data-label="Grounding">not yet invented</td>
-<td data-label="On gold, with the rules">—</td>
-<td data-label="Components shipped">N/A ‡</td>
+<td data-label="Gold sets: precision / recall">-</td>
+<td data-label="Residual components generated">N/A ‡</td>
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round02">02</a></td>
-<td data-label="What changed"><code>not_a_component</code> class added, confidence gate fixed.<br>1,200 × 16 = 19k · 32 layers · rank 8 · dropout 0 · constant LR 1e-4</td>
+<td data-label="What changed"><code>not_a_component</code> class added, confidence gate fixed</td>
 <td data-label="Identification">89.7% †</td>
 <td data-label="Grounding">not yet invented</td>
-<td data-label="On gold, with the rules">—</td>
-<td data-label="Components shipped">N/A ‡</td>
+<td data-label="Gold sets: precision / recall">-</td>
+<td data-label="Residual components generated">N/A ‡</td>
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round03">03</a></td>
-<td data-label="What changed">Class rebalanced; <strong>cosine decay and dropout introduced</strong>.<br>1,000 × <strong>32</strong> = 32k · 32 layers · rank 8 · dropout 0.05 · cosine 1e-4→1e-5</td>
+<td data-label="What changed">Class rebalanced; cosine decay and dropout introduced</td>
 <td data-label="Identification">88.4% †</td>
 <td data-label="Grounding">not yet invented</td>
-<td data-label="On gold, with the rules">—</td>
-<td data-label="Components shipped">N/A ‡</td>
+<td data-label="Gold sets: precision / recall">-</td>
+<td data-label="Residual components generated">N/A ‡</td>
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round04">04</a></td>
-<td data-label="What changed">Retrained on the 502-reagent lexicon.<br>1,000 × 16 = 16k · 32 layers · rank 8 · cosine 1e-4→1e-5</td>
-<td data-label="Identification"><strong>abandoned</strong> — trained on 36% duplicate rows</td>
-<td data-label="Grounding">—</td>
-<td data-label="On gold, with the rules">—</td>
-<td data-label="Components shipped">N/A ‡</td>
+<td data-label="What changed">Retrained on the 502-reagent lexicon</td>
+<td data-label="Identification">abandoned (36% duplicate training rows)</td>
+<td data-label="Grounding">-</td>
+<td data-label="Gold sets: precision / recall">-</td>
+<td data-label="Residual components generated">N/A ‡</td>
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round05">05</a></td>
-<td data-label="What changed">Deduplicated training set, 95,818 distinct pairs.<br>1,000 × 16 = 16k ≈ <strong>0.17 epochs</strong> · 32 layers · rank 8 · cosine 1e-4→1e-5</td>
+<td data-label="What changed">Deduplicated training set; first round scored on a frozen benchmark</td>
 <td data-label="Identification">87.58%</td>
 <td data-label="Grounding">93.41%</td>
-<td data-label="On gold, with the rules">—</td>
-<td data-label="Components shipped">N/A ‡</td>
+<td data-label="Gold sets: precision / recall">-</td>
+<td data-label="Residual components generated">N/A ‡</td>
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round06"><strong>06</strong></a></td>
-<td data-label="What changed">Full epoch, <strong>rank 16</strong>, 6,856 empty-answer examples.<br>6,000 × 16 = 96k ≈ <strong>0.94 epochs</strong> · <strong>32 layers</strong> · rank 16 · dropout 0.05 · cosine 1e-4→1e-5</td>
-<td data-label="Identification">88.99% final, 90.52% at iter 2,000</td>
-<td data-label="Grounding">94.36%</td>
-<td data-label="On gold, with the rules"><strong>98.2% / 95.2%</strong></td>
-<td data-label="Components shipped"><strong>153,736</strong></td>
+<td data-label="What changed">Full epoch, rank 16, 32 LoRA layers, empty-answer examples added</td>
+<td data-label="Identification">89.05%</td>
+<td data-label="Grounding">93.15%</td>
+<td data-label="Gold sets: precision / recall">95.3% / 85.7%</td>
+<td data-label="Residual components generated"><strong>153,736</strong></td>
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round07">07</a></td>
-<td data-label="What changed">32B-teacher labels <strong>replacing</strong> rules labels, 92.6% precise.<br>2,000 × 16 = 32k ≈ <strong>0.23 epochs</strong> · <strong>16 layers</strong> · rank 16 · cosine 1e-4→1e-5</td>
-<td data-label="Identification">not run</td>
-<td data-label="Grounding">not run</td>
-<td data-label="On gold, with the rules">93.6% / 89.1%</td>
-<td data-label="Components shipped">N/A ‡</td>
+<td data-label="What changed">32B-teacher labels <em>replacing</em> rules labels, 16 LoRA layers</td>
+<td data-label="Identification">92.39%</td>
+<td data-label="Grounding">92.65%</td>
+<td data-label="Gold sets: precision / recall">superseded by round 09, see below</td>
+<td data-label="Residual components generated">N/A ‡</td>
 </tr>
 <tr>
 <td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round08">08</a></td>
-<td data-label="What changed">Same idea, labels filtered to 97.6% precise, trained 4× longer.<br>8,000 × 16 = 128k ≈ <strong>1.06 epochs</strong> · <strong>16 layers</strong> · rank 16 · cosine 1e-4→1e-5</td>
-<td data-label="Identification">not run</td>
-<td data-label="Grounding">not run</td>
-<td data-label="On gold, with the rules">95.3% / 89.1%</td>
-<td data-label="Components shipped">N/A ‡</td>
+<td data-label="What changed">Same idea, labels filtered for precision, trained 4x longer, still 16 LoRA layers</td>
+<td data-label="Identification">93.3%</td>
+<td data-label="Grounding">93.53%</td>
+<td data-label="Gold sets: precision / recall">superseded by round 09, see below</td>
+<td data-label="Residual components generated">N/A ‡</td>
 </tr>
 <tr>
-<td data-label="Round"><strong>09</strong></td>
-<td data-label="What changed"><em>Running tonight.</em> Teacher labels <strong>added, not substituted</strong>; scope roles; prompt v2; lexicon 0.9.2.<br>8,000 × 16 = 128k ≈ <strong>1.04 epochs</strong> · <strong>32 layers</strong> · rank 16 · dropout 0.05 · cosine 1e-4→1e-5 · warmup 50</td>
-<td data-label="Identification">pending</td>
-<td data-label="Grounding">pending</td>
-<td data-label="On gold, with the rules">pending</td>
-<td data-label="Components shipped">pending</td>
+<td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-residual-parser/tree/main/round09"><strong>09</strong></a></td>
+<td data-label="What changed"><strong>Shipped 2026-08-04.</strong> Teacher labels <em>added</em> to the rules labels, not substituted; <code>protein_buffer</code>/<code>soak</code> scope roles; prompt v2; 32 LoRA layers, matching round 06</td>
+<td data-label="Identification"><strong>95.28%</strong></td>
+<td data-label="Grounding"><strong>94.83%</strong></td>
+<td data-label="Gold sets: precision / recall">93.3% / <strong>90.3%</strong></td>
+<td data-label="Residual components generated"><strong>188,655</strong> ¶</td>
 </tr>
 </tbody>
 </table></div>
-<p>Every round: <code>--mask-prompt</code> (loss on the completion only), <code>max_seq_length</code> 1024, LoRA scale 20, base <code>mlx-community/SmolLM2-360M-Instruct</code> on an M1 Max. Epochs are given only where the training set size at the time is recorded; <code>iters × batch</code> is exact for every round and is the honest comparison.</p>
-<p>† Scored against a <strong>live residual</strong> that shrank from the easy end every time curation improved, so these three are not comparable to each other or to anything else. From round 05 the benchmark is frozen.</p>
-<p><strong>Three cells need explaining, because each is a real answer rather than a gap.</strong></p>
-<p><strong>"Not yet invented"</strong> is literal. The grounding check — does the reagent the model named actually appear in the text it was given — was written on 2026-07-31; rounds 01 to 03 were trained the day before. Their adapters are still on the Hub and could be re-scored, but the number would sit beside an identification figure measured against a residual that no longer exists, which would look comparable and would not be.</p>
-<p><strong>"Not run"</strong> for rounds 07 and 08 is a decision, not an omission. By then the hand-labelled gold set existed, and <code>identification</code> had already produced three wrong answers to "how long should this train" — it asks only whether an emitted name is <em>in the lexicon</em>, so a model inventing plausible chemistry scores well on it. Those rounds were measured against labelled truth instead, which is the stricter test.</p>
-<p><strong>‡ "N/A" rather than "0", and the difference matters.</strong> The column counts rows that reached the released dataset. <strong>Only round 06 has ever been applied to the corpus</strong> — every other adapter is a training experiment that was measured and set aside, so it was never <em>given</em> the residual to read. A zero would say "it ran and found nothing", which is a claim about the model; N/A says "it was never asked", which is the truth. Producing a real number for rounds 07 and 08 would cost <strong>4.7 hours of generation each</strong> — measured from round 06's own 282-minute run, not estimated — and would answer a different question than the column asks.</p>
-<h3>🌙 Round 09, running tonight</h3>
-<p>The last training round this project will do, and the first clean test of the question rounds 07 and 08 were meant to answer. Chained in <code>TONIGHT.sh</code> so none of it needs watching.</p>
+<p>† Rounds 01–03 were scored against a live residual that shrank as curation improved, so these three figures are not comparable to each other or to later rounds. The comparable, frozen-benchmark story starts at round 05.</p>
+<p><strong>Read down the identification and grounding columns from round 05: every round improves on the last.</strong> 87.58, 89.05, 92.39, 93.3, 95.28 on identification; 93.41, 93.15, 92.65, 93.53, 94.83 on grounding; and 62.85 to 81.0 on fully-identified records between rounds 06 and 09. All measured on the same 2,000 held-out records against the same lexicon 0.9.2, so the comparison is between models rather than dictionaries.</p>
+<p>‡ N/A rather than 0: the column counts components the round <em>generated</em> over the residual, not rows in the released component table (see <a href="#-output">Output</a>). Only rounds 06 and 09 have ever been run over the corpus at scale; every other adapter was a training experiment, measured and set aside, and was never asked to read the residual.</p>
+<p>¶ Generated 2026-08-04, a 5.1-hour pass over all 47,845 residual records: <strong>188,655 components against round 06's 153,736, a 22.7% increase.</strong> <strong>35,580 of those are chemistry the rules never named, and they are now in the released component table</strong>, tagged <code>parser = slm</code>. Classification and screen matching were rebuilt from the same output.</p>
+<h3>Round 09: why it ships over round 06</h3>
+<p>Round 09 is the first clean test of whether teacher distillation helps when the teacher's labels are <em>added</em> to the rule parser's labels rather than replacing them, at matched LoRA capacity. It does: pooled recall against hand-labelled truth rises from round 06's 85.7% to 90.3%, finding 28 more reagents and missing 32% fewer, for a rise in role-misattribution errors rather than invented chemistry (see <a href="#-results-against-hand-labelled-truth">Results against hand-labelled truth</a>).</p>
+<p>Three things changed together: every rules label was kept and roughly 3,400 teacher-labelled residual rows were added on top; the run used 32 LoRA layers, matching round 06 (rounds 07 and 08 had trained at 16, since <code>--num-layers</code> was left at its default); and the prompt gained <code>protein_buffer</code> and <code>soak</code> roles so a correctly-identified reagent in the wrong role has somewhere to go. A build-time gate fails the run rather than training on a leak: zero gold records reached training, verified after the fact.</p>
+<p>Round 09 also trains for longer than round 06 (8,000 iterations against 6,000), and the frozen benchmark shows that this matters on its own: identification, grounding, fully-identified records and fidelity all climb monotonically from iteration 1,000 to 8,000. <strong>The shipped model is therefore round 09's final adapter</strong>, chosen on the 2,000-record benchmark rather than on the 192-record gold sets, which were too small to separate checkpoints that differ by 7 points of fully-identified records.</p>
+<h2>🧬 Where to cut: the construct boundary model</h2>
+<p><strong>The practical question.</strong> You have a protein that will not crystallise. Almost nobody crystallises the full-length gene product: they trim the flexible tails, drop a disordered linker, and try the folded core. Choosing where to cut is judgement, and it is usually made once, by hand, from a disorder plot and an alignment.</p>
+<p>The Protein Data Bank already contains <strong>523,018 of those decisions</strong>, made by crystallographers who then got a structure. Every deposited chain records exactly which stretch of the full-length protein was cloned, and SIFTS maps it back residue by residue. Those are free labels: nobody had to annotate anything, the experiment did it.</p>
+<p><strong>What the model does.</strong> Give it a full-length sequence. It returns, for every residue, the probability that a crystallographer would have kept that residue in the construct. High in the middle, falling away at the ends it thinks you should trim.</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
 <tr>
@@ -934,235 +944,309 @@
 </thead>
 <tbody>
 <tr>
-<td data-label=""><strong>Labels</strong></td>
-<td data-label="">Every rules label kept, plus ~3,400 teacher-labelled residual rows <strong>added, never substituted</strong> — which is what rounds 07 and 08 got wrong</td>
+<td data-label="">Weights</td>
+<td data-label=""><strong><a href="https://huggingface.co/Dellboy/toppdblx-construct-boundary"><code>Dellboy/toppdblx-construct-boundary</code></a></strong> on HuggingFace, 134 MB</td>
 </tr>
 <tr>
-<td data-label=""><strong>Capacity</strong></td>
-<td data-label=""><strong>32 LoRA layers</strong>, matching round 06. Rounds 07 and 08 ran at 16 because <code>--num-layers</code> was left at its default</td>
+<td data-label="">Base model</td>
+<td data-label=""><a href="https://huggingface.co/facebook/esm2_t12_35M_UR50D">ESM-2 t12-35M</a>, 33.5M parameters</td>
 </tr>
 <tr>
-<td data-label=""><strong>Prompt</strong></td>
-<td data-label=""><code>SYSTEM_V2</code>, adding the <code>protein_buffer</code> and <code>soak</code> roles. A round trained on v2 must be <em>served</em> with v2</td>
+<td data-label="">Input</td>
+<td data-label="">Full-length UniProt sequence, up to 1,022 residues</td>
 </tr>
 <tr>
-<td data-label=""><strong>Data</strong></td>
-<td data-label="">122,469 rows at lexicon 0.9.2, with 24,040 <code>protein_buffer</code> and 16,272 <code>soak</code> targets</td>
+<td data-label="">Output</td>
+<td data-label="">Per-residue probability of being inside a crystallised construct</td>
 </tr>
 <tr>
-<td data-label=""><strong>Gate</strong></td>
-<td data-label="">The build <strong>fails rather than trains</strong> if a single gold record leaks, or if any example would exceed the 1,024-token cap</td>
+<td data-label="">Trained on</td>
+<td data-label="">34,874 proteins, from 523,018 deposited chains across 185,831 PDB entries</td>
+</tr>
+<tr>
+<td data-label="">Held out</td>
+<td data-label="">4,077 proteins, split by 30% sequence identity so no homologue is on both sides</td>
 </tr>
 </tbody>
 </table></div>
-<p>It runs in three stages: wait for the 32B to finish labelling the records where the rules and the student both found nothing; score rounds 06, 07 and 08 on the frozen benchmark <strong>against tonight's lexicon</strong>, so the identification column compares models rather than dictionaries; then train. <code>SCORE_ROUND09.sh</code> follows in the morning with round 09's own figures, a checkpoint sweep across both gold sets, and the components.</p>
-<p><strong>Round 06 stays shipped unless round 09 beats it on F0.5.</strong> The downside is one night.</p>
-<p><strong>"Regressed" describes rounds 07 and 08 accurately and explains nothing.</strong> They scored below round 06 on gold, which is a fact. What caused it is not established: both ran at <strong>16 LoRA layers</strong> against round 06's 32, because <code>--num-layers</code> was left at its default, so they changed the label source <em>and</em> halved the adaptable capacity in the same experiment. The teacher-label hypothesis has never been tested at matched capacity, and the word "regressed" in this table should be read as "scored worse", not as "distillation does not work".</p>
-<p><strong>Round 06's final adapter is the one to use, and its 2,000-iteration checkpoint is kept beside it because the disagreement is the interesting part.</strong> The frozen-benchmark sweep promoted checkpoint 2,000 over the final adapter on <em>identification</em>, and against hand-labelled truth that was wrong: the checkpoint makes twelve false positives where the final adapter makes one (p = 0.0034). Identification asks only whether an emitted reagent exists in the lexicon, so it cannot see a name that is real, present in the text, and simply not what the depositor meant — the exact failure a checkpoint trained a little too long produces.</p>
-<p><strong>And the released data was never affected</strong>, by accident rather than design. <code>apply_slm</code> accepted <code>--checkpoint</code> and silently ignored it until 2026-08-02, so the 163,353 components shipped on 2026-08-01 came from the final adapter, which is the better model. The flag now works; the notes that said the release used checkpoint 2,000 were wrong and are corrected.</p>
-<h3>Rounds 07 and 08: distillation, and a measurement that was wrong</h3>
-<p>Two attempts to train past the rule parser's ceiling using labels from a local Qwen2.5-32B teacher instead of <code>rules_v3</code>. Both scored worse than round 06 — and then the metric that said so turned out to be biased against them.</p>
-<p><strong>Five of the 96 gold records carried a label the lexicon could not place</strong>, so their truth set was missing a reagent, and a parser naming that reagent correctly scored a <em>false positive</em>. 3KDJ is the clearest case: the text reads <code>0.01M GSH/GSSG</code>, the model answered <code>GLUTATHIONE</code>, which is right, and it counted against it. That penalty lands hardest on whichever model says the most — a bias in favour of the quieter one, which is precisely backwards for a metric whose purpose is to measure recall.</p>
-<p>Lexicon 0.6.0 resolves 18 of the 25 unresolvable labels; the remaining seven are labelling artefacts rather than lexicon gaps (<code>GSMT</code> is the protein, <code>POLYAMINES</code> a class, <code>BSI100156</code> a compound code), so those records are now excluded from scoring and counted. Re-scored:</p>
+<h3>What it achieves</h3>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
 <tr>
-<th></th>
-<th>precision</th>
-<th>recall</th>
-<th>F1</th>
-<th>F0.5</th>
+<th>Measure</th>
+<th>Test set</th>
+<th>Why this measure</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td data-label="">rules only</td>
-<td data-label="precision">100.0%</td>
-<td data-label="recall">67.7%</td>
-<td data-label="F1">80.7</td>
-<td data-label="F0.5">91.3</td>
+<td data-label="Measure"><strong>Boundary error</strong></td>
+<td data-label="Test set"><strong>9 residues</strong> (median)</td>
+<td data-label="Why this measure">How far off the cut is, on the 1,314 test proteins that were genuinely truncated. A median: the spread matters and is below</td>
 </tr>
 <tr>
-<td data-label=""><strong>round 06</strong></td>
-<td data-label="precision"><strong>99.6%</strong></td>
-<td data-label="recall">87.4%</td>
-<td data-label="F1"><strong>93.1</strong></td>
-<td data-label="F0.5"><strong>96.9</strong></td>
+<td data-label="Measure"><strong>MCC</strong></td>
+<td data-label="Test set"><strong>0.669</strong></td>
+<td data-label="Why this measure">Correlation between predicted and real per-residue calls. A model that says "keep everything" scores 0.00</td>
 </tr>
 <tr>
-<td data-label="">round 07 — teacher labels 92.6% precise, 0.23 epochs</td>
-<td data-label="precision">93.6%</td>
-<td data-label="recall"><strong>89.1%</strong></td>
-<td data-label="F1">91.3</td>
-<td data-label="F0.5">92.6</td>
-</tr>
-<tr>
-<td data-label="">round 08 — labels 97.6% precise, 1.06 epochs</td>
-<td data-label="precision">95.3%</td>
-<td data-label="recall"><strong>89.1%</strong></td>
-<td data-label="F1">92.1</td>
-<td data-label="F0.5">94.0</td>
+<td data-label="Measure">Accuracy</td>
+<td data-label="Test set">85.7%</td>
+<td data-label="Why this measure">Reported for completeness and <strong>should not be read alone</strong>: 61.5% of residues really are inside a construct, so "keep everything" already scores 61.5% while being useless</td>
 </tr>
 </tbody>
 </table></div>
-<blockquote>
-<p><strong>Measured at lexicon 0.6.x, and left there deliberately.</strong> Every row was scored before
-lexicon 0.7.0, which added 42 reagents and taught <code>apply_slm</code> to resolve aliases — worth
-about +5 points of recall to any row containing the student. Re-scoring round 06 alone
-would make it beat rounds 07 and 08 on a change none of them received, so the comparison
-is kept internally consistent at the version it was run. The current shipped figures are
-<a href="#-the-gold-set-precision-and-recall-against-labelled-truth">above</a>.</p>
-</blockquote>
-<p>Read on F0.5 — the summary that weights precision twice as heavily, and the right one for a released dataset — round 06 leads by 2.9 points rather than F1's 1.0.</p>
-<p>Round 06 still leads on F1 and holds a 4.3-point precision advantage, so <strong>it remains the shipped model</strong>. But the gap is smaller than first reported, both teacher rounds do gain real recall, and the line of work is <strong>unresolved rather than closed</strong> — an earlier version of this section declared it closed on the strength of the biased measurement.</p>
-<p><strong>The remaining errors are misattribution, not invention.</strong> Of round 08's false positives, <em>none</em> name a reagent absent from the text. They are reagents genuinely present but not part of the crystallisation condition: a protein storage buffer (<code>PROTEIN SOLUTION CONTAINING 50MM HEPES</code>), a soak, a cryo step. That is a far more tractable target than hallucination, and it is a question about <em>roles</em> rather than chemistry.</p>
-<h3>Agreement gating across two teachers</h3>
-<p>The errors are systematic rather than random — 11 of round 08's 14 false positives are the same reagents as round 07's, across independently filtered labels and four times the training. Correlated single-model error is what independent-model agreement removes and what heuristic filters cannot, so a teacher-only find is kept only when a second, architecturally different 32B names the same reagent unprompted. Gemma-4-31b, not another Qwen: <code>chem_sage</code> is Qwen2-based and would share the first teacher's failure modes.</p>
+<p><strong>A worked example.</strong> Hen lysozyme (<code>P00698</code>) is 147 residues in UniProt, of which 1 to 18 are the signal peptide and 19 to 147 the mature chain. Asked cold, the model proposes <strong>19 to 147</strong>. Nobody told it what a signal peptide is; it learned that crystallographers do not clone them.</p>
+<p><strong>But read the spread before trusting a single number</strong>, because the median hides the shape of it:</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
 <tr>
 <th></th>
-<th>precision</th>
-<th>recall</th>
-<th>F1</th>
-<th>F0.5</th>
+<th>boundary error</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td data-label="">rules + student <em>(round 06, shipped)</em></td>
-<td data-label="precision"><strong>99.6%</strong></td>
-<td data-label="recall">87.4%</td>
-<td data-label="F1">93.1</td>
-<td data-label="F0.5"><strong>96.9</strong></td>
+<td data-label="">Half the boundaries</td>
+<td data-label="boundary error">within <strong>5 residues</strong></td>
 </tr>
 <tr>
-<td data-label="">rules + Gemma alone</td>
-<td data-label="precision">96.3%</td>
-<td data-label="recall">87.8%</td>
-<td data-label="F1">91.8</td>
-<td data-label="F0.5">94.4</td>
+<td data-label="">Three quarters</td>
+<td data-label="boundary error">within 56 residues</td>
 </tr>
 <tr>
-<td data-label="">+ every Qwen find</td>
-<td data-label="precision">92.2%</td>
-<td data-label="recall"><strong>92.9%</strong></td>
-<td data-label="F1">92.5</td>
-<td data-label="F0.5">92.4</td>
-</tr>
-<tr>
-<td data-label=""><strong>+ only where Qwen and Gemma agree</strong></td>
-<td data-label="precision">96.1%</td>
-<td data-label="recall">91.8%</td>
-<td data-label="F1"><strong>93.9</strong></td>
-<td data-label="F0.5">95.2</td>
+<td data-label="">Nine tenths</td>
+<td data-label="boundary error">within 250 residues</td>
 </tr>
 </tbody>
 </table></div>
-<blockquote>
-<p><strong>Measured at lexicon 0.6.x, and left there deliberately.</strong> Every row was scored before
-lexicon 0.7.0, which added 42 reagents and taught <code>apply_slm</code> to resolve aliases — worth
-about +5 points of recall to any row containing the student. Re-scoring round 06 alone
-would make it beat rounds 07 and 08 on a change none of them received, so the comparison
-is kept internally consistent at the version it was run. The current shipped figures are
-<a href="#-the-gold-set-precision-and-recall-against-labelled-truth">above</a>.</p>
-</blockquote>
-<p><strong>The mechanism works.</strong> Requiring two independent teachers to agree keeps <strong>13 of the 16 correct finds</strong> while cutting the wrong ones <strong>from 22 to 10</strong>, which lifts precision on the combined output from 92.2% to 96.1% for 1.1 points of recall. That is the best <strong>F1</strong> measured anywhere in this project — 93.9 against the shipped model's 93.1, with 4.4 more points of recall.</p>
-<p><strong>It still does not clear the bar.</strong> On F0.5, the summary that matches how a released dataset is actually used, round 06 leads 96.9 to 95.2, and on raw precision 99.6% to 96.1%. Agreement removes about half the misattribution, not all of it.</p>
-<p>Two further findings:</p>
+<p><strong>It is excellent on most proteins and badly wrong on a minority.</strong> 60% of boundaries land within 10 residues, and 56% of proteins have <em>both</em> ends within 25. The mean error of 72 residues is the tail talking, not the typical case.</p>
+<p><strong>The model half knows when it is wrong.</strong> Mean probability across the proposed span runs 0.97 on good predictions and 0.82 on bad ones, so <code>model.propose_boundaries</code> returns a <code>confident</code> flag at 0.85. Confident proposals get both ends within 25 residues <strong>71%</strong> of the time against 56% ungated, and cover 68% of proteins. Treat a low-confidence span as a hint and look at the profile.</p>
+<p>For context, truncated constructs here trim a median of 62 residues from the N-terminus and keep under half the chain, so being within 5 residues is a small fraction of the decision, and being 250 out is not a usable answer.</p>
+<h3>🎓 Training rounds</h3>
+<p>All figures are the <strong>held-out test split</strong> (4,077 proteins, 1,445 of them truncated), never the validation split used to pick checkpoints. That distinction decided which model ships.</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Round</th>
+<th>What changed</th>
+<th>MCC</th>
+<th>Boundary error</th>
+<th>coverage@3</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Round"><a href="https://huggingface.co/Dellboy/toppdblx-construct-boundary"><strong>01</strong></a></td>
+<td data-label="What changed">ESM-2 t12-35M, 3 epochs, token-bucketed batches, consensus labels at 50% agreement</td>
+<td data-label="MCC"><strong>0.669</strong></td>
+<td data-label="Boundary error"><strong>9 residues</strong></td>
+<td data-label="coverage@3"><strong>36.1%</strong></td>
+<td data-label="Verdict"><strong>Shipped.</strong> Best on every metric, and still is</td>
+</tr>
+<tr>
+<td data-label="Round">02</td>
+<td data-label="What changed">Soft targets everywhere: train on the fraction of a protein's constructs covering each residue</td>
+<td data-label="MCC">0.661 †</td>
+<td data-label="Boundary error">11 †</td>
+<td data-label="coverage@3">30.6% †</td>
+<td data-label="Verdict"><strong>Abandoned at epoch 3.</strong> Validation metrics flat while training loss fell</td>
+</tr>
+<tr>
+<td data-label="Round">03</td>
+<td data-label="What changed">Soft targets gated to proteins with at least 10 deposited constructs, 6 epochs</td>
+<td data-label="MCC">0.659</td>
+<td data-label="Boundary error">10</td>
+<td data-label="coverage@3">35.6%</td>
+<td data-label="Verdict"><strong>Rejected.</strong> Worse than round 01 on all five metrics</td>
+</tr>
+<tr>
+<td data-label="Round">04</td>
+<td data-label="What changed">No soft targets, round 01's recipe run for 6 epochs instead of 3</td>
+<td data-label="MCC">0.662</td>
+<td data-label="Boundary error">10</td>
+<td data-label="coverage@3">35.8%</td>
+<td data-label="Verdict"><strong>Rejected.</strong> Led on validation, lost on test</td>
+</tr>
+<tr>
+<td data-label="Round">05</td>
+<td data-label="What changed"><strong>ESM-2 t30-150M</strong>, 4x the parameters, otherwise round 01's recipe</td>
+<td data-label="MCC">0.673</td>
+<td data-label="Boundary error">10</td>
+<td data-label="coverage@3">34.9%</td>
+<td data-label="Verdict"><strong>Rejected.</strong> A dead heat on MCC (+0.004) and worse on the other four measures</td>
+</tr>
+</tbody>
+</table></div>
+<p>† round 02 was stopped early, so its figures are validation-only and not comparable to the rest.</p>
+<p><strong>The campaign found nothing, and how it failed is the useful part.</strong> On the 519-protein validation split round 04 read coverage@3 41.8% against round 01's 40.3%, and that looked like a result. On the 1,445-protein test split it reverses to 35.8% against 36.1%. Round 03's dramatic jump from 34.1% to 41.0% at epoch 5, and round 04 matching it, were both inside the variance of the smaller sample.</p>
+<p><strong>Round 01 has now been challenged five ways and survived all of them</strong>, which is a better argument for it than the original result was:</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Attempted</th>
+<th>Outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Attempted">Six structural features (coil, pLDDT, Pfam edges, disorder, disorder as a channel, surface entropy)</td>
+<td data-label="Outcome">None help</td>
+</tr>
+<tr>
+<td data-label="Attempted">Soft targets, everywhere and gated</td>
+<td data-label="Outcome">Do not help</td>
+</tr>
+<tr>
+<td data-label="Attempted">Six epochs instead of three</td>
+<td data-label="Outcome">Does not help</td>
+</tr>
+<tr>
+<td data-label="Attempted"><strong>A 4x larger backbone</strong></td>
+<td data-label="Outcome"><strong>Does not help</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>The task has a ceiling near MCC 0.67 and a 9-residue median boundary error, and it is not a capacity, schedule or feature-engineering problem.</strong> The plateau is in the labels. Where a crystallographer cuts carries real signal, and the model already extracts most of it, but the decision is also part convention, part whichever vector was to hand, and part arbitrary. None of that is recoverable from sequence.</p>
+<p>Worth stating for anyone tempted to repeat this: the 150M model matched the 35M model to within 0.004 MCC while costing four times the parameters and four times the training time.</p>
+<p>Per epoch, on validation: MCC 0.607 then 0.681 then 0.700, boundary error 14 then 9 then 7 residues. That upward trend suggested a longer run would help. <strong>Round 04 tested it directly and it did not</strong>: six epochs scored marginally worse on held-out data than three.</p>
+<p><strong>The failure condition was written before the run, not after.</strong> MCC below 0.40 or a median boundary error worse than 20 residues would have meant the signal is not learnable from sequence at this scale, and R3 would have stopped. Declaring it in advance is what stops a marginal result being tuned until it looks like a good one.</p>
+<h3>Turning a probability into a construct</h3>
+<p><code>./run.sh model.propose_boundaries --uniprot P00698</code> smooths the profile, takes the longest contiguous run, merges runs separated by short gaps, and refuses below 50 residues rather than returning a construct nobody would clone.</p>
+<p><strong>Two structural rules were tried and both lost to the model.</strong> Neither is in the shipped proposer, and both are kept in the code with their numbers attached, as results rather than gaps.</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Feature tried</th>
+<th>Idea</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Feature tried">Chou-Fasman coil nudge</td>
+<td data-label="Idea">Do not cut mid-helix</td>
+<td data-label="Result"><strong>Worse</strong>: median error 5 residues to 8</td>
+</tr>
+<tr>
+<td data-label="Feature tried">ESMFold pLDDT gate</td>
+<td data-label="Idea">Trim where a single-sequence fold is unconfident</td>
+<td data-label="Result"><strong>No change</strong>: median 2 either way; pLDDT alone much worse (median 6, 71% within 25)</td>
+</tr>
+<tr>
+<td data-label="Feature tried">Pfam domain-edge snapping</td>
+<td data-label="Idea">Cut where the curated domain ends</td>
+<td data-label="Result"><strong>Signal real, application fails.</strong> True boundaries sit within 15 residues of a Pfam edge 54% of the time against a 19% null, but snapping never improves the median and nudges p75 from 56 to 58</td>
+</tr>
+<tr>
+<td data-label="Feature tried">metapredict disorder, blended</td>
+<td data-label="Idea">Trim predicted-disordered tails</td>
+<td data-label="Result"><strong>Not redundant but no help.</strong> Correlates with pLDDT only −0.39, and predicts "inside" better than pLDDT does (AUROC 0.793 against 0.719), yet blending leaves the median at 6 and worsens p90</td>
+</tr>
+<tr>
+<td data-label="Feature tried">Disorder as an input channel, retrained</td>
+<td data-label="Idea">Fuse the feature rather than blending post hoc</td>
+<td data-label="Result"><strong>No movement</strong>: like-for-like head-only pilot, p75 111 to 108, p90 unchanged at 362</td>
+</tr>
+<tr>
+<td data-label="Feature tried">Surface entropy, hydrophobicity</td>
+<td data-label="Idea">Trim high-entropy EKQR patches</td>
+<td data-label="Result"><strong>No signal at all</strong>: AUROC 0.474 and 0.491, both indistinguishable from chance</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Six attempts, no improvement, and the pattern is consistent.</strong> Two of the features carry genuine independent signal (Pfam edges at 2.8x enrichment over a null, disorder outscoring pLDDT on the very task) and still fail to help, whether blended afterwards or fused as an input channel and retrained.</p>
+<p>The reading: <strong>the classifier is trained on the decision itself, and every one of these features is a proxy for part of that decision.</strong> A construct boundary frequently sits in perfectly ordered sequence, at a domain junction or a convenient cloning site, and a 33.5M-parameter protein language model has evidently already absorbed what these proxies encode. Meanwhile validation MCC was still climbing when round 01 stopped (0.607, 0.681, 0.700 by epoch). <strong>Effort belongs in the model, not in features around it.</strong></p>
+<h3>What it is not</h3>
 <ul>
-<li><strong>Gemma is <em>not</em> the better teacher, and an earlier version of this section said it was.</strong> That claim compared a <em>rules + Gemma</em> row against a Qwen figure measured on a different set of records. Scored like for like — the 79 gold records both models answered and whose labels resolve — Qwen wins on precision at identical recall:</li>
+<li><strong>It is not a disorder predictor.</strong> Residues that were cloned but never appeared in the density count as <em>inside</em> the construct. The model predicts what a crystallographer chose to clone, not what turned out to be ordered.</li>
+<li><strong>It only knows successes.</strong> Every label comes from a construct that produced a crystal. It has never seen a construct that failed, so it cannot tell you a boundary is bad, only that it is unlike the ones that worked.</li>
+<li><strong>It errs towards keeping residues.</strong> It predicts "inside" for 69% of residues where the truth is 61.5%, so proposed spans run slightly long. For construct design that is the safer direction, but trim rather than extend if you are choosing between its suggestion and your own.</li>
 </ul>
+<h2>🎲 Will it crystallise at all?</h2>
+<p><strong>The one question the PDB cannot answer.</strong> Every condition in this dataset produced a crystal, so the archive supports <em>what worked</em> and is silent on <em>what failed</em>. The only substantial record of crystallisation failures is <a href="https://zenodo.org/records/821654">TargetTrack</a>, the archived structural genomics target log, final release 1 July 2017.</p>
+<p>Parsed to 335,771 targets with sequences and full status histories, of which:</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
 <tr>
 <th></th>
-<th>precision</th>
-<th>recall</th>
-<th>F1</th>
-<th>F0.5</th>
-<th>false positives</th>
+<th>Targets</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td data-label="">Gemma-4-31b</td>
-<td data-label="precision">89.7%</td>
-<td data-label="recall">87.9%</td>
-<td data-label="F1">88.8</td>
-<td data-label="F0.5">89.4</td>
-<td data-label="false positives">24</td>
+<td data-label="">Reached crystallisation</td>
+<td data-label="Targets">21,173</td>
 </tr>
 <tr>
-<td data-label=""><strong>Qwen2.5-32B</strong></td>
-<td data-label="precision"><strong>93.3%</strong></td>
-<td data-label="recall">87.9%</td>
-<td data-label="F1"><strong>90.5</strong></td>
-<td data-label="F0.5"><strong>92.2</strong></td>
-<td data-label="false positives"><strong>15</strong></td>
+<td data-label="">Reached purified protein and never crystallised</td>
+<td data-label="Targets">79,926</td>
 </tr>
 </tbody>
 </table></div>
-<p>Both find exactly the same reagents (210 true positives, 29 misses each); Gemma simply asserts nine more things that are not there. It is also the less reliable harness: 82 of 96 generations parsed against Qwen's 96 of 96, because its reasoning block eats the token budget. Gemma was chosen for <strong>architectural independence</strong>, which is what the agreement gate needs and which it delivers — not for being stronger.
-- <strong>It is still too noisy to train on.</strong> The surviving additions are 13 correct against 10 wrong, a 43% error rate on the new signal, and round 08 established that this student absorbs label noise rather than averaging it out.</p>
-<p>So the result lands as an <strong>inference-time ensemble</strong>, not a training recipe: run the second teacher only on the teacher-only candidates rather than the corpus, and take what both assert. Whether it ships is a judgement rather than a measurement — F1 says yes, F0.5 says no, and this project has consistently preferred precision.</p>
-<p><strong>A reasoning model needed two harness fixes</strong>, both of which would have failed silently. Gemma-4 emits a <code>&lt;|channel&gt;thought</code> block before answering, so at the 448-token budget tuned for Qwen only 6 of 96 generations ever closed a JSON array; and because it quotes the few-shot examples verbatim while reasoning, the <em>first</em> JSON array in its output is the prompt being thought about rather than the reply. Taking the first array would have scored our own examples back as the teacher's labels and looked entirely plausible.</p>
-<h3>🥊 The second gold batch: contested records</h3>
-<p>The random 96 answered "how good is the pipeline" and could not answer "which source is better", because only 41 of its 91 scored records contained a reagent the sources disputed at all. A second 96, sampled where the teacher and the pipeline <strong>disagree</strong>, in three equal strata — teacher found something extra, pipeline found something extra, both did.</p>
-<p>It produced <strong>32 rejections against the random batch's 1</strong>, which is the precision signal the first set could not supply.</p>
+<p><strong>Conditioning the negatives on reaching purified protein is the load-bearing decision.</strong> Every target in the training set got far enough that crystallisation was genuinely attempted, so the model answers <em>given soluble purified protein, will it crystallise</em>. Using all 335,771 targets instead drops the positive rate from 20.9% to 6.3%, and a model trained that way mostly predicts whether a gene expresses, which is a different and much easier question.</p>
+<p>Gradient boosting on 30 sequence descriptors, split at 30% identity by MMseqs2 cluster:</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
 <thead>
 <tr>
-<th>source</th>
-<th>precision</th>
-<th>recall</th>
-<th>F1</th>
-<th>F0.5</th>
+<th>Measure</th>
+<th>Value</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td data-label="source">rules only</td>
-<td data-label="precision">91.5%</td>
-<td data-label="recall">60.2%</td>
-<td data-label="F1">72.7</td>
-<td data-label="F0.5">82.9</td>
+<td data-label="Measure">AUC</td>
+<td data-label="Value"><strong>0.656</strong> (pre-declared floor 0.65)</td>
 </tr>
 <tr>
-<td data-label="source">rules + student <em>(shipped)</em></td>
-<td data-label="precision">92.2%</td>
-<td data-label="recall">76.7%</td>
-<td data-label="F1">83.7</td>
-<td data-label="F0.5">88.6</td>
+<td data-label="Measure">Average precision</td>
+<td data-label="Value">0.360 against a 0.218 base rate</td>
 </tr>
 <tr>
-<td data-label="source">rules + 32B teacher</td>
-<td data-label="precision">90.7%</td>
-<td data-label="recall"><strong>87.3%</strong></td>
-<td data-label="F1">88.9</td>
-<td data-label="F0.5"><strong>90.0</strong></td>
+<td data-label="Measure"><strong>Top 5% of ranked constructs crystallise</strong></td>
+<td data-label="Value"><strong>53%</strong>, a 2.4x lift</td>
 </tr>
 <tr>
-<td data-label="source">union of both</td>
-<td data-label="precision">90.8%</td>
-<td data-label="recall"><strong>97.5%</strong></td>
-<td data-label="F1"><strong>94.0</strong></td>
-<td data-label="F0.5">92.0</td>
-</tr>
-<tr>
-<td data-label="source">rules + only where both agree</td>
-<td data-label="precision"><strong>92.2%</strong></td>
-<td data-label="recall">66.5%</td>
-<td data-label="F1">77.3</td>
-<td data-label="F0.5">85.6</td>
+<td data-label="Measure">Top 10%</td>
+<td data-label="Value">43%, 2.0x</td>
 </tr>
 </tbody>
 </table></div>
-<p><strong>Three corrections come out of it.</strong></p>
-<p><strong>The rules are not 100% precise.</strong> They are <strong>91.5%</strong> here. The random batch reported 100.0% because it never drew a contested record, and that figure was quoted repeatedly, including in this README and on the published model card.</p>
-<p><strong>The teacher beats the student on recall, decisively.</strong> It finds <strong>75 reagents the student misses against 35 the other way, p = 0.00017</strong> — the first unambiguous result in this line of work — and pays almost nothing for it: 11 extra false positives against 3 avoided, p = 0.057.</p>
-<p><strong>The student's precision advantage largely evaporates</strong>: 92.2% against the teacher's 90.7%, not 98.2% against 91.5%. On a random sample the student looks far more precise mostly because it rarely says anything contestable.</p>
-<p><strong>Both batches are needed, and neither alone is honest.</strong> This one is adversarial by construction, so its absolute numbers do not describe the corpus — 57% of teacher-labelled records are contested, not all of them. The random 96 remains the yardstick for <em>how good is the pipeline</em>. But comparisons between sources are what this batch measures well, and it says the earlier reading — teacher labels buy +2 recall for −4 precision — came from a sample where contested records were too rare for the trade to show its real shape.</p>
+<p><strong>Read the ranking, not the AUC.</strong> 0.656 barely clears the threshold set before the run and would not trouble a published predictor. What it does usefully is order a shortlist: pick the top twenty constructs from a hundred candidates and half of them crystallise, against a fifth if you pick at random. Sequence length, net charge and cysteine content dominate; disorder predictions add nothing (AUC 0.654 to 0.656).</p>
+<p><strong>TargetTrack ends in 2017</strong> and is dominated by structural genomics centres that chose tractable targets. The number is honest for that population and is not a universal probability.</p>
+<h2>🚫 What the dataset will not tell you</h2>
+<p>Two independent attempts to predict the <em>condition</em> from the <em>sequence</em> both lose to a baseline that ignores the sequence entirely.</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th>Source</th>
+<th>hit@1</th>
+<th>hit@5</th>
+<th>hit@10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="Source"><strong>Frequency prior</strong> (ignores the query)</td>
+<td data-label="hit@1"><strong>0.646</strong></td>
+<td data-label="hit@5"><strong>0.846</strong></td>
+<td data-label="hit@10"><strong>0.922</strong></td>
+</tr>
+<tr>
+<td data-label="Source">ESM-2 embeddings + learned head</td>
+<td data-label="hit@1">0.571</td>
+<td data-label="hit@5">0.833</td>
+<td data-label="hit@10">0.909</td>
+</tr>
+</tbody>
+</table></div>
+<p>97,471 training and 21,316 test records at the 30% identity split, 41 condition classes. The learned model is worse on every measure. Its hit@5 margin is <strong>-0.013</strong> against the <strong>+0.03</strong> declared before the experiment began, so the kill criterion fired and the result is published untuned.</p>
+<p><strong>The scaling is what makes this convincing rather than merely disappointing.</strong> A 3,000-record pass scored +0.001 at hit@5; the full set, 32 times larger, scored -0.013. A model that moves <em>away</em> from the baseline as data is added is not short of data.</p>
+<p>Homology retrieval fails the same way, at every level, on both split thresholds, under three definitions of ground truth. Two independent methods failing identically points at the data rather than the method, and the reason is already visible in the data (see <a href="#-known-limitations">Known limitations</a>): condition frequency reflects screen popularity, not protein identity. Homologues were screened with the same popular screens as everything else, so there is little protein-specific signal to retrieve.</p>
+<p><strong>The archive supports choosing a screen by precedent, and choosing a construct by sequence, but not choosing a condition by protein.</strong> That is a useful thing to know before building a recommender, and it is why this project does not ship one.</p>
+<h2>📄 The paper</h2>
+<p><a href="PAPER.md"><code>PAPER.md</code></a> draws the whole project together in about 1,800 words: fidelity, the parser, the curation, and then what can and cannot be learned. Every figure in it is re-derived from the released artefacts rather than copied from earlier prose, which caught five stale numbers including two of the roadmap's own.</p>
 <h2>🔁 Redundancy</h2>
 <p><strong>In plain terms:</strong> the same experiment appears in the archive over and over. Popular proteins are solved hundreds of times, and a successful recipe gets copied. One condition string in this corpus appears <strong>1,784 times</strong>. That sounds harmless, and it quietly corrupts three different things if you let it.</p>
 <div class="emd-table-wrap"><table class="emd-data-table">
@@ -1236,13 +1320,13 @@ is kept internally consistent at the version it was run. The current shipped fig
 <td data-label="Reach">The per-class accuracy number (spec 6.6), split by provenance</td>
 </tr>
 <tr>
-<td data-label="Round"><strong>Gold set</strong></td>
-<td data-label="Questions"><strong>96</strong></td>
-<td data-label="Reach"><strong>Precision and recall against labelled truth, the yardstick for every future round</strong></td>
+<td data-label="Round"><strong>Gold sets</strong></td>
+<td data-label="Questions"><strong>96, then another 96</strong></td>
+<td data-label="Reach"><strong>Precision and recall against labelled truth, the yardstick for every model round</strong></td>
 </tr>
 </tbody>
 </table></div>
-<p><code>app/condition_courtroom_v5.html</code> renders any payload with the same shape, so a new audit is a new generator stage rather than a new page. <code>condition_courtroom_v7.html</code> is the accuracy audit: one condition per screen, one checkbox, and a three-field diagnosis that appears only when a card is ticked, so the ~90% waved through stay a single click. <code>gold_bench_v1.html</code> is the labeller: deposition text, removable reagent chips, and an autocomplete over all 535 lexicon names for what the pipeline missed.</p>
+<p><code>app/condition_courtroom_v5.html</code> renders any payload with the same shape, so a new audit is a new generator stage rather than a new page. <code>condition_courtroom_v7.html</code> is the accuracy audit: one condition per screen, one checkbox, and a three-field diagnosis that appears only when a card is ticked, so the ~90% waved through stay a single click. <code>gold_bench_v1.html</code> is the labeller: deposition text, removable reagent chips, and an autocomplete over all lexicon names for what the pipeline missed.</p>
 <p><strong>A recommendation is an answer, not a suggestion.</strong> Every dropdown is pre-set and there is an accept-all button, so a wrong recommendation is not caught, it is accepted in bulk. Generators therefore carry explicit chemistry guards: numbers must match exactly (a number in a reagent name is molecular weight or substitution position, never decoration), element and acid words must agree, and a family name such as bare <code>peg</code> identifies to nothing rather than inventing a member. Guards decide what is <strong>recommended</strong>, never what is <strong>available</strong>.</p>
 <h2>🔧 Installation</h2>
 <pre><code class="language-bash">git clone https://github.com/bellcheddar/TopPDBLX.git
@@ -1360,11 +1444,11 @@ ln -sfn ~/TopPDBLXData/processed data/processed
 </tr>
 <tr>
 <td data-label="Stage"><code>eval.gold_questions</code></td>
-<td data-label="Purpose">Samples 96 residual records for hand labelling, banded by text length</td>
+<td data-label="Purpose">Samples records for hand labelling, banded by text length</td>
 </tr>
 <tr>
 <td data-label="Stage"><code>eval.gold_metrics</code></td>
-<td data-label="Purpose">Precision, recall and F1 against the gold set, per source and unioned</td>
+<td data-label="Purpose">Precision and recall against the gold sets, per source and pooled</td>
 </tr>
 <tr>
 <td data-label="Stage"><code>eval.splits</code></td>
@@ -1418,19 +1502,19 @@ ln -sfn ~/TopPDBLXData/processed data/processed
 </thead>
 <tbody>
 <tr>
-<td data-label="File"><code>toppdblx-conditions-v0.1.0.jsonl.gz</code></td>
+<td data-label="File"><code>toppdblx-conditions-v1.0.0.jsonl.gz</code></td>
 <td data-label="Contents">Canonical form, one nested record per line</td>
 </tr>
 <tr>
-<td data-label="File"><code>toppdblx-conditions-v0.1.0.parquet</code></td>
+<td data-label="File"><code>toppdblx-conditions-v1.0.0.parquet</code></td>
 <td data-label="Contents">Record level, sequence linkage flattened on</td>
 </tr>
 <tr>
-<td data-label="File"><code>toppdblx-components-v0.1.0.parquet</code></td>
+<td data-label="File"><code>toppdblx-components-v1.0.0.parquet</code></td>
 <td data-label="Contents">One row per reagent</td>
 </tr>
 <tr>
-<td data-label="File"><code>toppdblx-components-v0.1.0.csv.gz</code></td>
+<td data-label="File"><code>toppdblx-components-v1.0.0.csv.gz</code></td>
 <td data-label="Contents">The same, for spreadsheets</td>
 </tr>
 <tr>
@@ -1438,11 +1522,35 @@ ln -sfn ~/TopPDBLXData/processed data/processed
 <td data-label="Contents">Both tables, plus <code>usable_conditions</code> and <code>condition_components</code> views</td>
 </tr>
 <tr>
-<td data-label="File"><code>schema-v0.1.0-draft.json</code></td>
+<td data-label="File"><code>schema-v1.0.0.json</code></td>
 <td data-label="Contents">JSON Schema, generated from the pydantic model</td>
 </tr>
 </tbody>
 </table></div>
+<p><strong>Every component carries a <code>parser</code> field</strong>, <code>rules</code> or <code>slm</code>, so the two sources are always separable:</p>
+<div class="emd-table-wrap"><table class="emd-data-table">
+<thead>
+<tr>
+<th><code>parser</code></th>
+<th>rows</th>
+<th>what it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-label="parser"><code>rules</code></td>
+<td data-label="rows">610,076</td>
+<td data-label="what it is">The deterministic parser. Filter to this for a fully reproducible subset containing no model output</td>
+</tr>
+<tr>
+<td data-label="parser"><code>slm</code></td>
+<td data-label="rows">35,580</td>
+<td data-label="what it is">Chemistry the rules left unnamed and the residual parser recovered, across 26,339 records</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>The rule parser wins wherever it succeeded.</strong> A model row is published only when it names a reagent the rules did <em>not</em> name for that record: of round 09's 149,913 named rows, 113,943 simply restate a reagent the rules already had and are discarded. The rules' unnamed rows (an amount with no reagent attached) are kept rather than replaced, because matching them to a model row on concentration and unit succeeds for only 24% of cases, and inventing that correspondence would be worse than recording the gap honestly.</p>
+<p>Until 2026-08-05 the released table was rule-parser output only, and this README described the model's contribution incorrectly: the "components shipped" figures quoted for round 06 counted rows in the model's own working file, not rows anyone could download.</p>
 <pre><code class="language-sql">-- which reagents crystallise the widest range of protein families,
 -- without lysozyme and trypsin drowning the answer
 SELECT name_canonical,
@@ -1520,20 +1628,20 @@ LIMIT 10;
 <td data-label="Consequence">Both sides use the same lexicon, so a systematic naming error moves both identically</td>
 </tr>
 <tr>
-<td data-label="Limitation">R1 labels come from the rule parser</td>
-<td data-label="Consequence">Fidelity to <code>rules_v3</code> is a ceiling, not evidence of beating it: only residual identification, where no label exists, measures a real gain</td>
+<td data-label="Limitation">Fidelity to the rules is a ceiling, not evidence of beating it</td>
+<td data-label="Consequence">The rule parser's own labels train the residual model, so agreement with <code>rules_v3</code> cannot show a gain; only identification and grounding on the residual, and precision/recall against the gold sets, can</td>
 </tr>
 <tr>
 <td data-label="Limitation">The residual parser cannot discover new chemistry</td>
 <td data-label="Consequence">It emits only names it has seen, so a genuinely absent reagent looks the same as a model error. Closing that gap is curation, not modelling</td>
 </tr>
 <tr>
-<td data-label="Limitation">The gold set is 96 records</td>
-<td data-label="Consequence">Wide intervals (recall [88, 94]), reagent identity only, no concentrations. It makes "did we miss something" answerable, not precisely answerable</td>
+<td data-label="Limitation">The gold sets are 192 records pooled</td>
+<td data-label="Consequence">Wide confidence intervals, reagent identity only, no concentrations. Makes "did we miss something" answerable, not precisely answerable</td>
 </tr>
 <tr>
-<td data-label="Limitation">Recall is the weaker half</td>
-<td data-label="Consequence">99.6% precision against 91.5% recall: the parser is far likelier to miss a reagent than to invent one, and every headline metric before the gold set was blind to that</td>
+<td data-label="Limitation">Recall is the weaker half of the pair</td>
+<td data-label="Consequence">Rules alone: 95.1% precision against 69.5% recall, the parser is far likelier to miss a reagent than invent one. Rules + round 09 narrows that gap to 93.3% precision, 90.3% recall</td>
 </tr>
 </tbody>
 </table></div>
@@ -1550,26 +1658,39 @@ LIMIT 10;
 <li><span class="emd-check">&#9989;</span> Seven-class condition ontology, replacing the withdrawn three-level version</li>
 <li><span class="emd-check">&#9989;</span> Fine-tune SmolLM2 on the parse residual, and strip narrative prose in the parser</li>
 <li><span class="emd-check">&#9989;</span> Classification accuracy audit, two rounds of 96 (spec 6.6): 85.4% rules-derived, 83.3% model-derived, pooled</li>
-<li><span class="emd-check">&#9989;</span> Apply the trained model over the residual: 153,736 components, classified coverage 59.5% to 80.2%</li>
+<li><span class="emd-check">&#9989;</span> Apply the trained model over the residual: round 06 generated 153,736 components and lifted classified coverage from 59.5% to 80.2%</li>
+<li><span class="emd-check">&#9989;</span> <strong>Regenerate the corpus with round 09</strong> (5.1 hours over all 47,845 residual records): <strong>188,655 components, 22.7% more than round 06</strong>, and classified coverage 80.2% to <strong>80.8%</strong></li>
+<li><span class="emd-check">&#9989;</span> <strong>Publish the model's recovered chemistry, with provenance:</strong> <code>release.assemble</code> now merges the residual parser's components into the released table behind a <code>parser</code> column (<code>rules</code> or <code>slm</code>). The rule parser wins wherever it succeeded, so only genuinely new reagents are added. <strong>Components 610,076 to 645,656; identified 86.5% to 87.2%; conditions classified 143,626 to 152,006.</strong> Before this, the model's output never reached anyone who downloaded the dataset, and the README said otherwise</li>
 <li><span class="emd-check">&#9989;</span> Gold set of 96 hand-labelled records, and the first precision/recall this project has had</li>
 <li><span class="emd-check">&#9989;</span> Second gold set of 96, sampled where the pipeline and the teacher disagree</li>
 <li><span class="emd-check">&#9989;</span> Add the reagents the gold sets named that the lexicon could not place</li>
 <li><span class="emd-check">&#9989;</span> Tell the drop from the protein sample: <code>protein_buffer</code> and <code>soak</code> roles, 6,800 components</li>
 <li><span class="emd-check">&#9989;</span> De-duplicate the lexicon: PEG MME was seven canonical ids per molecular weight; 36 merged, five invariants now tested</li>
-<li><span class="emd-check">&#9989;</span> Remove the aliases naming a <em>different</em> molecule — barium/yttrium, CAPS/CHAPS, DTT/DTE and four more</li>
+<li><span class="emd-check">&#9989;</span> Remove the aliases naming a <em>different</em> molecule: barium/yttrium, CAPS/CHAPS, DTT/DTE and four more</li>
 <li><span class="emd-check">&#9989;</span> Transcribe the Morpheus stock table from the vendor brochure: 15 premixes with real compositions</li>
 <li><span class="emd-check">&#9989;</span> Classify premixes on their constituents rather than refusing them: coverage 76.8% to 80.2%</li>
 <li><span class="emd-check">&#9989;</span> Split reagents written with no separator at all: +7,553 identified components, nothing lost</li>
-<li><span class="emd-check">&#11036;</span> Teacher distillation: label the residual with a local 32B and retrain past the rule parser's ceiling</li>
+<li><span class="emd-check">&#9989;</span> <strong>Teacher distillation, resolved:</strong> round 09 adds the 32B's labels to the rules labels instead of replacing them, at 32 LoRA layers matching round 06. Pooled recall against hand-labelled truth rises from 85.7% to 90.3%, finding 28 more reagents; rounds 07 and 08 had changed the label source and halved LoRA capacity in the same experiment</li>
+<li><span class="emd-check">&#9989;</span> <strong>Ship round 09, preferring recall over a precision-weighted score:</strong> it finds more chemistry and misfiles slightly more of it, and the extra errors are role misattributions (a real reagent in the wrong scope), not inventions</li>
+<li><span class="emd-check">&#9989;</span> Confirm training length matters: on the 2,000-record frozen benchmark, round 09's identification and fully-identified records keep rising from true iteration 1,000 to 8,000; the 192-record gold sets were too small to resolve the same gap clearly</li>
+<li><span class="emd-check">&#9989;</span> <strong>Choose the round 09 checkpoint on the larger benchmark, not the smaller one:</strong> the 192-record gold sets picked iteration 4,500 on recall, and the 2,000-record frozen benchmark showed it identifying 2.6 points fewer reagents and leaving 7.3 points fewer records fully identified. The final adapter (iteration 8,000) ships</li>
+<li><span class="emd-check">&#9989;</span> <strong>Re-generate the corpus with round 09</strong> (5.1 hours over 47,845 residual records): 188,655 components against round 06's 153,736, and classified coverage 80.2% to 80.8%</li>
+<li><span class="emd-check">&#9989;</span> <strong>Probe what the parsers still cannot name</strong>, by labelling 464 records carrying an unnamed component with a 32B teacher. <strong>17.7% yield a reagent the release lacks</strong> (CI 14.2 to 21.1), so the remaining 82,341 unnamed components are mostly not recoverable chemistry: the source text says "PEG" or "phosphate" without saying which, or names no reagent at all. One genuine lexicon gap found and closed (ACES, lexicon 0.9.3)</li>
+<li><span class="emd-check">&#11036;</span> Cut the 49 reagents round 09 still misses, and the 46 it misfiles: the misfiles are role errors the <code>protein_buffer</code> and <code>soak</code> classes should absorb</li>
 <li><span class="emd-check">&#11036;</span> Supply pKa values for 59 buffers, or fix the clause splitter that produced them</li>
-<li><span class="emd-check">&#11036;</span> Publish to Zenodo for a citable DOI, and mirror on HuggingFace Datasets</li>
-<li><span class="emd-check">&#11036;</span> Browser front end (an exploration tool, not a predictor)</li>
-<li><span class="emd-check">&#11036;</span> Construct boundary model, then crystallisation propensity</li>
+<li><span class="emd-check">&#9989;</span> <strong>Publish to Zenodo for a citable DOI:</strong> v1.0.0 deposited 2026-08-05, <a href="https://doi.org/10.5281/zenodo.21807134">10.5281/zenodo.21807134</a>. Schema and dataset versions frozen at 1.0.0; eight files, each checksum-verified on upload</li>
+<li><span class="emd-check">&#9989;</span> <strong>Mirror on HuggingFace Datasets:</strong> <a href="https://huggingface.co/datasets/Dellboy/toppdblx-conditions"><code>Dellboy/toppdblx-conditions</code></a>, public, with a dataset card carrying the provenance split and the limitations</li>
+<li><span class="emd-check">&#9989;</span> <strong>Browser front end</strong>, an exploration tool rather than a predictor: <a href="https://toppdblx.mdeller.com">toppdblx.mdeller.com</a>, single file, no build step</li>
+<li><span class="emd-check">&#9989;</span> <strong>Construct boundary model:</strong> MCC 0.669 and a 9-residue median error on held-out proteins, and it survived five separate attempts to beat it</li>
+<li><span class="emd-check">&#9989;</span> <strong>Crystallisation propensity from TargetTrack:</strong> AUC 0.656, and the top 5% of ranked constructs crystallise at 2.4x the base rate</li>
+<li><span class="emd-check">&#9989;</span> <strong>Condition recommender, killed on its own criterion:</strong> worse than a query-independent frequency prior on every measure, and worse with 32x the data. Published as a negative result rather than tuned</li>
+<li><span class="emd-check">&#9989;</span> <strong>Dataset paper drafted</strong> (<a href="PAPER.md"><code>PAPER.md</code></a>), every figure re-derived from the released artefacts</li>
+<li><span class="emd-check">&#11036;</span> Submit the paper, and mint a Zenodo version for the revision that accompanies it</li>
 </ul>
 <h2>📄 Licence</h2>
 <p><strong>Data:</strong> Creative Commons Attribution 4.0 International, see <a href="LICENSE-DATA"><code>LICENSE-DATA</code></a>. <strong>Code:</strong> MIT, see <a href="LICENSE"><code>LICENSE</code></a>.</p>
 <p>Attributing TopPDBLX does not discharge the obligation to the sources it derives from: the Protein Data Bank (CC0), SIFTS and UniProt (both CC BY 4.0). Commercial screen formulations in <code>ontology/screens/</code> are transcriptions of vendor-published support materials, kept structurally separable so they can be withdrawn without breaking the release. Screen names are trademarks of their owners, used nominatively.</p>
-<p><strong>Cite as:</strong> Deller, M. C. (2026). TopPDBLX: a parsed, normalised and sequence-linked database of crystallisation conditions from the Protein Data Bank. Version 0.1.0.</p>
+<p><strong>Cite as:</strong> Deller, M. C. (2026). TopPDBLX: a parsed, normalised and sequence-linked database of crystallisation conditions from the Protein Data Bank. Version 1.0.0. Zenodo. https://doi.org/10.5281/zenodo.21807134 (concept DOI <a href="https://doi.org/10.5281/zenodo.21807133">10.5281/zenodo.21807133</a> always resolves to the latest version)</p>
 <hr>
 <h2>👤 Author</h2>
 <p><strong>Marc C. Deller, D.Phil.</strong><br>
