@@ -462,6 +462,7 @@ validation split used to pick checkpoints. That distinction decided which model 
 | 02 | Soft targets everywhere: train on the fraction of a protein's constructs covering each residue | 0.661 † | 11 † | 30.6% † | **Abandoned at epoch 3.** Validation metrics flat while training loss fell |
 | 03 | Soft targets gated to proteins with at least 10 deposited constructs, 6 epochs | 0.659 | 10 | 35.6% | **Rejected.** Worse than round 01 on all five metrics |
 | 04 | No soft targets, round 01's recipe run for 6 epochs instead of 3 | 0.662 | 10 | 35.8% | **Rejected.** Led on validation, lost on test |
+| 05 | **ESM-2 t30-150M**, 4x the parameters, otherwise round 01's recipe | 0.673 | 10 | 34.9% | **Rejected.** A dead heat on MCC (+0.004) and worse on the other four measures |
 
 † round 02 was stopped early, so its figures are validation-only and not comparable to the rest.
 
@@ -471,11 +472,24 @@ the 1,445-protein test split it reverses to 35.8% against 36.1%. Round 03's dram
 34.1% to 41.0% at epoch 5, and round 04 matching it, were both inside the variance of the smaller
 sample.
 
-Three conclusions, all negative and all worth keeping: **soft targets do not help** (gated or not),
-**six epochs do not beat three**, and (from the [feature campaign](#turning-a-probability-into-a-construct))
-**no structural feature tested helps either**. The model is at a plateau that neither the training
-schedule nor added features move, so round 05 should change something substantive: a larger ESM-2
-backbone is the obvious untested lever.
+**Round 01 has now been challenged five ways and survived all of them**, which is a better argument
+for it than the original result was:
+
+| Attempted | Outcome |
+|---|---|
+| Six structural features (coil, pLDDT, Pfam edges, disorder, disorder as a channel, surface entropy) | None help |
+| Soft targets, everywhere and gated | Do not help |
+| Six epochs instead of three | Does not help |
+| **A 4x larger backbone** | **Does not help** |
+
+**The task has a ceiling near MCC 0.67 and a 9-residue median boundary error, and it is not a
+capacity, schedule or feature-engineering problem.** The plateau is in the labels. Where a
+crystallographer cuts carries real signal, and the model already extracts most of it, but the
+decision is also part convention, part whichever vector was to hand, and part arbitrary. None of
+that is recoverable from sequence.
+
+Worth stating for anyone tempted to repeat this: the 150M model matched the 35M model to within
+0.004 MCC while costing four times the parameters and four times the training time.
 
 Per epoch, on validation: MCC 0.607 then 0.681 then 0.700, boundary error 14 then 9 then 7
 residues. That upward trend suggested a longer run would help. **Round 04 tested it directly and it
